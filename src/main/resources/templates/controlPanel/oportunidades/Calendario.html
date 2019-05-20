@@ -1,0 +1,123 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>OPORTUNIDADES DE NEGOCIOS</h2>
+    </div>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>Calendario</h2>
+    			</div>
+    			
+    			<div class="body">
+	    			<div class="row clearfix">
+						<div class="col-sm-12 col-md-12">
+							<div id='divCalendario'></div>
+						</div>
+					</div>
+	    		</div>
+    		</div>    		    		
+    	</div>
+    </div>
+    
+    <!-- ACTIVIDAD MODAL -->
+    <div class="modal fade" id="popUpEvento" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="popUpTitulo"></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row m-t-20">
+                    	<div class="col-md-4">
+							<div class="form-group">
+	                       		<p><b>Tipo Actividad</b></p>
+                               <div class="form-line">
+                                   <input type="text" id="txtTipoActividad" name="txtTipoActividad" class="form-control" readonly="readonly" />
+                               </div>
+                           </div>
+						</div>
+						
+						<div class="col-md-4">
+							<div class="form-group">
+	                       		<p><b>Usuario</b></p>
+                               <div class="form-line">
+                                   <input type="text" id="txtUsuario" name="txtUsuario" class="form-control" readonly="readonly" />
+                               </div>
+                           </div>
+						</div>
+						
+						<div class="col-md-4">
+							<div class="form-group">
+	                       		<p><b>Vencimiento Fecha</b></p>
+                               <div class="form-line">
+                                   <input type="text" id="txtVencimientoFecha" name="txtVencimientoFecha" class="form-control" readonly="readonly" />
+                               </div>
+                           </div>
+						</div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CERRAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- CALENDAR -->
+	<script th:src="@{/plugins/fullcalendar/fullcalendar.min.js}"></script>
+	<script th:src='@{/plugins/fullcalendar/locale/es.js}'></script>
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
+		$(document).ready(function() {
+			
+			jsonActividades = jQuery.parseJSON( [[${jsonActividades}]] );
+			
+			console.log(jsonActividades);
+			
+			var calendar = $('#divCalendario').fullCalendar({
+				header: {
+					left 				: 'prev,next today',
+					center 				: 'title',
+					right 				: 'month,agendaWeek,agendaDay,listMonth'
+				},
+				selectable 			: true,
+				selectHelper		: true,
+				editable 			: true,
+				  
+				eventClick 			: function(calEvent, jsEvent, view) {					
+					popUpShow(calEvent);
+				},
+				
+				dayClick: function(date, jsEvent, view) {
+		        	//var urlReunion = [[${ {_PATH_} + 'controlPanel/reuniones/create/'}]] + date.format();
+		        	//window.location.href = urlReunion;
+				},
+				
+				events: jsonActividades					
+			});
+			
+			$('#popUpEvento').on('hidden.bs.modal', function () {
+				$('#popUpTitulo').html();
+				$('#txtTipoActividad').val();
+				$('#txtUsuario').val();
+				$('#txtVencimientoFecha').val();
+				
+				$('#popUpBtnDevolucion').hide();
+			})
+		});
+	
+		function popUpShow(eventoCalendario) {
+			
+			$('#popUpTitulo').html(eventoCalendario.title);
+			$('#txtTipoActividad').val(eventoCalendario.tipoActividad);
+			$('#txtUsuario').val(eventoCalendario.usuario);
+			$('#txtVencimientoFecha').val(eventoCalendario.vencimientoFechaNatural);			
+		  
+			$('#popUpEvento').modal("show");
+	  	}
+	/*]]>*/</script>
+</th:block>

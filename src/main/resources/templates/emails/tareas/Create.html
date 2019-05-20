@@ -1,0 +1,44 @@
+<th:block th:fragment="title">
+	<h1>Creaste una tarea</h1>
+</th:block>
+
+
+<th:block th:fragment="body">
+	<h1 style="color:#000000;">Hola <span th:text="${objTarea.getUsuario().getAlias()}"></span>: </h1>
+	<p style="display:inline">has creado una tarea en el sistema.</p>
+	
+	<table align="center" border="0" cellpadding="10" cellspacing="10" width="100%" style="border-collapse: collapse;">
+		
+		<tr>
+			<td width="25%"><h4><strong>Tarea: </strong></h4></td>
+			<td th:text="${objTarea.tarea}"></td>
+		</tr>
+		
+		<tr>
+			<td width="25%"><h4><strong>Creador: </strong></h4></td>
+			<td th:text="${objTarea.usuario.getAlias()}"></td>
+		</tr>
+		
+		<tr>
+			<td width="25%"><h4><strong>Lugar: </strong></h4></td>
+			<td th:text="${objTarea.lugar}"></td>
+		</tr>
+		
+		<tr>
+			<td width="25%"><h4><strong>Desde: </strong></h4></td>
+			<td th:text="${ {objTarea.getInicioFechaNatural()} + ' - ' + {objTarea.getInicioHoraNatural()} + ' Hrs.' }"></td>
+		</tr>
+		
+		<tr>
+			<td width="25%"><h4><strong>Hasta: </strong></h4></td>
+			<td th:text="${ {objTarea.getFinFechaNatural()} + ' - ' + {objTarea.getFinHoraNatural()} + ' Hrs.' }"></td>
+		</tr>
+		
+		<tr>
+			<td width="25%"><h4><strong>Descripci&oacute;n: </strong></h4></td>
+			<td th:text="${objTarea.getDescripcion()}"></td>
+		</tr>
+		
+	</table>
+</th:block>
+

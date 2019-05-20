@@ -1,0 +1,56 @@
+<th th:fragment="body">
+	<div class="login-box">
+		<div class="logo">
+			<a href="javascript:void(0);">SAR<b>2018</b></a>
+            <small>Sistema de Administraci&oacute;n de Recursos</small>
+		</div>
+		
+		<div class="card">
+			<div class="body">
+				<form th:action="@{/loginValidation}" method="POST">
+					<div class="msg">Accesa para iniciar tu sesi&oacute;n</div>
+					<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+					<div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="material-icons">person</i>
+                        </span>
+                        <div class="form-line">
+                            <input type="text" class="form-control" name="username" placeholder="Usuario" autocomplete="off" required="required" autofocus="autofocus" />
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="material-icons">lock</i>
+                        </span>
+                        <div class="form-line">
+                            <input type="password" autocomplete="off" class="form-control" name="password" placeholder="Contrase&ntilde;a" required="required" />
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-xs-7 p-t-5"></div>
+                        <div class="col-xs-5">
+                            <button class="btn btn-block bg-indigo waves-effect" type="submit">INICIAR SESI&Oacute;N</button>
+                        </div>
+                    </div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-md-12">
+			<div class="alert alert-warning alert-dismissible" role="alert" th:if="${error != null}" >
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <strong>LOGIN_ERROR_01</strong>
+                <br />
+                 El usuario y/o password incorrectos, verifique su información.
+			  	<th:block></th:block>
+             </div>
+		</div>
+	</div>
+</th>
+
+
+
+<scripts th:fragment="scripts"> </scripts>

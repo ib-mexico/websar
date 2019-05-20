@@ -1,0 +1,206 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>NOTICIAS</h2>
+    </div>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>LISTA DE NOTICIAS</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<div class="row clearfix" id="dtNoticiasToolBar">
+    					<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+   								<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupDesde'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
+	                           	</div>
+							</div>
+    					</div>
+    					
+    					<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+    							<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupHasta'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
+	                           	</div>
+							</div>
+    					</div>					
+					</div>
+					
+					<div class="table-responsive">
+						<table id="dtNoticias" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th class="col-md-1" data-field="idNoticia" data-halign="left" data-align="center">ID</th>
+									<!--  <th class="col-md-1" data-formatter="accionesFormatter" data-align="center">Acciones</th>-->
+									<th class="col-md-4" data-field="titulo" data-halign="left">Titulo</th>
+									<th class="col-md-6" data-field="descripcion" data-halign="left" data-visible="false">Descripcion</th>
+									<th class="col-md-3" data-field="vencimientoFecha" data-halign="center" >Vencimiento Fecha</th>
+									
+									<th class="col-md-4" data-field="creacionUsuario" data-halign="left">Usuario</th>																	
+								</tr>
+							</thead>
+						</table>
+		
+					</div>
+					
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script type="application/javascript" th:inline="javascript">
+		$("#dtNoticias").bootstrapTable({
+			url					: [[@{/controlPanel/noticias/table}]],
+			method				: 'post',
+			contentType 		: 'application/x-www-form-urlencoded',
+			sidePagination		: "server",
+			pagination			: true,
+			showColumns			: true,
+			showToggle 			: true,
+			showRefresh 		: true,
+			search				: true,
+			showExport			: true,
+			striped				: true,
+			pageSize 			: 50,
+			exportTypes			: ["excel"],
+			toolbar				: "#dtNoticiasToolBar",
+			queryParams 		: function(params) {
+										params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
+										params['txtBootstrapTableDesde'] = $('#txtBootstrapTableDesde').val();
+										params['txtBootstrapTableHasta'] = $('#txtBootstrapTableHasta').val();
+							        	return params;
+		    						},
+			onLoadSuccess 		: function(data) {
+				/*$(".lock-cliente").click(function() {
+					var idCliente = $(this).attr('data-cliente');
+					swal({
+						title	: "Bloqueo!",
+						text	: "Una vez bloqueado, el cliente no estara disponible.",
+						type	: "warning",
+						showCancelButton: true,
+						cancelButtonText: 'Cancelar',
+						confirmButtonText: 'Bloquear',
+					}).then((result) => {
+						if(result) {
+							
+							$.ajax({
+								url			: [[@{/controlPanel/clientes/lock}]],
+								data		: {
+												idCliente : idCliente, 
+												[[${_csrf.parameterName}]] : [[${_csrf.token}]]
+								},							        
+								dataType	: 'json',
+								type		: "POST",
+								success		: function(data) {
+									if(data.respuesta) {				
+										$("#dtClientes").bootstrapTable('refresh');
+										swal(data.titulo, data.mensaje,'success');
+									}
+								},
+								error		: function(e) {
+									console.log(e);										
+								}
+							});																													
+						}
+					}).catch(swal.noop);
+				});
+				
+				
+				
+				$(".unlock-cliente").click(function() {
+					var idCliente = $(this).attr('data-cliente');
+					swal({
+						title	: "Desbloqueo!",
+						text	: "Una vez desbloqueado, el cliente estara disponible.",
+						type	: "warning",
+						showCancelButton: true,
+						cancelButtonText: 'Cancelar',
+						confirmButtonText: 'Desbloquear',
+					}).then((result) => {
+						if(result) {
+							
+							$.ajax({
+								url			: [[@{/controlPanel/clientes/unlock}]],
+								data		: {
+												idCliente : idCliente, 
+												[[${_csrf.parameterName}]] : [[${_csrf.token}]]
+								},							        
+								dataType	: 'json',
+								type		: "POST",
+								success		: function(data) {
+									if(data.respuesta) {				
+										$("#dtClientes").bootstrapTable('refresh');
+										swal(data.titulo, data.mensaje,'success');
+									}
+								},
+								error		: function(e) {
+									console.log(e);										
+								}
+							});																													
+						}
+					}).catch(swal.noop);
+				});*/
+				
+			}
+		});
+		
+		/*function accionesFormatter(value, row, index) {
+			
+			urlEdit = [[@{/controlPanel/clientes/}]] + row.idCliente + '/edit';
+			urlContactos = [[@{/controlPanel/clientes/}]] + row.idCliente + '/contactos';
+			
+			if(row.eliminado) {
+			    return [
+			    	'<a title="Deshabilitado">',
+		        		'<i class="material-icons" style="color:grey">mode_edit</i>',
+		        	'</a>',
+		        	'<a title="Deshabilitado">',
+		        		'<i class="material-icons" style="color:grey">contacts</i>',
+		        	'</a>',
+			        '<a href="#" class="unlock-cliente" data-cliente="'+ row.idCliente +'" title="Desbloquear">',
+			        	'<i class="material-icons">lock_open</i>',
+			        '</a>'
+			    ].join(' ');
+			} else {				
+			    return [
+			    	'<a href="' + urlEdit + '" title="Editar">',
+		        		'<i class="material-icons">mode_edit</i>',
+		        	'</a>',
+		        	'<a href="' + urlContactos + '" title="Contactos">',
+		        		'<i class="material-icons">contacts</i>',
+		        	'</a>',
+			        '<a href="#" class="lock-cliente" data-cliente="'+ row.idCliente +'" title="Bloquear">',
+			        	'<i class="material-icons">lock_outline</i>',
+			        '</a>'
+			    ].join(' ');
+			}
+			
+		}*/
+		
+		$(function () {
+			//Datetimepicker plugin
+		    $('.datetimepicker').bootstrapMaterialDatePicker({
+		        format: 'MM/DD/YYYY',
+		        clearButton: true,
+		        weekStart: 1,
+		        time:false
+		    });
+	 	});
+	</script>
+</th:block>

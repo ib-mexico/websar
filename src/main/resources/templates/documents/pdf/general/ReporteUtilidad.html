@@ -1,0 +1,81 @@
+<th:block th:fragment="body">
+	<!--/* HEADER */-->
+	<table width="100%">
+		<tr>			
+			<td style="width:119px;">
+				<img th:src="@{'http://localhost:8080/WebSar/assets/images/' + ${objEmpresa.logotipo}}" />
+			</td>
+			
+			<td style="width:10px"></td>
+			<td style="width:258px">
+				<table width="100%">
+				<tr>
+					<td class="tituloH2">REPORTE DE FACTURACI&Oacute;N DE <th:block th:text="${mesActual}"></th:block></td>
+				</tr>
+				</table>
+			</td>
+			<td style="width:10px"></td>
+				
+			
+			<td style="width:179px">
+				<table width="100%">
+					<tr>
+						<td class="tituloTH2">PERIODO</td>
+					</tr>					
+					<tr>
+						<td class="celdaH3" th:text="${fechaInicio + ' - ' + fechaFin}"></td>
+					</tr>
+				</table>
+			</td>
+			
+		</tr>
+	</table>
+	
+	<table id="tblCotizaciones" width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" colspan="10" class="tituloH2" style="text-align:left" th:text="${objUsuario.getNombreCompleto()}"></td>
+		</tr>
+		<tr>
+			<td width="100%" colspan="10" class="tituloH2" style="text-align:left">CUOTA DE <th:block th:if="${objUsuario.getQuota() != null}" th:text="${objUsuario.getQuotaNatural()}"></th:block> <th:block th:unless="${objUsuario.getQuota() != null}" th:text="${'$0.00'}"></th:block> DE U.B.</td>
+		</tr>
+		<tr>
+			<td width="100%" colspan="10"></td>
+		</tr>
+		<tr>
+			<td width="15%" class="tituloTH5">Cotizaci&oacute;n</td>
+			<td width="15%" class="tituloTH5">Concepto</td>		
+			<td width="8%" class="tituloTH5">Fecha</td>
+			<td width="9%" class="tituloTH5" style="text-align:right">Subtotal</td>
+			<td width="9%" class="tituloTH5" style="text-align:right">G.I.</td>
+			<td width="9%" class="tituloTH5" style="text-align:right">Compras</td>
+			<td width="9%" class="tituloTH5" style="text-align:right">U.B.</td>
+			<td width="10%" class="tituloTH5" style="text-align:right">Acumulado Cuota</td>
+			<td width="8%" class="tituloTH5">Acumulado Comisi&oacute;n</td>
+			<td width="8%" class="tituloTH5" style="text-align:right">Comisi&oacute;n</td>
+		</tr>
+		<tr th:each="item : ${cotizacionesMap}">
+			<td width="15%" class="celdaH6" th:text="${item.folio}"></td>			
+			<td width="15%" class="celdaH6" th:text="${item.concepto}"></td>
+			<td width="8%" class="celdaH6" th:text="${item.fecha_facturacion}"></td>
+			<td width="9%" class="celdaH6" style="text-align:right" th:text="${item.subtotal}"></td>
+			<td width="9%" class="celdaH6" style="text-align:right" th:text="${'$' + item.gastos_indirectos}"></td>
+			<td width="9%" class="celdaH6" style="text-align:right" th:text="${'$' + item.compras}"></td>
+			<td width="9%" class="celdaH6" style="text-align:right" th:text="${'$' + item.utilidad_bruta}"></td>
+			<td width="10%" class="celdaH6" style="text-align:right" th:text="${'$' + item.acumulado_cuota}"></td>
+			<td width="8%" class="celdaH6" th:text="${item.acumulado_comision + '%'}"></td>
+			<td width="8%" class="celdaH6" style="text-align:right" th:text="${'$' + item.total_comision}"></td>
+		</tr>
+		<tr>
+			<td colspan="2"></td>
+			<td width="8%" class="tituloTH5">TOTAL</td>
+			<td width="9%" class="celdaH6" style="text-align:right" th:text="${'$' + totalSubtotal}"></td>
+			<td width="9%" class="celdaH6" style="text-align:right" th:text="${'$' + totalGastos}"></td>
+			<td width="9%" class="celdaH6" style="text-align:right" th:text="${'$' + totalCompras}"></td>
+			<td width="9%" class="celdaH6" style="text-align:right" th:text="${'$' + totalUtilidad}"></td>
+			<td width="10%" class="celdaH6" style="text-align:right" th:text="${'$' + totalAcumuladoCuota}"></td>
+			<td width="8%"></td>
+			<td width="8%" class="celdaH6" style="text-align:right" th:text="${'$' + totalAcumuladoComision}"></td>
+		</tr>
+	</table>
+	
+</th:block>

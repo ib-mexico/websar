@@ -1,0 +1,145 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>ENTREGAS DE PRODUCTOS</h2>
+    </div>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>LISTA DE ENTREGAS</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<div class="row clearfix" id="dtEntregasToolBar" data-toolbar-align="left">
+						<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+   								<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupDesde'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
+	                           	</div>
+							</div>
+    					</div>
+    					
+    					<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+    							<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupHasta'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
+	                           	</div>
+							</div>
+    					</div>							
+					</div>
+					
+					<div class="table-responsive">
+						<div class="container">						
+							<table id="dtEntregas" class="table table-bordered table-striped table-hover">
+								<thead>
+									<tr>
+										<th data-width="10%" data-field="idEntrega" data-halign="left" data-align="center">ID</th>
+										<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+										<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
+										<th data-width="30%" data-field="cliente" data-halign="center" data-align="left">Cliente</th>
+										<th data-width="30%" data-field="contacto" data-halign="center" data-align="left" data-visible="false">Contacto</th>
+										<th data-width="20%" data-field="cotizacion" data-halign="center" data-align="center">Cotizaci&oacute;n</th>
+										<th data-width="20%" data-field="ordenCompra" data-halign="center" data-align="left" data-visible="false">Orden Compra</th>
+																			
+										<th data-width="30%" data-field="nombreEntrega" data-halign="center" data-align="left">Entreg&oacute;</th>
+										<th data-width="30%" data-field="nombreRecibe" data-halign="center" data-align="left">Recibi&oacute;</th>
+										
+										<th data-width="20%" data-field="horaEntrega" data-halign="center" data-align="center">Hora/Entrega</th>
+										<th data-width="20%" data-field="creacionFecha" data-halign="center" data-align="center">Creaci&oacute;n/Fecha</th>																			
+									</tr>
+								</thead>
+							</table>		
+						</div>
+					</div>
+					
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script type="application/javascript" th:inline="javascript">
+		$(document).ready(function() {			
+			$("#dtEntregas").bootstrapTable({
+				url					: [[@{/controlPanel/entregas/table}]],
+				method				: 'post',
+				contentType 		: 'application/x-www-form-urlencoded',
+				sidePagination		: "server",
+				pagination			: true,
+				showColumns			: true,
+				showToggle 			: true,
+				showRefresh 		: true,
+				search				: true,
+				showExport			: true,
+				striped				: true,
+				pageSize 			: 50,
+				exportTypes			: ["excel"],
+				toolbar				: "#dtEntregasToolBar",
+				queryParams 		: function(params) {
+											params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
+											params['txtBootstrapTableDesde'] = $('#txtBootstrapTableDesde').val();
+											params['txtBootstrapTableHasta'] = $('#txtBootstrapTableHasta').val();
+								        	return params;
+			    						}
+			});
+					
+		});
+			
+		function accionesFormatter(value, row, index) {
+			
+			urlEdit = [[@{/controlPanel/entregas/}]] + row.idEntrega + '/edit';
+			urlPdf = [[@{/controlPanel/entregas/}]] + row.idEntrega + '/pdf';
+			urlFirma = [[@{/controlPanel/entregas/}]] + row.idEntrega + '/firma';
+			
+			if(row.nombreRecibe == null || row.nombreRecibe == '') {
+				return [
+			    	'<a href="' + urlEdit + '" title="Editar">',
+		        		'<i class="material-icons" >mode_edit</i>',
+		        	'</a>',
+		        	'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+		        		'<i class="material-icons">print</i>',
+		        	'</a>',
+		        	'<a href="' + urlFirma + '" title="Firma">',
+		        		'<i class="material-icons">receipt</i>',
+		        	'</a>',
+			    ].join(' ');
+			} else {				
+			    return [
+			    	'<a title="Deshabilitado" >',
+		        		'<i class="material-icons" style="color:grey">mode_edit</i>',
+		        	'</a>',
+		        	'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+		        		'<i class="material-icons">print</i>',
+		        	'</a>',
+		        	'<a title="Deshabilitado">',
+		        		'<i class="material-icons" style="color:grey">receipt</i>',
+		        	'</a>',
+			    ].join(' ');
+			}
+			
+		}
+			
+		//Datetimepicker plugin
+		$(function () {
+			$('#txtBootstrapTableHasta').bootstrapMaterialDatePicker({format: 'MM/DD/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+			$('#txtBootstrapTableDesde').bootstrapMaterialDatePicker({format: 'MM/DD/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false}).on('change', function(e, date)
+			{
+				$('#txtBootstrapTableHasta').bootstrapMaterialDatePicker('setMinDate', date);
+			});					
+			
+	 	});						
+	</script>
+</th:block>

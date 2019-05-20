@@ -1,0 +1,64 @@
+<th:block th:fragment="body">
+	<!--/* HEADER */-->
+	<table width="100%">
+		<tr>			
+			<td style="width:119px;">
+				<img th:src="@{'http://localhost:8080/WebSar/assets/images/' + ${objEmpresa.logotipo}}" />
+			</td>
+			
+			<td style="width:10px"></td>
+			<td style="width:258px">
+				<table width="100%">
+				<tr>
+					<td class="tituloH2">REPORTE DE FACTURACI&Oacute;N DE <th:block th:text="${mesActual}"></th:block></td>
+				</tr>
+				</table>
+			</td>
+			<td style="width:10px"></td>
+				
+			
+			<td style="width:179px">
+				<table width="100%">
+					<tr>
+						<td class="tituloTH2">PERIODO</td>
+					</tr>					
+					<tr>
+						<td class="celdaH3" th:text="${fechaInicio + ' - ' + fechaFin}"></td>
+					</tr>
+				</table>
+			</td>
+			
+		</tr>
+	</table>
+	
+	<table id="tblUsuarios" width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" colspan="10"></td>
+		</tr>
+		<tr>
+			<td width="30%" class="tituloTH5" style="text-align:left">EJECUTIVO</td>
+			<td width="15%" class="tituloTH5" style="text-align:right">FACTURACI&Oacute;N</td>		
+			<td width="15%" class="tituloTH5" style="text-align:right">UTILIDAD</td>
+			<td width="15%" class="tituloTH5" style="text-align:right">CUOTA LOG</td>
+			<td width="15%" class="tituloTH5" style="text-align:right">CUOTA</td>
+			<td width="10%" class="tituloTH5" style="text-align:right">% LOGRO</td>
+		</tr>
+		<tr th:each="item : ${usuariosMap}">
+			<td width="30%" class="celdaH6" style="text-align:left" th:text="${item.usuario}"></td>			
+			<td width="15%" class="celdaH6" style="text-align:right" th:text="${'$' + item.facturacion}"></td>
+			<td width="15%" class="celdaH6" style="text-align:right" th:text="${'$' + item.utilidad}"></td>
+			<td width="15%" class="celdaH6" style="text-align:right" th:text="${'$' + item.cuota_log}"></td>
+			<td width="15%" class="celdaH6" style="text-align:right" th:text="${item.cuota}"></td>
+			<td width="10%" class="celdaH6" style="text-align:right" th:text="${item.porcentaje_log + '%'}"></td>
+		</tr>
+		<tr>
+			<td width="30%" class="tituloTH5" style="text-align:right">SUBTOTAL</td>
+			<td width="15%" class="celdaH6" style="text-align:right" th:text="${'$' + totalFacturacion}"></td>
+			<td width="15%" class="celdaH6" style="text-align:right" th:text="${'$' + totalUtilidad}"></td>
+			<td width="15%" class="celdaH6" style="text-align:right" th:text="${'$' + totalAcumuladoCuota}"></td>
+			<td width="15%" class="celdaH6" style="text-align:right" th:text="${totalCuota}"></td>
+			<td width="10%" class="celdaH6" style="text-align:right" th:text="${totalPorcentajeLog + '%'}"></td>
+		</tr>
+	</table>
+	
+</th:block>

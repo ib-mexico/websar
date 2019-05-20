@@ -1,0 +1,19 @@
+<th:block th:if="${autoPrinter != null}">
+
+	<th:block >
+		<script type="application/javascript" th:inline="javascript">
+		
+		var autoPrinter = [[${autoPrinter}]];
+		var win = window.open(autoPrinter, '_blank');
+		/*
+		if (win) {
+		    //Browser has allowed it to be opened
+		    win.focus();
+		}
+		*/
+		
+		</script>
+	</th:block>
+	
+	
+</th:block>

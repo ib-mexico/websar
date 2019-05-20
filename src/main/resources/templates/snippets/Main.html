@@ -1,0 +1,25 @@
+<html th:fragment="html">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    	<meta charset="utf-8" />
+    	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    	<meta name="viewport" content="width=device-width, initial-scale=1" />
+    	
+    	<!--<link rel="shortcut icon" th:href="${'assets/imagenes/icono_16.png'}" type="image/png" />
+		<link rel="shortcut icon" type="image/png" th:href="@{assets/imagenes/icono_16.png}" /> -->
+    	
+    	<title>
+    		<th:block th:include="/snippets/Settings :: title"></th:block> - Ver. 
+    		<th:block th:include="/snippets/Settings :: version"></th:block>
+    	</title>
+    	
+    	<th:block th:replace="/snippets/Styles"></th:block>
+    	<th:block th:replace="/snippets/Scripts"></th:block>
+    	
+    
+	</head>
+	
+	<body class="login-page">		
+		<th:block th:replace="${_TEMPLATE_}"></th:block>		
+	</body>	
+</html>

@@ -1,0 +1,144 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>OPORTUNIDADES DE NEGOCIOS</h2>
+    </div>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>Nueva Actividad</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<form id="formActividad" th:action="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + objOportunidad.getIdOportunidadNegocio() + '/actividad'}" method="POST">
+						<div class="row clearfix">
+							<div class="col-md-6">
+								<b>Actividad *</b>						
+	                            <select class="form-control show-tick" name="cmbActividad" id="cmbActividad" data-live-search="true" >
+	                            	<option value="default" selected="selected">Selecciona una Actividad...</option>
+	                            	<option th:each="itemTipo : ${lstActividadesTipos}" th:value="${itemTipo.idActividadTipo}" th:text="${itemTipo.actividadTipo}"></option>
+	                       		</select>                      
+	                        </div>
+	                        
+	                        <div class="col-md-6">
+	                        	<b>Fecha Vencimiento</b>
+	                        	<div class="input-group">
+                        			<span class="input-group-addon">
+                                        <i class="material-icons">date_range</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control text-center" id="txtVencimientoFecha" name="txtVencimientoFecha" />
+                                    </div>
+								</div>
+	                        </div>
+						</div>
+						
+						<div class="row clearfix">
+							<div class="col-md-6">
+								<div class="form-group">								
+									<b>Resumen *</b>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtResumen" class="form-control" placeholder="Por ejemplo, discusi&oacute;n de una propuesta" required="required" />
+	                                </div>
+								</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+								<b>Asignada a *</b>
+                                <select class="form-control show-tick" name="cmbUsuario" id="cmbUsuario" data-live-search="true" >
+	                       			<th:block th:each="itemUsuario : ${lstUsuarios}" >
+	                       				<option th:if="${itemUsuario.idUsuario == _USER_.getIdUsuario()}" selected="selected" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}"></option>
+	                       				<option th:unless="${itemUsuario.idUsuario == _USER_.getIdUsuario()}" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}"></option>
+	                       			</th:block>
+	                       		</select>
+                            </div>
+                  		</div>
+                  		
+                  		<div class="row clearfix">
+                  			<div class="col-md-4">
+                  				<b>Color de Actividad</b>
+                                <div class="input-group colorpicker">
+                                    <div class="form-line">
+                                        <input type="text" name="txtColor" class="form-control" value="#00AABB" />
+                                    </div>
+                                    <span class="input-group-addon">
+                                        <i></i>
+                                    </span>
+                                </div>
+                  			</div>
+                  		</div>
+						
+						
+						<div class="row clearfix">
+							<div class="col-md-12">
+	                            <textarea id="txtNotas" name="txtNotas"></textarea>
+	                        </div>							
+						</div>
+					
+						<div class="row clearfix">
+							<div class="col-md-3 col-md-offset-8 text-right">
+								<a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<button type="submit" class="btn btn-primary m-t-15 waves-effect">CREAR</button>
+							</div>
+						</div>
+					</form>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- Bootstrap Colorpicker Js -->
+	<script th:src="@{/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.js}"></script>
+	
+	<!-- TinyMCE -->
+	<script th:src="@{/plugins/tinymce/tinymce.js}"></script>
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
+			
+		var idUsuario = [[${_USER_.getIdUsuario()}]];
+	
+		$(document).ready(function() {
+			//DATEPICKER
+			$('#txtVencimientoFecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false, minDate : new Date()});
+			$('#txtVencimientoFecha').bootstrapMaterialDatePicker('setDate', moment());
+			
+			$('.colorpicker').colorpicker({
+				useAlpha: false
+			});
+			
+			//TinyMCE
+		    tinymce.init({
+		        selector: "textarea#txtNotas",
+		        theme: "modern",
+		        height: 300,
+		        plugins: [
+		            'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+		            'searchreplace wordcount visualblocks visualchars code fullscreen',
+		            'insertdatetime media nonbreaking save table contextmenu directionality',
+		            'emoticons template paste textcolor colorpicker textpattern imagetools'
+		        ],
+		        toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+		        toolbar2: 'print preview media | forecolor backcolor emoticons',
+		        image_advtab: true
+		    });
+		    tinymce.suffix = ".min";
+		    tinyMCE.baseURL = '/WebSar/plugins/tinymce';
+			
+			// FORM SUBMIT
+			$('#formActividad').submit(function(e){
+				var flag = false;
+				
+				if($('#cmbActividad').val() == 'default') {
+					flag = true;
+				}				
+				
+				if(flag) {
+					swal('Hey!', 'Los campos con (*) son obligatorios', 'warning');
+					e.preventDefault();
+				}
+		  	});			
+		});	
+		/*]]>*/</script>
+</th:block>

@@ -1,0 +1,135 @@
+<th:block th:fragment="body">
+	<!--/* HEADER */-->
+	<table width="100%">
+		<tr>			
+			<td style="width:139px;">
+				<img th:src="@{'http://localhost:8080/WebSar/assets/images/' + ${objCotizacion.empresa.logotipo}}" />
+			</td>
+			
+			<td style="width:10px"></td>
+			<td style="width:278px">
+				<table width="100%">
+				<tr>
+					<td class="tituloH2">REPORTE DE UTILIDAD DE COTIZACI&Oacute;N</td>
+				</tr>
+				</table>
+			</td>
+			<td style="width:10px"></td>
+				
+			
+			<td style="width:139px">
+				<table width="100%">
+					<tr>
+						<td class="tituloTH2">FOLIO</td>
+					</tr>
+					
+					<tr>
+						<td class="celdaH3" th:text="${objCotizacion.folio}"></td>
+					</tr>
+				</table>
+			</td>
+			
+		</tr>
+	</table>
+	
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" colspan="5" class="tituloTH3">COMPRAS</td>
+		</tr>
+		<tr>
+			<td width="15%" class="tituloTH5">Folio O/C</td>
+			<td width="15%" class="tituloTH5">Folio</td>			
+			<td width="20%" class="tituloTH5">Proveedor</td>
+			<td width="30%" class="tituloTH5">Observaciones</td>
+			<td width="20%" class="tituloTH5">Importe</td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0">
+		<tr th:each="itemCompra : ${lstCompras}">
+			<td width="15%" class="celdaH6" style="text-align:center" th:text="${itemCompra.folioOrdenCompra}"></td>
+			<td width="15%" class="celdaH6" style="text-align:center" th:text="${itemCompra.folio}"></td>
+			<td width="20%" class="celdaH6" style="text-align:left" th:text="${itemCompra.proveedor}"></td>
+			<td width="30%" class="celdaH6" style="text-align:left" th:text="${itemCompra.observaciones}"></td>
+			<td width="20%" class="celdaH6" style="text-align:right" th:text="${'$' + itemCompra.importeNatural}"></td>
+		</tr>
+		<tr>
+			<td colspan="5" width="20%" class="celdaH6" style="text-align:right" th:text="${'Total: $' + totalCompras}"></td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" colspan="4" class="tituloTH3">GASTOS INDIRECTOS</td>
+		</tr>
+		<tr>
+			<td width="15%" class="tituloTH5">Folio</td>			
+			<td width="20%" class="tituloTH5">Proveedor</td>
+			<td width="30%" class="tituloTH5">Observaciones</td>
+			<td width="20%" class="tituloTH5">Importe</td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0">
+		<tr th:each="itemGasto : ${lstGastos}">
+			<td width="15%" class="celdaH6" style="text-align:center" th:text="${itemGasto.folio}"></td>
+			<td width="20%" class="celdaH6" style="text-align:left" th:text="${itemGasto.proveedor}"></td>
+			<td width="30%" class="celdaH6" style="text-align:left" th:text="${itemGasto.observaciones}"></td>
+			<td width="20%" class="celdaH6" style="text-align:right" th:text="${'$' + itemGasto.importeNatural}"></td>
+		</tr>
+		<tr>
+			<td colspan="4" width="20%" class="celdaH6" style="text-align:right" th:text="${'Total: $' + totalGastos}"></td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" colspan="5" class="tituloTH3">SUBTOTAL DE COTIZACI&Oacute;N</td>
+		</tr>
+		<tr>
+			<td width="15%" class="tituloTH5">Folio</td>			
+			<td width="45%" class="tituloTH5">Concepto</td>
+			<td width="20%" class="tituloTH5">Cliente</td>
+			<td width="20%" class="tituloTH5">Importe</td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0">
+		<tr>
+			<td width="15%" class="celdaH6" style="text-align:center" th:text="${objCotizacion.folio}"></td>
+			<td width="45%" class="celdaH6" style="text-align:left" th:text="${objCotizacion.concepto}"></td>
+			<td width="20%" class="celdaH6" style="text-align:left" th:text="${objCotizacion.cliente.cliente}"></td>
+			<td width="20%" class="celdaH6" style="text-align:right" th:text="${objCotizacion.subtotalNatural}"></td>
+		</tr>
+		<tr>
+			<td colspan="2"></td>
+			<td width="20%" class="tituloTH5"> TOTAL UTILIDAD</td>
+			<td width="20%" class="celdaH6" style="text-align:right" th:text="${'$' + totalUtilidad}"></td>
+		</tr>
+	</table>
+	
+	
+		
+	<!--/* FOOTER */-->
+	<table width="100%" style="margin-top:100px;">
+		<tr>
+			<td style="width:30%">
+				<table>
+					<tr>
+						<td th:text="${objCotizacion.empresa.razonSocial}"></td>
+					</tr>
+					<tr>							
+						<td><span style="color:#ff2e34;font-weight:bold;">ventas@<th:block th:text="${objCotizacion.empresa.dominio}"></th:block></span></td>
+					</tr>
+					<tr>
+						<td><span style="color:#ff2e34;font-weight:bold;">http://www.<th:block th:text="${objCotizacion.empresa.dominio}"></th:block></span></td>
+					</tr>
+					<tr></tr>
+				</table>
+			</td>							
+			<td style="width:40%"></td>
+			<td style="width:30%;"></td>				
+		</tr>
+	</table>
+</th:block>

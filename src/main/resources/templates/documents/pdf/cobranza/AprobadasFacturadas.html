@@ -1,0 +1,125 @@
+<th:block th:fragment="body">
+	<!--/* HEADER */-->
+	<table width="100%">
+		<tr>			
+			<td style="width:25%;">
+				<img th:src="@{'http://localhost:8080/WebSar/assets/images/ibmexico.jpg'}" />
+			</td>
+			
+			<td style="width:10px"></td>
+			<td style="width:50%">
+				<table width="100%">
+				<tr>
+					<td class="tituloH2">REPORTE DE COTIZACIONES APROBADAS Y FACTURADAS</td>
+				</tr>
+				</table>
+			</td>
+			<td style="width:10px"></td>
+				
+			
+			<td style="width:15%">
+				<table width="100%">
+					<tr>
+						<td class="tituloTH2">DIAS</td>
+					</tr>					
+					<tr>
+						<td class="celdaH3" th:text="${dias}"></td>
+					</tr>
+				</table>
+			</td>
+			
+		</tr>
+	</table>
+	
+	<table id="tblAprobadas" width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" colspan="5" class="tituloH2" style="text-align:left">COTIZACIONES APROBADAS Y NO FACTURADAS</td>
+		</tr>
+		<tr>
+			<td width="20%" class="tituloTH5">Cotizaci&oacute;n</td>
+			<td width="15%" class="tituloTH5">Cliente</td>
+			<td width="15%" class="tituloTH5">Ejecutivo</td>
+			<td width="30%" class="tituloTH5">Concepto</td>		
+			<td width="10%" class="tituloTH5">Fecha Aprobaci&oacute;n</td>
+			<td width="10%" class="tituloTH5" style="text-align:right">Subtotal</td>
+		</tr>
+		
+		<th:block th:if="${not #lists.isEmpty(lstAprobados)}">		
+			<tr th:each="item : ${lstAprobados}">
+				<td width="20%" class="celdaH6" th:text="${item.folio}"></td>
+				<td width="15%" class="celdaH6" th:text="${item.cliente.cliente}"></td>
+				
+				<th:block th:if="${item.empresa.idEmpresa == 1}">			
+					<td th:if="${item.cliente.usuarioEjecutivo != null}" width="15%" class="celdaH6" th:text="${item.getCliente().getUsuarioEjecutivo().getNombreCompleto()}"></td>
+					<td th:unless="${item.cliente.usuarioEjecutivo != null}" width="15%" class="celdaH6"> - </td>
+				</th:block>
+				
+				<th:block th:if="${item.empresa.idEmpresa == 2}">			
+					<td th:if="${item.cliente.usuarioEjecutivoS3s != null}" width="15%" class="celdaH6" th:text="${item.cliente.usuarioEjecutivoS3s.nombreCompleto}"></td>
+					<td th:unless="${item.cliente.usuarioEjecutivoS3s != null}" width="15%" class="celdaH6"> - </td>
+				</th:block>
+				
+				<th:block th:if="${item.empresa.idEmpresa == 3}">
+					<td th:if="${item.cliente.usuarioEjecutivoR2a != null}" width="15%" class="celdaH6" th:text="${item.cliente.usuarioEjecutivoR2a.nombreCompleto}"></td>
+					<td th:unless="${item.cliente.usuarioEjecutivoR2a != null}" width="15%" class="celdaH6"> - </td>		
+				</th:block>
+				
+				<td width="30%" class="celdaH6" th:text="${item.concepto}"></td>
+				<td width="10%" class="celdaH6" th:text="${item.aprobacionFecha}"></td>
+				<td width="10%" class="celdaH6" style="text-align:right" th:text="${item.subtotal}"></td>
+			</tr>
+		</th:block>
+		
+		<th:block th:unless="${not #lists.isEmpty(lstAprobados)}">
+			<tr><td colspan="6" class="celdaH6" width="100%">No hay registros para mostrar</td></tr>
+		</th:block>
+	</table>
+	
+	<br />
+	<br />
+	<br />
+	<hr />
+	<table id="tblFacturados" width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" colspan="5" class="tituloH2" style="text-align:left">COTIZACIONES FACTURADAS Y NO PAGADAS</td>
+		</tr>
+		<tr>
+			<td width="20%" class="tituloTH5">Cotizaci&oacute;n</td>
+			<td width="15%" class="tituloTH5">Cliente</td>
+			<td width="15%" class="tituloTH5">Ejecutivo</td>
+			<td width="30%" class="tituloTH5">Concepto</td>		
+			<td width="10%" class="tituloTH5">Fecha Facturaci&oacute;n</td>
+			<td width="10%" class="tituloTH5" style="text-align:right">Subtotal</td>
+		</tr>
+		<th:block th:if="${not #lists.isEmpty(lstFacturados)}">	
+			<tr th:each="item : ${lstFacturados}">
+				<td width="20%" class="celdaH6" th:text="${item.folio}"></td>
+				<td width="15%" class="celdaH6" th:text="${item.cliente.cliente}"></td>
+				
+				<th:block th:if="${item.empresa.idEmpresa == 1}">			
+					<td th:if="${item.cliente.usuarioEjecutivo != null}" width="15%" class="celdaH6" th:text="${item.getCliente().getUsuarioEjecutivo().getNombreCompleto()}"></td>
+					<td th:unless="${item.cliente.usuarioEjecutivo != null}" width="15%" class="celdaH6"> - </td>
+				</th:block>
+				
+				<th:block th:if="${item.empresa.idEmpresa == 2}">			
+					<td th:if="${item.cliente.usuarioEjecutivoS3s != null}" width="15%" class="celdaH6" th:text="${item.cliente.usuarioEjecutivoS3s.nombreCompleto}"></td>
+					<td th:unless="${item.cliente.usuarioEjecutivoS3s != null}" width="15%" class="celdaH6"> - </td>
+				</th:block>
+				
+				<th:block th:if="${item.empresa.idEmpresa == 3}">
+					<td th:if="${item.cliente.usuarioEjecutivoR2a != null}" width="15%" class="celdaH6" th:text="${item.cliente.usuarioEjecutivoR2a.nombreCompleto}"></td>
+					<td th:unless="${item.cliente.usuarioEjecutivoR2a != null}" width="15%" class="celdaH6"> - </td>		
+				</th:block>
+				
+				<td width="30%" class="celdaH6" th:text="${item.concepto}"></td>
+				<td width="10%" class="celdaH6" th:text="${item.facturacionFecha}"></td>
+				<td width="10%" class="celdaH6" style="text-align:right" th:text="${item.subtotal}"></td>
+			</tr>
+		</th:block>
+		
+		<th:block th:unless="${not #lists.isEmpty(lstFacturados)}">
+			<tr><td colspan="6" class="celdaH6" width="100%">No hay registros para mostrar</td></tr>
+		</th:block>
+	</table>
+	
+</th:block>

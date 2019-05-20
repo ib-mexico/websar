@@ -1,0 +1,193 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>TAREAS</h2>
+    </div>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>Nueva Tarea</h2>
+    			</div>
+    			
+    			<div class="body">
+	    			<form id="formTarea" th:action="${ {_PATH_} + 'controlPanel/tareas'}" th:method="POST">
+	    				<div class="row">
+	    					<div class="col-md-4">
+	                        	<div class="form-group">
+	                        		<b>Tarea *</b>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtTarea" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                        	<b>Fecha/Hora Inicio</b>
+	                        	<div class="input-group">
+                        			<span class="input-group-addon">
+                                        <i class="material-icons">date_range</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control text-center" id="txtFechaInicio" name="txtFechaInicio" required="required" />
+                                    </div>
+								</div>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                        	<b>Fecha/Hora Fin</b>
+	                        	<div class="input-group">
+                        			<span class="input-group-addon">
+                                        <i class="material-icons">date_range</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control text-center" id="txtFechaFin" name="txtFechaFin" required="required" />
+                                    </div>
+								</div>
+	                        </div>
+	    				</div>
+	    				
+	    				<div class="row clearfix">
+							<div class="col-md-12">							
+								<div class="form-group">
+									<p><b>Descripci&oacute;n</b></p>
+	                              	<div class="form-line">
+	                                  	<textarea rows="4" name="txtDescripcion" class="form-control no-resize"></textarea>
+	                              	</div>
+	                       		</div>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-4">
+	                        	<div class="form-group">
+	                        		<b>Lugar *</b>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtLugar" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>													
+                  			
+                  			<div class="col-md-4">
+                  				<b>Color de Tarea</b>
+                                <div class="input-group colorpicker">
+                                    <div class="form-line">
+                                        <input type="text" name="txtColor" class="form-control" value="#00AABB" />
+                                    </div>
+                                    <span class="input-group-addon">
+                                        <i></i>
+                                    </span>
+                                </div>
+                  			</div>
+                  			
+                  			<div class="col-md-4">
+                  				<input type="checkbox" id="chkAddParticipantes" class="chk-col-deep-purple" name="chkAddParticipantes" value="true" />
+                                <label for="chkAddParticipantes">&iquest;Desea agregar participantes a la tarea?</label>
+                  			</div>
+						</div>
+						
+						<div class="row" id="dvParticipantes" style="display:none">
+							<div class="col-md-8">
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<td>
+												<input type="checkbox" id="chkAddAll" class="chk-col-deep-purple" />
+                               					<label for="chkAddAll">Seleccionar todos</label>
+											</td>
+											<td>Nombre Completo</td>
+											<td>Puesto</td>
+										</tr>
+									</thead>
+									<tbody>
+										<th:block th:each="itemUsuario, itrStat : ${lstUsuarios}">
+											<tr>
+												<td>
+													<input type="checkbox" th:id="${'chkItem' + itrStat.index}" class="chk-col-deep-purple chkParticipante" name="chkParticipante[]" th:value="${itemUsuario.idUsuario}" />
+                               						<label th:attr="for=${'chkItem' + itrStat.index}">&iquest;Seleccionar?</label>
+												</td>
+												<td th:text="${itemUsuario.nombreCompleto}"></td>
+												<td th:text="${itemUsuario.puesto}"></td>
+											</tr>
+										</th:block>
+									</tbody>
+								</table>
+							</div>
+						</div>
+	    			
+	    				<div class="row clearfix">
+							<div class="col-md-3 col-md-offset-8 text-right">
+								<a th:href="${ {_PATH_} + 'controlPanel/tareas'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<button type="submit" class="btn btn-primary m-t-15 waves-effect">CREAR</button>
+							</div>
+						</div>
+	    			</form>
+	    		</div>
+    		</div>    		    		
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- Bootstrap Colorpicker Js -->
+	<script th:src="@{/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.js}"></script>
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
+		var varParamFecha  =  [[${fecha}]];
+		
+		$(document).ready(function() {
+			
+			$('.colorpicker').colorpicker({
+				useAlpha: false
+			});
+			
+			$('#chkAddParticipantes').change(function() {
+				$('#divParticipantes').css('display', 'none');
+				if(this.checked) {
+					$('#dvParticipantes').fadeIn('slow');
+				} else {
+					$('#dvParticipantes').fadeOut('fast');
+				}				
+			});
+			
+			$('#chkAddAll').on('change', function() {
+				$.each($('.chkParticipante'), function(index, element) {
+					$(element).prop('checked', $('#chkAddAll').prop('checked'));
+				});
+			});
+			
+			$('.chkParticipante').on('change', function() {
+				allChecked();
+			});
+		});
+		
+		function allChecked() {
+			boolAllChecked = true;
+			boolAllUnchecked = true;
+			$.each($('.chkParticipante'), function(index, element) {
+				if(!$(element).prop('checked')) {
+					boolAllChecked = false;
+				}
+			});
+			
+			if(boolAllChecked) {
+				$('#chkAddAll').prop('checked', true);
+			} else {
+				$('#chkAddAll').prop('checked', false);
+			}
+		}
+	
+		//Datetimepicker plugin
+		$(function () {						
+			
+			$('#txtFechaFin').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY HH:mm', lang:'es', weekStart : 1, clearButton: true, time:true});
+			$('#txtFechaInicio').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY HH:mm', lang:'es', weekStart : 1, clearButton: true, time:true}).on('change', function(e, date)
+			{
+				$('#txtFechaFin').bootstrapMaterialDatePicker('setMinDate', date);
+			});	
+			
+			if(varParamFecha != null) {	
+				$('#txtFechaInicio').bootstrapMaterialDatePicker('setDate', varParamFecha);
+			}
+	 	});
+	/*]]>*/</script>
+</th:block>

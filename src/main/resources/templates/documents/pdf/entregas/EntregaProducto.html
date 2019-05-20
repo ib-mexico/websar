@@ -1,0 +1,128 @@
+<th:block th:fragment="body">
+	<!--/* HEADER */-->
+	<table width="100%">
+		<tr>			
+			<td style="width:139px;">
+				<img src="http://localhost:8082/WebSar/assets/images/logotipo.jpg" />
+			</td>
+			
+			<td style="width:10px"></td>
+			<td style="width:278px">
+				<table width="100%">
+				<tr>
+					<td class="tituloH2">Entrega de Producto</td>
+				</tr>
+				</table>
+			</td>
+			<td style="width:10px"></td>
+				
+			
+			<td style="width:139px">
+				<table width="100%">
+					<tr>
+						<td class="tituloTH2">FOLIO</td>
+					</tr>
+					
+					<tr>
+						<td class="celdaH3" th:text="${objEntrega.folio}"></td>
+					</tr>
+				</table>
+			</td>
+			
+		</tr>
+	</table>
+	
+	<!--/* GENERAL INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 30px;">
+		<tr>
+			<td class="tituloH5" width="10%" style="text-align:left">Cliente:</td>
+			<td class="subrayadoH5" width="25%" th:text="${objEntrega.cliente.cliente}"></td>
+			<td class="tituloH5" width="18%" style="text-align:left">Orden de Compra:</td>
+			<td class="subrayadoH5" style="text-align:center; text-indent:0" width="15%" th:text="${objEntrega.ordenCompra}"></td>
+			<td class="tituloH5" width="18%" style="text-align:left">Fecha de creaci&oacute;n:</td>
+			<td class="subrayadoH5" style="text-align:center; text-indent:0" width="14%" th:text="${objEntrega.creacionFechaNatural}"></td>
+		</tr>
+	
+		<tr>
+			<td class="tituloH5" width="10%" style="text-align:left">Atenci&oacute;n:</td>
+			<td class="subrayadoH5" width="25%" th:text="${objEntrega.clienteContacto.contacto}"></td>
+			<td class="tituloH5" width="18%" style="text-align:left">Cotizaci&oacute;n:</td>
+			<td class="subrayadoH5" th:if="${objEntrega.cotizacion != null}" style="text-align:center; text-indent:0" width="15%" th:text="${objEntrega.cotizacion.folio}"></td>
+			<td class="subrayadoH5" th:unless="${objEntrega.cotizacion != null}" style="text-align:center; text-indent:0" width="15%"></td>		
+			<td class="tituloH5" width="18%" style="text-align:left">Hora de Entrega:</td>
+			<td class="subrayadoH5" style="text-align:center; text-indent:0" width="14%" th:text="${objEntrega.horaEntrada}"></td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="15%" class="tituloTH5">Cantidad</td>
+			<td width="20%" class="tituloTH5">N&uacute;mero de Parte</td>
+			<td width="45%" class="tituloTH5">Descripci&oacute;n</td>
+			<td width="20%" class="tituloTH5">N&uacute;mero de Serie</td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0">
+		<tr th:each="itemProducto : ${lstProductos}">
+			<td width="15%" class="celdaH6" th:text="${itemProducto.cantidad}"></td>
+			<td width="20%" class="celdaH6" th:text="${itemProducto.numeroParte}"></td>
+			<td width="45%" class="celdaH6" style="text-align:left" th:text="${itemProducto.descripcion}"></td>
+			<td width="20%" class="celdaH6" th:text="${itemProducto.numeroSerie}"></td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0">
+		<tr>
+			<td width="100%" rowspan="4">
+				<span class="tituloH6" style="text-align:left">Observaciones:</span><br />
+				<span class="textoH6" style="text-align:left; font-style: italic;" th:text="${objEntrega.observaciones}"></span><br />
+			</td>
+		</tr>
+	</table>
+	
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 50px;">
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Nombre y Firma:</td>
+			<td class="subrayadoH6" width="30%" th:text="${objEntrega.usuarioEntrega.nombreCompleto}"></td>
+			<td class="tituloH6" width="10%" style="text-align:left"></td>
+			<td class="tituloH6" width="15%" style="text-align:left">Nombre y Firma</td>
+			<td class="subrayadoH6" width="30%" th:text="${objEntrega.personaRecibe}"></td>
+		</tr>
+		
+		<tr>
+			<td class="subrayadoH6" colspan="2" width="40%" style="text-align:center">
+				<img style="width: 300px;" th:src="@{'http://localhost:8080/WebSar/ficheros/entregas/' + ${objEntrega.urlFirmaEntrega}}" />
+			</td>
+			<td class="tituloH6" width="10%"></td>
+			<td class="subrayadoH6" colspan="2" width="40%" style="text-align:center">
+				<img style="width: 300px;" th:src="@{'http://localhost:8080/WebSar/ficheros/entregas/' + ${objEntrega.urlFirmaRecibe}}" />
+			</td>
+		</tr>
+		
+	</table>	
+	
+		
+	<!--/* FOOTER */-->
+	<table width="100%" style="margin-top:100px;">
+		<tr>
+			<td style="width:30%">
+				<table>
+					<tr>
+						<td>Inside Business M&eacute;xico, S.A. de C.V.</td>
+					</tr>
+					<tr>							
+						<td><span style="color:#ff2e34;font-weight:bold;">ventas@ib-mexico.com</span></td>
+					</tr>
+					<tr>
+						<td><span style="color:#ff2e34;font-weight:bold;">http://www.ib-mexico.com</span></td>
+					</tr>
+					<tr></tr>
+				</table>
+			</td>							
+			<td style="width:40%"></td>
+			<td style="width:30%;"></td>				
+		</tr>
+	</table>
+</th:block>

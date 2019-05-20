@@ -1,0 +1,231 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>TAREAS</h2>
+    </div>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>Modificar Tarea</h2>
+    			</div>
+    			
+    			<div class="body">
+	    			<form id="formTarea" th:action="${ {_PATH_} + 'controlPanel/tareas/' + objTarea.idTarea}" th:method="PUT">
+	    				<div class="row">
+	    					<div class="col-md-4">
+	                        	<div class="form-group">
+	                        		<b>Tarea *</b>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtTarea" class="form-control" required="required" th:value="${objTarea.tarea}" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                        	<b>Fecha/Hora Inicio</b>
+	                        	<div class="input-group">
+                        			<span class="input-group-addon">
+                                        <i class="material-icons">date_range</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control text-center" id="txtFechaInicio" name="txtFechaInicio" th:attr="data-fecha_inicio=${objTarea.getInicioFecha()}" required="required" />
+                                    </div>
+								</div>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                        	<b>Fecha/Hora Fin</b>
+	                        	<div class="input-group">
+                        			<span class="input-group-addon">
+                                        <i class="material-icons">date_range</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control text-center" id="txtFechaFin" name="txtFechaFin" th:attr="data-fecha_fin=${objTarea.getFinFecha()}" required="required" />
+                                    </div>
+								</div>
+	                        </div>
+	    				</div>
+	    				
+	    				<div class="row clearfix">
+							<div class="col-md-12">							
+								<div class="form-group">
+									<p><b>Descripci&oacute;n</b></p>
+	                              	<div class="form-line">
+	                                  	<textarea rows="4" name="txtDescripcion" class="form-control no-resize">
+	                                  		<th:block th:text="${objTarea.getDescripcion()}"></th:block>
+	                                  	</textarea>
+	                              	</div>
+	                       		</div>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-4">
+	                        	<div class="form-group">
+	                        		<b>Lugar *</b>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtLugar" class="form-control" required="required" th:value="${objTarea.getLugar()}" />
+	                                </div>
+	                            </div>
+	                        </div>													
+                  			
+                  			<div class="col-md-4">
+                  				<b>Color de Tarea</b>
+                                <div class="input-group colorpicker">
+                                    <div class="form-line">
+                                        <input type="text" id="txtColor" name="txtColor" class="form-control" th:attr="data-color=${objTarea.getColor()}" />
+                                    </div>
+                                    <span class="input-group-addon">
+                                        <i></i>
+                                    </span>
+                                </div>
+                  			</div>
+                  			
+                  			<div class="col-md-4">
+                  				<input type="checkbox" id="chkAddParticipantes" th:if="${not #lists.isEmpty(lstParticipantes)}" class="chk-col-deep-purple" name="chkAddParticipantes" value="true" checked="checked" />
+                  				<input type="checkbox" id="chkAddParticipantes" th:unless="${not #lists.isEmpty(lstParticipantes)}" class="chk-col-deep-purple" name="chkAddParticipantes" value="true" />
+                                <label for="chkAddParticipantes">&iquest;Desea agregar participantes a la tarea?</label>
+                  			</div>
+						</div>
+						
+						<div class="row" id="dvParticipantes" style="display:none">
+							<div class="col-md-8">
+								<table class="table table-bordered">
+									<thead>
+										<tr>
+											<td>
+												<input type="checkbox" id="chkAddAll" class="chk-col-deep-purple" />
+                               					<label for="chkAddAll">Seleccionar todos</label>
+											</td>
+											<td>Nombre Completo</td>
+											<td>Puesto</td>
+										</tr>
+									</thead>
+									<tbody>
+										<th:block th:if="${not #lists.isEmpty(lstParticipantes)}">
+											<th:block th:each="itemUsuario, itrStat : ${lstUsuarios}">
+												<tr>
+													<td>												
+														<input th:if="${#lists.contains(arrParticipantes, itemUsuario.idUsuario)}" checked="checked" type="checkbox" th:id="${'chkItem' + itrStat.index}" class="chk-col-deep-purple chkParticipante" name="chkParticipante[]" th:value="${itemUsuario.idUsuario}" />
+														<input th:unless="${#lists.contains(arrParticipantes, itemUsuario.idUsuario)}" type="checkbox" th:id="${'chkItem' + itrStat.index}" class="chk-col-deep-purple chkParticipante" name="chkParticipante[]" th:value="${itemUsuario.idUsuario}" />
+														
+	                               						<label th:attr="for=${'chkItem' + itrStat.index}">&iquest;Seleccionar?</label>
+													</td>
+													<td th:text="${itemUsuario.nombreCompleto}"></td>
+													<td th:text="${itemUsuario.puesto}"></td>
+												</tr>
+											</th:block>
+										
+										</th:block>
+										
+										<th:block th:unless="${not #lists.isEmpty(lstParticipantes)}">
+											<th:block th:each="itemUsuario, itrStat : ${lstUsuarios}">
+												<tr>
+													<td>												
+														<input type="checkbox" th:id="${'chkItem' + itrStat.index}" class="chk-col-deep-purple chkParticipante" name="chkParticipante[]" th:value="${itemUsuario.idUsuario}" />
+	                               						<label th:attr="for=${'chkItem' + itrStat.index}">&iquest;Seleccionar?</label>
+													</td>
+													<td th:text="${itemUsuario.nombreCompleto}"></td>
+													<td th:text="${itemUsuario.puesto}"></td>
+												</tr>
+											</th:block>										
+										</th:block>																														
+									</tbody>
+								</table>
+							</div>
+						</div>
+	    			
+	    				<div class="row clearfix">
+							<div class="col-md-3 col-md-offset-8 text-right">
+								<a th:href="${ {_PATH_} + 'controlPanel/tareas'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<button type="submit" class="btn btn-primary m-t-15 waves-effect">MODIFICAR</button>
+							</div>
+						</div>
+	    			</form>
+	    		</div>
+    		</div>    		    		
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- Bootstrap Colorpicker Js -->
+	<script th:src="@{/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.js}"></script>
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
+		var boolParticipantes = [[${boolParticipantes}]];
+		
+		$(document).ready(function() {
+			
+			var dateInicio = $('#txtFechaInicio').data('fecha_inicio');
+			var dateFin = $('#txtFechaFin').data('fecha_fin');
+			
+			if(boolParticipantes) {		
+				$('#dvParticipantes').fadeIn('slow');
+			}
+			
+			//Datetimepicker plugin
+			$('#txtFechaFin').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY HH:mm', lang:'es', weekStart : 1, clearButton: true, time:true});
+			$('#txtFechaInicio').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY HH:mm', lang:'es', weekStart : 1, clearButton: true, time:true}).on('change', function(e, date)
+			{
+				$('#txtFechaFin').bootstrapMaterialDatePicker('setMinDate', date);
+			});	
+			
+			
+			if(dateInicio != null) {
+				var arrDateInicio = dateInicio.split("T");
+				var arDateInicio2 = arrDateInicio[0].split("-");
+				$('#txtFechaInicio').bootstrapMaterialDatePicker('setDate', arDateInicio2[2]+"/"+arDateInicio2[1]+"/"+arDateInicio2[0]+" " +arrDateInicio[1]);
+			}
+			
+			if(dateFin != null) {
+				var arrDateFin = dateFin.split("T");
+				var arDateFin2 = arrDateFin[0].split("-");
+				$('#txtFechaFin').bootstrapMaterialDatePicker('setDate', arDateFin2[2]+"/"+arDateFin2[1]+"/"+arDateFin2[0]+" " +arrDateFin[1]);
+			}
+			
+			 $('.colorpicker').colorpicker({
+				 color: $('#txtColor').data('color'),
+				 useAlpha: false
+			 });
+			
+			$('#chkAddParticipantes').change(function() {
+				$('#divParticipantes').css('display', 'none');
+				if(this.checked) {
+					$('#dvParticipantes').fadeIn('slow');
+				} else {
+					$.each($('.chkParticipante'), function(index, element) {
+						$(element).prop('checked', false);
+					});
+					$('#dvParticipantes').fadeOut('fast');
+				}				
+			});
+			
+			$('#chkAddAll').on('change', function() {
+				$.each($('.chkParticipante'), function(index, element) {
+					$(element).prop('checked', $('#chkAddAll').prop('checked'));
+				});
+			});
+			
+			$('.chkParticipante').on('change', function() {
+				allChecked();
+			});
+		});
+		
+		function allChecked() {
+			boolAllChecked = true;
+			boolAllUnchecked = true;
+			$.each($('.chkParticipante'), function(index, element) {
+				if(!$(element).prop('checked')) {
+					boolAllChecked = false;
+				}
+			});
+			
+			if(boolAllChecked) {
+				$('#chkAddAll').prop('checked', true);
+			} else {
+				$('#chkAddAll').prop('checked', false);
+			}
+		}			
+	/*]]>*/</script>
+</th:block>

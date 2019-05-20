@@ -1,0 +1,214 @@
+<th:block th:fragment="body">
+	<!--/* HEADER */-->
+	<table width="100%">
+		<tr>			
+			<td style="width:139px;">
+				<img th:src="@{'http://localhost:8080/WebSar/assets/images/' + ${objCotizacion.empresa.logotipo}}" />
+			</td>
+			
+			<td style="width:10px"></td>
+			<td style="width:278px">
+				<table width="100%">
+				<tr>
+					<td class="tituloH2">ORDEN DE SERVICIO</td>
+				</tr>
+				</table>
+			</td>
+			<td style="width:10px"></td>
+				
+			
+			<td style="width:139px">
+				<table width="100%">
+					<tr>
+						<td class="tituloTH2">FOLIO</td>
+					</tr>
+					
+					<tr>
+						<td class="celdaH3" th:text="${objOrdenServicio.folio}"></td>
+					</tr>
+				</table>
+			</td>
+			
+		</tr>
+	</table>
+	
+	<!--/* GENERAL INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 30px;">
+		<tr>
+			<td width="380" colspan="3"></td>
+			<td class="tituloH5" width="96" style="text-align:left">Fecha de entrega:</td>
+			<td class="subrayadoH5" style="text-align:center; text-indent:0" width="154" th:text="${objOrdenServicio.entregaFechaNatural}"></td>
+		</tr>
+		
+		<tr>
+			<td class="tituloH5" width="96" style="text-align:left">Fecha de inicio:</td>
+			<td class="subrayadoH5" width="100" th:text="${objOrdenServicio.inicioFechaNatural}"></td>
+			<td width="184"></td>
+			<td class="tituloH5" width="96" style="text-align:left">Hora de entrega:</td>
+			<td class="subrayadoH5" style="text-align:center; text-indent:0" width="100" th:text="${objOrdenServicio.entregaHoraNatural}"></td>
+		</tr>
+		
+		<tr>
+			<td class="tituloH5" width="96" style="text-align:left">Hora de inicio:</td>
+			<td class="subrayadoH5" width="100" th:text="${objOrdenServicio.inicioHoraNatural}"></td>
+			<td width="184"></td>
+			<td class="tituloH5" width="96" style="text-align:left">Cotizaci&oacute;n:</td>
+			<td class="subrayadoH5" th:if="${objOrdenServicio.cotizacion != null}" style="text-align:center; text-indent:0" width="100" th:text="${objOrdenServicio.cotizacion.folio}"></td>
+			<td class="subrayadoH5" th:unless="${objOrdenServicio.cotizacion != null}" width="100"></td>
+		</tr>
+	
+		<tr>
+			<td class="tituloH5" width="96" style="text-align:left">Tiempo de espera:</td>
+			<td class="subrayadoH5" width="100" th:text="${objOrdenServicio.tiempoEspera}"></td>
+			<td width="184"></td>
+			<td class="tituloH5" width="96" style="text-align:left">OSTicket:</td>
+			<td class="subrayadoH5" style="text-align:center; text-indent:0" width="100" th:text="${objOrdenServicio.osTicket}"></td>
+		</tr>
+	</table>
+	
+	<!--/* CLIENTE INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 30px;">
+		<tr>
+			<td class="tituloH5" width="10%" style="text-align:left">Cliente:</td>
+			<td class="subrayadoH5" width="90%" th:text="${objOrdenServicio.cliente.cliente}"></td>
+		</tr>
+	
+		<tr>
+			<td class="tituloH5" width="10%" style="text-align:left">Atenci&oacute;n:</td>
+			<td class="subrayadoH5" width="90%" th:text="${objOrdenServicio.clienteContacto.contacto}"></td>
+		</tr>
+	
+		<tr>
+			<td class="tituloH5" width="10%" style="text-align:left">Puesto:</td>
+			<td class="subrayadoH5" width="90%" th:text="${objOrdenServicio.clienteContacto.puesto}"></td>
+		</tr>
+		
+		<tr>
+			<td class="tituloH5" width="10%" style="text-align:left">Email:</td>
+			<td class="subrayadoH5" width="90%" th:text="${objOrdenServicio.clienteContacto.correo}"></td>
+		</tr>
+	</table>
+	
+	<!--/* ALCANCE DE SERVICIOS INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" class="tituloTH3">ALCANCE DE SERVICIOS</td>
+		</tr>
+		<tr>
+			<td width="100%" class="celdaH6" th:text="${objOrdenServicio.alcanceServicios}"></td>
+		</tr>
+	</table>
+	
+	<!--/* SERVICIOS O REFACCIONES INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" colspan="5" class="tituloTH3">SERVICIO(S) REALIZADO(S) Y/O REFACCION(ES) UTILIZADAS</td>
+		</tr>
+		<tr>
+			<td width="15%" class="tituloTH5">Cantidad</td>
+			<td width="40%" class="tituloTH5">Descripci&oacute;n</td>
+			<td width="15%" class="tituloTH5">No. parte</td>
+			<td width="15%" class="tituloTH5">Precio Unitario</td>
+			<td width="15%" class="tituloTH5">Importe</td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0">
+		<tr th:each="itemPartida : ${lstPartidas}">
+			<td width="15%" class="celdaH6" th:text="${itemPartida.cantidad}"></td>
+			<td width="40%" class="celdaH6" style="text-align:left" th:text="${itemPartida.descripcion}"></td>
+			<td width="15%" class="celdaH6" th:text="${itemPartida.numeroParte}"></td>
+			<td width="15%" class="celdaH6" style="text-align:right" th:text="${itemPartida.precioUnitarioNatural}"></td>
+			<td width="15%" class="celdaH6" style="text-align:right" th:text="${itemPartida.importeNatural}"></td>
+		</tr>
+		<tr>
+			<td width="70%" colspan="3"></td>
+			<td width="15%" class="tituloTH5">Sub-Total</td>
+			<td width="15%" class="celdaH6" style="text-align:right" th:text="${objOrdenServicio.subtotalNatural}"></td>
+		</tr>
+	</table>
+	
+	<!--/* BITACORA DE ACTIVIDADES INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" class="tituloTH3">BIT&Aacute;CORA DE ACTIVIDADES</td>
+		</tr>
+		<tr>
+			<td width="100%" class="celdaH6" th:text="${objOrdenServicio.bitacoraActividades}"></td>
+		</tr>
+	</table>
+	
+	
+	<!--/* SOPORTE INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" colspan="3" class="tituloTH6">Para soporte t&eacute;cnico: Networking, Firewall, Sistemas Operativos Windows, CCTV, Equipo SOHO, contamos con los siguientes recursos.</td>
+		</tr>
+		<tr>
+			<td width="33%" class="tituloTH6">E-mail:</td>
+			<td width="34%" class="tituloTH6">Tel&eacute;fonos M&oacute;viles:</td>
+			<td width="33%" class="tituloTH6">Tel&eacute;fonos de Oficina:</td>
+		</tr>
+		<tr>
+			<td width="33%" class="celdaH6">soporte@ib-mexico.com</td>
+			<td width="34%" class="celdaH6">(993) 311-32-75</td>
+			<td width="33%" class="celdaH6">(993) 351-19-16</td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" colspan="3" class="tituloTH6">Para soporte t&eacute;cnico: Infraestructura(Cableado Estructurado, Torres Arriostradas, etc.) y Conmutadores.</td>
+		</tr>
+		<tr>
+			<td width="33%" class="tituloTH6">E-mail:</td>
+			<td width="34%" class="tituloTH6">Tel&eacute;fonos M&oacute;viles:</td>
+			<td width="33%" class="tituloTH6">Tel&eacute;fonos de Oficina:</td>
+		</tr>
+		<tr>
+			<td width="33%" class="celdaH6">servicios@ib-mexico.com</td>
+			<td width="34%" class="celdaH6">(993) 190-33-23</td>
+			<td width="33%" class="celdaH6">(993) 351-19-16</td>
+		</tr>
+	</table>
+	
+	<!--/* FIRMAS INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 50px;">
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Elabor&oacute;:</td>
+			<td class="subrayadoH6" width="20%" th:text="${objOrdenServicio.usuarioElabora.nombreCompleto}"></td>
+			<td class="tituloH6" width="10%" style="text-align:left">Revis&oacute;:</td>
+			<td class="subrayadoH6" th:if="${objOrdenServicio.usuarioRevisa != null}" width="20%" th:text="${objOrdenServicio.usuarioRevisa.nombreCompleto}"></td>
+			<td class="subrayadoH6" th:unless="${objOrdenServicio.usuarioRevisa != null}" width="20%" ></td>
+			<td class="tituloH6" width="15%" style="text-align:left">Revis&oacute;:</td>
+			<td class="subrayadoH6" width="20%" th:text="${objOrdenServicio.nombreRecibe}"></td>
+		</tr>
+		
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Puesto:</td>
+			<td class="subrayadoH6" width="20%" th:text="${objOrdenServicio.usuarioElabora.puesto}"></td>
+			<td class="tituloH6" width="10%" style="text-align:left">Puesto:</td>
+			<td class="subrayadoH6" th:if="${objOrdenServicio.usuarioRevisa != null}"  width="20%" th:text="${objOrdenServicio.usuarioRevisa.puesto}"></td>
+			<td class="subrayadoH6" th:unless="${objOrdenServicio.usuarioRevisa != null}" width="20%" ></td>
+			<td class="tituloH6" width="15%" style="text-align:left">Puesto:</td>
+			<td class="subrayadoH6" width="20%" th:text="${objOrdenServicio.puestoRecibe}"></td>
+		</tr>
+		
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Firma:</td>
+			<td class="subrayadoH6" width="20%" >
+				<img style="width: 180px;" th:src="@{'http://localhost:8080/WebSar/ficheros/ordenesServicios/' + ${objOrdenServicio.urlFirmaElabora}}" />
+			</td>
+			<td class="tituloH6" width="10%" style="text-align:left">Firma:</td>
+			<td class="subrayadoH6" width="20%">
+				<img style="width: 180px;" th:src="@{'http://localhost:8080/WebSar/ficheros/ordenesServicios/' + ${objOrdenServicio.urlFirmaRevisa}}" />
+			</td>
+			<td class="tituloH6" width="15%" style="text-align:left">Firma de Conformidad:</td>
+			<td class="subrayadoH6" width="20%">
+				<img style="width: 180px;" th:src="@{'http://localhost:8080/WebSar/ficheros/ordenesServicios/' + ${objOrdenServicio.urlFirmaRecibe}}" />
+			</td>
+		</tr>
+		
+	</table>
+			
+</th:block>

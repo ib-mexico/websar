@@ -1,0 +1,214 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>USUARIOS</h2>
+    </div>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>LISTA DE USUARIOS</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<div class="row clearfix" id="dtUsuariosToolBar">
+    					<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+   								<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupDesde'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
+	                           	</div>
+							</div>
+    					</div>
+    					
+    					<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+    							<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupHasta'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
+	                           	</div>
+							</div>
+    					</div>					
+					</div>
+					
+					<div class="table-responsive">
+						<table id="dtUsuarios" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th class="col-md-1" data-field="idUsuario" data-halign="left" data-align="center">ID</th>
+									<th class="col-md-2" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+									<th class="col-md-2" data-field="clave" data-halign="left">Clave</th>
+									<th class="col-md-3" data-field="usuario" data-halign="left" >Usuario</th>
+									<th class="col-md-2" data-field="sucursal" data-halign="left" >Sucursal</th>
+									<th class="col-md-3" data-field="nombreCompleto" data-halign="left" >Nombre</th>	
+																									
+									<th class="col-md-2" data-field="direccion" data-halign="left" data-visible="false">Direcci&oacute;n</th>
+									<th class="col-md-2" data-field="telefono" data-halign="left" data-align="center" data-visible="false">Tel&eacute;fono</th>
+									<th class="col-md-2" data-field="celular" data-halign="left" data-visible="false">Celular</th>
+									
+									<th class="col-md-1" data-field="creacionUsuario" data-halign="left" data-align="center" data-visible="false">Creaci&oacute;n / Usuario</th>
+									<th class="col-md-1" data-field="creacionFecha" data-halign="center" data-align="center" >Creaci&oacute;n / Fecha</th>
+									<th class="col-md-1" data-field="modificacionUsuario" data-halign="left" data-align="center" data-visible="false">Modificaci&oacute;n / Usuario</th>
+									<th class="col-md-1" data-field="modificacionFecha" data-halign="center" data-align="center" data-visible="false">Modificaci&oacute;n / Fecha</th>																	
+								</tr>
+							</thead>
+						</table>
+		
+					</div>
+					
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script type="application/javascript" th:inline="javascript">
+		$("#dtUsuarios").bootstrapTable({
+			url					: [[@{/controlPanel/usuarios/table}]],
+			method				: 'post',
+			contentType 		: 'application/x-www-form-urlencoded',
+			sidePagination		: "server",
+			pagination			: true,
+			showColumns			: true,
+			showToggle 			: true,
+			showRefresh 		: true,
+			search				: true,
+			showExport			: true,
+			striped				: true,
+			pageSize 			: 50,
+			exportTypes			: ["excel"],
+			toolbar				: "#dtUsuariosToolBar",
+			queryParams 		: function(params) {
+										params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
+										params['txtBootstrapTableDesde'] = $('#txtBootstrapTableDesde').val();
+										params['txtBootstrapTableHasta'] = $('#txtBootstrapTableHasta').val();
+							        	return params;
+		    						},
+			onLoadSuccess 		: function(data) {
+				$(".lock-usuario").click(function() {
+					var idUsuario = $(this).attr('data-usuario');
+					swal({
+						title	: "Bloqueo!",
+						text	: "Una vez bloqueado, el usuario no estara disponible.",
+						type	: "warning",
+						showCancelButton: true,
+						cancelButtonText: 'Cancelar',
+						confirmButtonText: 'Bloquear',
+					}).then((result) => {
+						if(result) {
+							
+							$.ajax({
+								url			: [[@{/controlPanel/usuarios/lock}]],
+								data		: {
+												idUsuario : idUsuario, 
+												[[${_csrf.parameterName}]] : [[${_csrf.token}]]
+								},							        
+								dataType	: 'json',
+								type		: "POST",
+								success		: function(data) {
+									if(data.respuesta) {				
+										$("#dtUsuarios").bootstrapTable('refresh');
+										swal(data.titulo, data.mensaje,'success');
+									}
+								},
+								error		: function(e) {
+									console.log(e);										
+								}
+							});																													
+						}
+					}).catch(swal.noop);
+				});
+				
+				
+				
+				$(".unlock-usuario").click(function() {
+					var idUsuario = $(this).attr('data-usuario');
+					swal({
+						title	: "Desbloqueo!",
+						text	: "Una vez desbloqueado, el usuario estara disponible.",
+						type	: "warning",
+						showCancelButton: true,
+						cancelButtonText: 'Cancelar',
+						confirmButtonText: 'Desbloquear',
+					}).then((result) => {
+						if(result) {
+							
+							$.ajax({
+								url			: [[@{/controlPanel/usuarios/unlock}]],
+								data		: {
+												idUsuario : idUsuario, 
+												[[${_csrf.parameterName}]] : [[${_csrf.token}]]
+								},							        
+								dataType	: 'json',
+								type		: "POST",
+								success		: function(data) {
+									if(data.respuesta) {				
+										$("#dtUsuarios").bootstrapTable('refresh');
+										swal(data.titulo, data.mensaje,'success');
+									}
+								},
+								error		: function(e) {
+									console.log(e);										
+								}
+							});																													
+						}
+					}).catch(swal.noop);
+				});
+				
+			}
+		});
+		
+		function accionesFormatter(value, row, index) {
+			
+			urlEdit = [[@{/controlPanel/usuarios/}]] + row.idUsuario + '/edit';
+			urlPrivs = [[@{/controlPanel/usuarios/}]] + row.idUsuario + '/privileges';
+			
+			if(row.eliminado) {
+			    return [
+			    	'<a title="Deshabilitado">',
+		        		'<i class="material-icons" style="color:grey">mode_edit</i>',
+		        	'</a>',
+		        	'<a title="Deshabilitado">',
+		        		'<i class="material-icons" style="color:grey">fingerprint</i>',
+		        	'</a>',
+			        '<a href="#" class="unlock-usuario" data-usuario="'+ row.idUsuario +'" title="Desbloquear">',
+			        	'<i class="material-icons">lock_open</i>',
+			        '</a>'
+			    ].join(' ');
+			} else {				
+			    return [
+			    	'<a href="' + urlEdit + '" title="Editar">',
+		        		'<i class="material-icons">mode_edit</i>',
+		        	'</a>',
+		        	'<a href="'+ urlPrivs +'" title="Privilegios">',
+		        		'<i class="material-icons">fingerprint</i>',
+		        	'</a>',
+			        '<a href="#" class="lock-usuario" data-usuario="'+ row.idUsuario +'" title="Bloquear">',
+			        	'<i class="material-icons">lock_outline</i>',
+			        '</a>'
+			    ].join(' ');
+			}
+			
+		}
+		
+		$(function () {
+			//Datetimepicker plugin
+		    $('.datetimepicker').bootstrapMaterialDatePicker({
+		        format: 'MM/DD/YYYY',
+		        clearButton: true,
+		        weekStart: 1,
+		        time:false
+		    });
+	 	});
+	</script>
+</th:block>

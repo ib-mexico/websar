@@ -1,0 +1,118 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>SUCURSALES</h2>
+    </div>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>LISTA DE SUCURSALES</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<div class="row clearfix" id="dtSucursalesToolBar">
+    					<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+   								<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupDesde'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
+	                           	</div>
+							</div>
+    					</div>
+    					
+    					<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+    							<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupHasta'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
+	                           	</div>
+							</div>
+    					</div>						
+					</div>
+					
+					<div class="table-responsive">
+						<table id="dtSucursales" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th class="col-md-1" data-field="idSucursal" data-halign="left" data-align="center">ID</th>
+									<th class="col-md-3" data-field="sucursal" data-halign="left">Sucursal</th>
+									<th class="col-md-2" data-field="domicilio" data-halign="left">Domicilio</th>
+									<th class="col-md-2" data-field="colonia" data-halign="left">Colonia</th>
+									
+									<th class="col-md-3" data-field="municipio" data-halign="left">Municipio</th>
+									<th class="col-md-2" data-field="ciudad" data-halign="left">Ciudad</th>
+									<th class="col-md-2" data-field="estado" data-halign="left">Estado</th>
+									
+									<th class="col-md-1" data-field="codigoPostal" data-halign="left" data-align="center" data-visible="false">C&oacute;digo Postal</th>
+									<th class="col-md-1" data-field="telefono" data-halign="left" data-align="center" data-visible="false">Tel&eacute;fono</th>
+									
+									<th class="col-md-1" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+								</tr>
+							</thead>
+						</table>
+		
+					</div>
+					
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script type="application/javascript" th:inline="javascript">
+		$("#dtSucursales").bootstrapTable({
+			url					: [[@{/controlPanel/sucursales/table}]],
+			method				: 'post',
+			contentType 		: 'application/x-www-form-urlencoded',
+			sidePagination		: "server",
+			pagination			: true,
+			showColumns			: true,
+			showToggle 			: true,
+			showRefresh 		: true,
+			search				: true,
+			showExport			: true,
+			striped				: true,
+			pageSize 			: 50,
+			exportTypes			: ["excel"],
+			toolbar				: "#dtSucursalesToolBar",
+			queryParams 		: function(params) {
+										params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
+										params['txtBootstrapTableDesde'] = $('#txtBootstrapTableDesde').val();
+										params['txtBootstrapTableHasta'] = $('#txtBootstrapTableHasta').val();
+							        	return params;
+		    						}
+		});
+		
+		function accionesFormatter(value, row, index) {
+			
+			urlDelete = [[@{/controlPanel/sucursales/}]] + row.idSucursal + '/delete';
+			
+		    return [
+		        '<a href="' + urlDelete + '" title="Eliminar">',
+		        	'<i class="material-icons">delete</i>',
+		        '</a>'
+		    ].join('');
+		}
+		
+		$(function () {
+			//Datetimepicker plugin
+		    $('.datetimepicker').bootstrapMaterialDatePicker({
+		        format: 'MM/DD/YYYY',
+		        clearButton: true,
+		        weekStart: 1,
+		        time:false
+		    });
+	 	});
+	</script>
+</th:block>

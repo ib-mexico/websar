@@ -1,0 +1,215 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>CLIENTE: <th:block th:text="${objCliente.getCliente()}"></th:block></h2>
+    </div>
+    
+    <ol class="breadcrumb breadcrumb-bg-red">
+      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+    	<li><a th:href="${ {_PATH_} + 'controlPanel/clientes'}"><i class="material-icons">public</i> Clientes</a></li>
+    	<li class="active"><i class="material-icons">contacts</i> Contactos</li>
+  	</ol>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>LISTA DE CONTACTOS</h2>
+    				<ul class="header-dropdown m-r--5">
+                        <li class="dropdown">
+                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <i class="material-icons">more_vert</i>
+                            </a>
+                            <ul class="dropdown-menu pull-right">
+                                <li><a th:href="${ {_PATH_} + 'controlPanel/clientes/' + {objCliente.idCliente} + '/contactos/create'}">Nuevo contacto</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+    			</div>
+    			
+    			<div class="body">
+    				<div class="row clearfix" id="dtContactosToolBar">
+    					<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+   								<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupDesde'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
+	                           	</div>
+							</div>
+    					</div>
+    					
+    					<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+    							<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupHasta'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
+	                           	</div>
+							</div>
+    					</div>					
+					</div>
+					
+					<div class="table-responsive">
+						<table id="dtContactos" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th class="col-md-1" data-field="idClienteContacto" data-halign="left" data-align="center">ID</th>
+									<th class="col-md-1" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+									<th class="col-md-3" data-field="contacto" data-halign="left">Contacto</th>
+									<th class="col-md-3" data-field="puesto" data-halign="left" data-visible="false">Puesto</th>
+									<th class="col-md-3" data-field="correo" data-halign="left">Correo</th>
+									
+									<th class="col-md-2" data-field="telefono" data-halign="right" data-align="right">Tel&eacute;fono</th>
+									<th class="col-md-2" data-field="celular" data-halign="right" data-align="right">Celular</th>																	
+								</tr>
+							</thead>
+						</table>
+		
+					</div>
+					
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script type="application/javascript" th:inline="javascript">
+		var idCliente = [[${objCliente.getIdCliente()}]];
+		$("#dtContactos").bootstrapTable({
+			url					: [[@{/controlPanel/clientes/}]] + idCliente + '/contactos/table',
+			method				: 'post',
+			contentType 		: 'application/x-www-form-urlencoded',
+			sidePagination		: "server",
+			pagination			: true,
+			showColumns			: true,
+			showToggle 			: true,
+			showRefresh 		: true,
+			search				: true,
+			showExport			: true,
+			striped				: true,
+			pageSize 			: 50,
+			exportTypes			: ["excel"],
+			toolbar				: "#dtContactosToolBar",
+			queryParams 		: function(params) {
+										params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
+										params['txtBootstrapTableDesde'] = $('#txtBootstrapTableDesde').val();
+										params['txtBootstrapTableHasta'] = $('#txtBootstrapTableHasta').val();
+							        	return params;
+		    					},
+			onLoadSuccess 		: function(data) {
+				$(".lock-contacto").click(function() {
+					var idClienteContacto = $(this).attr('data-contacto');
+					swal({
+						title	: "Bloqueo!",
+						text	: "Una vez bloqueado, el contacto no estara disponible.",
+						type	: "warning",
+						showCancelButton: true,
+						cancelButtonText: 'Cancelar',
+						confirmButtonText: 'Bloquear',
+					}).then((result) => {
+						if(result) {							
+							$.ajax({
+								url			: [[@{/controlPanel/clientes/}]] + idCliente + '/contactos/lock',
+								data		: {
+												idClienteContacto : idClienteContacto, 
+												[[${_csrf.parameterName}]] : [[${_csrf.token}]]
+								},							        
+								dataType	: 'json',
+								type		: "POST",
+								success		: function(data) {
+									if(data.respuesta) {				
+										$("#dtContactos").bootstrapTable('refresh');
+										swal(data.titulo, data.mensaje,'success');
+									}
+								},
+								error		: function(e) {
+									console.log(e);										
+								}
+							});																													
+						}
+					}).catch(swal.noop);
+				});
+				
+				
+				
+				$(".unlock-contacto").click(function() {
+					var idClienteContacto = $(this).attr('data-contacto');
+					swal({
+						title	: "Desbloqueo!",
+						text	: "Una vez desbloqueado, el contacto estara disponible.",
+						type	: "warning",
+						showCancelButton: true,
+						cancelButtonText: 'Cancelar',
+						confirmButtonText: 'Desbloquear',
+					}).then((result) => {
+						if(result) {							
+							$.ajax({
+								url			: [[@{/controlPanel/clientes/}]]  + idCliente + '/contactos/unlock',
+								data		: {
+												idClienteContacto : idClienteContacto, 
+												[[${_csrf.parameterName}]] : [[${_csrf.token}]]
+								},							        
+								dataType	: 'json',
+								type		: "POST",
+								success		: function(data) {
+									if(data.respuesta) {				
+										$("#dtContactos").bootstrapTable('refresh');
+										swal(data.titulo, data.mensaje,'success');
+									}
+								},
+								error		: function(e) {
+									console.log(e);										
+								}
+							});																													
+						}
+					}).catch(swal.noop);
+				});
+				
+			}
+		});
+		
+		function accionesFormatter(value, row, index) {
+			
+			urlEdit = [[@{/controlPanel/clientes/}]] + idCliente + '/contactos/'+ row.idClienteContacto +'/edit';
+			
+			if(row.eliminado) {
+			    return [
+			    	'<a title="Deshabilitado">',
+		        		'<i class="material-icons" style="color:grey">mode_edit</i>',
+		        	'</a>',
+			        '<a href="#" class="unlock-contacto" data-contacto="'+ row.idClienteContacto +'" title="Desbloquear">',
+			        	'<i class="material-icons">lock_open</i>',
+			        '</a>'
+			    ].join(' ');
+			} else {				
+			    return [
+			    	'<a href="' + urlEdit + '" title="Editar">',
+		        		'<i class="material-icons">mode_edit</i>',
+		        	'</a>',
+			        '<a href="#" class="lock-contacto" data-contacto="'+ row.idClienteContacto +'" title="Bloquear">',
+			        	'<i class="material-icons">lock_outline</i>',
+			        '</a>'
+			    ].join(' ');
+			}
+			
+		}
+		
+		$(function () {
+			//Datetimepicker plugin
+		    $('.datetimepicker').bootstrapMaterialDatePicker({
+		        format: 'MM/DD/YYYY',
+		        clearButton: true,
+		        weekStart: 1,
+		        time:false
+		    });
+	 	});
+	</script>
+</th:block>

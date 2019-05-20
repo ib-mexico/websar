@@ -1,0 +1,132 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>PROVEEDORES</h2>
+    </div>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>Nuevo Proveedor</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<form id="formProveedor" th:action="${ {_PATH_} + 'controlPanel/proveedores/' + objProveedor.getIdProveedor()}" th:method="PUT">
+    					<input type="hidden" th:value="${objProveedor.getIdProveedor()}" name="hddIdProveedor" />
+    				
+						<div class="row clearfix">
+							<div class="col-md-4">
+	                        	<div class="form-group">
+	                        		<p><b>Proveedor *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtProveedor" class="form-control" th:value="${objProveedor.getProveedor()}" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                        	<div class="form-group">
+	                        		<p><b>Raz&oacute;n Social *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtRazonSocial" class="form-control" th:value="${objProveedor.getRazonSocial()}" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-2">
+	                        	<div class="form-group">
+	                        		<p><b>RFC *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtRfc" class="form-control" th:value="${objProveedor.getRfc()}" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>	
+	                        
+	                        <div class="col-md-2">
+	                        	<div class="form-group">
+	                        		<p><b>Ciudad *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtCiudad" class="form-control" th:value="${objProveedor.getCiudad()}"  required="required"/>
+	                                </div>
+	                            </div>
+	                        </div>                        	                        	                      
+						</div>
+						
+						<div class="row clearfix">
+							<div class="col-md-4">
+	                        	<div class="form-group">
+	                        		<p><b>Direcci&oacute;n *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtDireccion" class="form-control" th:value="${objProveedor.getDireccion()}" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-2">
+	                        	<div class="form-group">
+	                        		<p><b>C&oacute;digo Postal *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtCodigoPostal" class="form-control" th:value="${objProveedor.getCodigoPostal()}" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+						</div>
+					
+						<div class="row clearfix">
+							<div class="col-md-8">
+								<div class="form-group">
+	                        		<p><b>Observaciones</b></p>
+	                                <div class="form-line">
+	                                	<textarea rows="4" name="txtObservaciones" class="form-control no-resize">
+	                                		<th:block th:utext="${objProveedor.getObservaciones()}"></th:block>
+	                                	</textarea>
+	                                </div>
+	                            </div>
+							</div>
+						</div>
+					
+						<div class="row clearfix">
+							<div class="col-md-3 col-md-offset-8 text-right">
+								<a th:href="${ {_PATH_} + 'controlPanel/proveedores'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<button type="submit" class="btn btn-primary m-t-15 waves-effect">MODIFICAR</button>
+							</div>
+						</div>
+					</form>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/			
+	
+		$(document).ready(function() {
+			// VALIDADOR DE FORMULARIO
+			$('#formProveedor').validate({
+		        rules: {
+		            'txtCodigoPostal': {
+		            	number: true
+		            }
+		        },
+		        highlight: function (input) {
+		            $(input).parents('.form-line').addClass('error');
+		        },
+		        unhighlight: function (input) {
+		            $(input).parents('.form-line').removeClass('error');
+		        },
+		        errorPlacement: function (error, element) {
+		            $(element).parents('.form-group').append(error);
+		        }
+		    });
+			
+			//Custom Validations ===============================================================================
+		    //Number
+		    $.validator.addMethod('number', function (value, element) {
+		        return value.match('[0-9]+');
+		    },
+		        'Por favor ingresa un n&uacute;mero.'
+		    );
+		});			
+		/*]]>*/</script>
+</th:block>

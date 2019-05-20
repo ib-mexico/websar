@@ -1,0 +1,150 @@
+<th:block th:fragment="body">
+	<!--/* HEADER */-->
+	<table width="100%">
+		<tr>			
+			<td style="width:119px;">
+				<img th:src="@{'http://localhost:8080/WebSar/assets/images/ibmexico.jpg'}" />
+			</td>
+			
+			<td style="width:10px"></td>
+			<td style="width:258px">
+				<table width="100%">
+				<tr>
+					<td class="tituloH2">REPORTE DE OPN</td>
+				</tr>
+				</table>
+			</td>
+			<td style="width:10px"></td>
+				
+			
+			<td style="width:179px">
+				<table width="100%" cellspacing="0">
+					<tr>
+						<td class="tituloTH2">No. OPN</td>
+					</tr>					
+					<tr>
+						<td class="celdaH3" th:text="${'#' + objOportunidad.getIdOportunidadNegocio()}"></td>
+					</tr>
+				</table>
+			</td>
+			
+		</tr>
+	</table>
+	
+	<div style="margin-top: 50px;">
+
+		<br />
+		<span class="tituloH2" style="text-align: left">INFORMACI&Oacute;N DE LA OPORTUNIDAD DE NEGOCIO</span>
+		<hr />
+	
+		<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+			<tr>
+				<td width="25%" class="tituloTH5">Nombre</td>
+				<td colspan="3" width="75%" class="celdaH6" th:text="${objOportunidad.oportunidad}"></td>
+			</tr>
+			<tr>
+				<td width="25%" class="tituloTH5">Ingreso Estimado</td>
+				<td width="25%" class="celdaH6" th:text="${'$' + objOportunidad.getIngresoEstimadoNatural()}"></td>
+				<td width="25%" class="tituloTH5">Probabilidad de Ganar</td>
+				<td width="25%" class="celdaH6" th:text="${objOportunidad.getProbabilidadPorcentajeNatural()}"></td>
+			</tr>
+			<tr>
+				<td width="25%" class="tituloTH5">Cliente</td>
+				<td width="25%" class="celdaH6" th:text="${objOportunidad.cliente.cliente}"></td>
+				<td width="25%" class="tituloTH5">Contacto</td>
+				<td width="25%" class="celdaH6" th:text="${objOportunidad.clienteContacto.contacto}"></td>
+			</tr>
+			<tr>
+				<td width="25%" class="tituloTH5">Vendedor</td>
+				<td colspan="3" width="75%" class="celdaH6" th:text="${objOportunidad.usuarioVendedor.nombreCompleto}"></td>
+			</tr>
+			<tr>
+				<td width="25%" class="tituloTH5">Estatus</td>
+				<td width="25%" class="celdaH6" th:text="${objOportunidad.oportunidadNegocioEstatus.oportunidadNegocioEstatus}"></td>
+				<td width="25%" class="tituloTH5">Fecha Creaci&oacute;n</td>
+				<td width="25%" class="celdaH6" th:text="${objOportunidad.getCreacionFechaNatural()}"></td>
+			</tr>
+		</table>
+		
+		<br />
+		<span class="tituloH2" style="text-align: left">INFORMACI&Oacute;N DEL SEGUIMIENTO</span>
+		<hr />
+		
+		<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+			<tr>
+				<td width="40%" class="tituloTH5" style="text-align: left">Resumen</td>
+				<td width="15%" class="tituloTH5" style="text-align: left">Tipo de Actividad</td>
+				<td width="20%" class="tituloTH5" style="text-align: left">Usuario Asignado</td>
+				<td width="15%" class="tituloTH5" style="text-align: center">Fecha Vencimiento</td>
+				<td width="10%" class="tituloTH5" style="text-align: center">Finalizado</td>
+			</tr>
+			<th:block th:if="${not #lists.isEmpty(objOportunidad.getOportunidadesActividades())}">
+				<tr th:each="itemActividad : ${objOportunidad.getOportunidadesActividades()}">
+					<td width="40%" class="celdaH6" style="text-align: left" th:text="${item.resumen}"></td>
+					<td width="15%" class="celdaH6" style="text-align: left" th:text="${item.actividadTipo.actividadTipo}"></td>
+					<td width="20%" class="celdaH6" style="text-align: left" th:text="${item.usuario.nombreCompleto}"></td>
+					<td width="15%" class="celdaH6" style="text-align: center" th:text="${item.getVencimientoFechaNatural}"></td>
+					<th:block>
+						<td th:if="${item.isFinalizado()}" width="10%" class="celdaH6" style="text-align: center">S&iacute;</td>
+						<td th:unless="${item.isFinalizado()}" width="10%" class="celdaH6" style="text-align: center">No</td>
+					</th:block>				
+				</tr>
+			</th:block>
+			<th:block th:unless="${not #lists.isEmpty(objOportunidad.getOportunidadesActividades())}">
+				<tr><td width="100%" colspan="5" class="celdaH6" style="text-align: center">No existen registros de actividades</td></tr>
+			</th:block>
+		</table>
+		
+		<br />
+		<span class="tituloH2" style="text-align: left">COTIZACIONES VINCULADAS</span>
+		<hr />
+		
+		<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+			<tr>
+				<td width="15%" class="tituloTH5" style="text-align: left">Folio</td>
+				<td width="15%" class="tituloTH5" style="text-align: center">Fecha Creaci&oacute;n</td>
+				<td width="40%" class="tituloTH5" style="text-align: left">Concepto</td>
+				<td width="15%" class="tituloTH5" style="text-align: center">Estatus</td>
+				<td width="15%" class="tituloTH5" style="text-align: right">Subtotal</td>
+			</tr>
+			<th:block th:if="${not #lists.isEmpty(objOportunidad.getCotizaciones())}">
+				<tr th:each="itemCotizacion : ${objOportunidad.getCotizaciones()}">
+					<td width="15%" class="celdaH6" style="text-align: left" th:text="${itemCotizacion.folio}"></td>
+					<td width="15%" class="celdaH6" style="text-align: center" th:text="${itemCotizacion.getCreacionFechaNatural()}"></td>
+					<td width="40%" class="celdaH6" style="text-align: left" th:text="${itemCotizacion.concepto}"></td>
+					<td width="15%" class="celdaH6" style="text-align: center" th:text="${itemCotizacion.cotizacionEstatus.cotizacionEstatus}"></td>
+					<td width="15%" class="celdaH6" style="text-align: right" th:text="${itemCotizacion.getSubtotalNatural()}"></td>			
+				</tr>
+			</th:block>
+			<th:block th:unless="${not #lists.isEmpty(objOportunidad.getCotizaciones())}">
+				<tr><td width="100%" colspan="5" class="celdaH6" style="text-align: center">No existen cotizaciones vinculadas a esta oportunidad</td></tr>
+			</th:block>
+		</table>
+		
+		<br />
+		<span class="tituloH2" style="text-align: left">EXPEDIENTE DE OPORTUNIDAD</span>
+		<hr />
+		
+		<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+			<tr>
+				<td width="20%" class="tituloTH5" style="text-align: left">T&iacute;tulo</td>
+				<td width="70%" class="tituloTH5" style="text-align: left">Descripci&ocute;n</td>
+				<td width="10%" class="tituloTH5" style="text-align: left">Enlace</td>
+			</tr>
+			<th:block th:if="${not #lists.isEmpty(objOportunidad.getFicheros())}">
+				<tr th:each="item : ${objOportunidad.getFicheros()}">
+					<td width="20%" class="celdaH6" style="text-align: left" th:text="${item.titulo}"></td>
+					<td width="70%" class="celdaH6" style="text-align: left" th:text="${item.descripcion}"></td>
+					<td width="20%" class="celdaH6" style="text-align: left">
+						<a th:href="${'http://localhost:8080/ficheros/oportunidades/' + item.getUrl()}" target="_blank">Ver</a>
+					</td>			
+				</tr>
+			</th:block>
+			<th:block th:unless="${not #lists.isEmpty(objOportunidad.getFicheros())}">
+				<tr><td width="100%" colspan="3" class="celdaH6" style="text-align: center">No existe un expediente para esta oportunidad</td></tr>
+			</th:block>
+		</table>
+	</div>
+	
+	
+</th:block>

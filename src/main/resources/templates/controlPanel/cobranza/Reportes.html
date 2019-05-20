@@ -1,0 +1,100 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>REPORTES</h2>
+    </div>
+    
+    <ol class="breadcrumb breadcrumb-bg-red">
+      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+    	<li class="active"><i class="material-icons">attach_money</i> Cobranza</li>
+  	</ol>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>GENERAR REPORTE DE COBRANZA</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<h4>Reporte de Aprobados y Facturados</h4>
+					<form id="formReporte1" th:action="${ {_PATH_} + 'controlPanel/cobranza/reporteAprobadosFacturados'}" th:method="POST">
+    					<div class="row clearfix">
+							<div class="col-md-2">
+	                        	<div class="form-group">
+	                        		<br />
+	                        		<p><b>Realizar una busqueda con la condici&oacute;n:</b></p>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-2">
+	                            <p><b>Condicional</b></p>
+	                            <select class="form-control show-tick" name="cmbCondicional1" id="cmbCondicional1" data-live-search="true" >
+                       				<option selected="selected" value="1">Igual a</option>
+                       				<option value="2">Menor igual a</option>
+                       				<option value="3">Mayor igual a</option>
+	                       		</select>
+	                        </div>
+	                        
+	                        <div class="col-md-2">
+	                            <p><b>D&iacute;as</b></p>
+	                            <div class="form-line">
+                                    <input type="text" name="txtDias1" id="txtDias1" class="form-control" maxlength="3" required="required" />
+                                </div>
+	                        </div>
+	                        
+	                        <div class="col-md-2 text-left">
+								<button type="submit" class="btn btn-warning m-t-30 waves-effect">GENERAR REPORTE</button>
+							</div>				
+						</div>					
+					</form>
+					
+					<hr />
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<script type="application/javascript" th:inline="javascript">
+		$(document).ready(function() {
+			$('#formReporte1').submit(function(e){
+				var dias = parseInt($('#txtDias1').val();
+				
+				if(!dias.match('[0-9]+')) {
+					swal('Hey!', 'El campo de días únicamente acepta números}');
+					e.preventDefault();
+				}
+			}
+		});
+	
+	
+		$(function () {
+			// VALIDADOR DE FORMULARIO
+			$('#formReporte1').validate({
+		        rules: {
+		            'txtDias1': {
+		                number: true
+		            }
+		        },
+		        highlight: function (input) {
+		            $(input).parents('.form-line').addClass('error');
+		        },
+		        unhighlight: function (input) {
+		            $(input).parents('.form-line').removeClass('error');
+		        },
+		        errorPlacement: function (error, element) {
+		            $(element).parents('.input-group').append(error);
+		        }
+		    });
+			
+			//Custom Validations ===============================================================================
+		    //Number
+		    $.validator.addMethod('number', function (value, element) {
+		        return value.match('[0-9]+');
+		    },
+		        'Por favor ingresa un n&uacute;mero.'
+		    );
+		});	
+	</script>
+</th:block>

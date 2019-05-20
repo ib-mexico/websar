@@ -1,0 +1,736 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>ORDENES DE SERVICIOS</h2>
+    </div>
+    
+    <ol class="breadcrumb breadcrumb-bg-red">
+      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+    	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">view_list</i> Cotizaciones</a></li>
+    	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + objCotizacion.idCotizacion + '/ordenesServicios'}"> Ordenes de Servicio</a></li>
+    	<li class="active"> Nuevo</li>
+  	</ol>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>Nueva Orden de Servicio</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<form id="formOrden" th:action="${ {_PATH_} + 'controlPanel/cotizaciones/' + objCotizacion.idCotizacion + '/ordenesServicios'}" th:method="POST">
+						<input type="hidden" name="hddIdCotizacion" th:value="${objCotizacion.getIdCotizacion()}" />
+						<input type="hidden" id="imgFirmaEntrega" name="imgFirmaEntrega" value="" />
+    					<input type="hidden" id="imgFirmaRecepcion" name="imgFirmaRecepcion" value="" />
+						
+						<div class="row clearfix">
+							<div class="col-md-6">
+								<b>Cliente *</b>
+								<div class="input-group">								
+		                            <select class="form-control show-tick" name="cmbCliente" id="cmbCliente" data-live-search="true" >
+		                            	<option value="default" selected="selected">Selecciona un Cliente...</option>
+		                            	<option th:each="itemCliente : ${lstClientes}" th:value="${itemCliente.idCliente}" th:text="${itemCliente.cliente}"></option>
+		                       		</select>
+		                       		<span class="input-group-addon">
+		                       			<a href="#" data-toggle="modal" data-target="#clienteModal">		                       			
+	                                        <i class="material-icons">add_circle</i>
+		                       			</a>
+                                    </span>
+								</div>	                           
+	                        </div>
+	                        
+	                        <div class="col-md-6">
+	                            <b>Contacto *</b>
+	                            <div class="input-group">	                            
+		                            <select class="form-control show-tick" name="cmbClienteContacto" id="cmbClienteContacto" data-live-search="true" >
+		                            	<option value="default" selected="selected">Selecciona un Contacto...</option>
+		                            </select>
+		                            <span class="input-group-addon">
+		                       			<a href="#" data-toggle="modal" data-target="#contactoModal">		                       			
+	                                        <i class="material-icons">add_circle</i>
+		                       			</a>
+                                    </span>
+	                            </div>
+	                        </div>
+						</div>
+						
+						<div class="row clearfix">
+							<div class="col-md-4">
+	                        	<b>Fecha/Hora Inicio *</b>
+	                        	<div class="input-group">
+                        			<span class="input-group-addon">
+                                        <i class="material-icons">date_range</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control text-center" id="txtFechaInicio" name="txtFechaInicio" required="required" />
+                                    </div>
+								</div>
+	                        </div>
+	                        
+	                       <div class="col-md-4">
+	                        	<b>Fecha/Hora Entrega *</b>
+	                        	<div class="input-group">
+                        			<span class="input-group-addon">
+                                        <i class="material-icons">date_range</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control text-center" id="txtFechaEntrega" name="txtFechaEntrega" required="required" />
+                                    </div>
+								</div>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+								<div class="form-group">	
+									<b>Tiempo de espera</b>							
+									<div class="form-line">
+										<input type="text" id="txtTiempoEspera" name="txtTiempoEspera" class="form-control" />
+									</div>
+								</div>
+							</div>
+                  		</div>
+                  		
+                  		<div class="row clearfix">
+							<div class="col-md-4">
+								<div class="form-group">	
+									<b>Cotizaci&oacute;n</b>							
+									<div class="form-line">
+										<input type="text" class="form-control" th:value="${objCotizacion.folio}" />
+									</div>
+								</div>
+							</div>
+	                        
+	                        <div class="col-md-4">
+								<div class="form-group">	
+									<b>OSTicket</b>							
+									<div class="form-line">
+										<input type="text" id="txtOSTicket" name="txtOSTicket" class="form-control" placeholder="ej. #00001" />
+									</div>
+								</div>
+							</div>
+                  		</div>
+						
+						<div class="row clearfix">
+							<div class="col-md-6">							
+								<div class="form-group">
+									<p><b>Alcance de Servicios</b></p>
+	                              	<div class="form-line">
+	                                  	<textarea rows="4" name="txtAlcanceServicios" class="form-control no-resize"></textarea>
+	                              	</div>
+	                       		</div>
+							</div>
+							
+							<div class="col-md-6">							
+								<div class="form-group">
+									<p><b>Bit&aacute;cora de Actividades</b></p>
+	                              	<div class="form-line">
+	                                  	<textarea rows="4" name="txtBitacoraActividades" class="form-control no-resize"></textarea>
+	                              	</div>
+	                       		</div>
+							</div>
+						</div>
+						
+						<br />
+						
+						<h2 class="card-inside-title">SERVICIO(S) REALIZADO(S) Y/O REFACCION(ES) UTILIZADAS</h2>						
+						<div id="inputContainer" class="row clearfix">
+							<div class="col-md-2">
+								<div class="form-group">	
+									<p><b>Cantidad *</b></p>							
+									<div class="form-line">
+										<input type="text" id="inputCantidad" name="txtCantidad[]" class="form-control cantidad" data-id_cantidad="0" required="required"/>
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-3">
+								<div class="form-group">								
+									<div class="form-line">
+										<p><b>Descripci&oacute;n *</b></p>
+										<input type="text" id="inputDescripcion" name="txtDescripcion[]" class="form-control" required="required"/>
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-2">
+								<div class="form-group">
+									<p><b>N&uacute;mero de Parte *</b></p>								
+									<div class="form-line">
+										<input type="text" id="inputNumeroParte" name="txtNumeroParte[]" class="form-control" required="required" />
+									</div>
+								</div>
+							</div>
+																					
+							<div class="col-md-2">
+								<div class="form-group">
+									<p><b>Precio Unitario *</b></p>							
+									<div class="form-line">
+										<input type="text" id="inputNumeroSerie" name="txtPrecioUnitario[]" class="form-control precio" placeholder="$0.00" data-id_precio="0" required="required" />
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-2">
+								<div class="form-group">
+									<p><b>Importe *</b></p>							
+									<div class="form-line">
+										<input type="text" id="inputNumeroSerie" name="txtImporte[]" class="form-control" placeholder="$0.00" required="required" data-id_importe="0" readonly="readonly" />
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-1">
+								<a class="add-product" href="javascript:void(0)" type="button"><i class="material-icons">playlist_add</i></a>
+							</div>
+						</div>
+						
+						<div id="servicioContainer" data-cardinality="1" ></div>	
+						
+						<h2 class="card-inside-title">PERSONA QUE ELABORA LA ORDEN DE SERVICIO</h2>
+						<div class="row clearfix">
+							<div class="col-md-6">
+								<div class="form-group form-group-lg">
+	                       			<b>Nombre</b>
+	                                <div class="form-line">
+	                                    <input type="text" class="form-control" readonly="readonly" th:value="${_USER_.getNombreCompleto()}" />
+	                                </div>
+	                            </div>
+	                         </div>
+	                         
+	                         <div class="col-md-6">
+								<div class="form-group form-group-lg">
+	                       			<b>Puesto</b>
+	                                <div class="form-line">
+	                                    <input type="text" class="form-control" readonly="readonly" />
+	                                </div>
+	                            </div>
+	                         </div>
+	                 	</div>
+	                 	
+	                 	<div class="row clearfix m-t-20">
+	                 		<div class="col-md-12">
+								<div id="firmaEntrega" style="border: 2px dotted black; background-color: lightgrey;"></div>
+								<div class="align-right">
+									<button id="btnRestaurar1" type="button" class="btn btn-warning waves-effect">RESTAURAR</button>
+									<button id="btnGuardar1" type="button" class="btn btn-success waves-effect">GUARDAR</button>
+								</div>
+	                        </div>
+						</div>
+						
+						<h2 class="card-inside-title">PERSONA QUE RECIBE EL SERVICIO</h2>
+						<div class="row clearfix">
+							<div class="col-md-6">
+								<div class="form-group form-group-lg">
+	                       			<b>Nombre</b>
+	                                <div class="form-line">
+	                                    <input type="text" class="form-control" name="txtNombreRecibe" required="required" />
+	                                </div>
+	                            </div>
+	                         </div>
+	                         
+	                         <div class="col-md-6">
+								<div class="form-group form-group-lg">
+	                       			<b>Puesto</b>
+	                                <div class="form-line">
+	                                    <input type="text" class="form-control" name="txtPuestoRecibe" required="required" />
+	                                </div>
+	                            </div>
+	                         </div>
+	                         
+	                         <div class="col-md-6">
+								<div class="form-group form-group-lg">
+	                       			<b>Tel&eacute;fono</b>
+	                                <div class="form-line">
+	                                    <input type="text" class="form-control" name="txtTelefonoRecibe" required="required" />
+	                                </div>
+	                            </div>
+	                         </div>
+	                         
+	                         <div class="col-md-6">
+								<div class="form-group form-group-lg">
+	                       			<b>Correo</b>
+	                                <div class="form-line">
+	                                    <input type="text" class="form-control" name="txtCorreoRecibe" required="required" />
+	                                </div>
+	                            </div>
+	                         </div>
+	                 	</div>
+	                 	
+	                 	<div class="row clearfix m-t-20">
+	                 		<div class="col-md-12">
+								<div id="firmaRecepcion" style="border: 2px dotted black; background-color: lightgrey;"></div>
+								<h5>ESTA FIRMA ES &Uacute;NICAMENTE V&Aacute;LIDA PARA USO INTERNO DE LA EMPRESA Y SE ACATA A LA PROTECCI&Oacute;N DE DATOS DEL CLIENTE.</h5>
+								<div class="align-right">
+									<button id="btnRestaurar2" type="button" class="btn btn-warning waves-effect">RESTAURAR</button>
+									<button id="btnGuardar2" type="button" class="btn btn-success waves-effect">GUARDAR</button>
+								</div>
+	                        </div>
+						</div>				
+					
+						<div class="row clearfix">
+							<div class="col-md-3 col-md-offset-8 text-right">
+								<a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + objCotizacion.idCotizacion + '/ordenesServicios'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<button type="submit" class="btn btn-primary m-t-15 waves-effect">CREAR</button>
+							</div>
+						</div>
+					</form>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+    
+    <!-- CLIENTE MODAL -->
+    <div class="modal fade" id="clienteModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            	<form id="formCliente" th:action="${ {_PATH_} + 'controlPanel/clientes/add-cliente'}" th:method="POST">
+	                <div class="modal-header">
+	                    <h4 class="modal-title" id="defaultModalLabel">Nuevo Cliente</h4>
+	                </div>
+	                <div class="modal-body">
+	                    <div class="row clearfix">
+							<div class="col-md-8">
+	                        	<div class="form-group">
+	                        		<p><b>Nombre Comercial *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtNombreComercial" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+							<div class="col-md-4">
+	                            <p><b>Sucursal *</b></p>
+	                            <select class="form-control show-tick" name="cmbSucursal" id="cmbSucursal" data-live-search="true" >
+	                       			<th:block th:each="itemSucursal : ${lstSucursales}" >
+	                       				<option th:if="${itemSucursal.idSucursal == _USER_.getSucursal().getIdSucursal()}" selected="selected" th:value="${itemSucursal.idSucursal}" th:text="${itemSucursal.sucursal}"></option>
+	                       				<option th:unless="${itemSucursal.idSucursal == _USER_.getSucursal().getIdSucursal()}" th:value="${itemSucursal.idSucursal}" th:text="${itemSucursal.sucursal}"></option>
+	                       			</th:block>
+	                       		</select>
+	                        </div>	                        	                       
+						</div>
+						
+						<div class="row clearfix">
+							<div class="col-md-4">
+	                            <p><b>Giro</b></p>
+	                            <select class="form-control show-tick" name="cmbGiro" id="cmbGiro" data-live-search="true" >
+	                            	<option th:each="itemGiro : ${lstClientesGiros}" th:value="${itemGiro.idClienteGiro}" th:text="${itemGiro.clienteGiro}"></option>
+	                       		</select>
+	                        </div>
+						
+							<div class="col-md-4">
+	                        	<div class="form-group">
+	                        		<p><b>Raz&oacute;n social*</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtRazonSocial" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                       <div class="col-md-4">
+								<div class="form-group">
+	                        		<p><b>RFC *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtRFC" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+							</div>
+						</div>
+	                </div>
+	                <div class="modal-footer">	                    
+	                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CANCELAR</button>
+	                    <button type="submit" class="btn btn-link waves-effect">CREAR</button>
+	                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+	<!-- CONTACTO MODAL -->
+    <div class="modal fade" id="contactoModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            	<form id="formContacto" th:action="${ {_PATH_} + 'controlPanel/clientes/add-contacto'}" th:method="POST">
+            		<input type="hidden" value="" name="hddIdCliente" id="hddIdCliente" />
+	                <div class="modal-header">
+	                    <h4 class="modal-title" id="defaultModalLabel">Nuevo Contacto</h4>
+	                </div>
+	                <div class="modal-body">
+	                    <div class="row clearfix">
+	                        <div class="col-md-6">
+	                        	<div class="form-group">
+	                        		<p><b>Contacto *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtContacto" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+                        		<input type="checkbox" id="chkAdministrador" name="chkAdministrador" value="true" class="chk-col-red" />
+                               	<label for="chkAdministrador">&iquest;PROPIETARIO / GERENTE?</label>
+	                        </div>
+						</div>
+						
+						<div class="row clearfix">
+							<div class="col-md-3">
+								<div class="form-group">
+	                        		<p><b>Puesto</b></p>
+                                    <div class="form-line">
+                                        <input type="text" name="txtPuesto" class="form-control" />
+                                    </div>
+                                 </div>
+							</div>
+							
+							<div class="col-md-3">                        	
+	                        	<div class="form-group">
+	                        		<p><b>Correo *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtCorreo" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-3">                        		
+	                        	<div class="form-group">
+	                        		<p><b>Tel&eacute;fono</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtTelefono" class="form-control" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-3">                        		
+	                        	<div class="form-group">
+	                        		<p><b>Celular *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtCelular" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+						</div>
+	                </div>
+	                <div class="modal-footer">	                    
+	                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CANCELAR</button>
+	                    <button type="submit" class="btn btn-link waves-effect">CREAR</button>
+	                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- JSignature -->
+	<script th:src="@{/plugins/jsignature/jSignature.min.js}"></script>
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
+			
+		var idUsuario = [[${_USER_.getIdUsuario()}]];
+	
+		$(document).ready(function() {	
+			
+			//DATEPICKER
+			$('#txtFechaInicio').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY HH:mm', weekStart : 1, clearButton: true, time:true});
+			$('#txtFechaInicio').bootstrapMaterialDatePicker('setDate', moment());
+			
+			$('#txtFechaEntrega').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY HH:mm', weekStart : 1, clearButton: true, time:true});
+			//****************************************************************
+			
+			//JSIGNATURE
+			$("#firmaEntrega").jSignature()
+			$("#firmaRecepcion").jSignature()
+			
+			$('#btnRestaurar1').click(function() {
+				$("#firmaEntrega").jSignature("reset");
+				$("#firmaEntrega").jSignature("enable");
+				$('#imgFirmaEntrega').val("");
+			});
+			
+			$('#btnGuardar1').click(function() {
+				$("#firmaEntrega").jSignature("disable");
+				var data = $("#firmaEntrega").jSignature("getData", "image");
+				$('#imgFirmaEntrega').val(data[1]);
+			});
+			
+			$('#btnRestaurar2').click(function() {
+				$("#firmaRecepcion").jSignature("reset");
+				$("#firmaRecepcion").jSignature("enable");
+				$('#imgFirmaRecepcion').val("");
+			});
+			
+			$('#btnGuardar2').click(function() {
+				$("#firmaRecepcion").jSignature("disable");
+				var data = $("#firmaRecepcion").jSignature("getData", "image");	
+				$('#imgFirmaRecepcion').val(data[1]);
+				
+			});
+			
+			//****************************************************************
+			
+			// SELECT PICKER
+			$('#cmbCliente option').attr('selected', false);
+			
+			$('#cmbCliente').on('change', function() {
+				buscarContactos();
+			});
+			//******************************************************************
+			
+			
+			// FORM SUBMIT
+			$('#formOrden').submit(function(e){
+				var flag = false;
+				
+				if($('#cmbCliente').val() == 'default' || $('#cmbClienteContacto').val() == 'default') {
+					flag = true;
+				}				
+				
+				if(flag) {
+					swal('Hey!', 'Los campos con (*) son obligatorios', 'warning');
+					e.preventDefault();
+				}
+		  	});
+			
+			$('#formCliente').submit(function(e){
+				e.preventDefault();
+				
+				var formData = $('#formCliente').serialize();
+				
+				$.ajax({
+					url					: $('#formCliente').attr('action'),
+					dataType			: 'json',
+					data				: formData,
+					type				: "POST",
+					success				: function(data) {
+						if(data.respuesta) {
+							buscarClientes();
+							swal(data.titulo, data.mensaje, 'success');
+							$('#clienteModal').modal('hide');
+						} else{
+							swal('Error!', 'Ocurrio un error al crear el cliente, verifique su informacion.', 'error');
+						}
+					},
+					error				: function(e) {
+						console.log(e);
+					}
+				});
+		  	});
+			
+			$('#formContacto').submit(function(e){
+				e.preventDefault();				
+				
+				var data = $('#hddIdCliente').val()
+				var formData = $('#formContacto').serialize();
+				
+				if(data != "") {					
+					$.ajax({
+						url					: $('#formContacto').attr('action'),
+						dataType			: 'json',
+						data				: formData,
+						type				: "POST",
+						success				: function(data) {
+							if(data.respuesta) {
+								buscarContactos();
+								swal(data.titulo, data.mensaje, 'success');
+								$('#contactoModal').modal('hide');
+							} else{
+								swal('Error!', 'Ocurrio un error al crear el contacto, verifique su informacion.', 'error');
+							}
+						},
+						error				: function(e) {
+							console.log(e);
+						}
+					});
+				} else {
+					swal('Advertencia!', 'Para crear un contacto, es necesario seleccionar un cliente. Verifique su informacion.', 'warning');
+				}
+				
+		  	});
+			
+			//******************************************************************
+			
+			$(document).on('click', '.add-product', function() {
+				
+				cardinality = parseInt($('#servicioContainer').data('cardinality')) + 1;
+				
+				strNewTag = '<div class="row clearfix">';
+					strNewTag += '<div class="col-md-2">';
+						strNewTag += '<div class="form-group">';								
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input id="txtCantidad'+ cardinality +'" type="text" name="txtCantidad[]" placeholder="Cantidad" class="form-control cantidad" data-id_cantidad="'+cardinality+'" required="required" />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';
+					
+					strNewTag += '<div class="col-md-3">';
+						strNewTag += '<div class="form-group">';							
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input type="text" name="txtDescripcion[]" class="form-control" placeholder="Descripci&oacute;n" required="required" />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';
+					
+					strNewTag += '<div class="col-md-2">';
+						strNewTag += '<div class="form-group">';							
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input type="text" name="txtNumeroParte[]" class="form-control" placeholder="Numero de Parte" required="required" />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';
+					
+					
+					
+					strNewTag += '<div class="col-md-2">';
+						strNewTag += '<div class="form-group">';							
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input id="txtPrecioUnitario'+ cardinality +'" type="text" name="txtPrecioUnitario[]" class="form-control precio" placeholder="$0.00" data-id_precio="'+cardinality+'" required="required" />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';
+					
+					strNewTag += '<div class="col-md-2">';
+						strNewTag += '<div class="form-group">';							
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input id="txtImporte'+ cardinality +'" type="text" name="txtImporte[]" class="form-control" placeholder="$0.00" required="required" data-id_importe="'+cardinality+'" readonly="readonly" />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';
+						
+					strNewTag += '<div class="col-md-1">';
+						strNewTag += '<a class="add-product" href="javascript:void(0)" type="button"><i class="material-icons">playlist_add</i></a>';
+						strNewTag += '<a class="delete-product" href="javascript:void(0)" type="button"><i class="material-icons">delete</i></a>';
+					strNewTag += '</div>';
+				strNewTag += '</div>';
+				
+				$('#servicioContainer').append(strNewTag);
+	            $('#servicioContainer').data('cardinality', cardinality);	            
+			});
+			
+			$(document).on('focusout', '.precio', function() {
+				var idValue = $(this).data('id_precio');
+				var precioUnitario = parseFloat($(this).val());			
+				
+				var elementCantidad = $(document).find("[data-id_cantidad='" + idValue + "']");				
+				var elementImporte = $(document).find("[data-id_importe='" + idValue + "']");
+				
+				var importe = parseInt(elementCantidad.val()) * precioUnitario;
+				
+				if(!isNaN(importe)) {
+					elementImporte.val(importe);
+				} else {
+					elementImporte.val('');
+				}				
+			});
+			
+			$(document).on('focusout', '.cantidad', function() {
+				var idValue = $(this).data('id_cantidad');
+				var cantidad = parseInt($(this).val());			
+				
+				var elementPrecio = $(document).find("[data-id_precio='" + idValue + "']");				
+				var elementImporte = $(document).find("[data-id_importe='" + idValue + "']");
+				
+				var importe = cantidad * parseFloat(elementPrecio.val());
+				
+				if(!isNaN(importe)) {
+					elementImporte.val(importe);
+				} else {
+					elementImporte.val('');
+				}			
+			});
+			
+			$(document).on('click', '.delete-product', function() {
+				var _this = this;
+				swal({
+					title	: "&iquest;Est&aacute;s seguro?",
+					text	: "Una vez eliminado, el producto sera eliminado de la entrega.",
+					type	: "warning",
+					showCancelButton: true,
+					cancelButtonText: 'Cancelar',
+					confirmButtonText: 'Eliminar',
+				}).then((result) => {
+					if(result) {
+						$(_this).parent().parent().remove();																				
+					}
+				}).catch(swal.noop);				
+			});
+		});
+		
+		function buscarClientes() {
+			var $select = $('#cmbCliente');
+			
+			$.ajax({
+				url					: [[@{/controlPanel/clientes/get-clientes}]],
+				dataType			: 'json',
+				type				: "GET",
+				success				: function(data) {
+											 
+					$select.find('option').remove();
+					$select.append('<option value="" >Selecciona un cliente...</option>');
+					$.each(data, function(key, value) 
+					{
+					    $select.append('<option value="' + value.idCliente + '" >' + value.cliente + '</option>');
+					});
+					
+					$select.selectpicker('refresh');
+				},
+				error				: function(e) {
+					console.log(e);
+				}
+			});
+		}
+		
+		function buscarContactos() {
+			var $select = $('#cmbClienteContacto');
+			var data = $('#cmbCliente').val()
+			$('#hddIdCliente').val(data);
+			
+			$.ajax({
+				url					: [[@{/controlPanel/clientes/get-clientes-contactos}]] + "?idCliente=" + data,
+				dataType			: 'json',
+				type				: "GET",
+				success				: function(data) {
+					$select.attr('disabled', false);
+											 
+					$select.find('option').remove();  
+					$select.append('<option value="" >Selecciona un contacto...</option>');
+					$.each(data, function(key, value) 
+					{
+					    $select.append('<option value=' + value.idClienteContacto + ' data-subtext="'+ value.correo +'">' + value.contacto + '</option>');
+					});
+					
+					$select.selectpicker('refresh');
+				},
+				error				: function(e) {
+					console.log(e);
+					$select.attr('disabled', true);
+					$select.empty();
+				}
+			});
+		}
+		
+		$(function () {
+			// VALIDADOR DE FORMULARIO
+			$('#formCotizacion').validate({
+		        rules: {
+		            'txtCantidad': {
+		                number: true
+		            }
+		        },
+		        highlight: function (input) {
+		            $(input).parents('.form-line').addClass('error');
+		        },
+		        unhighlight: function (input) {
+		            $(input).parents('.form-line').removeClass('error');
+		        },
+		        errorPlacement: function (error, element) {
+		            $(element).parents('.form-group').append(error);
+		        }
+		    });
+			
+			//Custom Validations ===============================================================================
+		    //Number
+		    $.validator.addMethod('number', function (value, element) {
+		        return value.match('[0-9]+');
+		    },
+		        'Por favor ingresa un n&uacute;mero.'
+		    );
+		});	
+		/*]]>*/</script>
+</th:block>

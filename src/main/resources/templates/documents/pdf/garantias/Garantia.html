@@ -1,0 +1,155 @@
+<th:block th:fragment="body">
+	<!--/* HEADER */-->
+	<table width="100%">
+		<tr>			
+			<td style="width:139px;">
+				<img th:src="@{'http://localhost:8080/WebSar/assets/images/ibmexico.jpg'}" />
+			</td>
+			
+			<td style="width:10px"></td>
+			<td style="width:278px">
+				<table width="100%">
+				<tr>
+					<td class="tituloH2">GARANT&Iacute;A</td>
+				</tr>
+				</table>
+			</td>
+			<td style="width:10px"></td>
+				
+			
+			<td style="width:139px">
+				<table width="100%">
+					<tr>
+						<td class="tituloTH2">FOLIO</td>
+					</tr>
+					
+					<tr>
+						<td class="celdaH3" th:text="${objGarantia.folio}"></td>
+					</tr>
+				</table>
+			</td>
+			
+		</tr>
+	</table>
+	
+	<!--/* CLIENTE INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 30px;">
+		<tr>
+			<td class="tituloH5" width="10%" style="text-align:left">Fecha:</td>
+			<td class="subrayadoH5" width="20%" th:text="${objGarantia.creacionFechaNatural}"></td>
+		</tr>
+		<tr>
+			<td class="tituloH5" width="10%" style="text-align:left">Cliente:</td>
+			<td class="subrayadoH5" width="90%" th:text="${objGarantia.cliente.cliente}"></td>
+		</tr>
+	
+		<tr>
+			<td class="tituloH5" width="10%" style="text-align:left">Atenci&oacute;n:</td>
+			<td class="subrayadoH5" width="90%" th:text="${objGarantia.clienteContacto.contacto}"></td>
+		</tr>
+	
+		<tr>
+			<td class="tituloH5" width="10%" style="text-align:left">Puesto:</td>
+			<td class="subrayadoH5" width="90%" th:text="${objGarantia.clienteContacto.puesto}"></td>
+		</tr>
+		
+		<tr>
+			<td class="tituloH5" width="10%" style="text-align:left">Email:</td>
+			<td class="subrayadoH5" width="90%" th:text="${objGarantia.clienteContacto.correo}"></td>
+		</tr>
+	</table>
+	
+	<!--/* FALLA INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" class="tituloTH3">FALLA(S) PRESENTADA(S) EN EL/LOS PRODUCTO(S</td>
+		</tr>
+		<tr>
+			<td width="100%" class="celdaH6" th:text="${objGarantia.falla}"></td>
+		</tr>
+	</table>
+	
+	<!--/* PRODUCTO INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" colspan="5" class="tituloTH3">PRODUCTO RECIBIDO</td>
+		</tr>
+		<tr>
+			<td width="15%" class="tituloTH5">Cantidad</td>
+			<td width="70%" class="tituloTH5">Descripci&oacute;n</td>
+			<td width="15%" class="tituloTH5">N&uacute;mero de Serie</td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0">
+		<tr>
+			<td width="15%" class="celdaH6" th:text="${objGarantia.cantidad}"></td>
+			<td width="70%" class="celdaH6" style="text-align:left" th:text="${objGarantia.producto}"></td>
+			<td width="15%" class="celdaH6" th:text="${objGarantia.numeroSerie}"></td>
+		</tr>
+	</table>
+	
+	<!--/* DIAGNOSTICO INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" class="tituloTH3">DIAGN&Oacute;STICO</td>
+		</tr>
+		<tr>
+			<td width="100%" class="celdaH6" th:text="${objGarantia.diagnostico}"></td>
+		</tr>
+	</table>
+	
+	<!--/* IMAGENES INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" class="tituloTH3">IM&Aacute;GENES DE EQUIPO(S)</td>
+		</tr>
+		<tr>
+			<td width="100%" class="celdaH6">
+				<th:block th:each="itemFichero : ${lstFicheros}">				
+					<img style="width: 250px;" th:src="@{'http://localhost:8080/WebSar/ficheros/garantias/' + ${itemFichero.url}}" />
+				</th:block>
+			</td>
+		</tr>
+	</table>
+	
+	
+	<!--/* IMAGENES INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" colspan="3" class="tituloTH6">Para soporte t&eacute;cnico: Networking, Firewall, Sistemas Operativos Windows, CCTV, Equipo SOHO, contamos con los siguientes recursos.</td>
+		</tr>
+		<tr>
+			<td width="33%" class="tituloTH6">E-mail:</td>
+			<td width="34%" class="tituloTH6">Tel&eacute;fonos M&oacute;viles:</td>
+			<td width="33%" class="tituloTH6">Tel&eacute;fonos de Oficina:</td>
+		</tr>
+		<tr>
+			<td width="33%" class="celdaH6">soporte@ib-mexico.com</td>
+			<td width="34%" class="celdaH6">(993) 311-32-75</td>
+			<td width="33%" class="celdaH6">(993) 351-19-16</td>
+		</tr>
+	</table>
+	
+	<!--/* FIRMAS INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 50px;">
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Elabor&oacute;:</td>
+			<td class="subrayadoH6" width="20%" th:text="${objGarantia.creacionUsuario.nombreCompleto}"></td>
+			<td width="30%"></td>
+			<td class="tituloH6" width="15%" style="text-align:left">Recibi&oacute;:</td>
+			<td class="subrayadoH6" width="20%" th:text="${objGarantia.nombreRecibe}"></td>
+		</tr>
+		
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Puesto:</td>
+			<td class="subrayadoH6" width="20%" th:text="${objGarantia.creacionUsuario.puesto}"></td>
+			<td width="30%"></td>
+			<td class="tituloH6" width="15%" style="text-align:left">Firma de Conformidad:</td>
+			<td class="subrayadoH6" width="20%">
+				<img style="width: 180px;" th:src="@{'http://localhost:8080/WebSar/ficheros/garantias/' + ${objGarantia.urlFirmaRecepcion}}" />
+			</td>
+		</tr>		
+	</table>
+			
+</th:block>

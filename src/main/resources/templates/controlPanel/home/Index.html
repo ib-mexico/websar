@@ -1,0 +1,355 @@
+<th:block th:fragment="style">
+	<!-- Range Slider Css -->
+	<link th:href="@{/plugins/ion-rangeslider/css/ion.rangeSlider.css}" rel="stylesheet" />
+	<link th:href="@{/plugins/ion-rangeslider/css/ion.rangeSlider.skinFlat.css}" rel="stylesheet" />
+</th:block>
+
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>DASHBOARD</h2>
+    </div>
+    
+    <th:block th:each="itemNoticia : ${lstNoticiasImportantes}">    
+	    <div class="alert alert-warning alert-dismissible" role="alert">
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		  	<h4>
+		  		<th:block th:text="${itemNoticia.titulo}"></th:block>
+		  	</h4>
+		  	<th:block th:text="${itemNoticia.descripcion}"></th:block>			  
+		</div>
+    </th:block>
+    
+    <div class="row clearfix">
+    	<div class="col-md-4">
+    		<h2>Noticias / Comunicado</h2>
+    		<th:block th:each="itemNoticia : ${lstNoticias}">
+    			<div class="card">
+    				<div class="header">
+    					<h2 th:text="${itemNoticia.titulo}"></h2> <small th:text="${itemNoticia.creacionUsuario.alias + ' - ' + itemNoticia.creacionFechaNatural}"></small>
+    				</div>
+    				<div class="body">
+    					<div class="row cleafix">
+    						<p th:text="${itemNoticia.descripcion}"></p>
+    					</div>
+    					<div class="row">
+    						<div class="col-md-12 align-right">
+    							<button type="button" th:attr="data-id_noticia=${itemNoticia.idNoticia}" class="btn bg-light-green btn-circle waves-effect waves-circle waves-float show-news">
+                                    <i class="material-icons">chat</i>
+                                </button>
+    						</div>
+    					</div>
+    				</div>
+    			</div>
+    		</th:block>
+    	</div>
+    	
+    	<div class="col-md-8">
+    		<div class="block-header">
+                <h2>RESUMEN DEL PERIODO: <th:block th:text="${fechaMesInicio + ' - ' + fechaMesFin}"></th:block></h2>
+            </div>
+            
+            <div class="row">
+            	<div class="col-md-6">
+            		<div class="info-box bg-pink hover-zoom-effect">
+                        <div class="icon">
+                            <i class="material-icons">view_list</i>
+                        </div>
+                        <div class="content">
+                            <div class="text">COTIZACIONES</div>
+                            <div class="number"><th:block th:text="${'$' + totalCotizaciones}"></th:block></div>
+                        </div>
+                    </div>
+            	</div>
+            	
+            	<div class="col-md-6">
+            		<div class="info-box bg-blue hover-zoom-effect">
+                        <div class="icon">
+                            <i class="material-icons">group_work</i>
+                        </div>
+                        <div class="content">
+                            <div class="text">OPORTUNIDADES</div>
+                            <div class="number"><th:block th:text="${'$' + totalOportunidades}"></th:block></div>
+                        </div>
+                    </div>
+            	</div>
+            </div>
+            
+            <div class="row clearfix" th:if="${_USER_.getQuota() != null}">
+            	<div class="col-md-12">
+            		<div class="card">
+            			<div class="header">
+            				<h2>QUOTA DEL PERIODO</h2>
+            			</div>
+            			<div class="body">
+            				<input type="text" id="range_01" value="" />
+            			</div>
+            		</div>
+            	</div>
+            </div>
+            
+            <div class="row clearfix">
+            	<div class="col-md-6">
+            		<div class="card">
+            			<div class="header">
+            				<h2>ESTATUS DE COTIZACIONES</h2>
+            			</div>
+            			<div class="body">            			
+		            		<div id="donut_chart_cotizaciones" class="dashboard-donut-chart"></div>
+            			</div>
+            		</div>
+            	</div>
+            	
+            	<div class="col-md-6">
+            		<div class="card">
+            			<div class="header">
+            				<h2>REPORTE DE VENTAS</h2>
+            			</div>
+            			<div class="body">
+            				<th:block th:if="${rolCotizacionCobranza}">            				
+	            				<div class="row">
+	            					<div class="col-md-12">
+	            						<em>Para generar reportes de otro usuario, es necesario seleccionar una fecha en espec&iacute;fico en el campo de (Fecha de Consulta). En caso no de realizarlo el sistema generar&aacute; el reporte del usuario en sesi&oacute;n</em>
+	            					</div>
+	            				</div>
+	            				
+	            				<div class="row">
+	            					<div class="col-md-8">
+	            						<b>Usuario</b>
+	            						<select class="form-control show-tick" name="cmbUsuario" id="cmbUsuario" data-live-search="true" >
+			                       			<th:block th:each="itemUsuario : ${lstUsuarios}" >
+			                       				<option th:if="${itemUsuario.idUsuario == _USER_.getIdUsuario()}" selected="selected" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}"></option>
+			                       				<option th:unless="${itemUsuario.idUsuario == _USER_.getIdUsuario()}" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}"></option>
+			                       			</th:block>
+		                       			</select>
+	            					</div>
+	            				</div>
+            				</th:block>
+            				
+            				<div class="row">
+            					<div class="col-md-8">
+            						<b>Empresa</b>
+            						<select class="form-control show-tick" name="cmbEmpresa" id="cmbEmpresa" data-live-search="false" >
+		                       			<th:block th:each="itemEmpresa : ${lstEmpresas}" >
+		                       				<option th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.empresa}"></option>
+		                       			</th:block>
+	                       			</select>
+            					</div>
+            				</div>
+            				
+            				<div class="row">
+            					<div class="col-md-8">
+		                      		<b>Fecha de consulta</b>
+		                        	<div class="input-group">
+	                        			<span class="input-group-addon">
+	                                        <i class="material-icons">date_range</i>
+	                                    </span>
+	                                    <div class="form-line">
+	                                        <input type="text" class="form-control text-center" id="txtFecha" name="txtFecha" />
+	                                    </div>
+									</div>
+								</div>
+            				</div>
+            				
+            				<th:block th:if="${rolReportesGerencia}">
+            					<div class="row text-center">
+		           					<div class="col-md-6 col-sm-12">
+		           						<a id="btnReporteFacturacionArea" href="javascript:void(0);" target="_blank" role="button" class="btn bg-pink waves-effect">REPORTE FACTURACI&Oacute;N DE &Aacute;REA</a>
+		           					</div>        					            				
+		           				</div>
+            				</th:block>
+            				
+            				<div class="row text-center">
+            					<div class="col-md-6 col-sm-12">
+            						<a id="btnGenerarReporteFacturacion" th:href="${ {_PATH_} + 'controlPanel/reporte-facturacion-pdf/actual/0'}" target="_blank" role="button" class="btn bg-indigo waves-effect">GENERAR REPORTE DE VENTAS</a>
+            					</div>
+            					        					            				
+            					<div class="col-md-6 col-sm-12">            					
+	            					<a id="btnGenerarReporteComision" th:href="${ {_PATH_} + 'controlPanel/reporte-comision-pdf/actual/0'}" target="_blank" role="button" class="btn bg-teal waves-effect">GENERAR REPORTE DE COMISI&Oacute;N</a>
+            					</div>         					            				
+            				</div>
+            				<div>
+            					<div id="bar_chart" class="graph"></div>
+            				</div>
+            			</div>
+            		</div>
+            	</div>
+            </div>
+    	</div>
+    </div>
+    
+    
+    <!-- Modal -->
+	<div class="modal fade" id="modalInfo" role="dialog">
+  		<div class="modal-dialog">	  
+	    	<!-- Modal content-->
+	    	<div class="modal-content">
+	      		<div class="modal-header">
+	        		<button type="button" class="close" data-dismiss="modal">&times;</button>
+	        		<h4 class="modal-title">Aviso Informativo</h4>
+	     	 	</div>
+	      		<div class="modal-body">
+	        		<p>Estimado usuario, recuerda validar que los documentos de tus cotizaciones est&eacute;n cargados en el sistema 
+	        		antes de cambiar el estatus de la cotizaci&oacute;n a "Facturado o Pagado", ya que esto afecta el c&aacute;lculo de las cuotas.</p>
+	      		</div>
+	      		<div class="modal-footer">
+	        		<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+	      		</div>
+	    	</div>	    
+  		</div>
+	</div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- RangeSlider Plugin Js -->
+    <script th:src="@{/plugins/ion-rangeslider/js/ion.rangeSlider.js}"></script>
+    
+    <!-- Morris Plugin Js -->
+	<script th:src="@{/plugins/raphael/raphael.min.js}"></script>
+	<script th:src="@{/plugins/morrisjs/morris.js}"></script>
+	
+	<!-- ChartJs -->
+	<script th:src="@{/plugins/chartjs/Chart.bundle.js}"></script>
+	
+	<!-- Flot Charts Plugin Js -->
+	<script th:src="@{/plugins/flot-charts/jquery.flot.js}"></script>
+	<script th:src="@{/plugins/flot-charts/jquery.flot.resize.js}"></script>
+	<script th:src="@{/plugins/flot-charts/jquery.flot.pie.js}"></script>
+	<script th:src="@{/plugins/flot-charts/jquery.flot.categories.js}"></script>
+	<script th:src="@{/plugins/flot-charts/jquery.flot.time.js}"></script>
+	
+	<!-- Sparkline Chart Plugin Js -->
+	<script th:src="@{/plugins/jquery-sparkline/jquery.sparkline.js}"></script>
+    
+	<script type="application/javascript" th:inline="javascript">
+		var porcentData = JSON.parse([[${totalPorcentajes}]]);
+		var ventasData = JSON.parse([[${totalVentas}]]);
+		var month = [[${monthActual}]];
+		var year = [[${yearActual}]];
+		var quota = [[${_USER_.getQuota()}]];
+		var totalQuota = [[${totalQuota}]];
+	
+		$(document).ready(function() {
+			
+			//$("#modalInfo").modal();
+			
+			initCotizacionesDonutChart(porcentData);
+			getMorris('bar', 'bar_chart', ventasData);
+			
+			$('#txtFecha').bootstrapMaterialDatePicker({format: 'DD-MM-YYYY', weekStart : 1, clearButton: true, time:false});
+			
+			$('#btnReporteFacturacionArea').click(function(e){
+				e.preventDefault();
+				var urlRedirect = '';
+				
+				if($('#txtFecha').val() != '') {
+					urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-facturacion-area-pdf/' + $('#txtFecha').val() + '/' + $('#cmbEmpresa').val()  + '/' + $('#cmbUsuario').val();
+				} else {
+					urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-facturacion-area-pdf/actual/' + $('#cmbEmpresa').val() + '/0';
+				}
+				
+				window.open(urlRedirect);					
+			});
+			
+			$('#btnGenerarReporteFacturacion').click(function(e){
+				e.preventDefault();
+				var urlRedirect = '';
+				
+				if($('#txtFecha').val() != '') {					
+					if($('#cmbUsuario').length) {
+						urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-facturacion-pdf/' + $('#txtFecha').val() + '/' + $('#cmbEmpresa').val() + '/' + $('#cmbUsuario').val();
+					} else {						
+						urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-facturacion-pdf/' + $('#txtFecha').val() + '/' + $('#cmbEmpresa').val() + '/0';
+					}					
+				} else {
+					urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-facturacion-pdf/actual/' + $('#cmbEmpresa').val() + '/0';
+				}
+				
+				window.open(urlRedirect);		
+			});
+			
+			$('#btnGenerarReporteComision').click(function(e){
+				e.preventDefault();
+				var urlRedirect = '';
+				
+				if($('#txtFecha').val() != '') {					
+					if($('#cmbUsuario').length) {
+						urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-comision-pdf/' + $('#txtFecha').val() + '/' + $('#cmbEmpresa').val() + '/' + $('#cmbUsuario').val();
+					} else {						
+						urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-comision-pdf/' + $('#txtFecha').val() + '/' + $('#cmbEmpresa').val() + '/0';
+					}					
+				} else {
+					urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-comision-pdf/actual/' + $('#cmbEmpresa').val() + '/0';
+				}
+				
+				window.open(urlRedirect);				
+			});
+			
+			$('.show-news').click(function() {
+				var id = $(this).data('id_noticia');
+				var url = [[@{/controlPanel/noticias/}]] + id + '/show';
+				
+				window.location.href = url;
+			});
+			
+			if(quota != null) {				
+				$("#range_01").ionRangeSlider({
+					grid	: true,
+					min		: 0,
+					max		: quota,
+					from	: totalQuota,
+					prettify_enabled : true,
+					prettify_separator: ",",
+					prefix	: "$",
+					from_fixed: true,
+				    to_fixed: true
+				});
+			}
+		
+		});
+		
+		function initCotizacionesDonutChart(value) {
+		    Morris.Donut({
+		        element: 'donut_chart_cotizaciones',
+		        data: [{
+		            label: 'Activos',
+		            value: value.porcentajeActivos
+		        }, {
+		            label: 'Aprobados',
+		            value: value.porcentajeAprobados
+		        }, {
+		            label: 'Facturados',
+		            value: value.porcentajeFacturados
+		        }, {
+		            label: 'Pagados',
+		            value: value.porcentajePagados
+		        },
+		        {
+		            label: 'Cancelados',
+		            value: value.porcentajeCancelados
+		        }],
+		        colors: ['rgb(233, 30, 99)', 'rgb(0, 188, 212)', 'rgb(255, 152, 0)', 'rgb(0, 150, 136)', 'rgb(96, 125, 139)'],
+		        formatter: function (y) {
+		            return y + '%'
+		        }
+		    });
+		}
+		
+		function getMorris(type, element, value) {
+		    if (type === 'bar') {
+		        Morris.Bar({
+		            element: element,
+		            data: [{
+		                x: month+" "+year,
+		                y: value.totalCotizaciones,
+		                z: value.totalCompras,
+		                a: value.totalGastos
+		            }],
+		            xkey: 'x',
+		            ykeys: ['y', 'z', 'a'],
+		            labels: ['Cotizaciones', 'Compras', 'Gastos Indirectos'],
+		            barColors: ['rgb(233, 30, 99)', 'rgb(0, 188, 212)', 'rgb(0, 150, 136)'],
+		        });
+		    }
+        }
+	</script>
+</th:block>

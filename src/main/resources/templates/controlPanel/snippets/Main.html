@@ -1,0 +1,148 @@
+<html th:fragment="html">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    	<meta charset="utf-8" />
+    	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    	<meta name="viewport" content="width=device-width, initial-scale=1" />
+    	
+    	<sec:csrfMetaTags/>
+    	
+    	<!--  <link rel="shortcut icon" th:href="@{/assets/imagenes/icono_16.png}" type="image/png" />-->
+    	
+    	<title>
+    		<th:block th:replace="/snippets/Settings :: title"></th:block> - Ver. 
+    		<th:block th:replace="/snippets/Settings :: version"></th:block>
+    	</title>
+    	
+    	<th:block th:replace="/controlPanel/snippets/Styles"></th:block>
+    	<th:block th:include="${_TEMPLATE_} :: style" />
+	</head>
+
+	
+	<body class="theme-red">
+		<!-- Page Loader -->
+	    <div class="page-loader-wrapper">
+	        <div class="loader">
+	            <div class="preloader">
+	                <div class="spinner-layer pl-red">
+	                    <div class="circle-clipper left">
+	                        <div class="circle"></div>
+	                    </div>
+	                    <div class="circle-clipper right">
+	                        <div class="circle"></div>
+	                    </div>
+	                </div>
+	            </div>
+	            <p>Cargando ...</p>
+	        </div>
+	    </div>
+	    <!-- #END# Page Loader -->
+	    
+	    <!-- Overlay For Sidebars -->
+	    <div class="overlay"></div>
+	    <!-- #END# Overlay For Sidebars -->
+	    
+	    <!-- Search Bar -->
+	    <div class="search-bar">
+	        <div class="search-icon">
+	            <i class="material-icons">search</i>
+	        </div>
+	        <input type="text" placeholder="ESCRIBE ALGO..." />
+	        <div class="close-search">
+	            <i class="material-icons">close</i>
+	        </div>
+	    </div>
+	    <!-- #END# Search Bar -->
+	    
+	    <!-- Top Bar -->
+	    <th:block th:include="/controlPanel/snippets/Navigation" />
+	    <!-- #Top Bar -->
+	    
+	    <section>
+	    	<!-- Left Sidebar -->
+	    	<!--/*<th:block th:include="/controlPanel/snippets/MenuSideLeft" />*/-->
+	    	<th:block th:include="/controlPanel/snippets/MenuSideLeft" />
+	    	<!-- #END# Left Sidebar -->
+	    	
+	    	<!-- Right Sidebar -->
+	    	<th:block th:include="/controlPanel/snippets/MenuSideRight" />
+	    	<!-- #END# Right Sidebar -->
+	    </section>
+
+
+		<section class="content">
+			<div class="container-fluid">
+				<th:block th:include="/controlPanel/snippets/Alert"></th:block>
+				
+				<th:block th:include="${_TEMPLATE_} :: body" />
+			</div>
+		</section>
+	
+		
+	</body>
+	
+
+	<th:block th:replace="/controlPanel/snippets/Scripts" />
+	<th:block th:include="${_TEMPLATE_} :: script" />
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
+		var idUsuario = [[${_USER_.getIdUsuario()}]];
+
+		var pusher = new Pusher('7b4b9197d41e13beb30d', {
+			cluster: 'us2'
+		});
+		
+		Push.config({
+		    serviceWorker: './WebSar/assets/plugins/push/serviceWorker.min.js',
+		});
+		
+
+		var channel = pusher.subscribe('notifications');
+		channel.bind('new-notification', function(data) {
+			
+			if(idUsuario ==  data.id_usuario.value) {
+				
+				if(Push.Permission.has()) {					
+					Push.create("Notificación", {
+					    body: data.message.value,
+					    icon: 'http://icons.iconarchive.com/icons/fps.hu/free-christmas-flat-circle/256/bell-icon.png',
+					    timeout: 9000,
+					    onClick: function () {
+					        window.focus();
+					        this.close();
+					    }
+					});
+				} else {
+					$.notify({
+				        message: data.message.value
+				    },
+			        {
+			            type: 'bg-blue',
+			            allow_dismiss: true,
+			            newest_on_top: true,
+			            timer: 1000,
+			            placement: {
+			                from: 'bottom',
+			                align: 'right'
+			            },
+			            animate: {
+			                enter: 'animated zoomInRight',
+			                exit: 'animated zoomOutRight'
+			            },
+			            template: '<div data-notify="container" class="bootstrap-notify-container alert alert-dismissible {0} p-r-35" role="alert">' +
+			            '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+			            '<span data-notify="icon"></span> ' +
+			            '<span data-notify="title">{1}</span> ' +
+			            '<span data-notify="message">{2}</span>' +
+			            '<div class="progress" data-notify="progressbar">' +
+			            '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+			            '</div>' +
+			            '<a href="{3}" target="{4}" data-notify="url"></a>' +
+			            '</div>'
+			        });
+				}
+			}
+		});
+	/*]]>*/</script>
+	<th:block th:include="/controlPanel/snippets/Print"></th:block>
+	
+</html>

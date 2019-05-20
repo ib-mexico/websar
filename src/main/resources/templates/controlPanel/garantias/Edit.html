@@ -1,0 +1,184 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>GARANT&Iacute;A: <th:block th:text="${objGarantia.folio}"></th:block></h2>
+    </div>
+    
+    <ol class="breadcrumb breadcrumb-bg-red">
+      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+    	<li><a th:href="${ {_PATH_} + 'controlPanel/garantias'}"><i class="material-icons">build</i> Garant&iacute;as</a></li>
+    	<li class="active"> Modificaci&oacute;n</li>
+  	</ol>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>Modificar Garant&iacute;a</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<form id="formGarantia" th:action="${ {_PATH_} + 'controlPanel/garantias/' + objGarantia.idGarantia}" th:method="PUT">
+						<div class="row clearfix">
+							<div class="col-md-2">
+								<div class="form-group">	
+									<p><b>Cantidad</b></p>							
+									<div class="form-line">
+										<input type="text" class="form-control" th:value="${objGarantia.cantidad}" readonly="readonly" />
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-6">
+								<div class="form-group">
+									<p><b>Producto *</b></p>								
+									<div class="form-line">
+										<input type="text" class="form-control" th:value="${objGarantia.producto}" readonly="readonly" />
+									</div>
+								</div>
+							</div>
+							
+							
+							<div class="col-md-4">
+								<div class="form-group">
+									<p><b>N&uacute;mero de Serie *</b></p>							
+									<div class="form-line">
+										<input type="text" class="form-control" th:value="${objGarantia.numeroSerie}" readonly="readonly" />
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="row clearfix">
+							<div class="col-md-4">
+	                        	<b>Fecha de Entrega</b>
+	                        	<div class="input-group">
+                        			<span class="input-group-addon">
+                                        <i class="material-icons">date_range</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control text-center" id="txtFechaEntrega" name="txtFechaEntrega" th:attr="data-fecha_entrega=${objGarantia.getEntregaFecha()}" />
+                                    </div>
+								</div>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                            <b>Estatus de Garant&iacute;a *</b>	                            
+	                            <select class="form-control show-tick" name="cmbEstatus" id="cmbEstatus" data-live-search="true" >
+	                            	<th:block th:each="itemEstatus : ${lstGarantiaEstatus}">	                            	
+		                            	<option th:if="${itemEstatus.idGarantiaEstatus == objGarantia.garantiaEstatus.idGarantiaEstatus}" selected="selected"  th:value="${itemEstatus.idGarantiaEstatus}" th:text="${itemEstatus.garantiaEstatus}"></option>
+		                            	<option th:unless="${itemEstatus.idGarantiaEstatus == objGarantia.garantiaEstatus.idGarantiaEstatus}"  th:value="${itemEstatus.idGarantiaEstatus}" th:text="${itemEstatus.garantiaEstatus}"></option>
+	                            	</th:block>
+	                            </select>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                        	<input name="tipoDiagnostico" type="radio" id="rdDOA" class="with-gap radio-col-red" value="doa" th:if="${objGarantia.doa == true}" checked="checked" />
+	                        	<input name="tipoDiagnostico" type="radio" id="rdDOA" class="with-gap radio-col-red" value="doa" th:unless="${objGarantia.doa == true}" />
+                                <label for="rdDOA">DOA</label>
+                                
+                                <input name="tipoDiagnostico" type="radio" id="rdRMA" class="with-gap radio-col-indigo" value="rma" th:if="${objGarantia.rma == true}" checked="checked" />
+                                <input name="tipoDiagnostico" type="radio" id="rdRMA" class="with-gap radio-col-indigo" value="rma" th:unless="${objGarantia.rma == true}" />
+                                <label for="rdRMA">RMA</label>
+	                        </div>
+                  		</div>
+						
+						<div class="row clearfix">
+							<div class="col-md-12">							
+								<div class="form-group">
+									<p><b>Falla</b></p>
+	                              	<div class="form-line">
+	                                  	<textarea rows="4" name="txtFalla" class="form-control no-resize">
+	                                  		<th:block th:utext="${objGarantia.falla}"></th:block>
+	                                  	</textarea>
+	                              	</div>
+	                       		</div>
+							</div>
+						</div>
+						
+						<div class="row clearfix">
+							<div class="col-md-12">							
+								<div class="form-group">
+									<p><b>Diagn&oacute;stico</b></p>
+	                              	<div class="form-line">
+	                                  	<textarea rows="4" name="txtDiagnostico" class="form-control no-resize">
+	                                  		<th:block th:utext="${objGarantia.diagnostico}"></th:block>
+	                                  	</textarea>
+	                              	</div>
+	                       		</div>
+							</div>
+						</div>																																							
+					
+						<div class="row clearfix">
+							<div class="col-md-3 col-md-offset-8 text-right">
+								<a th:href="${ {_PATH_} + 'controlPanel/garantias'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<button type="submit" class="btn btn-primary m-t-15 waves-effect">MODIFICAR</button>
+							</div>
+						</div>
+					</form>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
+			
+		var idUsuario = [[${_USER_.getIdUsuario()}]];
+	
+		$(document).ready(function() {
+			
+			var date = $('#txtFechaEntrega').data('fecha_entrega');
+			
+			//DATEPICKER
+			$('#txtFechaEntrega').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false, minDate : new Date()});
+			
+			if(date != null && date != '') {
+				var arrDate = date.split("-");				
+				$('#txtFechaEntrega').bootstrapMaterialDatePicker('setDate', arrDate[2]+"/"+arrDate[1]+"/"+arrDate[0]);
+			}							
+			
+			// FORM SUBMIT
+			$('#formGarantia').submit(function(e){
+				var flag = false;
+				
+				if(false) {
+					flag = true;
+				}				
+				
+				if(flag) {
+					swal('Hey!', 'Los campos con (*) son obligatorios', 'warning');
+					e.preventDefault();
+				}
+		  	});
+		});
+		
+		$(function () {
+			// VALIDADOR DE FORMULARIO
+			$('#formGarantia').validate({
+		        rules: {
+		            'txtCantidad': {
+		                number: true
+		            }
+		        },
+		        highlight: function (input) {
+		            $(input).parents('.form-line').addClass('error');
+		        },
+		        unhighlight: function (input) {
+		            $(input).parents('.form-line').removeClass('error');
+		        },
+		        errorPlacement: function (error, element) {
+		            $(element).parents('.form-group').append(error);
+		        }
+		    });
+			
+			//Custom Validations ===============================================================================
+		    //Number
+		    $.validator.addMethod('number', function (value, element) {
+		        return value.match('[0-9]+');
+		    },
+		        'Por favor ingresa un n&uacute;mero.'
+		    );
+		});	
+		/*]]>*/</script>
+</th:block>

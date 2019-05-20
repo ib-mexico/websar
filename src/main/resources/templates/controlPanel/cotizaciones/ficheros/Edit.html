@@ -1,0 +1,231 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>Expediente #<th:block th:text="${objFichero.getIdCotizacionFichero()}"></th:block></h2>
+    </div>
+    
+    <ol class="breadcrumb breadcrumb-bg-red">
+      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+    	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">public</i> Cotizaciones</a></li>
+    	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + objFichero.cotizacion.idCotizacion + '/ficheros'}"><i class="material-icons">archive</i> Expedientes</a></li>
+    	<li class="active">Modificar</li>
+  	</ol>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>
+    					MODIFICACI&Oacute;N DE EXPEDIENTE
+    					<small>El m&aacute;ximo de volumen por archivo es de 10MB.</small>	
+    				</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<form id="formFichero" th:action="${ {_PATH_} + 'controlPanel/cotizaciones/' + objFichero.getCotizacion().getIdCotizacion() + '/ficheros/' + objFichero.getIdCotizacionFichero()}" method="POST" enctype="multipart/form-data">
+    					<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    				
+						<div class="row clearfix">
+	                		<div class="col-md-3 col-sm-6">
+	                			<p><b>Tipo de Fichero *</b></p>
+	                            <select class="form-control show-tick" name="cmbTipoFichero" id="cmbTipoFichero" data-live-search="true" >
+	                       			<th:block th:each="itemTipo : ${lstTiposFicheros}" >
+	                       				<option th:if="${itemTipo.idCotizacionTipoFichero == objFichero.cotizacionTipoFichero.idCotizacionTipoFichero}" th:value="${itemTipo.idCotizacionTipoFichero}" th:text="${itemTipo.cotizacionTipoFichero}" selected="selected"></option>
+	                       				<option th:unless="${itemTipo.idCotizacionTipoFichero == objFichero.cotizacionTipoFichero.idCotizacionTipoFichero}" th:value="${itemTipo.idCotizacionTipoFichero}" th:text="${itemTipo.cotizacionTipoFichero}"></option>	                       				
+	                       			</th:block>
+	                       		</select>
+	                		</div>
+	                	</div>
+	                	
+	                	<div class="row clearfix m-t-20">
+	                		<div class="col-md-6">
+	                        	<div class="form-group">
+	                        		<b>Folio de Factura</b>
+	                                <div class="form-line">
+	                                    <input id="txtFolio" type="text" name="txtFolio" class="form-control" th:value="${objFichero.folio}" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-6">
+	                        	<b>Importe</b>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <div class="form-line">
+                                        <input type="text" id="txtImporte" name="txtImporte" class="form-control" th:value="${objFichero.importe}" />
+                                    </div>                                    
+                                </div>
+	                        </div>
+	                	</div>
+	                	
+	                	<div class="row clearfix">
+	                		<div class="col-md-6">
+	                        	<div class="form-group">
+	                        		<b>Proveedor / Cliente</b>
+	                                <div class="form-line">
+	                                    <input id="txtProveedor" type="text" name="txtProveedor" class="form-control" th:value="${objFichero.proveedor}" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-6">
+	                        	<div class="form-group">
+	                        		<b>Banco</b>
+	                                <div class="form-line">
+	                                    <input id="txtBanco" type="text" name="txtBanco" class="form-control" th:value="${objFichero.banco}" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                	</div>
+	                	
+	                	<div class="row clearfix">
+	                		<div class="col-md-6">
+	                        	<b>Fecha Vencimiento</b>
+	                        	<div class="input-group">
+                        			<span class="input-group-addon">
+                                        <i class="material-icons">date_range</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control text-center" id="txtFechaVencimiento" name="txtFechaVencimiento" th:attr="data-fecha_vencimiento=${objFichero.getVencimientoFecha()}" />
+                                    </div>
+								</div>
+	                        </div>
+	                        
+	                        <div class="col-md-6">
+	                        	<div class="form-group">
+	                        		<b>Folio Orden de Compra</b>
+	                                <div class="form-line">
+	                                    <input id="txtFolioOrdenCompra" type="text" name="txtFolioOrdenCompra" class="form-control" th:value="${objFichero.folioOrdenCompra}" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                	</div>
+	                
+	                	<div class="row clearfix">
+	                		<div class="col-md-12">
+	                        	<div class="form-group">
+	                        		<p><b>Observaciones *</b></p>
+	                                <div class="form-line">
+	                                    <input id="txtDescripcion" type="text" name="txtDescripcion" class="form-control" required="required" th:value="${objFichero.observaciones}" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                	</div>
+	                	
+	                	<div class="row clearfix">                	
+		                    <div class="col-md-12">
+	                        	<div class="form-group">
+	                        		<p><b>Fichero *</b></p>
+	                                <div class="form-line">
+	                                    <input id="fichero" type="file" name="fichero" class="form-control" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                	</div>	                
+	                	
+	                	<div class="row clearfix">
+							<div class="col-md-3 col-md-offset-8 text-right">
+								<a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + objFichero.getCotizacion().getIdCotizacion() + '/ficheros'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<button type="submit" class="btn btn-primary m-t-15 waves-effect">MODIFICAR</button>
+							</div>
+						</div>		
+    				</form>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<script type="application/javascript" th:inline="javascript">
+		$(document).ready(function() {
+			
+		var date = $('#txtFechaVencimiento').data('fecha_vencimiento');
+			
+			//DATEPICKER
+			$('#txtFechaVencimiento').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false});
+			
+			if(date != null) {
+				var arrDate = date.split("-");				
+				$('#txtFechaVencimiento').bootstrapMaterialDatePicker('setDate', arrDate[2]+"/"+arrDate[1]+"/"+arrDate[0]);
+			}
+			
+			
+			$('#cmbTipoFichero').change(function() {
+				
+				var idTipoFichero = $(this).val();				
+				
+				switch(idTipoFichero) {
+					case "1":
+						$('#txtFechaVencimiento').attr('disabled', true);
+						
+						$('#txtFechaVencimiento').val('');
+						
+						$('#txtFolio').attr('disabled', false);
+						$('#txtFolioOrdenCompra').attr('disabled', false);
+						$('#txtImporte').attr('disabled', false);
+						$('#txtProveedor').attr('disabled', false);
+						$('#txtBanco').attr('disabled', false);
+						break;
+						
+					case "2":
+						$('#txtImporte').attr('disabled', true);
+						$('#txtProveedor').attr('disabled', true);
+						$('#txtBanco').attr('disabled', true);
+						
+						$('#txtImporte').val('');
+						$('#txtProveedor').val('');
+						$('#txtBanco').val('');
+						
+						$('#txtFolio').attr('disabled', false);
+						$('#txtFolioOrdenCompra').attr('disabled', false);
+						$('#txtFechaVencimiento').attr('disabled', false);
+						break;
+						
+					case "3":
+						$('#txtFechaVencimiento').attr('disabled', true);
+						$('#txtBanco').attr('disabled', true);						
+						
+						$('#txtFechaVencimiento').val('');
+						$('#txtProveedor').val('');
+						$('#txtBanco').val('');
+						
+						$('#txtFolio').attr('disabled', false);
+                        $('#txtProveedor').attr('disabled', false);
+						$('#txtFolioOrdenCompra').attr('disabled', false);
+						$('#txtImporte').attr('disabled', false);
+						break;
+						
+					case "4":
+						$('#txtFechaVencimiento').attr('disabled', true);
+						$('#txtBanco').attr('disabled', true);						
+						
+						$('#txtFechaVencimiento').val('');
+						$('#txtBanco').val('');
+						
+						$('#txtFolio').attr('disabled', false);
+						$('#txtProveedor').attr('disabled', false);
+						$('#txtFolioOrdenCompra').attr('disabled', false);
+						$('#txtImporte').attr('disabled', false);
+						break;
+						
+					case "5":
+						$('#txtImporte').attr('disabled', true);
+						$('#txtFechaVencimiento').attr('disabled', true);
+						$('#txtBanco').attr('disabled', true);
+						$('#txtProveedor').attr('disabled', true);
+						$('#txtFolio').attr('disabled', true);
+						$('#txtFolioOrdenCompra').attr('disabled', true);
+						
+						$('#txtFechaVencimiento').val('');
+						$('#txtImporte').val('');
+						$('#txtFolio').val('');
+						$('#txtFolioOrdenCompra').val('');
+						$('#txtBanco').val('');
+						$('#txtProveedor').val('');
+						break;
+				}
+							
+			});
+		});
+	</script>
+</th:block>

@@ -1,0 +1,691 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Sistema de Administración de Recursos</title>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css' />
+    <link href="https://fonts.googleapis.com/css?family=Poiret+One" rel="stylesheet" type='text/css' />
+    
+    <!-- use the font -->
+   	<style>
+		body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+        }
+        
+		.tituloH1
+		{
+			height:19pt;
+			vertical-align:"middle";
+			color:#000000;
+			font-type:"Arial";
+			font-size:17pt;
+			font-weight:bold;
+			text-align:center;
+		}
+		
+		.tituloH2
+		{
+			height:17pt;
+			vertical-align:"middle";
+			color:#000000;
+			font-type:"Arial";
+			font-size:15pt;
+			font-weight:bold;
+			text-align:center;
+		}
+		
+		.tituloH3
+		{
+			height:15pt;
+			vertical-align:"middle";
+			color:#000000;
+			font-type:"Arial";
+			font-size:13pt;
+			font-weight:bold;
+			text-align:center;
+		}
+		
+		.tituloH4
+		{
+			height:12pt;
+			vertical-align:"middle";
+			color:#000000;
+			font-type:"Arial";
+			font-size:11pt;
+			font-weight:bold;
+			text-align:center;
+		}
+		
+		.tituloH5
+		{
+			height:10pt;
+			vertical-align:"middle";
+			color:#000000;
+			font-type:"Arial";
+			font-size:9pt;
+			font-weight:bold;
+			text-align:center;
+		}
+		
+		.tituloH6
+		{
+			height:10pt;
+			vertical-align:"middle";
+			color:#000000;
+			font-type:"Arial";
+			font-size:7pt;
+			font-weight:bold;
+			text-align:center;
+		}
+		
+		.tituloTH1
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+			
+			background-color:#dddddd;
+			height:20pt;
+			vertical-align:"middle";
+			color:#000000;
+			font-type:"Arial";
+			font-size:16pt;
+			font-weight:bold;
+			text-align:center;
+		}
+		
+		.tituloTH2
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+			
+			background-color:#dddddd;
+			height:16pt;
+			vertical-align:"middle";
+			color:#000000;
+			font-type:"Arial";
+			font-size:14pt;
+			font-weight:bold;
+			text-align:center;
+		}
+		
+		.tituloTH3
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+			
+			background-color:#dddddd;
+			height:14pt;
+			vertical-align:"middle";
+			color:#000000;
+			font-type:"Arial";
+			font-size:12pt;
+			font-weight:normal;
+			text-align:center;
+		}
+		
+		.tituloTH4
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+			
+			background-color:#dddddd;
+			height:12pt;
+			vertical-align:"middle";
+			color:#000000;
+			font-type:"Arial";
+			font-size:10pt;
+			font-weight:normal;
+			text-align:center;
+		}
+		
+		.tituloTH5
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+			
+			background-color:#dddddd;
+			height:10pt;
+			vertical-align:"middle";
+			color:#000000;
+			font-type:"Arial";
+			font-size:8pt;
+			font-weight:normal;
+			text-align:center;
+		}
+		
+		.tituloBoldTH5
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+			
+			background-color:#dddddd;
+			height:10pt;
+			vertical-align:"middle";
+			color:#000000;
+			font-type:"Arial";
+			font-size:8pt;
+			font-weight:bold;
+			text-align:center;
+		}
+		
+		.tituloTH6
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+			
+			background-color:#dddddd;
+			height:10pt;
+			vertical-align:"middle";
+			color:#000000;
+			font-type:"Arial";
+			font-size:7pt;
+			font-weight:normal;
+			text-align:center;
+		}
+		
+		.celdaH1
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+	
+			height:20pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:16pt;
+			font-weight:normal;
+			text-align:center;
+		}
+		
+		.celdaH2
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+	
+			height:16pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:14pt;
+			font-weight:normal;
+			text-align:center;
+		}
+		
+		.celdaH3
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+	
+			height:14pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:11pt;
+			font-weight:normal;
+			text-align:center;
+		}
+		
+		.celdaH4
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+	
+			height:12pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:10pt;
+			font-weight:normal;
+			text-align:center;
+		}
+		
+		.celdaH5
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+	
+			height:10pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:8pt;
+			font-weight:normal;
+			text-align:center;
+		}
+		
+		.celdaTLH5
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+	
+			height:10pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:8pt;
+			font-weight:bold;
+			text-align:left;
+		}
+		
+		.celdaH6
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+	
+			height:10pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:7pt;
+			font-weight:normal;
+			text-align:center;
+		}
+		
+		.celdaH6NB
+		{
+			border-top-color:#FFFFFF;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			border-bottom-color:#FFFFFF;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+			
+			border-left-color:#000000;
+			border-left-width:1pt;
+			border-left-style:inset;
+			
+			border-right-color:#000000;
+			border-right-width:1pt;
+			border-right-style:inset;
+	
+			height:10pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:7pt;
+			font-weight:normal;
+			text-align:center;
+		}
+		
+		.subrayadoH1
+		{
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+	
+			height:15pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:16pt;
+			font-weight:normal;
+			text-align:left;
+			text-indent: 10px;
+		}
+		
+		.subrayadoH2
+		{
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+	
+			height:15pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:14pt;
+			font-weight:normal;
+			text-align:left;
+			text-indent: 10px;
+		}
+		
+		.subrayadoH3
+		{
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+	
+			height:14pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:12pt;
+			font-weight:normal;
+			text-align:left;
+			text-indent: 10px;
+		}
+		
+		.subrayadoH4
+		{
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+	
+			height:12pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:10pt;
+			font-weight:normal;
+			text-align:left;
+			text-indent: 10px;
+		}
+		
+		.subrayadoH5
+		{
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+	
+			height:10pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:8pt;
+			font-weight:normal;
+			text-align:left;
+			text-indent: 10px;
+		}
+		
+		.subrayadoH6
+		{
+			border-bottom-color:#000000;
+			border-bottom-width:1pt;
+			border-bottom-style:inset;
+	
+			height:10pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:6pt;
+			font-weight:normal;
+			text-align:left;
+			text-indent: 10px;
+		}
+		
+		.textoH1
+		{	
+			height:17pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:15pt;
+			font-weight:normal;
+			text-align:left;
+		}
+		
+		.textoH2
+		{	
+			height:15pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:13pt;
+			font-weight:normal;
+			text-align:left;
+		}
+		
+		.textoH3
+		{	
+			height:13pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:11pt;
+			font-weight:normal;
+			text-align:left;
+		}
+		
+		.textoH4
+		{	
+			height:10pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:9pt;
+			font-weight:normal;
+			text-align:left;
+		}
+		
+		.textoH5
+		{	
+			height:10pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:7pt;
+			font-weight:normal;
+			text-align:left;
+		}
+		
+		.textoH6
+		{	
+			height:10pt;
+			vertical-align:"bottom";
+			color:#000000;
+			font-type:"Arial";
+			font-size:6pt;
+			font-weight:normal;
+			text-align:left;
+		}
+
+		
+		.textoFirma
+		{
+			border-top-color:#000000;
+			border-top-width:1pt;
+			border-top-style:inset;
+			
+			height:15pt;
+			vertical-align:"middle";
+			color:#000000;
+			font-type:"Arial";
+			font-size:9pt;
+			font-weight:normal;
+			text-align:center;
+		}
+		
+		.subtexto
+		{
+			color:#000000;
+			font-type:"Arial";
+			font-size:7pt;
+			font-weight:normal;
+			text-align:center;
+		}
+	</style>
+</head>
+<body style="margin: 0; padding: 0;" bgcolor="#eaeaea">
+
+	<th:block th:include="${_TEMPLATE_} :: body" />
+
+	<th:block th:include="${_TEMPLATE_} :: script" />
+</body>
+</html>

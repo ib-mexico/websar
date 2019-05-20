@@ -1,0 +1,60 @@
+<aside id="leftsidebar" class="sidebar">
+
+	<!-- User Info -->
+    <div class="user-info">
+        <div class="image">
+            <img th:if="${_USER_.getImagen() != null}" th:src="@{'/ficheros/usuarios/' + ${_USER_.getImagen()}}" width="48" height="48" alt="User" />
+            <img th:unless="${_USER_.getImagen() != null}" th:src="@{/assets/images/user.png}" width="48" height="48" alt="User" />
+        </div>
+        <div class="info-container">
+            <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><th:block th:text="${_USER_.getNombreCompleto()}" /></div>
+            <div class="email"><th:block th:text="${_USER_.getUsername()}" /></div>
+            <div class="btn-group user-helper-dropdown">
+                <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
+                <ul class="dropdown-menu pull-right">
+                    <li><a th:href="${ {_PATH_} + 'controlPanel/miPerfil'}"><i class="material-icons">person</i>Perfil</a></li>
+                    <li role="seperator" class="divider"></li>
+                    <li>
+                    	<form th:action="${ {_PATH_} + 'logout'}" method="post" name="frmCerrarSesion" id="frmCerrarSesion">
+                    		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    	</form>
+                    	<a class="logout" form="frmCerrarSesion"><i class="material-icons">input</i>Cerrar Sesi&oacute;n</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- #User Info -->
+	
+	
+	<!-- Menu -->
+	<div class="menu">
+		<ul class="list">
+        	<li class="header">MEN&Uacute; PRINCIPAL</li>
+        	<li id="menu-home" class="active"><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i><span>INICIO</span></a></li>
+        	<th th:each="categoria : ${_ROLES_MENU_}">
+       			<li>
+	                <a href="javascript:void(0);" class="menu-toggle">
+	                    <i class="material-icons"><th:block th:text="${categoria.key.icono}" /></i>
+	                    <span><th:block th:text="${categoria.key.rolCategoria}" /></span>
+   	                </a>
+                    <ul class="ml-menu">
+                    	<li th:each="rol : ${categoria.value}"><a th:href="${ {_PATH_} + 'controlPanel/' + {rol.url}}"><th:block th:text="${rol.label}" /></a></li>
+                    </ul>
+               	</li>
+        	</th>
+        </ul>
+	</div>
+	<!-- #Menu -->
+	
+	<!-- Footer -->
+   	<div class="legal">
+    	<div class="copyright">
+        	&copy; 2018 - 2019 <a href="javascript:void(0);">IB-M&eacute;xico - SAR</a>.
+       	</div>
+       	<div class="version">
+           <b>Version: </b> <th:block th:text="${_VERSION_}"></th:block>
+       	</div>
+   	</div>
+   	<!-- #Footer -->
+</aside>

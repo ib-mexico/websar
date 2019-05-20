@@ -1,0 +1,425 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>COTIZACIONES</h2>
+    </div>
+    
+    <ol class="breadcrumb breadcrumb-bg-red">
+      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+    	<li class="active"><i class="material-icons">view_list</i> Cotizaciones</li>
+  	</ol>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>LISTA DE COTIZACIONES</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<div class="row clearfix" id="dtCotizacionesToolBar" data-toolbar-align="left">
+						<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+   								<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupDesde'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
+	                           	</div>
+							</div>
+    					</div>
+    					
+    					<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+    							<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupHasta'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
+	                           	</div>
+							</div>
+    					</div>							
+					</div>
+					
+					<div class="table-responsive">
+						<div class="container">						
+							<table id="dtCotizaciones" class="table table-bordered table-striped table-hover">
+								<thead>
+									<tr>
+										<th data-width="10%" data-field="idCotizacion" data-halign="left" data-align="center">ID</th>
+										<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+										<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
+										<th data-width="20%" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>
+										<th data-width="40%" data-field="concepto" data-halign="left">Concepto</th>
+																			
+										<th data-width="20%" data-field="subtotal" data-halign="left" data-align="right">Subtotal</th>
+										<th data-width="20%" data-field="iva" data-halign="left" data-align="right" data-visible="false">Iva</th>
+										<th data-width="20%" data-field="total" data-halign="left" data-align="right">Total</th>
+										
+										<th data-width="25%" data-field="requisicion_folio" data-halign="center" data-visible="false">Folio Requisici&oacute;n</th>
+										<th data-width="30%" data-field="usuario" data-halign="center">Usuario</th>
+										<th data-width="30%" data-field="cliente" data-halign="center">Cliente</th>
+										<th data-width="30%" data-field="ejecutivo" data-halign="center">Ejecutivo</th>
+										
+										<th data-width="150px" data-field="creacionFecha" data-halign="center">Creaci&oacute;n Fecha</th>														
+									</tr>
+								</thead>
+							</table>		
+						</div>
+					</div>
+					
+    			</div>
+    		</div>
+    	</div>
+    </div>
+    
+    <!-- ESTATUS COTIZACION MODAL -->
+    <div class="modal fade" id="popUpEstatus" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            	<form id="formEstatus" th:action="${ {_PATH_} + 'controlPanel/cotizaciones/modificar-estatus'}" th:method="POST">
+	                <div class="modal-header">
+	                    <h4 class="modal-title">Modificar Estatus de Cotizaci&oacute;n</h4>
+	                </div>
+	                <div class="modal-body">                	
+	                    <input type="hidden" id="hddIdCotizacion" name="hddIdCotizacion" value="" />
+	                    <div class="row m-t-20">
+	                    	<div class="col-md-4">
+								<div class="form-group">
+		                       		<p><b>Cotizaci&oacute;n</b></p>
+	                               <div class="form-line">
+	                                   <input type="text" id="txtCotizacion" class="form-control" readonly="readonly" />
+	                               </div>
+	                           </div>
+							</div>
+							
+							<div class="col-md-4">
+								<p><b>Estatus *</b></p>					
+	                            <select class="form-control show-tick" name="cmbEstatus" id="cmbEstatus" data-live-search="true" >
+	                            	<th:block th:each="itemEstatus : ${lstCotizacionEstatus}">
+	                            		<th:block th:if="${rolCotizacionCobranza}">	                            		
+			                            	<option th:value="${itemEstatus.idCotizacionEstatus}" th:text="${itemEstatus.cotizacionEstatus}"></option>
+	                            		</th:block>
+	                            		
+	                            		<th:block th:unless="${rolCotizacionCobranza}">
+	                            			<th:block th:if="${itemEstatus.idCotizacionEstatus != 3 and itemEstatus.idCotizacionEstatus != 4}">
+	                            				<option th:value="${itemEstatus.idCotizacionEstatus}" th:text="${itemEstatus.cotizacionEstatus}"></option>
+	                            			</th:block>
+	                            		</th:block>	                          	
+	                            	</th:block>
+	                       		</select>
+							</div>	
+	                    </div>
+	                    
+	                    <hr />
+	                    
+	                    <div id="divFactura" class="row">
+	                    	<div class="col-md-4">
+								<b>Factura/fecha</b>
+	                        	<div class="input-group">
+	                       			<span class="input-group-addon">
+	                                       <i class="material-icons">date_range</i>
+	                                   </span>
+	                                   <div class="form-line">
+	                                       <input type="text" class="form-control text-center" id="txtFacturaFecha" name="txtFacturaFecha" />
+	                                   </div>
+								</div>
+							</div>
+							
+							<div class="col-md-6">
+								<div class="form-group">
+		                       		<b>Factura/n&uacute;mero</b>
+	                               <div class="form-line">
+	                                   <input type="text" id="txtFacturaNumero" name="txtFacturaNumero" class="form-control" />
+	                               </div>
+	                           </div>
+							</div>	
+	                    </div>
+	                    
+	                    <div id="divPago" class="row hide">
+	                    	<div class="col-md-4">
+								<b>Pago/fecha</b>
+	                        	<div class="input-group">
+	                       			<span class="input-group-addon">
+	                                       <i class="material-icons">date_range</i>
+	                                   </span>
+	                                   <div class="form-line">
+	                                       <input type="text" class="form-control text-center" id="txtPagoFecha" name="txtPagoFecha" />
+	                                   </div>
+								</div>
+							</div>
+							
+							<div class="col-md-6">
+								<div class="form-group">
+		                       		<b>Pago/referencia</b>
+	                               <div class="form-line">
+	                                   <input type="text" id="txtPagoReferencia" name="txtPagoReferencia" class="form-control" />
+	                               </div>
+	                           </div>
+							</div>	
+	                    </div>                    
+	                </div>
+	                <div class="modal-footer">
+	                    <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">CERRAR</button>
+	                    <button id="btnCambioEstatus" type="submit" class="btn btn-primary waves-effect">ACTUALIZAR</button>
+	                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script type="application/javascript" th:inline="javascript">
+	
+		var rolExpediente = [[${rolCotizacionExpediente}]];
+	
+		$(document).ready(function() {			
+			$("#dtCotizaciones").bootstrapTable({
+				url					: [[@{/controlPanel/cotizaciones/table}]],
+				method				: 'post',
+				contentType 		: 'application/x-www-form-urlencoded',
+				sidePagination		: "server",
+				pagination			: true,
+				showColumns			: true,
+				showToggle 			: true,
+				showRefresh 		: true,
+				search				: true,
+				showExport			: true,
+				striped				: true,
+				pageSize 			: 50,
+				pageList			: [100, 500, 1000, 5000],
+				exportTypes			: ["excel"],
+				toolbar				: "#dtCotizacionesToolBar",
+				queryParams 		: function(params) {
+											params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
+											params['txtBootstrapTableDesde'] = $('#txtBootstrapTableDesde').val();
+											params['txtBootstrapTableHasta'] = $('#txtBootstrapTableHasta').val();
+								        	return params;
+			    						},
+			    onLoadSuccess		: function(data) {
+			    	$(".clone-cotizacion").click(function() {
+						var idCotizacion = $(this).attr('data-cotizacion');
+						swal({
+							title	: "Clonaci&oacute;n de cotizaci&oacute;n",
+							text	: "La cotizacion se duplicara en el sistema.",
+							type	: "warning",
+							showCancelButton: true,
+							cancelButtonText: 'Cancelar',
+							confirmButtonText: 'Clonar',
+						}).then((result) => {
+							if(result) {
+								
+								$.ajax({
+									url			: [[@{/controlPanel/cotizaciones/}]] + idCotizacion + '/clone',
+									data		: {
+													idCotizacion : idCotizacion, 
+													[[${_csrf.parameterName}]] : [[${_csrf.token}]]
+									},							        
+									dataType	: 'json',
+									type		: "POST",
+									success		: function(data) {
+										if(data.respuesta) {				
+											$("#dtCotizaciones").bootstrapTable('refresh');
+											swal(data.titulo, data.mensaje,'success');
+										}
+									},
+									error		: function(e) {
+										console.log(e);										
+									}
+								});																													
+							}
+						}).catch(swal.noop);
+					});
+			    }
+			});
+			
+			$('#cmbEstatus').change(function() {
+				var value = $(this).val();
+				
+				switch(value) {
+					case "1":
+					case "2":
+					case "5":
+						$('#divFactura').addClass('hide');
+						$('#divPago').addClass('hide');
+						$('#txtFacturaFecha').attr('disabled', true);
+						$('#txtPagoFecha').attr('disabled', true);
+						$('#txtFacturaNumero').attr('disabled', true);
+						$('#txtPagoReferencia').attr('disabled', true);
+						break;
+						
+					case "3":		
+						$('#divFactura').removeClass('hide');
+						$('#divPago').addClass('hide');
+						$('#txtPagoFecha').attr('disabled', true);
+						$('#txtFacturaFecha').attr('disabled', false);
+						$('#txtFacturaNumero').attr('disabled', false);
+						$('#txtPagoReferencia').attr('disabled', true);
+						break;
+						
+					case "4":
+						$('#divFactura').removeClass('hide');
+						$('#divPago').removeClass('hide');
+						$('#txtFacturaFecha').attr('disabled', false);
+						$('#txtPagoFecha').attr('disabled', false);
+						$('#txtFacturaNumero').attr('disabled', false);
+						$('#txtPagoReferencia').attr('disabled', false);
+						break;
+				}
+			});
+			
+			$('#formEstatus').submit(function(e){
+				e.preventDefault();
+				$('#btnCambioEstatus').addClass('disabled');
+				
+				var formData = $('#formEstatus').serialize();
+				
+				$.ajax({
+					url					: $('#formEstatus').attr('action'),
+					dataType			: 'json',
+					data				: formData,
+					type				: "POST",
+					success				: function(data) {
+						if(data.respuesta) {
+							swal(data.titulo, data.mensaje, 'success');
+							$("#dtCotizaciones").bootstrapTable('refresh');
+							$('#popUpEstatus').modal('hide');
+						} else{
+							$('#btnCambioEstatus').removeClass('disabled');
+							swal('Error!', 'Ocurrio un error al modificar el estatus, verifique su informacion.', 'error');
+						}
+					},
+					error				: function(e) {
+						console.log(e);
+					}
+				});
+		  	});
+					
+		});
+			
+		function accionesFormatter(value, row, index) {
+			
+			urlEdit = [[@{/controlPanel/cotizaciones/}]] + row.idCotizacion + '/edit';
+			urlPartidas = [[@{/controlPanel/cotizaciones/}]] + row.idCotizacion + '/partidas';
+			urlPdf = [[@{/controlPanel/cotizaciones/}]] + row.idCotizacion + '/pdf';
+			urlFicheros = [[@{/controlPanel/cotizaciones/}]] + row.idCotizacion + '/ficheros';
+			urlOrdenes = [[@{/controlPanel/cotizaciones/}]] + row.idCotizacion + '/ordenesServicios';
+			
+		    return [
+		    	'<a href="' + urlEdit + '" title="Editar">',
+	        		'<i class="material-icons">mode_edit</i>',
+	        	'</a>',
+	        	'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
+		        	'<i class="material-icons">flip_to_front</i>',
+		        '</a>',
+	        	'<a href="' + urlPartidas + '" title="Partidas">',
+	        		'<i class="material-icons">format_list_numbered</i>',
+	        	'</a>',
+	        	'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
+	        		'<i class="material-icons">assignment_turned_in</i>',
+	        	'</a>',
+	        	'<a href="' + ((rolExpediente)?urlFicheros:'#') + '" title="Ficheros">',
+	        		'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
+	        	'</a>',
+	        	'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+	        		'<i class="material-icons">print</i>',
+	        	'</a>'
+		    ].join(' ');
+		}
+			
+		function estatusFormatter(value, row, index) {
+			
+			var lblEstatus = '';
+			
+			switch(row.idEstatus) {
+				case 1:
+					lblEstatus = '<a type="button" class="btn bg-black waves-effect" onclick="cambioEstatus('+row.idCotizacion+')">'+ row.estatus +'</a>';
+				break;
+				
+				case 2:
+					lblEstatus = '<a type="button" class="btn bg-blue waves-effect" onclick="cambioEstatus('+row.idCotizacion+')">'+ row.estatus +'</a>';
+				break;
+				
+				case 3:
+					lblEstatus = '<a type="button" class="btn bg-indigo waves-effect" onclick="cambioEstatus('+row.idCotizacion+')">'+ row.estatus +'</a>';
+				break;
+				
+				case 4:
+					lblEstatus = '<a type="button" class="btn bg-green waves-effect">'+ row.estatus +'</a>';
+				break;
+				
+				case 5:
+					lblEstatus = '<a type="button" class="btn bg-red waves-effect">'+ row.estatus +'</a>';
+				break;
+				
+			}
+			
+			return lblEstatus;
+		}
+		
+		function cambioEstatus(idCotizacion) {
+			
+			$('#hddIdCotizacion').val('');
+			$('#txtCotizacion').val('');
+			$('#txtFacturaNumero').val('');
+			$('#txtPagoReferencia').val('');
+			//$('#txtFacturaFecha').bootstrapMaterialDatePicker('destroy');
+			//$('#txtPagoFecha').bootstrapMaterialDatePicker('destroy');
+			
+			
+			$.ajax({
+				url			: [[@{/controlPanel/cotizaciones/}]] + idCotizacion + '/get-cotizacion',							        
+				dataType	: 'json',
+				type		: "GET",
+				success		: function(data) {
+					if(data.respuesta) {
+						$('#hddIdCotizacion').val(idCotizacion);
+						$('#txtCotizacion').val(data.folio);
+						$('#txtFacturaNumero').val(data.facturaNumero);
+						$('#txtPagoReferencia').val(data.pagoReferencia);
+						
+						if(data.facturacionFecha != '') {
+							var arrDate1 = data.facturacionFecha.split("-");
+							$('#txtFacturaFecha').bootstrapMaterialDatePicker('_onClearClick');
+							$('#txtFacturaFecha').bootstrapMaterialDatePicker('setDate', arrDate1[2]+"/"+arrDate1[1]+"/"+arrDate1[0]);
+						}
+						
+						if(data.pagoFecha != '') {
+							var arrDate2 = data.pagoFecha.split("-");
+							$('#txtPagoFecha').bootstrapMaterialDatePicker('_onClearClick');
+							$('#txtPagoFecha').bootstrapMaterialDatePicker('setDate', arrDate2[2]+"/"+arrDate2[1]+"/"+arrDate2[0]);
+						}
+						
+						$('#cmbEstatus').val(data.idEstatus).change();						
+						$('#btnCambioEstatus').removeClass('disabled');
+						$('#popUpEstatus').modal('show');
+					}
+				},
+				error		: function(e) {
+					console.log(e);										
+				}
+			});	
+		}
+		
+		$('#txtFacturaFecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+		$('#txtPagoFecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+			
+		//Datetimepicker plugin
+		$(function () {
+			$('#txtBootstrapTableHasta').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+			$('#txtBootstrapTableDesde').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false}).on('change', function(e, date)
+			{
+				$('#txtBootstrapTableHasta').bootstrapMaterialDatePicker('setMinDate', date);
+			});
+			
+			$('#txtFacturaFecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+			$('#txtPagoFecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+			
+	 	});						
+	</script>
+</th:block>

@@ -1,0 +1,200 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>GARANT&Iacute;AS</h2>
+    </div>
+    
+    <ol class="breadcrumb breadcrumb-bg-red">
+      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+    	<li class="active"><i class="material-icons">build</i> Garant&iacute;as</li>
+  	</ol>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>LISTA DE GARANT&Iacute;AS</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<div class="row clearfix" id="dtGarantiasToolBar" data-toolbar-align="left">
+						<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+   								<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupDesde'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
+	                           	</div>
+							</div>
+    					</div>
+    					
+    					<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+    							<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupHasta'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
+	                           	</div>
+							</div>
+    					</div>							
+					</div>
+					
+					<div class="table-responsive">
+						<div class="container">						
+							<table id="dtGarantias" class="table table-bordered table-striped table-hover">
+								<thead>
+									<tr>
+										<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
+										<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+										<th data-width="30%" data-formatter="progresoFormatter" data-align="center">Progreso</th>
+										<th data-width="20%" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>										
+										<th data-width="30%" data-field="cliente" data-halign="center" data-align="left">Cliente</th>
+										<th data-width="30%" data-field="contacto" data-halign="center" data-align="left">Contacto</th>								
+										<th data-width="40%" data-field="producto" data-halign="center" data-align="left">Producto</th>
+
+										
+										<th data-width="20%" data-field="creacionUsuario" data-halign="center" data-align="center">Creaci&oacute;n/Usuario</th>
+										<th data-width="20%" data-field="creacionFecha" data-halign="center" data-align="center">Creaci&oacute;n/Fecha</th>																			
+									</tr>
+								</thead>
+							</table>		
+						</div>
+					</div>
+					
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script type="application/javascript" th:inline="javascript">
+		$(document).ready(function() {			
+			$("#dtGarantias").bootstrapTable({
+				url					: [[@{/controlPanel/garantias/table}]],
+				method				: 'post',
+				contentType 		: 'application/x-www-form-urlencoded',
+				sidePagination		: "server",
+				pagination			: true,
+				showColumns			: true,
+				showToggle 			: true,
+				showRefresh 		: true,
+				search				: true,
+				showExport			: true,
+				striped				: true,
+				pageSize 			: 50,
+				exportTypes			: ["excel"],
+				toolbar				: "#dtGarantiasToolBar",
+				queryParams 		: function(params) {
+											params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
+											params['txtBootstrapTableDesde'] = $('#txtBootstrapTableDesde').val();
+											params['txtBootstrapTableHasta'] = $('#txtBootstrapTableHasta').val();
+								        	return params;
+			    						}
+			});
+					
+		});
+			
+		function accionesFormatter(value, row, index) {
+			
+			urlEdit = [[@{/controlPanel/garantias/}]] + row.idGarantia + '/edit';
+			urlPdf = [[@{/controlPanel/garantias/}]] + row.idGarantia + '/pdf';
+			urlFirma = [[@{/controlPanel/garantias/}]] + row.idGarantia + '/firma';
+			
+			if(row.nombreRecibe == null || row.nombreRecibe == '') {
+				return [
+			    	'<a href="' + urlEdit + '" title="Editar">',
+		        		'<i class="material-icons" >mode_edit</i>',
+		        	'</a>',
+		        	'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+		        		'<i class="material-icons">print</i>',
+		        	'</a>',
+			    ].join(' ');
+			} else {				
+			    return [
+			    	'<a title="Deshabilitado" >',
+		        		'<i class="material-icons" style="color:grey">mode_edit</i>',
+		        	'</a>',
+		        	'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+		        		'<i class="material-icons">print</i>',
+		        	'</a>',
+			    ].join(' ');
+			}
+			
+		}
+		
+		function progresoFormatter(value, row, index) {
+			var progressBar = '';
+			
+			switch(row.idEstatus) {
+				case 1:
+					progressBar = '<div class="progress">';
+						progressBar += '<div class="progress-bar bg-blue" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%"></div>';
+                    progressBar += '</div>';
+				break;
+					
+				case 2:
+					progressBar = '<div class="progress">';
+						progressBar += '<div class="progress-bar bg-orange" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%"></div>';
+	                progressBar += '</div>';
+				break;
+					
+				case 3:
+					progressBar = '<div class="progress">';
+						progressBar += '<div class="progress-bar bg-red" role="progressbar" aria-valuenow="79" aria-valuemin="0" aria-valuemax="100" style="width: 79%"></div>';
+	                progressBar += '</div>';
+				break;
+					
+				case 4:
+					progressBar = '<div class="progress">';
+						progressBar += '<div class="progress-bar bg-green" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>';
+	                progressBar += '</div>';
+				break;
+			
+			}
+			
+			return progressBar;
+		}
+		
+		function estatusFormatter(value, row, index) {
+			var lblEstatus = '';
+			
+			switch(row.idEstatus) {
+				case 1:
+					lblEstatus = '<span class="label bg-blue">'+ row.estatus +'</span>';
+				break;
+					
+				case 2:
+					lblEstatus = '<span class="label bg-orange">'+ row.estatus +'</span>';
+				break;
+					
+				case 3:
+					lblEstatus = '<span class="label bg-red">'+ row.estatus +'</span>';
+				break;
+					
+				case 4:
+					lblEstatus = '<span class="label bg-green">'+ row.estatus +'</span>';
+				break;
+			
+			}
+			
+			return lblEstatus;
+		}
+			
+		//Datetimepicker plugin
+		$(function () {
+			$('#txtBootstrapTableHasta').bootstrapMaterialDatePicker({format: 'MM/DD/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+			$('#txtBootstrapTableDesde').bootstrapMaterialDatePicker({format: 'MM/DD/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false}).on('change', function(e, date)
+			{
+				$('#txtBootstrapTableHasta').bootstrapMaterialDatePicker('setMinDate', date);
+			});					
+			
+	 	});						
+	</script>
+</th:block>

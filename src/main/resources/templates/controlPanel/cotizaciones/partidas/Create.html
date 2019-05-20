@@ -1,0 +1,210 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>COTIZACIONES</h2>
+    </div>
+    
+    <ol class="breadcrumb breadcrumb-bg-red">
+      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+    	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">public</i> Cotizaciones</a></li>
+    	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + objCotizacion.idCotizacion + '/partidas'}"><i class="material-icons">format_list_numbered</i>Partidas</a></li>
+    	<li class="active"> Nuevo</li>
+  	</ol>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>Nueva Partida</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<form id="formPartida" th:action="${ {_PATH_} + 'controlPanel/cotizaciones/' + objCotizacion.idCotizacion + '/partidas'}" method="POST">
+    					<input type="hidden" name="hddIdCotizacion" id="hddIdCotizacion" th:value="${objCotizacion.idCotizacion}" />
+    					<input type="hidden" name="txtCantidad" id="txtCantidad" value="1" />
+    					<input type="hidden" name="txtPrecioUnitarioLista" id="txtPrecioUnitarioLista" value="0" />
+    					<input type="hidden" name="txtDescuento" id="txtDescuento" value="0" />
+    				
+						<div class="row clearfix">
+	                        <div class="col-md-6">
+	                        	<div class="form-group">
+	                        		<p><b>No. parte *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtNumeroParte" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-3">
+	                        	<div class="form-group">
+	                        		<p><b>Tiempo de entrega *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtTiempoEntrega" class="form-control" placeholder="D&iacute;as h&aacute;biles" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+						</div>
+						
+						<div class="row clearfix">
+							<div class="col-md-12">
+								<div class="form-group">
+	                        		<p><b>Descripci&oacute;n *</b></p>
+                                    <div class="form-line">
+                                        <textarea rows="6" name="txtDescripcion" class="form-control no-resize" placeholder="..." required="required"></textarea>
+                                    </div>
+                                 </div>
+							</div>
+						</div>						
+						
+						<div class="row clearfix">
+	                        <div class="col-md-3">
+                        		<b>Cantidad *</b>
+	                        	<div class="input-group">
+	                                <div class="form-line">
+	                                    <input type="text" id="txtCantidadF" name="txtCantidadF" class="form-control" value="1" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-3">
+	                        	<b>P/U Lista *</b>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="material-icons">attach_money</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" id="txtPrecioUnitarioListaF" name="txtPrecioUnitarioListaF" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': true, 'placeholder': '0'" value="0" class="form-control" />
+                                    </div>
+                                </div>
+	                        </div>
+	                        
+	                        <div class="col-md-3">
+	                        	<b>Descuento</b>
+	                        	<div class="input-group">
+	                                <div class="form-line">
+	                                    <input type="text" id="txtDescuentoF" name="txtDescuentoF" maxlength="6" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0'" class="form-control" value="0" required="required" />
+	                                </div>
+	                                <span class="input-group-addon">
+                                       <b>%</b>
+                                    </span>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-3">
+	                        	<b>Total</b>
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="material-icons">attach_money</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" id="txtTotalF" data-inputmask="'alias': 'numeric', 'groupSeparator': ',', 'autoGroup': true, 'digits': 2, 'digitsOptional': false, 'placeholder': '0'" value="0" class="form-control" readonly="readonly" />
+                                    </div>
+                                </div>
+	                        </div>
+						</div>
+					
+						<div class="row clearfix">
+							<div class="col-md-3 col-md-offset-8 text-right">
+								<a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + objCotizacion.idCotizacion + '/partidas'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<button type="submit" class="btn btn-primary m-t-15 waves-effect">CREAR</button>
+							</div>
+						</div>
+					</form>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/			
+	
+		$(document).ready(function() {
+			//Masked Input =====================================================			
+		    $('#txtPrecioUnitarioLista').inputmask();
+		    $('#txtDescuento').inputmask();
+		    $('#txtTotal').inputmask();
+
+			
+			// FORM SUBMIT
+			$('#formPartida').submit(function(e){
+				var flag = false;	
+				var cantidad = parseInt($('#txtCantidad').inputmask('unmaskedvalue'));
+				var precio = $('#txtPrecioUnitarioListaF').inputmask('unmaskedvalue');
+				var descuento = $('#txtDescuentoF').inputmask('unmaskedvalue');
+				
+				if(precio.includes(',') || descuento.includes(',')) {
+					swal('Hey!', 'Las cantidades numericas no pueden llevar ",", "$", "%".', 'warning');
+					e.preventDefault();
+				}				
+				
+				
+				if(cantidad <= 0) {
+					swal('Hey!', 'Es necesario tener al menos una unidad en el campo cantidad.', 'warning');
+					e.preventDefault();
+				}
+		  	});
+			
+			$('#txtCantidadF').focusout(function() {
+				calcularTotales();
+			});
+			
+			$('#txtPrecioUnitarioListaF').focusout(function() {
+				calcularTotales();
+			});
+			
+			$('#txtDescuentoF').focusout(function() {
+				calcularTotales();
+			});
+			
+			function calcularTotales() {
+				var cantidad = parseInt($('#txtCantidadF').inputmask('unmaskedvalue'));
+				var precio = parseFloat($('#txtPrecioUnitarioListaF').inputmask('unmaskedvalue'));
+				var descuento = parseFloat($('#txtDescuentoF').inputmask('unmaskedvalue'));
+				var total = 0;
+				
+				if(cantidad > 0) {
+					total = (precio - ((descuento / 100) * precio)) * cantidad;
+					$('#txtCantidad').val(cantidad);
+					$('#txtPrecioUnitarioLista').val(precio);
+					$('#txtDescuento').val(descuento);
+					$('#txtTotalF').val(total);
+				}				
+			}
+		});
+		
+		
+		$(function () {
+			// VALIDADOR DE FORMULARIO
+			$('#formPartida').validate({
+		        rules: {
+		            'txtCantidadF': {
+		                number: true
+		            },
+		            'txtPrecioUnitarioListaF': {
+		                number: true
+		            },
+		            'txtDescuentoF': {
+		                number: true
+		            }
+		        },
+		        highlight: function (input) {
+		            $(input).parents('.form-line').addClass('error');
+		        },
+		        unhighlight: function (input) {
+		            $(input).parents('.form-line').removeClass('error');
+		        },
+		        errorPlacement: function (error, element) {
+		            $(element).parents('.input-group').append(error);
+		        }
+		    });
+			
+			//Custom Validations ===============================================================================
+		    //Number
+		    $.validator.addMethod('number', function (value, element) {
+		        return value.match('[0-9]+');
+		    },
+		        'Por favor ingresa un n&uacute;mero.'
+		    );
+		});				
+		/*]]>*/</script>
+</th:block>

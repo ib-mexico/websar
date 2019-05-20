@@ -1,0 +1,23 @@
+<th:block th:if="${action != null}">
+	<div class="row">
+		<div class="col-xs-12">
+			<div th:if="${action}" class="alert bg-green alert-dismissible" role="alert" >
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  	<h4>
+			  		<th:block th:text="${title}"></th:block>
+			  		<small th:text="${code}" style="color: #fff;"></small>
+			  	</h4>
+			  	<th:block th:text="${simpleMessage}"></th:block>			  
+			</div>
+			
+			<div th:if="${!action}" class="alert alert-warning alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  	<h4>
+			  		<th:block th:text="${title}"></th:block>
+			  		<small th:text="${code}"  style="color: #fff;"></small>
+			  	</h4>
+			  	<th:block th:text="${simpleMessage}"></th:block>			  
+			</div>
+		</div>
+	</div>
+</th:block>

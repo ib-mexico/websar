@@ -1,0 +1,273 @@
+<th:block th:fragment="body">
+	<!--/* HEADER */-->
+	<table width="100%">
+		<tr>			
+			<td style="width:129px;">
+				<img th:src="@{'http://localhost:8080/WebSar/assets/images/' + ${objCotizacion.empresa.logotipo}}" />
+			</td>
+			
+			<td style="width:5px"></td>
+			<td style="width:268px">
+				<table width="100%">
+				<tr>
+					<td class="tituloH2" th:text="${objCotizacion.concepto}"></td>
+				</tr>
+				</table>
+			</td>
+			<td style="width:5px"></td>
+				
+			
+			<td style="width:168px">
+				<table width="100%">
+					<tr>
+						<td class="tituloTH2">COTIZACI&Oacute;N</td>
+					</tr>
+					
+					<tr>
+						<td class="celdaH3" th:text="${objCotizacion.folio}"></td>
+					</tr>
+				</table>
+			</td>
+			
+		</tr>
+	</table>
+	
+	<!--/* GENERAL INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 30px;">
+		<tr>
+			<td class="tituloH5" width="56" style="text-align:left">Cliente:</td>
+			<td class="subrayadoH5" width="270" th:text="${objCotizacion.cliente.cliente}"></td>
+			<td class="tituloH5" width="96" style="text-align:left">Fecha de solicitud:</td>
+			<td class="subrayadoH5" style="text-align:center; text-indent:0" width="154" th:text="${objCotizacion.solicitudFechaNatural}"></td>
+		</tr>
+	
+		<tr>
+			<td class="tituloH5" width="56" style="text-align:left">Atenci&oacute;n:</td>
+			<td class="subrayadoH5" width="270" th:text="${objCotizacion.clienteContacto.contacto}"></td>
+			<td class="tituloH5" width="96" style="text-align:left">Fecha actual:</td>
+			<td class="subrayadoH5" style="text-align:center; text-indent:0" width="154" th:text="${fechaActual}"></td>
+		</tr>
+	
+		<tr>
+			<td class="tituloH5" width="56" style="text-align:left">Puesto:</td>
+			<td class="subrayadoH5" width="270" th:text="${objCotizacion.clienteContacto.puesto}"></td>
+			<td class="tituloH5" width="96" style="text-align:left">Ubicaci&oacute;n:</td>
+			<td class="subrayadoH5" style="text-align:center; text-indent:0" width="154" th:text="${objCotizacion.ubicacion}"></td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="10%" class="tituloTH5">Cant</td>
+			<td width="15%" class="tituloTH5">No. parte</td>
+			<td width="30%" class="tituloTH5">Descripci&oacute;n</td>
+			<td width="10%" class="tituloTH5">Tiempo<br/>entrega</td>
+			<td width="10%" class="tituloTH5">P.U. lista</td>
+			<td width="5%" class="tituloTH5">Desc</td>
+			<td width="10%" class="tituloTH5">P.U. final</td>
+			<td width="10%" class="tituloTH5">Importe</td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0">
+		<tr th:each="itemPartida : ${lstPartida}">
+			<td width="10%" class="celdaH6" th:text="${itemPartida.cantidad}"></td>
+			<td width="15%" class="celdaH6" style="word-wrap: break-word;" th:text="${itemPartida.numeroParte}"></td>
+			<td width="30%" class="celdaH6" style="text-align:left" th:utext="${#strings.replace(#strings.escapeXml(itemPartida.descripcion), '&#10;', '&lt;br /&gt;')}"></td>
+			<td width="10%" class="celdaH6" th:text="${itemPartida.entregaDiasHabiles}"></td>
+			<td width="10%" class="celdaH6" style="text-align:right" th:text="${itemPartida.precioUnitarioListaNatural}"></td>
+			<td width="5%" class="celdaH6" th:text="${itemPartida.descuentoPorcentajeNatural}"></td>
+			<td width="10%" class="celdaH6" style="text-align:right" th:text="${'$' + #numbers.formatDecimal(itemPartida.total, 0, 'COMMA', 2, 'POINT') }"></td>
+			<td width="10%" class="celdaH6" style="text-align:right" th:text="${itemPartida.totalNatural}"></td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0">
+		<tr>
+			<td width="75%" rowspan="3">
+				<span class="tituloH6" style="text-align:left">Observaciones:</span><br />
+				<span class="textoH6" style="text-align:left; font-style: italic;" th:text="${objCotizacion.observaciones}"></span><br />
+			</td>
+			<td width="5%" rowspan="3"></td>
+			<td width="10%" class="tituloTH5" style="text-align:left">Subtotal</td>
+			<td width="10%" class="celdaH5" style="text-align:right" th:text="${objCotizacion.subtotalNatural}"></td>
+		</tr>
+		
+		<tr>
+			<td width="10%" class="tituloTH5" style="text-align:left" th:text="${'IVA: ' + objCotizacion.ivaPorcentajeNatural}"></td>
+			<td width="10%" class="celdaH5" style="text-align:right" th:text="${objCotizacion.ivaNatural}"></td>
+		</tr>
+		
+		<tr>
+			<td width="10%" class="tituloTH5" style="text-align:left">Total</td>
+			<td width="10%" class="celdaH5" style="text-align:right" th:text="${objCotizacion.totalNatural}"></td>
+		</tr>
+	</table>
+	
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 50px;">
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Lugar de entrega:</td>
+			<td class="subrayadoH6" width="20%" th:text="${objCotizacion.entregaLugar}"></td>
+			<td colspan="4"></td>
+		</tr>
+		
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Vigencia de precios:</td>
+			<td class="subrayadoH6" width="25%" th:text="${objCotizacion.vigenciaPrecioDiasHabiles}"></td>
+			<td colspan="4"></td>
+		</tr>
+		
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Forma de pago:</td>
+			<td class="subrayadoH6" width="25%" th:text="${objCotizacion.formaPago.formaPago}"></td>
+			<td colspan="4"></td>
+		</tr>
+		
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Moneda:</td>
+			<td class="subrayadoH6" width="25%" th:text="${objCotizacion.moneda.monedaCodigo + ' - ' + objCotizacion.moneda.moneda}"></td>
+			<td colspan="4"></td>
+		</tr>
+		
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Dias de credito:</td>
+			<td class="subrayadoH6" width="25%" th:if="${objCotizacion.diasCredito != '0'}" th:text="${objCotizacion.diasCredito + ' Dias Naturales'}"></td>
+			<td class="subrayadoH6" width="25%" th:unless="${objCotizacion.diasCredito != '0'}" th:text="${'N/A'}"></td>
+			<td colspan="4"></td>
+		</tr>
+		
+	</table>
+
+
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 50px;">
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Ejecutivo:</td>
+			<th:block th:if="${objCotizacion.empresa.idEmpresa == 1}">			
+				<td th:if="${objCotizacion.cliente.usuarioEjecutivo != null}" class="subrayadoH6" width="20%" th:text="${objCotizacion.cliente.usuarioEjecutivo.nombreCompleto}"></td>
+				<td th:unless="${objCotizacion.cliente.usuarioEjecutivo != null}" class="subrayadoH6" width="20%"> - </td>
+			</th:block>
+			
+			<th:block th:if="${objCotizacion.empresa.idEmpresa == 2}">							
+				<td th:if="${objCotizacion.cliente.usuarioEjecutivoS3s != null}" class="subrayadoH6" width="20%" th:text="${objCotizacion.cliente.usuarioEjecutivoS3s.nombreCompleto}"></td>
+				<td th:unless="${objCotizacion.cliente.usuarioEjecutivoS3s != null}" class="subrayadoH6" width="20%"> - </td>
+			</th:block>
+			
+			<th:block th:if="${objCotizacion.empresa.idEmpresa == 3}">							
+				<td th:if="${objCotizacion.cliente.usuarioEjecutivoR2a != null}" class="subrayadoH6" width="20%" th:text="${objCotizacion.cliente.usuarioEjecutivoR2a.nombreCompleto}"></td>
+				<td th:unless="${objCotizacion.cliente.usuarioEjecutivoR2a != null}" class="subrayadoH6" width="20%"> - </td>
+			</th:block>
+
+			<td class="tituloH6" width="10%" style="text-align:left">Cotiz&oacute;:</td>
+			<td class="subrayadoH6" width="22%" th:text="${objCotizacion.usuario.nombreCompleto}"></td>
+			<td class="tituloH6" width="10%" style="text-align:left">Vendi&oacute;:</td>
+			<td class="subrayadoH6" width="23%" th:text="${objCotizacion.usuarioVendedor.nombreCompleto}"></td>
+		</tr>
+		
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Correo:</td>
+			<th:block th:if="${objCotizacion.empresa.idEmpresa == 1}">			
+				<td th:if="${objCotizacion.cliente.usuarioEjecutivo != null}" class="subrayadoH6" width="25%" th:text="${objCotizacion.cliente.usuarioEjecutivo.username + '@' + objCotizacion.empresa.dominio}"></td>
+				<td th:unless="${objCotizacion.cliente.usuarioEjecutivo != null}" class="subrayadoH6" width="25%"> - </td>
+			</th:block>
+			
+			<th:block th:if="${objCotizacion.empresa.idEmpresa == 2}">							
+				<td th:if="${objCotizacion.cliente.usuarioEjecutivoS3s != null}" class="subrayadoH6" width="25%" th:text="${objCotizacion.cliente.usuarioEjecutivoS3s.username + '@' + objCotizacion.empresa.dominio}"></td>
+				<td th:unless="${objCotizacion.cliente.usuarioEjecutivoS3s != null}" class="subrayadoH6" width="25%"> - </td>
+			</th:block>
+			
+			<th:block th:if="${objCotizacion.empresa.idEmpresa == 3}">							
+				<td th:if="${objCotizacion.cliente.usuarioEjecutivoR2a != null}" class="subrayadoH6" width="25%" th:text="${objCotizacion.cliente.usuarioEjecutivoR2a.username + '@' + objCotizacion.empresa.dominio}"></td>
+				<td th:unless="${objCotizacion.cliente.usuarioEjecutivoR2a != null}" class="subrayadoH6" width="25%"> - </td>
+			</th:block>
+						
+			<td class="tituloH6" width="10%" style="text-align:left">Correo:</td>
+			<td class="subrayadoH6" width="22%" th:text="${objCotizacion.usuario.username + '@' + objCotizacion.empresa.dominio}"> </td>
+			<td class="tituloH6" width="10%" style="text-align:left">Correo:</td>
+			<td class="subrayadoH6" width="23%" th:text="${objCotizacion.usuarioVendedor.username + '@' + objCotizacion.empresa.dominio}"> </td>
+		</tr>
+		
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Tel&eacute;fono:</td>
+			<th:block th:if="${objCotizacion.empresa.idEmpresa == 1}">			
+				<td th:if="${objCotizacion.cliente.usuarioEjecutivo != null}" class="subrayadoH6" width="25%" th:text="${objCotizacion.cliente.usuarioEjecutivo.telefono}"></td>
+				<td th:unless="${objCotizacion.cliente.usuarioEjecutivo != null}" class="subrayadoH6" width="25%"> - </td>
+			</th:block>
+			
+			<th:block th:if="${objCotizacion.empresa.idEmpresa == 2}">							
+				<td th:if="${objCotizacion.cliente.usuarioEjecutivoS3s != null}" class="subrayadoH6" width="25%" th:text="${objCotizacion.cliente.usuarioEjecutivoS3s.telefono}"></td>
+				<td th:unless="${objCotizacion.cliente.usuarioEjecutivoS3s != null}" class="subrayadoH6" width="25%"> - </td>
+			</th:block>
+			
+			<th:block th:if="${objCotizacion.empresa.idEmpresa == 3}">							
+				<td th:if="${objCotizacion.cliente.usuarioEjecutivoR2a != null}" class="subrayadoH6" width="25%" th:text="${objCotizacion.cliente.usuarioEjecutivoR2a.telefono}"></td>
+				<td th:unless="${objCotizacion.cliente.usuarioEjecutivoR2a != null}" class="subrayadoH6" width="25%"> - </td>
+			</th:block>			
+
+			<td class="tituloH6" width="10%" style="text-align:left">Tel&eacute;fono:</td>
+			<td class="subrayadoH6" width="22%" th:text="${objCotizacion.usuario.telefono}"></td>
+			<td class="tituloH6" width="10%" style="text-align:left">Tel&eacute;fono:</td>
+			<td class="subrayadoH6" width="23%" th:text="${objCotizacion.usuarioVendedor.telefono}"></td>
+		</tr>
+		
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Celular:</td>
+			<th:block th:if="${objCotizacion.empresa.idEmpresa == 1}">			
+				<td th:if="${objCotizacion.cliente.usuarioEjecutivo != null}" class="subrayadoH6" width="25%" th:text="${objCotizacion.cliente.usuarioEjecutivo.celular}"></td>
+				<td th:unless="${objCotizacion.cliente.usuarioEjecutivo != null}" class="subrayadoH6" width="25%"> - </td>
+			</th:block>
+			
+			<th:block th:if="${objCotizacion.empresa.idEmpresa == 2}">							
+				<td th:if="${objCotizacion.cliente.usuarioEjecutivoS3s != null}" class="subrayadoH6" width="25%" th:text="${objCotizacion.cliente.usuarioEjecutivoS3s.celular}"></td>
+				<td th:unless="${objCotizacion.cliente.usuarioEjecutivoS3s != null}" class="subrayadoH6" width="25%"> - </td>
+			</th:block>
+			
+			<th:block th:if="${objCotizacion.empresa.idEmpresa == 3}">							
+				<td th:if="${objCotizacion.cliente.usuarioEjecutivoR2a != null}" class="subrayadoH6" width="25%" th:text="${objCotizacion.cliente.usuarioEjecutivoR2a.celular}"></td>
+				<td th:unless="${objCotizacion.cliente.usuarioEjecutivoR2a != null}" class="subrayadoH6" width="25%"> - </td>
+			</th:block>				
+
+			<td class="tituloH6" width="10%" style="text-align:left">Celular:</td>
+			<td class="subrayadoH6" width="22%" th:text="${objCotizacion.usuario.celular}"></td>
+			<td class="tituloH6" width="10%" style="text-align:left">Celular:</td>
+			<td class="subrayadoH6" width="23%" th:text="${objCotizacion.usuarioVendedor.celular}"></td>
+		</tr>
+		
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 50px;">
+		<tr>
+			<td width="50%">
+				<span class="tituloH6" style="text-align:left">Condiciones Comerciales:</span><br />
+				<span class="textoH6" style="text-align:left; font-style: italic;">** No cancelaci&oacute;n / no devoluaci&oacute;n a productos y servicios marcados con esta leyenda.</span><br />
+				<span class="textoH6" style="text-align:left; font-style: italic;">** De autorizar una devoluci&oacute;n causar&aacute; un 20% de cargo.</span><br />
+				<span class="textoH6" style="text-align:left; font-style: italic;">Descuento asignado &uacute;nicamente por la cantidad indicada en esta cotizaci&oacute;n.</span><br />
+				<span class="textoH6" style="text-align:left; font-style: italic;">El tiempo de entrega depender&aacute; de la fecha y hora en la que se coloque la O.C.</span><br />
+				<span class="textoH6" style="text-align:left; font-style: italic;">La garant&iacute;a es otorgada en t&eacute;rminos y condiciones establecidos por el fabricante.</span><br />
+				<span class="textoH6" style="text-align:left; font-style: italic;">Precios y existencia pueden variar sin previo aviso.</span><br />
+			</td>
+		</tr>
+	</table>	
+	
+	<!--/* FOOTER */-->
+	<table width="100%" style="margin-top:100px;">
+		<tr>
+			<td style="width:80%">
+				<table>
+					<tr>
+						<td th:text="${objCotizacion.empresa.razonSocial}"></td>
+					</tr>
+					<tr>							
+						<td><span style="color:#ff2e34;font-weight:bold;">ventas@<th:block th:text="${objCotizacion.empresa.dominio}"></th:block></span></td>
+					</tr>
+					<tr>
+						<td><span style="color:#ff2e34;font-weight:bold;">http://www.<th:block th:text="${objCotizacion.empresa.dominio}"></th:block></span></td>
+					</tr>
+					<tr></tr>
+				</table>
+			</td>							
+			<td style="width:10%"></td>
+			<td style="width:10%;"></td>				
+		</tr>
+	</table>
+</th:block>

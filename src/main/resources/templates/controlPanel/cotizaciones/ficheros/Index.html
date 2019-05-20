@@ -1,0 +1,488 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>COTIZACI&Oacute;N: <th:block th:text="${objCotizacion.folio}"></th:block></h2>
+    </div>
+    
+    <ol class="breadcrumb breadcrumb-bg-red">
+      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+    	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">public</i> Cotizaciones</a></li>
+    	<li class="active"><i class="material-icons">archive</i> Expedientes</li>
+  	</ol>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>
+    					EXPEDIENTE
+    					<small>Los ficheros listados pertenecen a la cotizaci&oacute;n, el m&aacute;ximo de volumen por archivo es de 10MB.</small>	
+    				</h2>
+    				<ul class="header-dropdown m-r--5">
+                        <li class="dropdown">
+                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <i class="material-icons">more_vert</i>
+                            </a>
+                            <ul class="dropdown-menu pull-right">
+                                <li><a href="#" data-toggle="modal" data-target="#ficheroModal">Nuevo fichero</a></li>
+                                <li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {objCotizacion.idCotizacion} + '/reporte-utilidad'}" target="_blank" >Reporte de Utilidad</a></li>
+                                <li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {objCotizacion.idCotizacion} + '/reporte-facturas'}" target="_blank" >Reporte de Facturas</a></li>
+                                <li th:if="${rolExpedienteGerente}">
+                                	<a id="accRecalculoCotizacion" href="#">Recalcular Cotizaci&oacute;n</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+    			</div>
+    			
+    			<div class="body">
+    				<div class="row">
+    					<div class="col-md-4 col-md-offset-8">
+    						<button class="btn bg-blue btn-lg btn-block waves-effect" type="button">
+    							GASTOS INDIRECTOS 
+    							<span class="badge">
+    								<th:block th:text="${' $' + totalGastos}"></th:block>
+   								</span>
+							</button>
+    					</div>
+    				</div>
+    				
+    				<div class="table-responsive">
+    					<table class="table table-bordered table-striped table-hover dataTable tbl-expediente">
+    						<thead>
+    							<tr>
+    								<th>Folio</th>
+    								<th>Cliente/Proveedor</th>
+    								<th>Importe</th>
+    								<th>Banco</th>
+    								<th>O.C</th>
+    								<th>Fecha Vigencia</th>
+    								<th>Observaciones</th>
+    								<th>Acciones</th>
+    							</tr>
+    						</thead>
+    						<tbody>
+    							<th:block th:each="itemFichero : ${lstFicheros}">						
+	    							<tr>
+	    								<td th:text="${itemFichero.getFolio()}"></td>
+	    								<td th:text="${itemFichero.getProveedor()}"></td>
+	    								<td th:text="'$' + ${itemFichero.getImporteNatural()}"></td>
+	    								<td th:text="${itemFichero.getBanco()}"></td>
+	    								<td th:text="${itemFichero.getFolioOrdenCompra()}"></td>
+	    								<td th:text="${itemFichero.getVencimientoFechaNatural()}"></td>
+	    								<td th:text="${itemFichero.getObservaciones()}"></td>
+	    								<td class="text-left">
+	    									<div class="row">
+	    										<div class="col-md-4">
+			    									<a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {objCotizacion.idCotizacion} + '/ficheros/' + {itemFichero.getIdCotizacionFichero()} + '/edit'}" class="btn btn-warning">Editar</a>	    										
+	    										</div>
+	    										<div class="col-md-4">
+			    									<a target="_blank" th:href="@{'/ficheros/cotizaciones/' + ${itemFichero.getUrl()}}" class="btn btn-primary">Ver Archivo</a>	    										
+	    										</div>
+	    										<div class="col-md-4" th:if="${rolExpedienteAdministrador}">
+	    											<a href="#" th:attr="data-id_fichero=${itemFichero.getIdCotizacionFichero()}" class="delete-file btn btn-danger">Eliminar</a>
+	    										</div>
+	    									</div>
+	    								</td>
+	    							</tr>
+    							</th:block>
+    						</tbody>
+    					</table>
+    				</div>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+    
+    <!-- FICHERO MODAL -->
+    <div class="modal fade" id="ficheroModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            	<form id="formFichero" th:action="${ {_PATH_} + 'controlPanel/cotizaciones/' + objCotizacion.getIdCotizacion() + '/ficheros'}" th:method="POST" enctype="multipart/form-data">
+            		<input type="hidden" th:value="${objCotizacion.getIdCotizacion()}" name="hddIdCotizacion" id="hddIdCotizacion" />
+	                <div class="modal-header">
+	                    <h4 class="modal-title" id="defaultModalLabel">Carga de Fichero</h4>
+	                </div>
+	                <div class="modal-body">
+	                	<div class="row clearfix">
+	                		<div class="col-md-6">
+	                			<p><b>Tipo de Fichero *</b></p>
+	                            <select class="form-control show-tick" name="cmbTipoFichero" id="cmbTipoFichero" data-live-search="true" >
+	                       			<th:block th:each="itemTipo : ${lstTiposFicheros}" >
+	                       				<option th:value="${itemTipo.idCotizacionTipoFichero}" th:text="${itemTipo.cotizacionTipoFichero}"></option>	                       				
+	                       			</th:block>
+	                       		</select>
+	                		</div>
+	                	</div>
+	                	
+	                	<div class="row clearfix m-t-20">
+	                		<div class="col-md-6">
+	                        	<div class="form-group">
+	                        		<b>Folio de Factura</b>
+	                                <div class="form-line">
+	                                    <input id="txtFolio" type="text" name="txtFolio" class="form-control" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-6">
+	                        	<b>Importe</b>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <div class="form-line">
+                                        <input type="text" id="txtImporte" name="txtImporte" class="form-control" />
+                                    </div>                                    
+                                </div>
+	                        </div>
+	                	</div>
+	                	
+	                	<div class="row clearfix">
+	                		<div class="col-md-6">
+	                        	<div class="form-group">
+	                        		<b>Proveedor / Cliente</b>
+	                                <div class="form-line">
+	                                    <input id="txtProveedor" type="text" name="txtProveedor" class="form-control" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-6">
+	                        	<div class="form-group">
+	                        		<b>Banco</b>
+	                                <div class="form-line">
+	                                    <input id="txtBanco" type="text" name="txtBanco" class="form-control" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                	</div>
+	                	
+	                	<div class="row clearfix">
+	                		<div class="col-md-6">
+	                        	<b>Fecha Vencimiento</b>
+	                        	<div class="input-group">
+                        			<span class="input-group-addon">
+                                        <i class="material-icons">date_range</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control text-center" id="txtFechaVencimiento" name="txtFechaVencimiento" />
+                                    </div>
+								</div>
+	                        </div>
+	                        
+	                        <div class="col-md-6">
+	                        	<div class="form-group">
+	                        		<b>Folio Orden de Compra</b>
+	                                <div class="form-line">
+	                                    <input id="txtFolioOrdenCompra" type="text" name="txtFolioOrdenCompra" class="form-control" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                	</div>
+	                
+	                	<div class="row clearfix">
+	                		<div class="col-md-12">
+	                        	<div class="form-group">
+	                        		<p><b>Observaciones *</b></p>
+	                                <div class="form-line">
+	                                    <input id="txtDescripcion" type="text" name="txtDescripcion" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                	</div>
+	                	
+	                	<div class="row clearfix">                	
+		                    <div class="col-md-12">
+	                        	<div class="form-group">
+	                        		<p><b>Fichero *</b></p>
+	                                <div class="form-line">
+	                                    <input id="fichero" type="file" name="fichero" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                	</div>
+	                	
+	                	<div class="row clearfix">
+	                		<div class="progress">
+                                <div id="progressBar" class="progress-bar bg-cyan progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+                                     style="width: 0%">
+                                    0%
+                                </div>
+                            </div>
+	                	</div>
+	                </div>
+	                <div class="modal-footer">	                    
+	                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CANCELAR</button>
+	                    <button id="btnCargar" type="submit" class="btn btn-link waves-effect">CARGAR</button>
+	                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- Jquery DataTable Plugin Js -->
+    <script th:src="@{/plugins/jquery-datatable/jquery.dataTables.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/skin/bootstrap/js/dataTables.bootstrap.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/extensions/export/dataTables.buttons.min.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/extensions/export/buttons.flash.min.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/extensions/export/jszip.min.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/extensions/export/pdfmake.min.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/extensions/export/vfs_fonts.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/extensions/export/buttons.html5.min.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/extensions/export/buttons.print.min.js}"></script>
+	
+	<script type="application/javascript" th:inline="javascript">
+		var idCotizacion = [[${objCotizacion.getIdCotizacion()}]];
+		
+		$(document).ready(function() {
+			
+			var dtable = $('.tbl-expediente').DataTable({
+		        responsive: true
+		    });
+			
+			//DATEPICKER
+			$('#txtFechaVencimiento').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false});
+			
+			$('#cmbTipoFichero').change(function() {
+				
+				var idTipoFichero = $(this).val();				
+				
+				switch(idTipoFichero) {
+					case "1":
+						$('#txtFechaVencimiento').attr('disabled', true);
+						
+						$('#txtFechaVencimiento').val('');
+						
+						$('#txtFolio').attr('disabled', false);
+						$('#txtFolioOrdenCompra').attr('disabled', false);
+						$('#txtImporte').attr('disabled', false);
+						$('#txtProveedor').attr('disabled', false);
+						$('#txtBanco').attr('disabled', false);
+						break;
+						
+					case "2":
+						$('#txtImporte').attr('disabled', true);
+						$('#txtProveedor').attr('disabled', true);
+						$('#txtBanco').attr('disabled', true);
+						
+						$('#txtImporte').val('');
+						$('#txtProveedor').val('');
+						$('#txtBanco').val('');
+						
+						$('#txtFolio').attr('disabled', false);
+						$('#txtFolioOrdenCompra').attr('disabled', false);
+						$('#txtFechaVencimiento').attr('disabled', false);
+						break;
+						
+					case "3":
+						$('#txtFechaVencimiento').attr('disabled', true);
+						$('#txtBanco').attr('disabled', true);						
+						
+						$('#txtFechaVencimiento').val('');
+						$('#txtProveedor').val('');
+						$('#txtBanco').val('');
+						
+						$('#txtFolio').attr('disabled', false);
+                        $('#txtProveedor').attr('disabled', false);
+						$('#txtFolioOrdenCompra').attr('disabled', false);
+						$('#txtImporte').attr('disabled', false);
+						break;
+						
+					case "4":
+						$('#txtFechaVencimiento').attr('disabled', true);
+						$('#txtBanco').attr('disabled', true);						
+						
+						$('#txtFechaVencimiento').val('');
+						$('#txtBanco').val('');
+						
+						$('#txtFolio').attr('disabled', false);
+						$('#txtProveedor').attr('disabled', false);
+						$('#txtFolioOrdenCompra').attr('disabled', false);
+						$('#txtImporte').attr('disabled', false);
+						break;
+						
+					case "5":
+						$('#txtImporte').attr('disabled', true);
+						$('#txtFechaVencimiento').attr('disabled', true);
+						$('#txtBanco').attr('disabled', true);
+						$('#txtProveedor').attr('disabled', true);
+						$('#txtFolio').attr('disabled', true);
+						$('#txtFolioOrdenCompra').attr('disabled', true);
+						
+						$('#txtFechaVencimiento').val('');
+						$('#txtImporte').val('');
+						$('#txtFolio').val('');
+						$('#txtFolioOrdenCompra').val('');
+						$('#txtBanco').val('');
+						$('#txtProveedor').val('');
+						break;
+				}
+				
+				
+			});
+			
+			$('#formFichero').submit(function(e) {
+				e.preventDefault();
+				
+				var form = $('#formFichero');
+				var data = new FormData(form);
+				data.append([[${_csrf.parameterName}]], [[${_csrf.token}]]);
+				data.append("cmbTipoFichero", $('#cmbTipoFichero').val());
+				data.append("txtFolio", $('#txtFolio').val());
+				data.append("txtFolioOrdenCompra", $('#txtFolioOrdenCompra').val());
+				
+				var importe = $('#txtImporte').val();
+				data.append("txtImporte", importe.trim());
+				
+				data.append("txtProveedor", $('#txtProveedor').val());
+				data.append("txtBanco", $('#txtBanco').val());
+				data.append("txtFechaVencimiento", $('#txtFechaVencimiento').val());
+				data.append("txtDescripcion", $('#txtDescripcion').val());
+				data.append("fichero", $("#fichero")[0].files[0]);	
+								
+				$("#btnCargar").prop("disabled", true);
+									
+				$.ajax({
+					url					: $('#formFichero').attr('action'),
+					enctype				: 'multipart/form-data',
+					data				: data,
+					dataType			: 'json',
+					processData			: false,
+					contentType			: false,
+			        cache				: false,
+					type				: "POST",
+					timeOut				: 60000,
+					xhr: function () {
+				        var xhr = new window.XMLHttpRequest();
+				        xhr.upload.addEventListener("progress", function (evt) {
+				            if (evt.lengthComputable) {
+				                var percentComplete = evt.loaded / evt.total;				                
+				                $('.progress-bar').css({
+				                    width: percentComplete * 100 + '%'
+				                });
+				                
+				                $('#progressBar').text = (percentComplete * 100) + '%'
+				            }
+				        }, false);
+				        xhr.addEventListener("progress", function (evt) {
+				            if (evt.lengthComputable) {
+				                var percentComplete = evt.loaded / evt.total;
+				                $('.progress-bar').css({
+				                    width: percentComplete * 100 + '%'
+				                });
+				                
+				                $('#progressBar').text = (percentComplete * 100) + '%'
+				            }
+				        }, false);
+				        return xhr;
+				    },
+					success				: function(data) {
+						console.log(data);
+						if(data.respuesta) {																					
+							$('#ficheroModal').modal('hide');
+							location.reload();
+						} else{
+							swal('Error!', 'Ocurrio un error al cargar el fichero, verifique su informacion.', 'error');
+						}
+						
+						$("#btnCargar").prop("disabled", false);
+					},
+					error				: function(e) {
+						console.log(e);
+					}
+				});
+				
+			});
+			
+			$('#accRecalculoCotizacion').click(function(event) {
+				event.preventDefault();
+				
+				swal({
+		  			title: 'La cotizacion calculara nuevamente las comisiones y la cuota de los usuarios.',
+				  	showCancelButton: true,
+				  	confirmButtonText: 'Recalcular',
+				  	showLoaderOnConfirm: true,
+				  	preConfirm: (login) => {				  	
+				  		return $.ajax({
+							url					: [[@{/controlPanel/cotizaciones/}]] + idCotizacion + '/recalcular',
+							dataType			: 'json',
+							type				: "GET",
+							timeOut				: 60000,
+							success				: function(data) {
+								return data;
+							},
+							error				: function(e) {
+								console.log(e);
+							}
+						});				  		
+			  		},
+				  	allowOutsideClick: () => !Swal.isLoading()
+				}).then((result) => {
+			  		if (result.respuesta) {
+					    swal({
+					    	type: 'success',
+				      		title: result.titulo,
+				      		text: result.mensaje,
+					    })
+				  	} else {
+				  		swal({
+				    		type: 'error',
+				    		title: result.titulo,
+				      		text: result.mensaje,
+	    				}) 
+				  	}
+				});
+			});
+			
+			$('.delete-file').click(function() {
+				var idFichero = $(this).data('id_fichero');
+				var that = this;											
+				
+				swal({
+					type: 'warning',
+					title: 'Advertencia!',
+					text: 'Este registro sera eliminado del sistema, si la cotizacion se encuentra (Facturada o Pagada) afectara los calculos de cuotas y comisiones, por lo que tendra que realizar el recalculo.',
+					showCancelButton: true,
+					confirmButtonText: 'Eliminar',
+					showLoaderOnConfirm: true,
+					preConfirm: (action) => {
+						return $.ajax({
+							url		: [[@{/controlPanel/cotizaciones/fichero-eliminar}]],
+							data	: {
+								idCotizacion : idCotizacion,
+								idCotizacionFichero: idFichero,
+								[[${_csrf.parameterName}]] : [[${_csrf.token}]]
+							},							        
+							dataType: 'json',
+							type	: "POST",
+							timeOut	: 60000,
+							success	: function(data) {
+								return data;
+							},
+							error	: function(e) {
+								console.log(e);
+							}
+						});
+					}
+				}).then((result) => {
+			  		if (result.respuesta) {
+			  			
+			  			dtable.row($(that).parent().parent().parent().parent()).remove().draw(false);
+			  			
+					    swal({
+					    	type: 'success',
+				      		title: result.titulo,
+				      		text: result.mensaje,
+					    })
+				  	} else {
+				  		swal({
+				    		type: 'error',
+				    		title: result.titulo,
+				      		text: result.mensaje,
+	    				}) 
+				  	}
+				});
+			});
+		});
+	</script>
+</th:block>

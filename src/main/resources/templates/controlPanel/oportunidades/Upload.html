@@ -1,0 +1,73 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>OPORTUNIDADES DE NEGOCIOS</h2>
+    </div>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>Subir Fichero</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<form id="formOportunidad" th:action="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + objOportunidad.idOportunidadNegocio +'/upload-file'}" method="POST" enctype="multipart/form-data">
+						<div class="row clearfix">
+							<div class="col-md-8">
+								<div class="form-group">
+	                        		<p><b>Titulo *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtTitulo" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+							</div>
+							
+							<div class="col-md-4">
+	                        	<div class="form-group">
+	                        		<p><b>Fichero *</b></p>
+	                                <div class="form-line">
+	                                    <input id="fichero" type="file" name="fichero" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+						</div>
+						
+						<div class="row clearfix">
+	                		<div class="col-md-12">
+	                        	<div class="form-group">
+	                        		<p><b>Observaciones *</b></p>
+	                                <div class="form-line">
+	                                    <input id="txtDescripcion" type="text" name="txtDescripcion" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                	</div>					
+					
+						<div class="row clearfix">
+							<div class="col-md-3 col-md-offset-8 text-right">
+								<a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<button id="btnSubmit" type="submit" class="btn btn-primary m-t-15 waves-effect">CARGAR ARCHIVO</button>
+							</div>
+						</div>
+					</form>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/			
+	
+		$(document).ready(function() {
+
+			// FORM SUBMIT
+			$('#formOportunidad').submit(function(e){
+				$('#btnSubmit').addClass('disabled');
+		  	});
+			
+
+		});
+			
+	/*]]>*/</script>
+</th:block>

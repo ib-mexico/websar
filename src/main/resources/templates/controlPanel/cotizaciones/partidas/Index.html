@@ -1,0 +1,378 @@
+<th:block th:fragment="style">
+	<link th:href="@{/plugins/bootstrap3-editable/css/bootstrap-editable.css}" rel="stylesheet" />
+</th:block>
+
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>COTIZACI&Oacute;N: <th:block th:text="${objCotizacion.folio}"></th:block></h2>
+    </div>
+    
+    <ol class="breadcrumb breadcrumb-bg-red">
+      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+    	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">public</i> Cotizaciones</a></li>
+    	<li class="active"><i class="material-icons">format_list_numbered</i> Partidas</li>
+  	</ol>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>LISTA DE PARTIDAS</h2>
+    				<ul class="header-dropdown m-r--5">
+                        <li class="dropdown">
+                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <i class="material-icons">more_vert</i>
+                            </a>
+                            <ul class="dropdown-menu pull-right">
+                                <li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {objCotizacion.idCotizacion} + '/partidas/create'}">Nueva Partida</a></li>
+                                <li><a id="ordenarModal" href="#" data-toggle="modal" data-target="#sortableModal">Ordenar Partidas</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+    			</div>
+    			
+    			<div class="body">
+    				<div class="row">    				
+    					<div class="col-md-6 col-md-offset-6 text-right">
+    						<button class="btn bg-blue btn-lg waves-effect" type="button">
+    							SUBTOTAL DE COTIZACI&Oacute;N 
+    							<span class="badge subtotal-cotizacion">
+    								<th:block th:text="${objCotizacion.getSubtotalNatural()}"></th:block>
+   								</span>
+							</button>
+							
+							<a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {objCotizacion.idCotizacion} + '/pdf'}" target="_blank" class="btn bg-pink btn-lg waves-effect" role="button"> PREVISUALIZAR COTIZACI&Oacute;N</a>
+    					</div>
+    				</div>    		
+					
+					<div class="table-responsive">
+						<table id="dtPartidas" class="table table-bordered table-striped table-hover dataTable tbl-expediente">
+    						<thead>
+    							<tr>
+    								<th>ID</th>
+    								<th>Acciones</th>
+    								<th>No. parte</th>
+    								<th>Descripci&oacute;n</th>
+    								<th>Cantidad</th>
+    								<th>P.U. / lista</th>
+    								<th>Desc. / porcentaje</th>
+    								<th>Total</th>
+    							</tr>
+    						</thead>
+    						<tbody>
+    							<th:block th:each="item : ${lstPartidas}">						
+	    							<tr>
+	    								<td th:text="${item.idCotizacionPartida}"></td>
+	    								<td>
+	    									<a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {objCotizacion.idCotizacion} + '/partidas/' + {item.idCotizacionPartida} + '/edit'}" title="Editar"><i class="material-icons">mode_edit</i></a>
+									        <a href="#" class="clone-partida" th:attr="data-partida=${item.idCotizacionPartida}" title="Clonar partida"><i class="material-icons">flip_to_front</i></a>
+									        <a href="#" class="delete-partida" th:attr="data-partida=${item.idCotizacionPartida}" title="Eliminar"><i class="material-icons">delete</i></a>
+	    								</td>
+	    								<td th:text="${item.numeroParte}"></td>
+	    								<td th:text="${item.descripcion}"></td>
+	    								<td>
+	    									<a href="javascript:void(0)" class="row-editable" th:attr="data-partida=${item.idCotizacionPartida}" data-name="cantidad"><th:block  th:text="${item.cantidad}"></th:block></a>
+	    								</td>
+	    								<td>
+	    									<a href="javascript:void(0)" class="row-editable" th:attr="data-partida=${item.idCotizacionPartida}" data-name="precioUnitario"><th:block  th:text="${item.precioUnitarioListaNatural}"></th:block></a>
+	    								</td>
+	    								<td>
+	    									<a href="javascript:void(0)" class="row-editable" th:attr="data-partida=${item.idCotizacionPartida}" data-name="descuentoPorcentaje"><th:block  th:text="${item.descuentoPorcentajeNatural}"></th:block></a>
+	    								</td>
+	    								<td th:class="${'total' + {item.idCotizacionPartida}}" th:text="${item.totalNatural}"></td>
+	    							</tr>
+    							</th:block>
+    						</tbody>
+    					</table>					
+					</div>
+					
+    			</div>
+    		</div>
+    	</div>
+    </div>
+    
+    <!-- SORTABLE MODAL -->
+    <div class="modal fade" id="sortableModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            	<form id="formSortable" th:action="${ {_PATH_} + 'controlPanel/cotizaciones/' + objCotizacion.getIdCotizacion() + '/sort-partidas'}" th:method="POST">
+            		<input type="hidden" th:value="${objCotizacion.getIdCotizacion()}" name="hddIdCotizacion" id="hddIdCotizacion" />
+            		<input type="hidden" value="" name="ordenPartidas" id="ordenPartidas" />
+	                <div class="modal-header">
+	                    <h4 class="modal-title" id="defaultModalLabel">Ordenar Partidas</h4>
+	                </div>
+	                <div class="modal-body">
+	                    <div class="row clearfix">
+	                        <div class="col-md-12">
+	                        	<ul id="listWithHandle" class="list-group"></ul>
+	                        </div>
+						</div>
+	                </div>
+	                <div class="modal-footer">	                    
+	                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CANCELAR</button>
+	                    <button type="submit" class="btn btn-link waves-effect">ORDENAR</button>
+	                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	
+	<!-- Jquery DataTable Plugin Js -->
+    <script th:src="@{/plugins/jquery-datatable/jquery.dataTables.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/skin/bootstrap/js/dataTables.bootstrap.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/extensions/export/dataTables.buttons.min.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/extensions/export/buttons.flash.min.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/extensions/export/jszip.min.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/extensions/export/pdfmake.min.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/extensions/export/vfs_fonts.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/extensions/export/buttons.html5.min.js}"></script>
+    <script th:src="@{/plugins/jquery-datatable/extensions/export/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/bootstrap3-editable/js/bootstrap-editable.min.js}"></script>
+
+	<!-- Sortable -->
+	<script th:src="@{/plugins/sortable/Sortable.min.js}"></script>
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
+		var idCotizacion = [[${objCotizacion.getIdCotizacion()}]];
+	
+		$(document).on("ready", function() {
+			
+			var table = $('#dtPartidas').DataTable({
+		        responsive: true,
+		        pageLength: 100,
+		        ordering: false,
+		    });			
+			
+			$(document).on('click', '.delete-partida', function() {
+				var idPartida = $(this).attr('data-partida');
+				var _this = this;
+				
+				swal({
+					title	: "&iquest;Est&aacute;s seguro?",
+					text	: "Una vez eliminada, la partida no podra recuperarse.",
+					type	: "warning",
+					showCancelButton: true,
+					cancelButtonText: 'Cancelar',
+					confirmButtonText: 'Eliminar',
+				}).then((result) => {
+					if(result) {
+						
+						$.ajax({
+							url			: [[@{/controlPanel/cotizaciones/}]] + idCotizacion + '/partidas/delete',
+							data		: {
+											idCotizacion : idCotizacion, 
+											idCotizacionPartida : idPartida,
+											[[${_csrf.parameterName}]] : [[${_csrf.token}]]
+							},							        
+							dataType	: 'json',
+							type		: "POST",
+							success		: function(data) {
+								if(data.respuesta) {
+									table.row($(_this).parents('tr')).remove().draw();
+									$('.subtotal-cotizacion').html(data.subtotal);
+									swal(data.titulo, data.mensaje,'success');									
+								}
+							},
+							error		: function(e) {
+								console.log(e);										
+							}
+						});																													
+					}
+				}).catch(swal.noop);
+			});
+			
+			$(document).on('click', '.clone-partida', function() {
+				var idPartida = $(this).attr('data-partida');
+				swal({
+					title	: "Clonaci&oacute;n de partida",
+					text	: "La partida seleccionada se duplicara en la cotizacion.",
+					type	: "warning",
+					showCancelButton: true,
+					cancelButtonText: 'Cancelar',
+					confirmButtonText: 'Clonar',
+				}).then((result) => {
+					if(result) {
+						
+						$.ajax({
+							url			: [[@{/controlPanel/cotizaciones/}]] + idCotizacion + '/partidas/clone',
+							data		: {
+											idCotizacion : idCotizacion, 
+											idCotizacionPartida : idPartida,
+											[[${_csrf.parameterName}]] : [[${_csrf.token}]]
+							},							        
+							dataType	: 'json',
+							type		: "POST",
+							success		: function(data) {
+								if(data.respuesta) {				
+									swal(data.titulo, data.mensaje,'success');
+									location.reload();
+								}
+							},
+							error		: function(e) {
+								console.log(e);										
+							}
+						});																													
+					}
+				}).catch(swal.noop);
+			});
+			
+			
+			$(document).on('click', '.row-editable', function() {
+				var _this = this;
+				var idPartida = $(this).data("partida");
+				
+				$(this).editable({
+					type: 'text',
+				    pk: idPartida,
+				    url: function(params) {				    	
+				    	var d = new $.Deferred();
+				    	var flag = true;
+
+				    	if($.isNumeric(params.value) && params.pk > 0 && params.name != "") {
+				    		
+				    		if(params.name == "cantidad") {
+				    			if(Math.floor(params.value) != +params.value) {
+					    			flag = false;
+					    		}
+				    		}				    					    		
+				    		
+				    		if(flag) {
+				    			$.ajax({
+								url			: [[@{/controlPanel/cotizaciones/}]] + idCotizacion + '/partida/modificar-inline',
+								data		: {
+												idCotizacion : idCotizacion, 
+												idCotizacionPartida : idPartida,
+												valor : params.value,
+												campo : params.name,
+												[[${_csrf.parameterName}]] : [[${_csrf.token}]]
+								},							        
+								dataType	: 'json',
+								type		: "POST",
+								success		: function(data) {
+									if(data.respuesta) {
+										$('.total' + idPartida).html(data.totalPartida);
+										$('.subtotal-cotizacion').html(data.subtotal);
+										swal(data.titulo, data.mensaje,'success');
+										d.resolve();
+									}
+								},
+								error		: function(e) {
+									console.log(e);										
+								}
+							});
+				    		} else {
+					    		return d.reject('No se cumplen las condiciones para editar el campo.');
+				    		}
+				    		
+				    	} else {
+				    		return d.reject('El campo debe contener unicamente numeros.');
+				    	}
+				    	
+				    	return d.promise();
+				    },
+				    title: 'Nuevo valor',
+				    ajaxOptions: {
+				    	type: 'post',
+		           		dataType: 'json' //assuming json response
+		       		}
+				});	
+			});
+			
+			
+			$("#ordenarModal").click(function() {
+				$.ajax({
+					url			: [[@{/controlPanel/cotizaciones/}]] + idCotizacion + '/get-partidas',
+					data		: {idCotizacion : idCotizacion},							        
+					dataType	: 'json',
+					type		: "GET",
+					success		: function(data) {
+						$('#listWithHandle').empty();
+						data.sort(compare);
+						data.forEach(element => {
+							$("#listWithHandle").append('<li data-id="'+ element.idCotizacionPartida +'" class="list-group-item" style="cursor: move; cursor: -webkit-grabbing;"><i class="material-icons">sort</i><span style=" display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">'+ element.numeroParte +' - '+ element.descripcion + element.descripcion +'</span></li>');							
+						});
+					},
+					error		: function(e) {
+						console.log(e);										
+					}
+				});
+			});
+			
+			// List with handle
+			var list = Sortable.create(listWithHandle, {
+			  handle: '.list-group-item',
+			  animation: 150
+			});
+			
+			$('#formSortable').submit(function(e) {
+				e.preventDefault();
+				var order = list.toArray();
+				$('#ordenPartidas').val(order);
+				
+				var formData = $('#formSortable').serialize();
+									
+				$.ajax({
+					url					: $('#formSortable').attr('action'),
+					dataType			: 'json',
+					data				: formData,
+					type				: "POST",
+					success				: function(data) {
+						if(data.respuesta) {							
+							swal(data.titulo, data.mensaje, 'success');
+							$('#sortableModal').modal('hide');
+							location.reload();
+						} else{
+							swal('Error!', 'Ocurrio un error al ordenar las partidas, verifique su informacion.', 'error');
+						}
+					},
+					error				: function(e) {
+						console.log(e);
+					}
+				});
+			});
+		});
+		
+		function compare(a, b) {
+		  const itemA = a.ordenIndex;
+		  const itemB = b.ordenIndex;
+		  
+		  let comparison = 0;
+		  if(itemA > itemB) {
+		    comparison = 1;
+		  }else if(itemA < itemB) {
+		    comparison = -1;
+		  }
+		  return comparison;
+		}
+		
+		/*function accionesFormatter(value, row, index) {
+			
+			urlEdit = [[@{/controlPanel/cotizaciones/}]] + idCotizacion + '/partidas/' + row.idCotizacionPartida + '/edit';
+			
+		    return [
+		    	'<a href="' + urlEdit + '" title="Editar">',
+		        	'<i class="material-icons">mode_edit</i>',
+		        '</a>',
+		        '<a href="#" class="clone-partida" data-cotizacion="'+ idCotizacion +'" data-partida="'+ row.idCotizacionPartida +'" title="Clonar partida">',
+		        	'<i class="material-icons">flip_to_front</i>',
+		        '</a>',
+		        '<a href="#" class="delete-partida" data-cotizacion="'+ idCotizacion +'" data-partida="'+ row.idCotizacionPartida +'" title="Eliminar">',
+		        	'<i class="material-icons">delete</i>',
+		        '</a>'
+		    ].join('');
+		}*/
+		
+		//Datetimepicker plugin
+		/*$(function () {
+			$('#txtBootstrapTableHasta').bootstrapMaterialDatePicker({format: 'MM/DD/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+			$('#txtBootstrapTableDesde').bootstrapMaterialDatePicker({format: 'MM/DD/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false}).on('change', function(e, date)
+			{
+				$('#txtBootstrapTableHasta').bootstrapMaterialDatePicker('setMinDate', date);
+			});					
+			
+	 	});*/
+	
+		/*]]>*/</script>
+</th:block>

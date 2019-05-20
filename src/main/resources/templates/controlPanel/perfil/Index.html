@@ -1,0 +1,160 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>MI PERFIL</h2>
+    </div>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>INFORMACI&Oacute;N PERSONAL</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<div class="row clearfix">
+    					<form id="formUsuario" th:action="${ {_PATH_} + 'controlPanel/miPerfil'}" th:method="PUT" enctype="multipart/form-data">
+							<div class="col-md-4">
+								<img th:if="${objUsuario.imagen != null}" th:src="@{'/ficheros/usuarios/' + ${objUsuario.imagen}}" width="200px" class="img-circle" />
+								<img th:unless="${objUsuario.imagen != null}" src="http://www.sbcs.edu.tt/wp-content/uploads/2016/04/profile-default.png" width="200px" class="img-circle" />
+								
+								<div class="form-group">
+	                        		<p><b>Subir imagen</b></p>
+	                                <div class="form-line">
+	                                    <input id="fichero" type="file" name="fichero" class="form-control" />
+	                                </div>
+	                            </div>
+							</div>
+							
+							<div class="col-md-8">
+								<div class="row clearfix">
+									<div class="col-md-4">
+			                        	<div class="form-group">
+			                        		<p><b>Nombre *</b></p>
+			                                <div class="form-line">
+			                                    <input type="text" name="txtNombre" class="form-control" th:value="${objUsuario.nombre}" required="required" />
+			                                </div>
+			                            </div>
+			                        </div>
+			                        
+			                        <div class="col-md-4">
+			                        	<div class="form-group">
+			                        		<p><b>Apellido Paterno *</b></p>
+			                                <div class="form-line">
+			                                    <input type="text" name="txtApellidoPaterno" class="form-control" th:value="${objUsuario.apellidoPaterno}" required="required" />
+			                                </div>
+			                            </div>
+			                        </div>
+			                        
+			                        <div class="col-md-4">
+			                        	<div class="form-group">
+			                        		<p><b>Apellido Materno *</b></p>
+			                                <div class="form-line">
+			                                    <input type="text" name="txtApellidoMaterno" class="form-control" th:value="${objUsuario.apellidoMaterno}" required="required" />
+			                                </div>
+			                            </div>
+			                        </div>
+								</div>
+								
+								<div class="row clearfix">
+									<div class="col-md-12">
+			                        	<div class="form-group">
+			                        		<p><b>Direcci&oacute;n</b></p>
+			                                <div class="form-line">
+			                                    <input type="text" name="txtDireccion" th:value="${objUsuario.direccion}" class="form-control"  />
+			                                </div>
+			                            </div>
+			                        </div>
+								</div>
+								
+								<div class="row clearfix">
+									<div class="col-md-4">
+			                        	<div class="form-group">
+			                        		<p><b>Tel&eacute;fono </b></p>
+			                                <div class="form-line">
+			                                    <input type="text" name="txtTelefono" th:value="${objUsuario.telefono}" class="form-control" />
+			                                </div>
+			                            </div>
+			                        </div>
+			                        
+			                        <div class="col-md-4">
+			                        	<div class="form-group">
+			                        		<p><b>Celular</b></p>
+			                                <div class="form-line">
+			                                    <input type="text" name="txtCelular" th:value="${objUsuario.celular}" class="form-control" />
+			                                </div>
+			                            </div>
+			                        </div>												
+								</div>
+								
+								<hr />
+							
+								<div class="row clearfix">
+									<div class="col-md-4">
+			                        	<div class="form-group">
+			                        		<p><b>Contrase&ntilde;a *</b></p>
+			                                <div class="form-line">
+			                                    <input type="password" id="txtPassword" name="txtPassword" class="form-control" />
+			                                </div>
+			                            </div>
+			                        </div>
+			                        
+			                        <div class="col-md-4">
+			                        	<div class="form-group">
+			                        		<p><b>Confirmar Contrase&ntilde;a *</b></p>
+			                                <div class="form-line">
+			                                    <input type="password" name="txtConfirm" class="form-control" />
+			                                </div>
+			                            </div>
+			                        </div>
+								</div>
+								
+								<div class="row clearfix">
+									<div class="col-md-6 col-md-offset-6 text-right">
+										<a th:href="${ {_PATH_} + 'controlPanel'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+										<button type="submit" class="btn btn-primary m-t-15 waves-effect">MODIFICAR</button>
+									</div>
+								</div>
+								
+							</div>
+						</form>
+					</div>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<script type="application/javascript" th:inline="javascript">
+		$(document).ready(function() {			
+			// VALIDADOR DE FORMULARIO
+			$('#formUsuario').validate({
+		        rules: {
+		            'txtCelular': {
+		                number: false
+		            },
+		            'txtConfirm': {
+		                equalTo: '#txtPassword'
+		            }
+		        },
+		        highlight: function (input) {
+		            $(input).parents('.form-line').addClass('error');
+		        },
+		        unhighlight: function (input) {
+		            $(input).parents('.form-line').removeClass('error');
+		        },
+		        errorPlacement: function (error, element) {
+		            $(element).parents('.form-group').append(error);
+		        }
+		    });
+			
+			//Custom Validations ===============================================================================
+		    //Number
+		    $.validator.addMethod('number', function (value, element) {
+		        return value.match('[0-9]+');
+		    },
+		        'Por favor ingresa un n&uacute;mero.'
+		    );
+		});					
+	</script>
+</th:block>
