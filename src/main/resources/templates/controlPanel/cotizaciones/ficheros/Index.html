@@ -325,7 +325,8 @@
 				e.preventDefault();
 				
 				var form = $('#formFichero');
-				var data = new FormData(form);
+				//var data = new FormData(form);
+				var data = new FormData();
 				data.append([[${_csrf.parameterName}]], [[${_csrf.token}]]);
 				data.append("cmbTipoFichero", $('#cmbTipoFichero').val());
 				data.append("txtFolio", $('#txtFolio').val());

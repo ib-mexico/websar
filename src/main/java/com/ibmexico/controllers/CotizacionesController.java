@@ -612,7 +612,7 @@ public class CotizacionesController {
 				}
 								
 				
-				if(cmbEstatus.equals(1) && objCotizacion.getAprobacionFecha() != null) {
+				if((cmbEstatus.equals(1) || cmbEstatus.equals(2)) && objCotizacion.getAprobacionFecha() != null) {
 					LocalDate ldNow = LocalDate.now();
 					objCotizacion.setAprobacionFecha(ldNow);
 				}

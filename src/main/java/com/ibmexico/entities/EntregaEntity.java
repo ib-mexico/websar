@@ -28,6 +28,10 @@ public class EntregaEntity {
 	private int idEntrega;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_empresa", nullable = true)
+	private EmpresaEntity empresa;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_usuario_entrega", nullable = false)
 	private UsuarioEntity usuarioEntrega;
 	
@@ -42,7 +46,7 @@ public class EntregaEntity {
 	@JoinColumn(name = "id_cliente_contacto", nullable = false)
 	private ClienteContactoEntity clienteContacto;
 	
-	@Formula(value = "(select concat('ENT-IBM-',u.clave,'-', lpad(id_entrega, 7, '0')) from usuarios u where u.id_usuario = id_usuario_entrega)")
+	@Formula(value = "(select concat('ENT-',e.clave,'-',u.clave,'-', lpad(id_entrega, 7, '0')) from usuarios u, empresas e where u.id_usuario = id_usuario_entrega AND e.id_empresa = id_empresa)")
 	private String folio;
 	
 	@Column(nullable = true)
@@ -103,6 +107,14 @@ public class EntregaEntity {
 	
 	public UsuarioEntity getUsuarioEntrega() {
 		return usuarioEntrega;
+	}
+	
+	public EmpresaEntity getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(EmpresaEntity empresa) {
+		this.empresa = empresa;
 	}
 	
 	public void setUsuarioEntrega(UsuarioEntity usuarioEntrega) {

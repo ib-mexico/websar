@@ -13,24 +13,26 @@
     			<div class="body">
     				<form id="formEntrega" th:action="${ {_PATH_} + 'controlPanel/entregas/' + objEntrega.getIdEntrega() + '/edit'}" th:method="PUT">
 						<div class="row clearfix">
-							<div class="col-md-6">
+							<div class="col-md-4">
+	                            <p><b>Empresa *</b></p>
+	                            <select class="form-control show-tick" name="cmbEmpresa" id="cmbEmpresa" data-live-search="true" >
+	                            	<option value="default">Selecciona una Empresa...</option>
+	                            	<th:block th:each="itemEmpresa : ${lstEmpresas}">	
+	                            		<option th:if="${objEntrega.getEmpresa().getIdEmpresa() == itemEmpresa.idEmpresa}" selected="selected" th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.empresa}"></option>
+	                            		<option th:unless="${objEntrega.getEmpresa().getIdEmpresa() == itemEmpresa.idEmpresa}" th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.empresa}"></option>                            	
+	                            	</th:block>
+	                       		</select>
+	                        </div>
+						
+							<div class="col-md-4">
 								<b>Cliente *</b>
 								<div class="input-group">
-									<th:block th:if="${objEntrega.cliente != null}">
-										<select class="form-control show-tick" name="cmbCliente" id="cmbCliente" data-live-search="true" >
-			                            	<th:block th:each="itemCliente : ${lstClientes}">
-			                            		<option th:if="${objEntrega.cliente.idCliente == itemCliente.idCliente}" selected="selected"  th:value="${itemCliente.idCliente}" th:text="${itemCliente.cliente}"></option>
-			                            		<option th:unless="${objEntrega.cliente.idCliente == itemCliente.idCliente}" th:value="${itemCliente.idCliente}" th:text="${itemCliente.cliente}"></option>
-			                            	</th:block>			                            	
-			                       		</select>
-									</th:block>
-									
-									<th:block th:unless="${objEntrega.cliente != null}">
-										<select class="form-control show-tick" name="cmbCliente" id="cmbCliente" data-live-search="true" >
-			                            	<option value="default" selected="selected">Selecciona un Cliente...</option>
-			                            	<option th:each="itemCliente : ${lstClientes}" th:value="${itemCliente.idCliente}" th:text="${itemCliente.cliente}"></option>
-			                       		</select>			                       		
-									</th:block>	
+									<select class="form-control show-tick" name="cmbCliente" id="cmbCliente" data-live-search="true" >
+		                            	<th:block th:each="itemCliente : ${lstClientes}">
+		                            		<option th:if="${objEntrega.cliente.idCliente == itemCliente.idCliente}" selected="selected"  th:value="${itemCliente.idCliente}" th:text="${itemCliente.cliente}"></option>
+		                            		<option th:unless="${objEntrega.cliente.idCliente == itemCliente.idCliente}" th:value="${itemCliente.idCliente}" th:text="${itemCliente.cliente}"></option>
+		                            	</th:block>			                            	
+		                       		</select>
 									
 									<span class="input-group-addon">
 		                       			<a href="#" data-toggle="modal" data-target="#clienteModal">		                       			
@@ -40,23 +42,15 @@
 								</div>	                           
 	                        </div>
 	                        
-	                        <div class="col-md-6">
+	                        <div class="col-md-4">
 	                            <b>Contacto *</b>
 	                            <div class="input-group">
-	                            	<th:block th:if="${objEntrega.clienteContacto != null}">
-	                            		<select class="form-control show-tick" name="cmbClienteContacto" id="cmbClienteContacto" data-live-search="true" >
-			                            	<th:block th:each="itemContacto : ${lstContactos}">
-			                            		<option th:if="${objEntrega.clienteContacto.idClienteContacto == itemContacto.idClienteContacto}" selected="selected"  th:value="${itemContacto.idClienteContacto}" th:text="${itemContacto.contacto}"></option>
-			                            		<option th:unless="${objEntrega.clienteContacto.idClienteContacto == itemContacto.idClienteContacto}" th:value="${itemContacto.idClienteContacto}" th:text="${itemContacto.contacto}"></option>
-			                            	</th:block>	
-			                            </select>
-	                            	</th:block>
-	                            	
-	                            	<th:block th:unless="${objEntrega.clienteContacto != null}">
-	                            		<select class="form-control show-tick" name="cmbClienteContacto" id="cmbClienteContacto" data-live-search="true" >
-			                            	<option value="default" selected="selected">Selecciona un Contacto...</option>
-			                            </select>
-	                            	</th:block>		                            		                            
+                            		<select class="form-control show-tick" name="cmbClienteContacto" id="cmbClienteContacto" data-live-search="true" >
+		                            	<th:block th:each="itemContacto : ${lstContactos}">
+		                            		<option th:if="${objEntrega.clienteContacto.idClienteContacto == itemContacto.idClienteContacto}" selected="selected"  th:value="${itemContacto.idClienteContacto}" th:text="${itemContacto.contacto}"></option>
+		                            		<option th:unless="${objEntrega.clienteContacto.idClienteContacto == itemContacto.idClienteContacto}" th:value="${itemContacto.idClienteContacto}" th:text="${itemContacto.contacto}"></option>
+		                            	</th:block>	
+		                            </select>	                            	                            		                            
 		                            
 		                            <span class="input-group-addon">
 		                       			<a href="#" data-toggle="modal" data-target="#contactoModal">		                       			
@@ -362,7 +356,7 @@
 			}
 			
 			// SELECT PICKER
-			$('#cmbCliente option').attr('selected', false);
+			//$('#cmbCliente option').attr('selected', false);
 			
 			$('#cmbCliente').on('change', function() {
 				buscarContactos();

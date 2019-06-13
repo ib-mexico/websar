@@ -13,7 +13,16 @@
     			<div class="body">
     				<form id="formEntrega" th:action="${ {_PATH_} + 'controlPanel/entregas'}" th:method="POST">
 						<div class="row clearfix">
-							<div class="col-md-6">
+							<div class="col-md-4">
+	                            <p><b>Empresa *</b></p>
+	                            <select class="form-control show-tick" name="cmbEmpresa" id="cmbEmpresa" data-live-search="true" >
+	                       			<th:block th:each="itemEmpresa : ${lstEmpresas}" >
+	                       				<option th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.empresa}"></option>
+	                       			</th:block>
+	                       		</select>
+	                        </div>
+						
+							<div class="col-md-4">
 								<b>Cliente *</b>
 								<div class="input-group">								
 		                            <select class="form-control show-tick" name="cmbCliente" id="cmbCliente" data-live-search="true" >
@@ -28,7 +37,7 @@
 								</div>	                           
 	                        </div>
 	                        
-	                        <div class="col-md-6">
+	                        <div class="col-md-4">
 	                            <b>Contacto *</b>
 	                            <div class="input-group">	                            
 		                            <select class="form-control show-tick" name="cmbClienteContacto" id="cmbClienteContacto" data-live-search="true" >

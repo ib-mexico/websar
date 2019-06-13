@@ -36,6 +36,7 @@ import com.ibmexico.entities.ClienteContactoEntity;
 import com.ibmexico.entities.ClienteEntity;
 import com.ibmexico.entities.ClienteGiroEntity;
 import com.ibmexico.entities.CotizacionEntity;
+import com.ibmexico.entities.EmpresaEntity;
 import com.ibmexico.entities.EntregaEntity;
 import com.ibmexico.entities.EntregaProductoEntity;
 import com.ibmexico.entities.SucursalEntity;
@@ -46,6 +47,7 @@ import com.ibmexico.services.ClienteContactoService;
 import com.ibmexico.services.ClienteGiroService;
 import com.ibmexico.services.ClienteService;
 import com.ibmexico.services.CotizacionService;
+import com.ibmexico.services.EmpresaService;
 import com.ibmexico.services.EntregaProductoService;
 import com.ibmexico.services.EntregaService;
 import com.ibmexico.services.SessionService;
@@ -72,6 +74,10 @@ public class EntregasController {
 	@Autowired
 	@Qualifier("entregaProductoService")
 	private EntregaProductoService entregaProductoService;
+	
+	@Autowired
+	@Qualifier("empresaService")
+	private EmpresaService empresaService;
 	
 	@Autowired
 	@Qualifier("usuarioService")
@@ -152,6 +158,7 @@ public class EntregasController {
 	@GetMapping({"/create", "/create/"})
 	public ModelAndView create() {		
 		
+		List<EmpresaEntity> lstEmpresas = empresaService.listEmpresas();
 		List<UsuarioEntity> lstUsuarios = usuarioService.listUsuarios();
 		List<ClienteEntity> lstClientes = clienteService.listClientesActivos();
 		List<SucursalEntity> lstSucursales = sucursalService.listSucursales();
@@ -160,6 +167,7 @@ public class EntregasController {
 		
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_ENTREGAS_CREATE);
 		objModelAndView.addObject("lstUsuarios", lstUsuarios);
+		objModelAndView.addObject("lstEmpresas", lstEmpresas);
 		objModelAndView.addObject("lstClientes", lstClientes);
 		objModelAndView.addObject("lstClientesGiros", lstClientesGiros);
 		objModelAndView.addObject("lstSucursales", lstSucursales);
@@ -171,6 +179,7 @@ public class EntregasController {
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public RedirectView store(@RequestParam(value="cmbCliente") Integer cmbCliente,
 								@RequestParam(value="cmbClienteContacto") Integer cmbClienteContacto,
+								@RequestParam(value="cmbEmpresa") Integer cmbEmpresa,
 								@RequestParam(value="cmbCotizacion", required=false, defaultValue="0") Integer cmbCotizacion,
 								@RequestParam(value="txtOrdenCompra", required=false, defaultValue="") String txtOrdenCompra,
 								@RequestParam(value="cmbUsuarioEntrega") int cmbUsuarioEntrega,
@@ -189,6 +198,7 @@ public class EntregasController {
 		
 		try {
 			
+			objEntrega.setEmpresa(empresaService.findByIdEmpresa(cmbEmpresa));
 			objEntrega.setCliente(clienteService.findByIdCliente(cmbCliente));
 			objEntrega.setClienteContacto(clienteContactoService.findByIdClienteContacto(cmbClienteContacto));
 			objEntrega.setOrdenCompra(txtOrdenCompra);
@@ -225,6 +235,7 @@ public class EntregasController {
 		
 		EntregaEntity objEntrega = entregaService.findByIdEntrega(paramIdEntrega);
 		List<EntregaProductoEntity> lstProductos = entregaProductoService.listEntregaProductos(paramIdEntrega);
+		List<EmpresaEntity> lstEmpresas = empresaService.listEmpresas();
 		List<UsuarioEntity> lstUsuarios = usuarioService.listUsuarios();
 		List<ClienteEntity> lstClientes = clienteService.listClientesActivos();
 		List<ClienteContactoEntity> lstContactos = clienteContactoService.listClienteContactosActivos(objEntrega.getCliente().getIdCliente());
@@ -235,6 +246,7 @@ public class EntregasController {
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_ENTREGAS_EDIT);
 		objModelAndView.addObject("objEntrega", objEntrega);
 		objModelAndView.addObject("lstProductos", lstProductos);
+		objModelAndView.addObject("lstEmpresas", lstEmpresas);
 		objModelAndView.addObject("lstUsuarios", lstUsuarios);
 		objModelAndView.addObject("lstClientes", lstClientes);
 		objModelAndView.addObject("lstContactos", lstContactos);
@@ -249,6 +261,7 @@ public class EntregasController {
 	public RedirectView store( @PathVariable(value="paramIdEntrega") Integer paramIdEntrega,
 								@RequestParam(value="cmbCliente") Integer cmbCliente,
 								@RequestParam(value="cmbClienteContacto") Integer cmbClienteContacto,
+								@RequestParam(value="cmbEmpresa") Integer cmbEmpresa,
 								@RequestParam(value="cmbCotizacion", required=false, defaultValue="0") Integer cmbCotizacion,
 								@RequestParam(value="txtOrdenCompra", required=false, defaultValue="") String txtOrdenCompra,
 								@RequestParam(value="cmbUsuarioEntrega") int cmbUsuarioEntrega,
@@ -265,7 +278,7 @@ public class EntregasController {
 		EntregaEntity objEntrega = entregaService.findByIdEntrega(paramIdEntrega);
 		
 		try {
-			
+			objEntrega.setEmpresa(empresaService.findByIdEmpresa(cmbEmpresa));
 			objEntrega.setCliente(clienteService.findByIdCliente(cmbCliente));
 			objEntrega.setClienteContacto(clienteContactoService.findByIdClienteContacto(cmbClienteContacto));
 			objEntrega.setOrdenCompra(txtOrdenCompra);
