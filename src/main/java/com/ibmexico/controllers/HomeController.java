@@ -5,13 +5,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,10 +101,7 @@ public class HomeController {
 		
 		//PERIODO
 		LocalDate fechaMesInicio = LocalDate.now().withDayOfMonth(1);
-		LocalDate fechaMesFin = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
-		
-		//CALENDARIO
-		Calendar c = Calendar.getInstance();	
+		LocalDate fechaMesFin = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());	
 		
 		//USUARIOS
 		List<UsuarioEntity> lstUsuarios = usuarioService.listUsuariosActivos();
@@ -708,6 +702,114 @@ public class HomeController {
 		objContext.setVariable("totalImplementador", GeneralConfiguration.getInstance().getNumberFormat().format(totalImplementador));
 		objContext.setVariable("totalAcumuladoComision", GeneralConfiguration.getInstance().getNumberFormat().format(totalAcumuladoComision));
 		objContext.setVariable("totalCuota", GeneralConfiguration.getInstance().getNumberFormat().format(totalQuota));
+		
+		objContext.setVariable("fechaInicio", fechaInicio.format(GeneralConfiguration.getInstance().getDateFormatterNatural()));
+		objContext.setVariable("fechaFin", fechaFin.format(GeneralConfiguration.getInstance().getDateFormatterNatural()));
+		objContext.setVariable("mesActual", GeneralConfiguration.getInstance().getCurrentMonthNatural(fechaInicio.getMonthValue()));
+
+		
+		return pdfComponent.generate(path_file, objTemplates.FOUNDATION_PDF, objContext);		
+	}
+
+	@RequestMapping(value = {"reporte-cobranza-pdf", "reporte-cobranza-pdf/{fecha}/{empresa}/{usuario}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
+	public ResponseEntity<InputStreamResource> previewPdffCobranza(@PathVariable(value="fecha", required=false) String fecha,
+																	 @PathVariable(value="empresa", required=false) Integer idEmpresa,
+																	 @PathVariable(value="usuario", required=false) Integer idUsuario) throws IOException, DocumentException {
+		
+		LocalDate fechaMesInicio = null;
+		LocalDate fechaMesFin = null;
+		
+		UsuarioEntity objUsuario = null;
+		EmpresaEntity objEmpresa = empresaService.findByIdEmpresa(idEmpresa);
+		
+		//USUARIO
+		if((idUsuario != null && idUsuario >= 1) && sessionService.hasRol("COTIZACIONES_COBRANZA")) {
+			objUsuario = usuarioService.findByIdUsuario(idUsuario);
+		} else {
+			objUsuario = sessionService.getCurrentUser();
+		}
+		
+		 
+		//PERIODO
+		if(!fecha.equals("") && fecha.contains("-")) {
+			
+			String[] arrFecha = fecha.split("-");
+			int year = Integer.parseInt(arrFecha[2]);
+			int month = Integer.parseInt(arrFecha[1]);
+			int day = Integer.parseInt(arrFecha[0]);
+			
+			fechaMesInicio = LocalDate.of(year, month, day).withDayOfMonth(1);
+			fechaMesFin = LocalDate.of(year, month, day).withDayOfMonth(LocalDate.of(year, month, day).lengthOfMonth());
+			
+		} else {			
+			fechaMesInicio = LocalDate.now().withDayOfMonth(1);
+			fechaMesFin = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+		}
+		
+		//TOTALES DEL REPORTE DE COMISION
+		BigDecimal totalAcumuladoComision = new BigDecimal(0);
+		
+		final LocalDate fechaInicio = fechaMesInicio;
+		final LocalDate fechaFin = fechaMesFin;
+		
+		List<CotizacionEntity> lstCotizaciones = cotizacionService.listCotizacionesCobradasPeriodo(fechaInicio, fechaFin, objUsuario, objEmpresa);
+		List<Map<String , String>> myMap  = new ArrayList<Map<String,String>>();
+		Integer iterator = 0;
+		
+		
+		for(CotizacionEntity itemCotizacion: lstCotizaciones) {
+			
+			Map<String,String> myMap1 = new HashMap<String, String>();
+			
+			/*COMISION DEL USUARIO */
+			CotizacionComisionEntity objComision = cotizacionComisionService.comisionUsuarioCotizacionCobradaPeriodo(objUsuario, itemCotizacion, fechaInicio, fechaFin);					
+			
+			BigDecimal comisionCobranza = new BigDecimal(0);			
+			String comisionCobranzaNatural = "-";
+			
+			
+			if(objComision != null) {
+				
+				if(objComision.getUsuarioCobranza() != null) {
+					if(objComision.getUsuarioCobranza().getIdUsuario() == objUsuario.getIdUsuario()){
+						comisionCobranza = objComision.getComisionCobranza();
+						comisionCobranzaNatural = GeneralConfiguration.getInstance().getNumberFormat().format(objComision.getComisionCobranza());
+					}
+				}				
+			}
+			
+			//TOTAL DE COMISIÓN GENERADA POR LA COTIZACIÓN
+			totalAcumuladoComision 	= totalAcumuladoComision.add(comisionCobranza);		
+			
+			myMap1.put("folio", itemCotizacion.getFolio());	
+			myMap1.put("fecha_aprobacion", itemCotizacion.getAprobacionFechaNatural());
+			myMap1.put("dias_credito", itemCotizacion.getDiasCredito());
+			myMap1.put("fecha_cobranza", itemCotizacion.getInicioCobranzaFechaNatural());
+			myMap1.put("fecha_pago", itemCotizacion.getPagoFechaNatural());
+			myMap1.put("porcentaje_cobranza", objComision.getPorcentajeCobranzaNatural());
+			myMap1.put("comision_cobranza", comisionCobranzaNatural);
+			
+			myMap.add(iterator,myMap1);
+			
+			iterator++;						
+		};
+		
+		
+		LocalDateTime ldtNow = LocalDateTime.now();
+		Templates objTemplates = new Templates();
+		
+		String path_file = ldtNow.getYear() + "_" + ldtNow.getMonthValue() + "_" + ldtNow.getDayOfMonth() + "_REPORTE_COBRANZA_2DO_NIVEL.pdf";
+				
+		Context objContext = new Context();
+		objContext.setVariable("_TEMPLATE_", Templates.PDF_REPORTE_COMISION_COBRANZA);
+		objContext.setVariable("title", "Reporte de Comisión de Cobranza");
+		
+		objContext.setVariable("objUsuario", objUsuario);
+		objContext.setVariable("objEmpresa", objEmpresa);
+		objContext.setVariable("rolCotizacionCobranza", sessionService.hasRol("COTIZACIONES_COBRANZA"));
+		
+		objContext.setVariable("cotizacionesMap", myMap);		
+		objContext.setVariable("totalAcumuladoComision", GeneralConfiguration.getInstance().getNumberFormat().format(totalAcumuladoComision));
 		
 		objContext.setVariable("fechaInicio", fechaInicio.format(GeneralConfiguration.getInstance().getDateFormatterNatural()));
 		objContext.setVariable("fechaFin", fechaFin.format(GeneralConfiguration.getInstance().getDateFormatterNatural()));

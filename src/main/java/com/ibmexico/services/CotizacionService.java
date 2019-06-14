@@ -17,8 +17,10 @@ import org.springframework.stereotype.Service;
 import com.ibmexico.libraries.notifications.ApplicationException;
 import com.ibmexico.libraries.notifications.EnumException;
 import com.ibmexico.configurations.GeneralConfiguration;
+import com.ibmexico.entities.CotizacionComisionEntity;
 import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.CotizacionPartidaEntity;
+import com.ibmexico.entities.CotizacionUsuarioQuotaEntity;
 import com.ibmexico.entities.EmpresaEntity;
 import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.libraries.DataTable;
@@ -38,6 +40,14 @@ public class CotizacionService {
 	@Autowired
 	@Qualifier("cotizacionFicheroService")
 	private CotizacionFicheroService cotizacionFicheroService;
+	
+	@Autowired
+	@Qualifier("cotizacionUsuarioQuotaService")
+	private CotizacionUsuarioQuotaService cotizacionUsuarioQuotaService;
+	
+	@Autowired
+	@Qualifier("cotizacionComisionService")
+	private CotizacionComisionService cotizacionComisionService;
 	
 	@Autowired
 	@Qualifier("sessionService")
@@ -129,6 +139,7 @@ public class CotizacionService {
 		BigDecimal porcentajeFacturados = null;
 		BigDecimal porcentajePagados = null;
 		BigDecimal porcentajeCancelados = null;
+		BigDecimal porcentajeEnCobranza = null;
 		
 		if(sessionService.hasRol("COTIZACIONES_ADMINISTRADOR")) {
 			
@@ -140,13 +151,15 @@ public class CotizacionService {
 				porcentajeAprobados =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(2, ldFechaInicio, ldFechaFin)).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
 				porcentajeFacturados =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(3, ldFechaInicio, ldFechaFin)).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
 				porcentajePagados =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(4, ldFechaInicio, ldFechaFin)).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
-				porcentajeCancelados =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(5, ldFechaInicio, ldFechaFin)).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);			
+				porcentajeCancelados =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(5, ldFechaInicio, ldFechaFin)).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
+				porcentajeEnCobranza =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(6, ldFechaInicio, ldFechaFin)).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
 			} else {
 				porcentajeActivos = new BigDecimal(0);
 				porcentajeAprobados = new BigDecimal(0);
 				porcentajeFacturados = new BigDecimal(0);
 				porcentajePagados = new BigDecimal(0);
 				porcentajeCancelados = new BigDecimal(0);
+				porcentajeEnCobranza = new BigDecimal(0);
 			}
 			
 		} else {
@@ -159,13 +172,15 @@ public class CotizacionService {
 				porcentajeAprobados =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(2, ldFechaInicio, ldFechaFin, sessionService.getCurrentUser().getIdUsuario())).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
 				porcentajeFacturados =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(3, ldFechaInicio, ldFechaFin, sessionService.getCurrentUser().getIdUsuario())).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
 				porcentajePagados =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(4, ldFechaInicio, ldFechaFin, sessionService.getCurrentUser().getIdUsuario())).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
-				porcentajeCancelados =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(5, ldFechaInicio, ldFechaFin, sessionService.getCurrentUser().getIdUsuario())).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);			
+				porcentajeCancelados =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(5, ldFechaInicio, ldFechaFin, sessionService.getCurrentUser().getIdUsuario())).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
+				porcentajeEnCobranza =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(5, ldFechaInicio, ldFechaFin, sessionService.getCurrentUser().getIdUsuario())).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
 			} else {
 				porcentajeActivos = new BigDecimal(0);
 				porcentajeAprobados = new BigDecimal(0);
 				porcentajeFacturados = new BigDecimal(0);
 				porcentajePagados = new BigDecimal(0);
 				porcentajeCancelados = new BigDecimal(0);
+				porcentajeEnCobranza = new BigDecimal(0);
 			}
 			
 		}		
@@ -175,7 +190,8 @@ public class CotizacionService {
 					.add("porcentajeAprobados", porcentajeAprobados.multiply(new BigDecimal(100)).toString())
 					.add("porcentajeFacturados", porcentajeFacturados.multiply(new BigDecimal(100)).toString())
 					.add("porcentajePagados", porcentajePagados.multiply(new BigDecimal(100)).toString())
-					.add("porcentajeCancelados", porcentajeCancelados.multiply(new BigDecimal(100)).toString());
+					.add("porcentajeCancelados", porcentajeCancelados.multiply(new BigDecimal(100)).toString())
+					.add("porcentajeEnCobranza", porcentajeEnCobranza.multiply(new BigDecimal(100)).toString());
 		
 		return jsonReturn.build().toString();
 	}
@@ -218,6 +234,9 @@ public class CotizacionService {
 		return jsonReturn.build().toString();
 	}
 	
+	public List<CotizacionEntity> lstCotizacionesNoCobradas() {		
+		return cotizacionRepository.lstCotizacionesNoCobradas();
+	}
 	
 	/* REPORTE DE APROBADOS */
 	public List<CotizacionEntity> listCotizacionesAprobados(LocalDate ldFechaActual, int condicional) {
@@ -279,6 +298,12 @@ public class CotizacionService {
 	}
 	//**************************
 	
+	/* REPORTES DE COMISIONES DE COBRANZA */
+	public List<CotizacionEntity> listCotizacionesCobradasPeriodo(LocalDate ldFechaInicio, LocalDate ldFechaFin, UsuarioEntity objUsuario, EmpresaEntity objEmpresa) {
+		return cotizacionRepository.findCotizacionesCobradasPorMes(ldFechaInicio, ldFechaFin, objUsuario.getIdUsuario(), objEmpresa.getIdEmpresa());
+	}
+	//**************************
+	
 	public BigDecimal sumCotizacionesSubtotalVentasPeriodo(LocalDate ldFechaInicio, LocalDate ldFechaFin) {		
 		return cotizacionRepository.sumTotalCotizacionPorMes(ldFechaInicio, ldFechaFin, sessionService.getCurrentUser().getIdUsuario());		
 	}
@@ -287,6 +312,7 @@ public class CotizacionService {
 		return cotizacionRepository.findCotizacionesActivas();
 	}
 	
+	/* CRUD DE COTIZACIONES */
 	public void create(CotizacionEntity objCotizacion) {
 		
 		if(objCotizacion != null) {
@@ -362,7 +388,60 @@ public class CotizacionService {
 			throw new ApplicationException(EnumException.COTIZACIONES_CLONE_002);
 		}
 	}
+	//**************************
 	
-	
+	/* RECALCULO DE LA COTIZACION */
+	public void recalcularCotizacion(CotizacionEntity objCotizacion) {
+		if( objCotizacion != null) {
+			//VALIDAMOS QUE LA COTIZACION NO SE UNA RENTA
+			if(objCotizacion.isMaestra() || objCotizacion.isNormal()) {
+				
+				List<CotizacionUsuarioQuotaEntity> lstCuotas = cotizacionUsuarioQuotaService.listCotizacionQuotas(objCotizacion);
+				
+				if(!lstCuotas.isEmpty()) {						
+					cotizacionUsuarioQuotaService.eliminarQuota(objCotizacion);													
+				}
+				
+				if(objCotizacion.isMaestra()) {					
+					CotizacionComisionEntity objComisionCotizacion = cotizacionComisionService.findByCotizacion(objCotizacion);
+					
+					if(objComisionCotizacion != null) {							
+						cotizacionComisionService.eliminarComision(objCotizacion);														
+					}													
+				}
+				
+				CotizacionUsuarioQuotaEntity objcuota = new CotizacionUsuarioQuotaEntity();
+				objcuota.setCotizacion(objCotizacion);
+				
+				cotizacionUsuarioQuotaService.cargarQuota(objCotizacion);						
+			}
+			
+			//VALIDAMOS QUE LA COTIZACION NO SE MAESTRA
+			if(objCotizacion.getCotizacionEstatus().getIdCotizacionEstatus() == 4) {				
+				if(objCotizacion.isRenta() || objCotizacion.isNormal()) {
+					
+					CotizacionComisionEntity objComisionCotizacion = cotizacionComisionService.findByCotizacion(objCotizacion);
+					
+					if(objComisionCotizacion != null) {							
+						cotizacionComisionService.eliminarComision(objCotizacion);														
+					}
+					
+					if(objCotizacion.isRenta()) {					
+						List<CotizacionUsuarioQuotaEntity> lstCuotas = cotizacionUsuarioQuotaService.listCotizacionQuotas(objCotizacion);
+						
+						if(!lstCuotas.isEmpty()) {						
+							cotizacionUsuarioQuotaService.eliminarQuota(objCotizacion);													
+						}													
+					}
+					
+					CotizacionComisionEntity objComision = new CotizacionComisionEntity();
+					objComision.setCotizacion(objCotizacion);
+					
+					cotizacionComisionService.create(objComision, objCotizacion);						
+				}
+			}
+		}
+	}
+	//**************************
 	
 }

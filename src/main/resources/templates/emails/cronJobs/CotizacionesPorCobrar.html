@@ -1,0 +1,28 @@
+<th:block th:fragment="title">
+	<h1>Notificaci&oacute;n de Cotizaciones</h1>
+</th:block>
+
+
+<th:block th:fragment="body">
+	<h1 style="color:#000000;">Hola <span>Cobranza</span>: </h1>
+	<p style="display:inline">Existen cotizaciones vencidas con forma de pago <b>(Cr&eacute;dito)</b> en el SAR:</p>
+	
+	<table align="center" border="0" cellpadding="10" cellspacing="10" width="100%" style="border-collapse: collapse; border:solid 1px #333333">		
+		<tr>
+			<th style="background-color: #333333; text-align: left; border: solid 1px #333333; color: #FFF" width="20%">Folio</th>
+			<th style="background-color: #333333; text-align: left; border: solid 1px #333333; color: #FFF" width="15%">Estatus</th>
+			<th style="background-color: #333333; text-align: center; border: solid 1px #333333; color: #FFF" width="15%">Fecha de Facuraci&oacute;n</th>
+			<th style="background-color: #333333; text-align: left; border: solid 1px #333333; color: #FFF" width="30%">Cliente</th>
+			<th style="background-color: #333333; text-align: right; border: solid 1px #333333; color: #FFF" width="20%">Total</th>
+		</tr>
+		
+		<tr th:each="itemCotizacion : ${lstCotizaciones}">
+			<td style="text-align: left; border: solid 1px #333333" th:text="${itemCotizacion.folio}"></td>
+			<td style="text-align: left; border: solid 1px #333333" th:text="${itemCotizacion.estatus}"></td>
+			<td style="text-align: center; border: solid 1px #333333" th:text="${itemCotizacion.fecha_factura}"></td>
+			<td style="text-align: left; border: solid 1px #333333" th:text="${itemCotizacion.cliente}"></td>
+			<td style="text-align: right; border: solid 1px #333333" th:text="${itemCotizacion.total}"></td>
+		</tr>		
+	</table>
+</th:block>
+

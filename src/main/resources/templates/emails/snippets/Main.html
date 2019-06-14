@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Gestión de conjuntos habitacionales</title>
+    <title>Sistema de Administraci&oacute;n de Recursos</title>
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -54,11 +54,12 @@
     <table align="center" border="0" cellpadding="0" cellspacing="0" width="720" style="border-collapse: collapse;">
         <tr>
             <td align="center" bgcolor="#333333" style="padding: 40px 0 30px 0;">
-							<th:block th:include="${_TEMPLATE_} :: title" /> 
+				<th:block th:include="${_TEMPLATE_} :: title" />
             </td>
             
             <td align="center" bgcolor="#333333" style="padding: 40px 0 30px 0;">
-                <img src="cid:logotipo_250.png" alt="https://www.suburbios.com/" style="display: block; float:right;" />
+            	<img th:src="@{'http://localhost:8080/WebSar/assets/images/logotipo_250.png'}" style="display: block; float:right;" />
+                <!-- <img src="cid:logotipo_250.png" alt="#" style="display: block; float:right;" /> -->
             </td>
         </tr>
         <tr>
@@ -75,7 +76,7 @@
         
         <tr>
             <td  colspan="2" bgcolor="#626262" style="padding: 30px 30px 30px 30px;">
-                <p><small>&copy; 2018 Copyright</small></p>
+                <p><small>&copy; 2019 Copyright</small></p>
                 <p><a class="link_blanco" href="http://www.ib-mexico.com">www.ib-mexico.com</a></p>
             </td>
         </tr>

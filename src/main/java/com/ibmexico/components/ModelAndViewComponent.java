@@ -43,7 +43,7 @@ public class ModelAndViewComponent {
 		//cambiar nombre de atributo
 		objModelAndViewControlPanel.addObject("_ROLES_MENU_", sessionService.getCategoriesRolesMenu());
 
-		objModelAndViewControlPanel.addObject("_VERSION_", "1.2.2");
+		objModelAndViewControlPanel.addObject("_VERSION_", "1.4.7");
 		
 		Map<String, Boolean> mapRoles = sessionService.getStringFullRoles();
 		objModelAndViewControlPanel.addObject("_ROLES_", mapRoles);

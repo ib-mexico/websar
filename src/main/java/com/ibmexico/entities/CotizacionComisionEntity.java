@@ -71,6 +71,16 @@ public class CotizacionComisionEntity {
 	@Column(nullable = false, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
 	private BigDecimal comisionImplementador;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_usuario_cobranza", nullable = true)
+	private UsuarioEntity usuarioCobranza;
+	
+	@Column(nullable = false, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
+	private BigDecimal porcentajeCobranza;
+	
+	@Column(nullable = false, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
+	private BigDecimal comisionCobranza;
+	
 	@Column(nullable = false, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
 	private BigDecimal totalComisiones;
 	
@@ -354,6 +364,67 @@ public class CotizacionComisionEntity {
 
 	public void setComisionImplementador(BigDecimal comisionImplementador) {
 		this.comisionImplementador = comisionImplementador;
+	}
+	
+	public UsuarioEntity getUsuarioCobranza() {
+		UsuarioEntity objUsuario = null;
+		
+		if(usuarioCobranza != null) {
+			objUsuario = usuarioCobranza;
+		}
+		return objUsuario;
+	}
+
+	public void setUsuarioCobranza(UsuarioEntity usuarioCobranza) {
+		this.usuarioCobranza = usuarioCobranza;
+	}
+
+	public BigDecimal getPorcentajeCobranza() {
+		BigDecimal porcentaje = new BigDecimal(0);
+		
+		if(porcentajeCobranza != null) {
+			porcentaje = porcentajeCobranza;
+		}
+		
+		return porcentaje;
+	}
+	
+	public String getPorcentajeCobranzaNatural() {
+		String porcentajeNatural = "0%";
+		
+		if(porcentajeCobranza != null) {
+			porcentajeNatural = GeneralConfiguration.getInstance().getNumberFormat().format(porcentajeCobranza) + "%";
+		}
+		
+		return porcentajeNatural;
+	}
+
+	public void setPorcentajeCobranza(BigDecimal porcentajeCobranza) {
+		this.porcentajeCobranza = porcentajeCobranza;
+	}
+
+	public BigDecimal getComisionCobranza() {
+		BigDecimal comision = new BigDecimal(0);
+		
+		if(comisionCobranza != null) {
+			comision = comisionCobranza;
+		}
+		
+		return comision;
+	}
+	
+	public String getComisionCobranzaNatural() {
+		String comisionNatural = "$0.00";
+		
+		if(comisionCobranza != null) {
+			comisionNatural = GeneralConfiguration.getInstance().getNumberFormat().format(comisionCobranza);
+		}
+		
+		return comisionNatural;
+	}
+
+	public void setComisionCobranza(BigDecimal comisionCobranza) {
+		this.comisionCobranza = comisionCobranza;
 	}
 
 	public BigDecimal getTotalComisiones() {

@@ -328,6 +328,10 @@ public class SessionService implements UserDetailsService {
 		return usuarioRolRepository.findByRol_RolAndUsuario_IdUsuario(rol, getCurrentUser().getIdUsuario());
 	}
 	
+	public UsuarioRolEntity findRol(String rol, UsuarioEntity objUsuario) {
+		return usuarioRolRepository.findByRol_RolAndUsuario_IdUsuario(rol, objUsuario.getIdUsuario());
+	}
+	
 	public UsuarioRolEntity findRol(RolEntity objRol) {
 		UsuarioRolEntity objReturn = null;
 		
@@ -357,6 +361,19 @@ public class SessionService implements UserDetailsService {
 		
 		if(rol != null) {
 			UsuarioRolEntity objUsuarioRolEntity = findRol(rol);
+			if(objUsuarioRolEntity != null) {
+				boolReturn = true;
+			}
+		}
+		
+		return boolReturn;
+	}
+	
+	public boolean hasRol(String rol, UsuarioEntity objUsuario) {
+		boolean boolReturn = false;
+		
+		if(rol != null) {
+			UsuarioRolEntity objUsuarioRolEntity = findRol(rol, objUsuario);
 			if(objUsuarioRolEntity != null) {
 				boolReturn = true;
 			}

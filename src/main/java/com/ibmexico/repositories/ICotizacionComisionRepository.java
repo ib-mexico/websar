@@ -30,4 +30,7 @@ public interface ICotizacionComisionRepository extends JpaRepository<CotizacionC
 	
 	@Query("SELECT objComision FROM CotizacionComisionEntity objComision WHERE (objComision.usuarioEjecutivo.idUsuario = ?1 OR objComision.usuarioCotizante.idUsuario = ?1 OR objComision.usuarioVendedor.idUsuario = ?1 OR objComision.usuarioImplementador.idUsuario = ?1) AND objComision.cotizacion.cotizacionEstatus.idCotizacionEstatus = 4 AND objComision.cotizacion.idCotizacion = ?2 AND (CONVERT(objComision.cotizacion.pagoFecha, DATE) BETWEEN ?3 AND ?4)")
 	public abstract CotizacionComisionEntity comisionUsuarioCotizacionPagadaPeriodo(int idUsuario, int idCotizacion, LocalDate ldFechaInicio, LocalDate ldFechaFin);
+	
+	@Query("SELECT objComision FROM CotizacionComisionEntity objComision WHERE objComision.usuarioCobranza.idUsuario = ?1 AND objComision.cotizacion.cotizacionEstatus.idCotizacionEstatus = 4 AND objComision.cotizacion.idCotizacion = ?2 AND (CONVERT(objComision.cotizacion.pagoFecha, DATE) BETWEEN ?3 AND ?4)")
+	public abstract CotizacionComisionEntity comisionUsuarioCotizacionCobradaPeriodo(int idUsuario, int idCotizacion, LocalDate ldFechaInicio, LocalDate ldFechaFin);
 }

@@ -43,8 +43,11 @@ public class CotizacionEntity {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_usuario_implementador", nullable = true)
-	private UsuarioEntity usuarioImplementador;	
-
+	private UsuarioEntity usuarioImplementador;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_usuario_cobranza", nullable = true)
+	private UsuarioEntity usuarioCobranza;	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_sucursal", nullable = true)
@@ -53,7 +56,7 @@ public class CotizacionEntity {
 	@Formula(value = "(select concat('COT-', e.clave,'-',u.clave,'-', lpad(id_cotizacion, 7, '0')) from usuarios u ,empresas e where u.id_usuario = id_usuario AND e.id_empresa = id_empresa)")
 	private String folio;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_cliente", nullable = true)
 	private ClienteEntity cliente;
 	
@@ -95,7 +98,7 @@ public class CotizacionEntity {
 	@JoinColumn(name = "id_moneda", nullable = true)
 	private MonedaEntity moneda;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_cotizacion_estatus", nullable = true)
 	private CotizacionEstatusEntity cotizacionEstatus;
 	
@@ -113,6 +116,9 @@ public class CotizacionEntity {
 	
 	@Column(length = 50, nullable = true)
 	private String pagoReferencia = "";
+	
+	@Column(nullable = true)
+	private LocalDate inicioCobranzaFecha;
 	
 	@Lob
 	@Column
@@ -212,6 +218,14 @@ public class CotizacionEntity {
 
 	public void setUsuarioImplementador(UsuarioEntity usuarioImplementador) {
 		this.usuarioImplementador = usuarioImplementador;
+	}
+	
+	public UsuarioEntity getUsuarioCobranza() {
+		return usuarioCobranza;
+	}
+
+	public void setUsuarioCobranza(UsuarioEntity usuarioCobranza) {
+		this.usuarioCobranza = usuarioCobranza;
 	}
 
 	public SucursalEntity getSucursal() {
@@ -412,6 +426,25 @@ public class CotizacionEntity {
 
 	public void setPagoReferencia(String pagoReferencia) {
 		this.pagoReferencia = pagoReferencia;
+	}
+	
+	public LocalDate getInicioCobranzaFecha() {
+		return inicioCobranzaFecha;
+	}
+	
+	public String getInicioCobranzaFechaNatural() {
+		
+		String fecha = "";
+		
+		if(inicioCobranzaFecha != null) {			
+			fecha = inicioCobranzaFecha.format(GeneralConfiguration.getInstance().getDateFormatterNatural());
+		}
+		
+		return fecha;
+	}
+
+	public void setInicioCobranzaFecha(LocalDate inicioCobranzaFecha) {
+		this.inicioCobranzaFecha = inicioCobranzaFecha;
 	}
 
 	public String getObservaciones() {

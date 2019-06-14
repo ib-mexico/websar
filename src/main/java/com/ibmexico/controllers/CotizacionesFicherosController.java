@@ -34,18 +34,14 @@ import com.ibmexico.libraries.notifications.EnumMessage;
 import com.ibmexico.components.ModelAndViewComponent;
 import com.ibmexico.components.PdfComponent;
 import com.ibmexico.configurations.GeneralConfiguration;
-import com.ibmexico.entities.CotizacionComisionEntity;
 import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.CotizacionFicheroEntity;
 import com.ibmexico.entities.CotizacionTipoFicheroEntity;
-import com.ibmexico.entities.CotizacionUsuarioQuotaEntity;
 import com.ibmexico.libraries.Templates;
 import com.lowagie.text.DocumentException;
-import com.ibmexico.services.CotizacionComisionService;
 import com.ibmexico.services.CotizacionFicheroService;
 import com.ibmexico.services.CotizacionService;
 import com.ibmexico.services.CotizacionTipoFicheroService;
-import com.ibmexico.services.CotizacionUsuarioQuotaService;
 import com.ibmexico.services.SessionService;
 
 @Controller
@@ -71,14 +67,6 @@ public class CotizacionesFicherosController {
 	@Autowired
 	@Qualifier("cotizacionTipoFicheroService")
 	private CotizacionTipoFicheroService cotizacionTipoFicheroService;
-	
-	@Autowired
-	@Qualifier("cotizacionUsuarioQuotaService")
-	private CotizacionUsuarioQuotaService cotizacionUsuarioQuotaService;
-	
-	@Autowired
-	@Qualifier("cotizacionComisionService")
-	private CotizacionComisionService cotizacionComisionService;
 	
 	@Autowired
 	@Qualifier("sessionService")
@@ -143,7 +131,13 @@ public class CotizacionesFicherosController {
 			}
 			
 			objFichero.setObservaciones(txtDescripcion);
-			cotizacionFicheroService.addFile(objFichero, fichero);			
+			cotizacionFicheroService.addFile(objFichero, fichero);
+			
+			if(cmbTipoFichero == 3 || cmbTipoFichero == 4) {					
+				if(objFichero.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() >= 3 &&  objFichero.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() != 5) {	
+					cotizacionService.recalcularCotizacion(objFichero.getCotizacion());
+				}				
+			}
 			
 			respuesta = true;
 			titulo = "Cargado!";
@@ -217,6 +211,13 @@ public class CotizacionesFicherosController {
 				objFichero.setObservaciones(txtDescripcion);
 				
 				cotizacionFicheroService.updateFile(objFichero, fichero);
+				
+				if(cmbTipoFichero == 3 || cmbTipoFichero == 4) {					
+					if(objFichero.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() >= 3 &&  objFichero.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() != 5) {	
+						cotizacionService.recalcularCotizacion(objFichero.getCotizacion());
+					}				
+				}
+				
 				objRedirectView = new RedirectView("/WebSar/controlPanel/cotizaciones/" + paramIdCotizacion + "/ficheros");
 				modelAndViewComponent.addResult(objRedirectAttributes, EnumMessage.COTIZACIONES_FICHEROS_UPDATE_001);
 				
@@ -328,52 +329,7 @@ public class CotizacionesFicherosController {
 		if(objCotizacion != null) {
 			if(objCotizacion.getCotizacionEstatus().getIdCotizacionEstatus() >= 3 &&  objCotizacion.getCotizacionEstatus().getIdCotizacionEstatus() != 5) {				
 				try {
-					
-					//VALIDAMOS QUE LA COTIZACION NO SE UNA RENTA
-					if(objCotizacion.isMaestra() || objCotizacion.isNormal()) {
-						
-						List<CotizacionUsuarioQuotaEntity> lstCuotas = cotizacionUsuarioQuotaService.listCotizacionQuotas(objCotizacion);
-						
-						if(!lstCuotas.isEmpty()) {						
-							cotizacionUsuarioQuotaService.eliminarQuota(objCotizacion);													
-						}
-						
-						if(objCotizacion.isMaestra()) {					
-							CotizacionComisionEntity objComisionCotizacion = cotizacionComisionService.findByCotizacion(objCotizacion);
-							
-							if(objComisionCotizacion != null) {							
-								cotizacionComisionService.eliminarComision(objCotizacion);														
-							}													
-						}
-						
-						CotizacionUsuarioQuotaEntity objcuota = new CotizacionUsuarioQuotaEntity();
-						objcuota.setCotizacion(objCotizacion);
-						
-						cotizacionUsuarioQuotaService.cargarQuota(objCotizacion);						
-					}
-					
-					//VALIDAMOS QUE LA COTIZACION NO SE MAESTRA
-					if(objCotizacion.isRenta() || objCotizacion.isNormal()) {
-						
-						CotizacionComisionEntity objComisionCotizacion = cotizacionComisionService.findByCotizacion(objCotizacion);
-						
-						if(objComisionCotizacion != null) {							
-							cotizacionComisionService.eliminarComision(objCotizacion);														
-						}
-						
-						if(objCotizacion.isRenta()) {					
-							List<CotizacionUsuarioQuotaEntity> lstCuotas = cotizacionUsuarioQuotaService.listCotizacionQuotas(objCotizacion);
-							
-							if(!lstCuotas.isEmpty()) {						
-								cotizacionUsuarioQuotaService.eliminarQuota(objCotizacion);													
-							}													
-						}
-						
-						CotizacionComisionEntity objComision = new CotizacionComisionEntity();
-						objComision.setCotizacion(objCotizacion);
-						
-						cotizacionComisionService.create(objComision, objCotizacion);						
-					}
+					cotizacionService.recalcularCotizacion(objCotizacion);
 																				
 					respuesta = true;
 					titulo = "Completado!";

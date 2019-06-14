@@ -105,7 +105,7 @@
             				<h2>REPORTE DE VENTAS</h2>
             			</div>
             			<div class="body">
-            				<th:block th:if="${rolCotizacionCobranza}">            				
+            				<th:block th:if="${rolCotizacionCobranza}">         				
 	            				<div class="row">
 	            					<div class="col-md-12">
 	            						<em>Para generar reportes de otro usuario, es necesario seleccionar una fecha en espec&iacute;fico en el campo de (Fecha de Consulta). En caso no de realizarlo el sistema generar&aacute; el reporte del usuario en sesi&oacute;n</em>
@@ -162,11 +162,22 @@
             					<div class="col-md-6 col-sm-12">
             						<a id="btnGenerarReporteFacturacion" th:href="${ {_PATH_} + 'controlPanel/reporte-facturacion-pdf/actual/0'}" target="_blank" role="button" class="btn bg-indigo waves-effect">GENERAR REPORTE DE VENTAS</a>
             					</div>
-            					        					            				
+            				</div>
+            				
+            				<div class="row text-center"> 					            				
             					<div class="col-md-6 col-sm-12">            					
 	            					<a id="btnGenerarReporteComision" th:href="${ {_PATH_} + 'controlPanel/reporte-comision-pdf/actual/0'}" target="_blank" role="button" class="btn bg-teal waves-effect">GENERAR REPORTE DE COMISI&Oacute;N</a>
             					</div>         					            				
             				</div>
+            				
+            				<th:block th:if="${rolCotizacionCobranza}">
+            					<div class="row text-center">              					
+	            					<div class="col-md-6 col-sm-12">
+	            						<a id="btnGenerarReporteCobranza" th:href="${ {_PATH_} + 'controlPanel/reporte-cobranza-pdf/actual/0'}" target="_blank" role="button" class="btn bg-purple waves-effect">GENERAR REPORTE DE COBRANZA 2DO. NIVEL</a>
+	            					</div>
+            					</div>
+            				</th:block>
+            				
             				<div>
             					<div id="bar_chart" class="graph"></div>
             				</div>
@@ -284,6 +295,23 @@
 				window.open(urlRedirect);				
 			});
 			
+			$('#btnGenerarReporteCobranza').click(function(e){
+				e.preventDefault();
+				var urlRedirect = '';
+				
+				if($('#txtFecha').val() != '') {					
+					if($('#cmbUsuario').length) {
+						urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-cobranza-pdf/' + $('#txtFecha').val() + '/' + $('#cmbEmpresa').val() + '/' + $('#cmbUsuario').val();
+					} else {						
+						urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-cobranza-pdf/' + $('#txtFecha').val() + '/' + $('#cmbEmpresa').val() + '/0';
+					}					
+				} else {
+					urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-cobranza-pdf/actual/' + $('#cmbEmpresa').val() + '/0';
+				}
+				
+				window.open(urlRedirect);		
+			});
+			
 			$('.show-news').click(function() {
 				var id = $(this).data('id_noticia');
 				var url = [[@{/controlPanel/noticias/}]] + id + '/show';
@@ -326,8 +354,12 @@
 		        {
 		            label: 'Cancelados',
 		            value: value.porcentajeCancelados
+		        },
+		        {
+		        	label: 'En Cobranza',
+		        	value: value.porcentajeEnCobranza
 		        }],
-		        colors: ['rgb(233, 30, 99)', 'rgb(0, 188, 212)', 'rgb(255, 152, 0)', 'rgb(0, 150, 136)', 'rgb(96, 125, 139)'],
+		        colors: ['rgb(0, 0, 0)', 'rgb(33, 150, 243)', 'rgb(63, 81, 181)', 'rgb(76, 175, 80)', 'rgb(244, 67, 54)', 'rgb(255, 152, 0)'],
 		        formatter: function (y) {
 		            return y + '%'
 		        }

@@ -597,27 +597,17 @@ public class CotizacionesController {
 		
 		try {
 			
-			if(objCotizacion != null) {
+			if(objCotizacion != null) {												
 				
-				objCotizacion.setFacturaNumero(txtFacturaNumero);
-				
-				if(!txtFacturaFecha.equals("")) {
-					objCotizacion.setFacturacionFecha(LocalDate.parse(txtFacturaFecha, GeneralConfiguration.getInstance().getDateFormatterNatural()));
-				}
-				
-				objCotizacion.setPagoReferencia(txtPagoReferencia);
-				
-				if(!txtPagoFecha.equals("")) {
-					objCotizacion.setPagoFecha(LocalDate.parse(txtPagoFecha, GeneralConfiguration.getInstance().getDateFormatterNatural()));
-				}
-								
-				
-				if((cmbEstatus.equals(1) || cmbEstatus.equals(2)) && objCotizacion.getAprobacionFecha() != null) {
+				if(cmbEstatus.equals(2) && objCotizacion.getAprobacionFecha() == null) {
 					LocalDate ldNow = LocalDate.now();
 					objCotizacion.setAprobacionFecha(ldNow);
 				}
 				
 				if(cmbEstatus.equals(3) && objCotizacion.getCotizacionEstatus().getIdCotizacionEstatus() != 3) {
+					objCotizacion.setFacturacionFecha(LocalDate.parse(txtFacturaFecha, GeneralConfiguration.getInstance().getDateFormatterNatural()));
+					objCotizacion.setFacturaNumero(txtFacturaNumero);			
+					
 					//VALIDAMOS QUE LA COTIZACION NO SEA UNA RENTA
 					if(objCotizacion.isMaestra() || objCotizacion.isNormal()) {						
 						CotizacionUsuarioQuotaEntity objQuota = new CotizacionUsuarioQuotaEntity();
@@ -628,6 +618,9 @@ public class CotizacionesController {
 				}
 				
 				if(cmbEstatus.equals(4)) {
+					objCotizacion.setPagoFecha(LocalDate.parse(txtPagoFecha, GeneralConfiguration.getInstance().getDateFormatterNatural()));
+					objCotizacion.setPagoReferencia(txtPagoReferencia);					
+					
 					//VALIDAMOS QUE LA COTIZACION NO SE MAESTRA
 					if(objCotizacion.isRenta() || objCotizacion.isNormal()) {	
 						
@@ -640,6 +633,12 @@ public class CotizacionesController {
 							cotizacionComisionService.create(objComision, objCotizacion);
 						}
 					}
+				}
+				
+				if(cmbEstatus.equals(6) && objCotizacion.getInicioCobranzaFecha() == null) {
+					LocalDate ldNow = LocalDate.now();
+					objCotizacion.setInicioCobranzaFecha(ldNow);
+					objCotizacion.setUsuarioCobranza(sessionService.getCurrentUser());
 				}
 				
 				objCotizacion.setCotizacionEstatus(cotizacionEstatusService.findByIdCotizacionEstatus(cmbEstatus));

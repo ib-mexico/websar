@@ -17,14 +17,17 @@ public interface ICotizacionRepository  extends JpaRepository<CotizacionEntity, 
 	
 	public abstract CotizacionEntity findByIdCotizacion(int idCotizacion);
 	
-	@Query("SELECT COALESCE(SUM(objCotizacion.subtotal), 0) FROM CotizacionEntity objCotizacion WHERE (objCotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objCotizacion.cotizacionEstatus.idCotizacionEstatus = 4) AND CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?1 AND ?2 " )
+	@Query("SELECT COALESCE(SUM(objCotizacion.subtotal), 0) FROM CotizacionEntity objCotizacion WHERE (objCotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objCotizacion.cotizacionEstatus.idCotizacionEstatus = 4 OR objCotizacion.cotizacionEstatus.idCotizacionEstatus = 6) AND CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?1 AND ?2 " )
 	public abstract BigDecimal sumTotalCotizacionPorMes(LocalDate ldFechaInicio, LocalDate ldFechaFin);
 	
-	@Query("SELECT COALESCE(SUM(objCotizacion.subtotal), 0) FROM CotizacionEntity objCotizacion WHERE (objCotizacion.cotizacionEstatus.idCotizacionEstatus = 3  OR objCotizacion.cotizacionEstatus.idCotizacionEstatus = 4) AND (objCotizacion.usuario.idUsuario = ?3 OR objCotizacion.usuarioVendedor.idUsuario = ?3) AND (CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?1 AND ?2)" )
+	@Query("SELECT COALESCE(SUM(objCotizacion.subtotal), 0) FROM CotizacionEntity objCotizacion WHERE (objCotizacion.cotizacionEstatus.idCotizacionEstatus = 3  OR objCotizacion.cotizacionEstatus.idCotizacionEstatus = 4 OR objCotizacion.cotizacionEstatus.idCotizacionEstatus = 6) AND (objCotizacion.usuario.idUsuario = ?3 OR objCotizacion.usuarioVendedor.idUsuario = ?3) AND (CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?1 AND ?2)" )
 	public abstract BigDecimal sumTotalCotizacionPorMes(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idUsuario);
 	
 	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.cotizacionEstatus.idCotizacionEstatus != 5")
 	public abstract List<CotizacionEntity> findCotizacionesActivas();
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE (objCotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objCotizacion.cotizacionEstatus.idCotizacionEstatus = 6) AND objCotizacion.boolNormal = true AND objCotizacion.formaPago.idFormaPago = 1")
+	public abstract List<CotizacionEntity> lstCotizacionesNoCobradas();
 	
 	
 	//GRAFICAS
@@ -42,15 +45,19 @@ public interface ICotizacionRepository  extends JpaRepository<CotizacionEntity, 
 	
 	
 	//REPORTE DE VENTAS
-	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE (objCotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objCotizacion.cotizacionEstatus.idCotizacionEstatus = 4) AND (objCotizacion.usuario.idUsuario = ?3 OR objCotizacion.usuarioVendedor.idUsuario = ?3 OR objCotizacion.cliente.usuarioEjecutivo.idUsuario = ?3 OR objCotizacion.usuarioImplementador.idUsuario = ?3) AND (CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?1 AND ?2)" )
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE (objCotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objCotizacion.cotizacionEstatus.idCotizacionEstatus = 4 OR objCotizacion.cotizacionEstatus.idCotizacionEstatus = 6) AND (objCotizacion.usuario.idUsuario = ?3 OR objCotizacion.usuarioVendedor.idUsuario = ?3 OR objCotizacion.cliente.usuarioEjecutivo.idUsuario = ?3 OR objCotizacion.usuarioImplementador.idUsuario = ?3) AND (CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?1 AND ?2)" )
 	public abstract List<CotizacionEntity> findCotizacionesPorMes(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idUsuario);
 	
-	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE (objCotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objCotizacion.cotizacionEstatus.idCotizacionEstatus = 4) AND objCotizacion.empresa.idEmpresa = ?4 AND (objCotizacion.usuario.idUsuario = ?3 OR objCotizacion.usuarioVendedor.idUsuario = ?3 OR objCotizacion.cliente.usuarioEjecutivo.idUsuario = ?3 OR objCotizacion.usuarioImplementador.idUsuario = ?3) AND (CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?1 AND ?2)" )
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE (objCotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objCotizacion.cotizacionEstatus.idCotizacionEstatus = 4 OR objCotizacion.cotizacionEstatus.idCotizacionEstatus = 6) AND objCotizacion.empresa.idEmpresa = ?4 AND (objCotizacion.usuario.idUsuario = ?3 OR objCotizacion.usuarioVendedor.idUsuario = ?3 OR objCotizacion.cliente.usuarioEjecutivo.idUsuario = ?3 OR objCotizacion.usuarioImplementador.idUsuario = ?3) AND (CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?1 AND ?2)" )
 	public abstract List<CotizacionEntity> findCotizacionesPorMes(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idUsuario, int idEmpresa);
 	
 	//REPORTE DE COMISIONES
 	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.cotizacionEstatus.idCotizacionEstatus = 4 AND objCotizacion.empresa.idEmpresa = ?4 AND (objCotizacion.usuario.idUsuario = ?3 OR objCotizacion.usuarioVendedor.idUsuario = ?3 OR objCotizacion.cliente.usuarioEjecutivo.idUsuario = ?3 OR objCotizacion.usuarioImplementador.idUsuario = ?3) AND (CONVERT(objCotizacion.pagoFecha, DATE) BETWEEN ?1 AND ?2)" )
 	public abstract List<CotizacionEntity> findCotizacionesPagadasPorMes(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idUsuario, int idEmpresa);
+	
+	//REPORTE DE COMISIONES DE COBRANZA
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.cotizacionEstatus.idCotizacionEstatus = 4 AND objCotizacion.empresa.idEmpresa = ?4 AND objCotizacion.usuarioCobranza.idUsuario = ?3 AND (CONVERT(objCotizacion.pagoFecha, DATE) BETWEEN ?1 AND ?2)" )
+	public abstract List<CotizacionEntity> findCotizacionesCobradasPorMes(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idUsuario, int idEmpresa);
 	
 	//REPORTE DE COTIZACIONES APROBADAS
 	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.cotizacionEstatus.idCotizacionEstatus = 2 AND (CONVERT(objCotizacion.aprobacionFecha, DATE) = ?1) ORDER BY objCotizacion.aprobacionFecha ASC")

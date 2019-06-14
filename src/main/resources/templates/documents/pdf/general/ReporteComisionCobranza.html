@@ -1,0 +1,69 @@
+<th:block th:fragment="body">
+	<!--/* HEADER */-->
+	<table width="100%">
+		<tr>			
+			<td style="width:119px;">
+				<img th:src="@{'http://localhost:8080/WebSar/assets/images/' + ${objEmpresa.logotipo}}" />
+			</td>
+			
+			<td style="width:10px"></td>
+			<td style="width:258px">
+				<table width="100%">
+				<tr>
+					<td class="tituloH2">REPORTE DE COMISIONES DE <th:block th:text="${mesActual}"></th:block></td>
+				</tr>
+				</table>
+			</td>
+			<td style="width:10px"></td>
+				
+			
+			<td style="width:179px">
+				<table width="100%">
+					<tr>
+						<td class="tituloTH2">PERIODO</td>
+					</tr>					
+					<tr>
+						<td class="celdaH3" th:text="${fechaInicio + ' - ' + fechaFin}"></td>
+					</tr>
+				</table>
+			</td>
+			
+		</tr>
+	</table>
+	
+	<table id="tblCotizaciones" width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" colspan="10" class="tituloH2" style="text-align:left" th:text="${objUsuario.getNombreCompleto()}"></td>
+		</tr>
+		<tr>
+			<td width="100%" colspan="10"></td>
+		</tr>
+		<th:block th:if="${rolCotizacionCobranza}">
+			<tr>
+				<td width="15%" class="tituloTH5">Cotizaci&oacute;n</td>		
+				<td width="15%" class="tituloTH5">Fecha Aprob.</td>
+				<td width="10%" class="tituloTH5">D&iacute;as Cr&eacute;dito</td>
+				<td width="15%" class="tituloTH5">Fecha Cobranza</td>
+				<td width="15%" class="tituloTH5">Fecha Pago</td>
+				<td width="15%" class="tituloTH5" style="text-align:right">Porcentaje Obtenido</td>
+				<td width="15%" class="tituloTH5" style="text-align:right">Acumulado de Comisi&oacute;n</td>
+			</tr>
+			<tr th:each="item : ${cotizacionesMap}">
+				<td width="15%" class="celdaH6" th:text="${item.folio}"></td>			
+				<td width="15%" class="celdaH6" th:text="${item.fecha_aprobacion}"></td>
+				<td width="10%" class="celdaH6" th:text="${item.dias_credito}"></td>
+				<td width="15%" class="celdaH6" th:text="${item.fecha_cobranza}"></td>
+				<td width="15%" class="celdaH6" th:text="${item.fecha_pago}"></td>
+				<td width="15%" class="celdaH6" style="text-align:right" th:text="${item.porcentaje_cobranza + '%'}"></td>
+				<td width="15%" class="celdaH6" style="text-align:right" th:text="${'$' + item.comision_cobranza}"></td>
+			</tr>
+			<tr>
+				<td colspan="4"></td>
+				<td width="15%" class="tituloTH5">TOTAL</td>
+				<td></td>
+				<td width="15%" class="celdaH6" style="text-align:right" th:text="${'$' + totalAcumuladoComision}"></td>
+			</tr>
+		</th:block>
+	</table>
+	
+</th:block>

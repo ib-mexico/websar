@@ -101,7 +101,7 @@
 	                            		</th:block>
 	                            		
 	                            		<th:block th:unless="${rolCotizacionCobranza}">
-	                            			<th:block th:if="${itemEstatus.idCotizacionEstatus != 3 and itemEstatus.idCotizacionEstatus != 4}">
+	                            			<th:block th:if="${itemEstatus.idCotizacionEstatus != 3 and itemEstatus.idCotizacionEstatus != 4 and itemEstatus.idCotizacionEstatus != 6}">
 	                            				<option th:value="${itemEstatus.idCotizacionEstatus}" th:text="${itemEstatus.cotizacionEstatus}"></option>
 	                            			</th:block>
 	                            		</th:block>	                          	
@@ -245,6 +245,7 @@
 					case "1":
 					case "2":
 					case "5":
+					case "6":
 						$('#divFactura').addClass('hide');
 						$('#divPago').addClass('hide');
 						$('#txtFacturaFecha').attr('disabled', true);
@@ -357,6 +358,10 @@
 					lblEstatus = '<a type="button" class="btn bg-red waves-effect">'+ row.estatus +'</a>';
 				break;
 				
+				case 6:
+					lblEstatus = '<a type="button" class="btn bg-orange waves-effect" onclick="cambioEstatus('+row.idCotizacion+')">'+ row.estatus +'</a>';
+				break;
+				
 			}
 			
 			return lblEstatus;
@@ -368,8 +373,6 @@
 			$('#txtCotizacion').val('');
 			$('#txtFacturaNumero').val('');
 			$('#txtPagoReferencia').val('');
-			//$('#txtFacturaFecha').bootstrapMaterialDatePicker('destroy');
-			//$('#txtPagoFecha').bootstrapMaterialDatePicker('destroy');
 			
 			
 			$.ajax({
@@ -387,12 +390,16 @@
 							var arrDate1 = data.facturacionFecha.split("-");
 							$('#txtFacturaFecha').bootstrapMaterialDatePicker('_onClearClick');
 							$('#txtFacturaFecha').bootstrapMaterialDatePicker('setDate', arrDate1[2]+"/"+arrDate1[1]+"/"+arrDate1[0]);
+						} else {
+							$('#txtFacturaFecha').bootstrapMaterialDatePicker('_onClearClick');
 						}
 						
 						if(data.pagoFecha != '') {
 							var arrDate2 = data.pagoFecha.split("-");
 							$('#txtPagoFecha').bootstrapMaterialDatePicker('_onClearClick');
 							$('#txtPagoFecha').bootstrapMaterialDatePicker('setDate', arrDate2[2]+"/"+arrDate2[1]+"/"+arrDate2[0]);
+						} else {
+							$('#txtPagoFecha').bootstrapMaterialDatePicker('_onClearClick');
 						}
 						
 						$('#cmbEstatus').val(data.idEstatus).change();						

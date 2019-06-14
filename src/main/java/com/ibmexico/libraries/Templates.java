@@ -128,15 +128,7 @@ public class Templates {
 	public static final String EMAIL_TAREAS_PARTICIPANTES_UPDATE = PATH_EMAIL + "tareas/ParticipantesUpdate";
 	
 	
-	public static final String EMAIL_INMUEBLES_CREATE = PATH_EMAIL + "inmuebles/Create";
-	public static final String EMAIL_AREAS_COMUNES_RESERVACION_CREATE = PATH_EMAIL + "areasComunes/reservaciones/Create";
-	public static final String EMAIL_MOVIMIENTOS_CARGOS_CREATE = PATH_EMAIL + "movimientos/cargos/Create";
-	public static final String EMAIL_MOVIMIENTOS_ABONOS_CREATE = PATH_EMAIL + "movimientos/abonos/Create";
-	public static final String EMAIL_REUNIONES_CREATE = PATH_EMAIL + "reuniones/Create";
-	public static final String EMAIL_REUNIONES_UPDATE = PATH_EMAIL + "reuniones/Update";
-	public static final String EMAIL_REUNIONES_INVITADOS_CREATE = PATH_EMAIL + "reuniones/InvitadosCreate";
-	public static final String EMAIL_REUNIONES_INVITADOS_UPDATE = PATH_EMAIL + "reuniones/InvitadosUpdate";
-	public static final String EMAIL_ADEUDOS_RENTAS = PATH_EMAIL + "cronJobs/AdeudosRentas";
+	public static final String EMAIL_COTIZACIONES_POR_COBRAR = PATH_EMAIL + "cronJobs/CotizacionesPorCobrar";
 	public static final String EMAIL_REPORTE_MENSUAL = PATH_EMAIL + "cronJobs/reportes/Mensual";
 	public static final String EMAIL_TICKETS_CREATE = PATH_EMAIL + "tickets/Create";
 
@@ -154,6 +146,7 @@ public class Templates {
 	public static final String PDF_REPORTE_UTILIDAD_GENERAL = PATH_DOCUMENTS_PDF + "general/ReporteUtilidad";
 	public static final String PDF_REPORTE_UTILIDAD_AREA = PATH_DOCUMENTS_PDF + "general/ReporteUtilidadArea";
 	public static final String PDF_REPORTE_COMISION_GENERAL = PATH_DOCUMENTS_PDF + "general/ReporteComision";
+	public static final String PDF_REPORTE_COMISION_COBRANZA = PATH_DOCUMENTS_PDF + "general/ReporteComisionCobranza";
 	public static final String PDF_REPORTE_OPORTUNIDAD_NEGOCIO = PATH_DOCUMENTS_PDF + "oportunidadesNegocios/ReporteOportunidad";
 	public static final String PDF_REPORTE_APROBADAS_FACTURADAS = PATH_DOCUMENTS_PDF + "cobranza/AprobadasFacturadas";
 
