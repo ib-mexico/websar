@@ -4,7 +4,7 @@
 
 
 <th:block th:fragment="body">
-	<h1 style="color:#000000;">Hola <span>Cobranza</span>: </h1>
+	<h1 style="color:#000000;">Hola <span th:text="${alias}"></span>: </h1>
 	<p style="display:inline">Existen cotizaciones vencidas con forma de pago <b>(Cr&eacute;dito)</b> en el SAR:</p>
 	
 	<table align="center" border="0" cellpadding="10" cellspacing="10" width="100%" style="border-collapse: collapse; border:solid 1px #333333">		

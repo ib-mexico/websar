@@ -127,6 +127,7 @@ public class Templates {
 	public static final String EMAIL_TAREAS_PARTICIPANTES_CREATE = PATH_EMAIL + "tareas/ParticipantesCreate";
 	public static final String EMAIL_TAREAS_PARTICIPANTES_UPDATE = PATH_EMAIL + "tareas/ParticipantesUpdate";
 	
+	public static final String EMAIL_HOME_COTIZACIONES = PATH_EMAIL + "home/Cotizaciones";
 	
 	public static final String EMAIL_COTIZACIONES_POR_COBRAR = PATH_EMAIL + "cronJobs/CotizacionesPorCobrar";
 	public static final String EMAIL_REPORTE_MENSUAL = PATH_EMAIL + "cronJobs/reportes/Mensual";

@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.json.Json;
+import javax.json.JsonObjectBuilder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
@@ -21,9 +24,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.thymeleaf.context.Context;
 
+import com.ibmexico.components.MailerComponent;
 import com.ibmexico.components.ModelAndViewComponent;
 import com.ibmexico.components.PdfComponent;
 import com.ibmexico.configurations.GeneralConfiguration;
@@ -53,6 +59,9 @@ public class HomeController {
 	@Autowired
 	@Qualifier("modelAndViewComponent")
 	private ModelAndViewComponent modelAndViewComponent;
+	
+	@Autowired
+	private MailerComponent mailerComponent;
 	
 	@Autowired
 	@Qualifier("pdfComponent")
@@ -712,7 +721,7 @@ public class HomeController {
 	}
 
 	@RequestMapping(value = {"reporte-cobranza-pdf", "reporte-cobranza-pdf/{fecha}/{empresa}/{usuario}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
-	public ResponseEntity<InputStreamResource> previewPdffCobranza(@PathVariable(value="fecha", required=false) String fecha,
+	public ResponseEntity<InputStreamResource> previewPdfCobranza(@PathVariable(value="fecha", required=false) String fecha,
 																	 @PathVariable(value="empresa", required=false) Integer idEmpresa,
 																	 @PathVariable(value="usuario", required=false) Integer idUsuario) throws IOException, DocumentException {
 		
@@ -818,4 +827,119 @@ public class HomeController {
 		
 		return pdfComponent.generate(path_file, objTemplates.FOUNDATION_PDF, objContext);		
 	}
+
+	@RequestMapping(value = {"reporte-cotizaciones-correo/{tipoReporte}", "/reporte-cotizaciones-correo/{tipoReporte}"}, method = RequestMethod.GET)
+	public @ResponseBody String recalculateCotizacion(	@PathVariable("tipoReporte") int paramTipoReporte,								
+														RedirectAttributes objRedirectAttributes) {
+		
+		Boolean respuesta = false;
+		String titulo = "";
+		String mensaje = "";
+		
+		if(paramTipoReporte < 1) {
+			
+			List<CotizacionEntity> lstCotizaciones = cotizacionService.lstCotizacionesNoCobradas();
+			List<Map<String , String>> mapCotizacionesFiltradas  = new ArrayList<Map<String,String>>();
+			Integer iterator = 0;
+			
+			LocalDate ldNow = LocalDate.now();		
+			
+			for(CotizacionEntity itemCotizacion : lstCotizaciones) {
+				
+				Map<String,String> myMap1 = new HashMap<String, String>();
+				if(itemCotizacion.getAprobacionFecha() != null) {
+					
+					int diff = (int) ChronoUnit.DAYS.between(itemCotizacion.getAprobacionFecha(), ldNow);
+					
+					if(diff > Integer.parseInt(itemCotizacion.getDiasCredito().trim())) {
+						myMap1.put("folio", itemCotizacion.getFolio());
+						myMap1.put("fecha_factura", itemCotizacion.getFacturacionFechaNatural());
+						myMap1.put("estatus", itemCotizacion.getCotizacionEstatus().getCotizacionEstatus());
+						myMap1.put("cliente", itemCotizacion.getCliente().getCliente());
+						myMap1.put("total", itemCotizacion.getTotalNatural());
+						
+						mapCotizacionesFiltradas.add(iterator, myMap1);
+						
+						iterator++;
+					}
+				}
+			}
+			
+			if(!mapCotizacionesFiltradas.isEmpty() ) {				
+				try {
+					Map<String, Object> mapVariables = new HashMap<String, Object>();
+					mapVariables.put("lstCotizaciones", mapCotizacionesFiltradas);
+					mapVariables.put("titulo", "Cotizaciones pendientes por cobrar");
+					mapVariables.put("alias", sessionService.getCurrentUser().getAlias());
+					mailerComponent.send(sessionService.getCurrentUser().getCorreo(), "Hay cotizaciones con falta de pago", Templates.EMAIL_COTIZACIONES_POR_COBRAR, mapVariables);
+					
+					respuesta = true;
+					titulo = "Enviado!";
+					mensaje = "Revisa tu bandeja de entrada, el reporte ya debe de estar por llegar.";
+				} catch(Exception exception) {
+					respuesta = false;
+					titulo = "Error!";
+					mensaje = "Ocurrió un error al generar el correo.";
+				}
+			} else {
+				respuesta = false;
+				titulo = "Aviso";
+				mensaje = "No existen cotizaciones vencidas.";
+			}						
+		} else if(paramTipoReporte < 2) {
+			try {				
+				LocalDate ldtFechaCondicional = LocalDate.now().minusDays(15);
+				
+				//LISTA DE APROBADOS
+				List<CotizacionEntity> lstAprobados = cotizacionService.listCotizacionesAprobados(ldtFechaCondicional, 3);
+				
+				Map<String, Object> mapVariables = new HashMap<String, Object>();
+				mapVariables.put("lstCotizaciones", lstAprobados);
+				mapVariables.put("objUsuario", sessionService.getCurrentUser());
+				mapVariables.put("descripcion", "Las siguientes cotizaciones se encuentran en estatus de aprobadas, están a la espera de ser facturadas");
+				mapVariables.put("tipoFecha", "Aprobación");
+				
+				mailerComponent.send(sessionService.getCurrentUser().getCorreo(), "Hay cotizaciones pendientes de facturar", Templates.EMAIL_HOME_COTIZACIONES, mapVariables);
+				
+				respuesta = true;
+				titulo = "Enviado!";
+				mensaje = "Revisa tu bandeja de entrada, el reporte ya debe de estar por llegar.";
+			} catch(Exception exception) {
+				respuesta = false;
+				titulo = "Error!";
+				mensaje = "Ocurrió un error al generar el correo.";
+			}
+		} else {
+			try {				
+				LocalDate ldtFechaCondicional = LocalDate.now().minusDays(15);
+				
+				//LISTA DE FACTURADOS
+				List<CotizacionEntity> lstFacturados = cotizacionService.listCotizacionesFacturados(ldtFechaCondicional, 3);
+				
+				Map<String, Object> mapVariables = new HashMap<String, Object>();
+				mapVariables.put("lstCotizaciones", lstFacturados);
+				mapVariables.put("objUsuario", sessionService.getCurrentUser());
+				mapVariables.put("descripcion", "Las siguientes cotizaciones se encuentran en estatus de facturadas, están a la espera de ser pagadas");
+				mapVariables.put("tipoFecha", "Facturación");
+				
+				mailerComponent.send(sessionService.getCurrentUser().getCorreo(), "Hay cotizaciones pendientes de pagar", Templates.EMAIL_HOME_COTIZACIONES, mapVariables);
+				
+				respuesta = true;
+				titulo = "Enviado!";
+				mensaje = "Revisa tu bandeja de entrada, el reporte ya debe de estar por llegar.";
+			} catch(Exception exception) { 
+				respuesta = false;
+				titulo = "Error!";
+				mensaje = "Ocurrió un error al generar el correo.";
+			}
+		}
+		
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("titulo", titulo)
+					.add("mensaje", mensaje);
+		
+		return jsonReturn.build().toString();		
+	}
+
 }

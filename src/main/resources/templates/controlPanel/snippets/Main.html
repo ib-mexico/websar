@@ -91,17 +91,16 @@
 			cluster: 'us2'
 		});
 		
-		Push.config({
+		/*Push.config({
 		    serviceWorker: './WebSar/assets/plugins/push/serviceWorker.min.js',
-		});
+		});*/
 		
 
 		var channel = pusher.subscribe('notifications');
 		channel.bind('new-notification', function(data) {
-			
-			if(idUsuario ==  data.id_usuario.value) {
+			if(idUsuario ==  data.id_usuario) {
 				
-				if(Push.Permission.has()) {					
+				/*if(Push.Permission.has()) {					
 					Push.create("Notificación", {
 					    body: data.message.value,
 					    icon: 'http://icons.iconarchive.com/icons/fps.hu/free-christmas-flat-circle/256/bell-icon.png',
@@ -111,9 +110,9 @@
 					        this.close();
 					    }
 					});
-				} else {
+				} else {*/
 					$.notify({
-				        message: data.message.value
+				        message: data.message
 				    },
 			        {
 			            type: 'bg-blue',
@@ -139,7 +138,7 @@
 			            '<a href="{3}" target="{4}" data-notify="url"></a>' +
 			            '</div>'
 			        });
-				}
+				//}
 			}
 		});
 	/*]]>*/</script>

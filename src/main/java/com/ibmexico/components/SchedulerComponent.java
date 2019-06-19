@@ -96,6 +96,7 @@ public class SchedulerComponent {
 	private void cronJobCobranzaEnviarMails(Map<String, Object> mapVariables) {
 		try {
 			mapVariables.put("titulo", "Cotizaciones pendientes por cobrar");
+			mapVariables.put("alias", "Cobranza");
 			mailerComponent.send("cobranza@ib-mexico.com", "Hay cotizaciones con falta de pago", Templates.EMAIL_COTIZACIONES_POR_COBRAR, mapVariables);
 		} catch(Exception exception) { }
 	}

@@ -97,6 +97,38 @@
 		            		<div id="donut_chart_cotizaciones" class="dashboard-donut-chart"></div>
             			</div>
             		</div>
+            		
+            		<th:block th:if="${_USER_.getQuota() != null}">            		
+	            		<div class="card">
+	            			<div class="header">
+	            				<h2>REPORTE DE COTIZACIONES (VIA CORREO)</h2>
+	            			</div>
+	            			<div class="body">
+	            				<div class="row">
+	            					<div class="col-md-12">
+	            						<b>Tipo de reporte</b>
+	            						<select class="form-control show-tick" name="cmbTipo" id="cmbTipo">
+		                       				<option value="0">Vencidas (D&iacute;as de Cr&eacute;dito sobrepasados)</option>
+		                       				<option value="1" selected="selected">Aprobadas y no facturadas</option>
+		                       				<option value="2">Facturadas y no pagadas</option>
+		                       			</select>
+	            					</div>
+	            				</div>
+	            				
+	            				<div class="row">
+	            					<div class="col-md-12">
+	            						<em>El siguiente reporte ser&aacute; enviado al correo de tu cuenta empresarial, se generar&aacute;n &uacute;nicamente cotizaciones mayores a 15 d&iacute;as.</em>
+	            					</div>
+	            				</div>
+	            				
+	            				<div class="row text-center">
+		           					<div class="col-md-6 col-sm-12">
+		           						<button id="btnEnviarReporte" type="button" class="btn bg-amber waves-effect">ENVIAR REPORTE</button>
+		           					</div>        					            				
+		           				</div>
+	            			</div>
+	            		</div>
+            		</th:block>
             	</div>
             	
             	<div class="col-md-6">
@@ -237,6 +269,7 @@
 		var month = [[${monthActual}]];
 		var year = [[${yearActual}]];
 		var quota = [[${_USER_.getQuota()}]];
+		var correo = [[${_USER_.getCorreo()}]];
 		var totalQuota = [[${totalQuota}]];
 	
 		$(document).ready(function() {
@@ -310,6 +343,51 @@
 				}
 				
 				window.open(urlRedirect);		
+			});
+			
+			$('#btnEnviarReporte').click(function(e){
+				e.preventDefault();
+				$("#btnEnviarReporte").prop("disabled", true);
+				
+				if($('#cmbTipo').val() != '') {	
+					swal({
+			  			title: 'El sistema enviara el reporte al siguiente correo: ' + correo,
+					  	showCancelButton: true,
+					  	confirmButtonText: 'Aceptar',
+					  	showLoaderOnConfirm: true,
+					  	preConfirm: (login) => {				  	
+					  		return $.ajax({
+								url					: [[@{/controlPanel/reporte-cotizaciones-correo/}]] + $('#cmbTipo').val(),
+								dataType			: 'json',
+								type				: "GET",
+								timeOut				: 60000,
+								success				: function(data) {
+									return data;
+								},
+								error				: function(e) {
+									console.log(e);
+								}
+							});				  		
+				  		},
+					  	allowOutsideClick: () => !Swal.isLoading()
+					}).then((result) => {
+				  		if (result.respuesta) {
+						    swal({
+						    	type: 'success',
+					      		title: result.titulo,
+					      		text: result.mensaje,
+						    })
+					  	} else {
+					  		swal({
+					    		type: 'error',
+					    		title: result.titulo,
+					      		text: result.mensaje,
+		    				}) 
+					  	}
+					});					
+				}
+				
+				$("#btnEnviarReporte").prop("disabled", false);
 			});
 			
 			$('.show-news').click(function() {
