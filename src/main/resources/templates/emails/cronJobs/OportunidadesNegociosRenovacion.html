@@ -1,0 +1,28 @@
+<th:block th:fragment="title">
+	<h1>Notificaci&oacute;n de Oportunidades de Negocios</h1>
+</th:block>
+
+
+<th:block th:fragment="body">
+	<h1 style="color:#000000;">Hola <span th:text="${alias}"></span>: </h1>
+	<p style="display:inline"><th:block th:text="${titulo}"></th:block>:</p>
+	
+	<table align="center" border="0" cellpadding="10" cellspacing="10" width="100%" style="border-collapse: collapse; border:solid 1px #333333">		
+		<tr>
+			<th style="background-color: #333333; text-align: left; border: solid 1px #333333; color: #FFF" width="10%"># ID</th>
+			<th style="background-color: #333333; text-align: left; border: solid 1px #333333; color: #FFF" width="30%">Oportunidad</th>
+			<th style="background-color: #333333; text-align: left; border: solid 1px #333333; color: #FFF" width="20%">Cliente</th>
+			<th style="background-color: #333333; text-align: center; border: solid 1px #333333; color: #FFF" width="20%">Moneda</th>
+			<th style="background-color: #333333; text-align: right; border: solid 1px #333333; color: #FFF" width="20%">Ingreso</th>
+		</tr>
+		
+		<tr th:each="itemOportunidad : ${lstOportunidades}">
+			<td style="text-align: left; border: solid 1px #333333" th:text="${itemOportunidad.id_oportunidad}"></td>
+			<td style="text-align: left; border: solid 1px #333333" th:text="${itemOportunidad.oportunidad}"></td>
+			<td style="text-align: left; border: solid 1px #333333" th:text="${itemOportunidad.cliente}"></td>
+			<td style="text-align: center; border: solid 1px #333333" th:text="${itemOportunidad.moneda}"></td>
+			<td style="text-align: right; border: solid 1px #333333" th:text="${itemOportunidad.ingreso}"></td>
+		</tr>		
+	</table>
+</th:block>
+

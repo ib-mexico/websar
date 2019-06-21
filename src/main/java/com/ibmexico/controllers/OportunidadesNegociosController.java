@@ -41,6 +41,7 @@ import com.ibmexico.entities.ClienteContactoEntity;
 import com.ibmexico.entities.ClienteEntity;
 import com.ibmexico.entities.ClienteGiroEntity;
 import com.ibmexico.entities.EmpresaEntity;
+import com.ibmexico.entities.MonedaEntity;
 import com.ibmexico.entities.OportunidadNegocioEntity;
 import com.ibmexico.entities.OportunidadNegocioEstatusEntity;
 import com.ibmexico.entities.OportunidadNegocioFicheroEntity;
@@ -53,6 +54,7 @@ import com.ibmexico.services.ClienteContactoService;
 import com.ibmexico.services.ClienteGiroService;
 import com.ibmexico.services.ClienteService;
 import com.ibmexico.services.EmpresaService;
+import com.ibmexico.services.MonedaService;
 import com.ibmexico.services.OportunidadNegocioEstatusService;
 import com.ibmexico.services.OportunidadNegocioFicheroService;
 import com.ibmexico.services.OportunidadNegocioService;
@@ -119,6 +121,10 @@ public class OportunidadesNegociosController {
 	private EmpresaService empresaService;
 	
 	@Autowired
+	@Qualifier("monedaService")
+	private MonedaService monedaService;
+	
+	@Autowired
 	@Qualifier("sessionService")
 	private SessionService sessionService;
 	
@@ -143,6 +149,7 @@ public class OportunidadesNegociosController {
 		List<OportunidadNegocioEntity> lstCerradoR2a = oportunidadNegocioService.listOportunidadesNegociosEmpresa(4,3);
 		List<OportunidadNegocioEntity> lstPerdidosR2a = oportunidadNegocioService.listOportunidadesNegociosEmpresa(5,3);
 		
+		
 		String totalAbiertos = oportunidadNegocioService.totalIngresoEstimadoEmpresa(1,1);
 		String totalProgreso = oportunidadNegocioService.totalIngresoEstimadoEmpresa(2,1);
 		String totalRentas = oportunidadNegocioService.totalIngresoEstimadoEmpresa(3,1);
@@ -161,7 +168,12 @@ public class OportunidadesNegociosController {
 		String totalCerradoR2a = oportunidadNegocioService.totalIngresoEstimadoEmpresa(4,3);
 		String totalPerdidosR2a = oportunidadNegocioService.totalIngresoEstimadoEmpresa(5,3);
 		
+		
+		
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_OPORTUNIDADES_INDEX);
+		
+		objModelAndView.addObject("rolOportunidadEmpresaUca", sessionService.hasRol("OPORTUNIDADES_EMPRESA_UCA"));
+		
 		objModelAndView.addObject("totalAbiertos", totalAbiertos);
 		objModelAndView.addObject("totalProgreso", totalProgreso);
 		objModelAndView.addObject("totalRentas", totalRentas);
@@ -195,6 +207,32 @@ public class OportunidadesNegociosController {
 		objModelAndView.addObject("lstCerradoR2a", lstCerradoR2a);
 		objModelAndView.addObject("lstPerdidosR2a", lstPerdidosR2a);
 		
+		if(sessionService.hasRol("OPORTUNIDADES_EMPRESA_UCA")) {
+			
+			List<OportunidadNegocioEntity> lstAbiertosUca = oportunidadNegocioService.listOportunidadesNegociosEmpresa(1,4);
+			List<OportunidadNegocioEntity> lstProgresoUca = oportunidadNegocioService.listOportunidadesNegociosEmpresa(2,4);
+			List<OportunidadNegocioEntity> lstRentasUca = oportunidadNegocioService.listOportunidadesNegociosEmpresa(3,4);
+			List<OportunidadNegocioEntity> lstCerradoUca = oportunidadNegocioService.listOportunidadesNegociosEmpresa(4,4);
+			List<OportunidadNegocioEntity> lstPerdidosUca = oportunidadNegocioService.listOportunidadesNegociosEmpresa(5,4);
+			
+			String totalAbiertosUca = oportunidadNegocioService.totalIngresoEstimadoEmpresa(1,4);
+			String totalProgresoUca = oportunidadNegocioService.totalIngresoEstimadoEmpresa(2,4);
+			String totalRentasUca = oportunidadNegocioService.totalIngresoEstimadoEmpresa(3,4);
+			String totalCerradoUca = oportunidadNegocioService.totalIngresoEstimadoEmpresa(4,4);
+			String totalPerdidosUca = oportunidadNegocioService.totalIngresoEstimadoEmpresa(5,4);
+			
+			objModelAndView.addObject("totalAbiertosUca", totalAbiertosUca);
+			objModelAndView.addObject("totalProgresoUca", totalProgresoUca);
+			objModelAndView.addObject("totalRentasUca", totalRentasUca);
+			objModelAndView.addObject("totalCerradoUca", totalCerradoUca);
+			objModelAndView.addObject("totalPerdidosUca", totalPerdidosUca);		
+			objModelAndView.addObject("lstAbiertosUca", lstAbiertosUca);
+			objModelAndView.addObject("lstProgresoUca", lstProgresoUca);
+			objModelAndView.addObject("lstRentasUca", lstRentasUca);
+			objModelAndView.addObject("lstCerradoUca", lstCerradoUca);
+			objModelAndView.addObject("lstPerdidosUca", lstPerdidosUca);
+		}
+		
 		return objModelAndView;
 	}
 	
@@ -206,6 +244,7 @@ public class OportunidadesNegociosController {
 		List<SucursalEntity> lstSucursales = sucursalService.listSucursales();
 		List<ClienteGiroEntity> lstClientesGiros = clienteGiroService.listClientesGiros();
 		List<EmpresaEntity> lstEmpresas = empresaService.listEmpresas();
+		List<MonedaEntity> lstMonedas = monedaService.listMonedas();
 		
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_OPORTUNIDADES_CREATE);
 		objModelAndView.addObject("lstUsuarios", lstUsuarios);
@@ -213,6 +252,7 @@ public class OportunidadesNegociosController {
 		objModelAndView.addObject("lstClientesGiros", lstClientesGiros);
 		objModelAndView.addObject("lstSucursales", lstSucursales);
 		objModelAndView.addObject("lstEmpresas", lstEmpresas);
+		objModelAndView.addObject("lstMonedas", lstMonedas);
 		
 		return objModelAndView;
 	}
@@ -220,6 +260,9 @@ public class OportunidadesNegociosController {
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public RedirectView store(@RequestParam(value="txtOportunidad") String txtOportunidad,
 								@RequestParam(value="cmbEmpresa") Integer cmbEmpresa,
+								@RequestParam(value="cmbMoneda") int cmbMoneda,
+								@RequestParam(value="txtTipoCambio", required=false, defaultValue="0") String txtTipoCambio,
+								@RequestParam(value="txtValorMonedaExtranjera", required=false, defaultValue="0") String txtValorMonedaExtranjera,
 								@RequestParam(value="txtIngresoEstimado") String txtIngresoEstimado,
 								@RequestParam(value="txtProbabilidad", required=false, defaultValue="") String txtProbabilidad,
 								@RequestParam(value="cmbCliente") int cmbCliente,
@@ -251,6 +294,13 @@ public class OportunidadesNegociosController {
 			objOportunidad.setNotasInternas(txtNotasInternas);
 			objOportunidad.setOportunidadNegocioEstatus(oportunidadNegocioEstatusService.findByIdOportunidadNegocioEstatus(1));
 			
+			objOportunidad.setMoneda(monedaService.find(cmbMoneda));
+			
+			if(cmbMoneda > 1) {
+				objOportunidad.setTipoCambio(new BigDecimal(txtTipoCambio));
+				objOportunidad.setValorMonedaExtranjera(new BigDecimal(txtValorMonedaExtranjera));
+			}
+			
 			oportunidadNegocioService.create(objOportunidad);
 			objRedirectView = new RedirectView("/WebSar/controlPanel/oportunidadesNegocios");
 			modelAndViewComponent.addResult(objRedirectAttributes, EnumMessage.OPORTUNIDADES_CREATE_001);
@@ -276,6 +326,7 @@ public class OportunidadesNegociosController {
 		List<SucursalEntity> lstSucursales = sucursalService.listSucursales();
 		List<ClienteGiroEntity> lstClientesGiros = clienteGiroService.listClientesGiros();
 		List<EmpresaEntity> lstEmpresas = empresaService.listEmpresas();
+		List<MonedaEntity> lstMonedas = monedaService.listMonedas();
 		
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_OPORTUNIDADES_EDIT);
 		objModelAndView.addObject("objOportunidad", objOportunidad);
@@ -286,6 +337,7 @@ public class OportunidadesNegociosController {
 		objModelAndView.addObject("lstClientesGiros", lstClientesGiros);
 		objModelAndView.addObject("lstSucursales", lstSucursales);
 		objModelAndView.addObject("lstEmpresas", lstEmpresas);
+		objModelAndView.addObject("lstMonedas", lstMonedas);
 		
 		return objModelAndView;
 	}
@@ -295,6 +347,10 @@ public class OportunidadesNegociosController {
 								@RequestParam(value="cmbEmpresa") Integer cmbEmpresa,
 								@RequestParam(value="txtOportunidad") String txtOportunidad,
 								@RequestParam(value="cmbEstatus") int cmbEstatus,
+								@RequestParam(value="cmbMoneda") int cmbMoneda,
+								@RequestParam(value="txtTipoCambio", required=false, defaultValue="0") String txtTipoCambio,
+								@RequestParam(value="txtValorMonedaExtranjera", required=false, defaultValue="0") String txtValorMonedaExtranjera,
+								@RequestParam(value="txtRenovacionFecha", required=false, defaultValue="") String txtRenovacionFecha,
 								@RequestParam(value="txtIngresoEstimado") String txtIngresoEstimado,
 								@RequestParam(value="txtProbabilidad", required=false, defaultValue="") String txtProbabilidad,
 								@RequestParam(value="cmbCliente") int cmbCliente,
@@ -325,6 +381,17 @@ public class OportunidadesNegociosController {
 			objOportunidad.setPrioridad(txtPrioridad);
 			objOportunidad.setNotasInternas(txtNotasInternas);
 			objOportunidad.setOportunidadNegocioEstatus(oportunidadNegocioEstatusService.findByIdOportunidadNegocioEstatus(cmbEstatus));
+			
+			if(cmbEstatus == 3 && !txtRenovacionFecha.equals("")) {
+				objOportunidad.setRenovacionFecha(LocalDate.parse(txtRenovacionFecha, GeneralConfiguration.getInstance().getDateFormatterNatural()));
+			}
+			
+			objOportunidad.setMoneda(monedaService.find(cmbMoneda));
+			
+			if(cmbMoneda > 1) {
+				objOportunidad.setTipoCambio(new BigDecimal(txtTipoCambio));
+				objOportunidad.setValorMonedaExtranjera(new BigDecimal(txtValorMonedaExtranjera));
+			}
 			
 			oportunidadNegocioService.update(objOportunidad);
 			objRedirectView = new RedirectView("/WebSar/controlPanel/oportunidadesNegocios");

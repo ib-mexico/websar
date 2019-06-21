@@ -7,17 +7,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.ibmexico.configurations.GeneralConfiguration;
 import com.ibmexico.entities.CotizacionEntity;
+import com.ibmexico.entities.OportunidadNegocioEntity;
 import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.libraries.Templates;
 import com.ibmexico.services.CotizacionService;
+import com.ibmexico.services.OportunidadNegocioService;
 import com.ibmexico.services.SessionService;
 import com.ibmexico.services.UsuarioService;
 
@@ -32,6 +32,10 @@ public class SchedulerComponent {
 	private CotizacionService cotizacionService;
 	
 	@Autowired
+	@Qualifier("oportunidadNegocioService")
+	private OportunidadNegocioService oportunidadNegocioService;
+	
+	@Autowired
 	@Qualifier("usuarioService")
 	private UsuarioService usuarioService;
 	
@@ -39,7 +43,6 @@ public class SchedulerComponent {
 	@Qualifier("sessionService")
 	private SessionService sessionService;
 	
-	//@Scheduled(cron = "10 * * * * *")
 	@Scheduled(cron = "0 0 8 ? * 3")
 	public void cronJobNotificadorCotizacionesPorCobrar() {
 		
@@ -49,8 +52,6 @@ public class SchedulerComponent {
 		Integer iterator = 0;
 		
 		LocalDate ldNow = LocalDate.now();
-		
-		System.out.println("Cotizaciones: " + lstCotizaciones.size());
 		
 		for(CotizacionEntity itemCotizacion : lstCotizaciones) {
 			
@@ -98,6 +99,61 @@ public class SchedulerComponent {
 			mapVariables.put("titulo", "Cotizaciones pendientes por cobrar");
 			mapVariables.put("alias", "Cobranza");
 			mailerComponent.send("cobranza@ib-mexico.com", "Hay cotizaciones con falta de pago", Templates.EMAIL_COTIZACIONES_POR_COBRAR, mapVariables);
+		} catch(Exception exception) { }
+	}
+	
+	@Scheduled(cron = "0 0 8 ? * *")
+	public void cronJobNotificadorOportunidadesRenovacion() {
+		
+		List<UsuarioEntity> lstUsuarios = usuarioService.listUsuariosActivos();
+		LocalDate ldNow = LocalDate.now();
+		
+		for(UsuarioEntity itemUsuario : lstUsuarios) {
+			List<OportunidadNegocioEntity> lstOportunidades = oportunidadNegocioService.listOportunidadesNegociosRenovaciones(itemUsuario, ldNow);
+			List<Map<String , String>> mapOportunidades  = new ArrayList<Map<String,String>>();
+			Integer iterator = 0;
+			
+			if(!lstOportunidades.isEmpty()) {				
+				for(OportunidadNegocioEntity itemOportunidad : lstOportunidades) {
+					
+					Map<String,String> myMap1 = new HashMap<String, String>();
+					myMap1.put("id_oportunidad",  Integer.toString(itemOportunidad.getIdOportunidadNegocio()));
+					myMap1.put("oportunidad", itemOportunidad.getOportunidad());
+					myMap1.put("cliente", itemOportunidad.getCliente().getCliente());
+					myMap1.put("moneda", itemOportunidad.getMoneda().getMonedaCodigo());
+					
+					if(itemOportunidad.getMoneda().getIdMoneda() != 1) {
+						myMap1.put("ingreso", itemOportunidad.getValorMonedaExtranjeraNatural());
+					} else {
+						myMap1.put("ingreso", itemOportunidad.getIngresoEstimadoNatural());
+					}
+					
+					mapOportunidades.add(iterator, myMap1);
+					
+					iterator++;
+				}
+				
+				Map<String, Object> mapVariables = new HashMap<String, Object>();
+				mapVariables.put("lstOportunidades", mapOportunidades);
+				
+				cronJobOportunidadesRenovarEnviarMails(itemUsuario, mapVariables);
+				
+			}
+		}
+		
+	}
+	
+	private void cronJobOportunidadesRenovarEnviarMails(UsuarioEntity objUsuario, Map<String, Object> mapVariables) {
+		try {
+			mapVariables.put("titulo", "Oportunidades de negocio que debes renovar");
+			mapVariables.put("alias", objUsuario.getAlias());
+			
+			mailerComponent.send(objUsuario.getCorreo(), "Hay oportunidades pendientes de renovación", Templates.EMAIL_OPORTUNIDADES_NEGOCIOS_RENOVACION, mapVariables);
+			
+			//COPIA DE CORREO PARA ERICK
+			if(objUsuario.getIdUsuario() != 2) {
+				mailerComponent.send("erick.montoya@ib-mexico.com", "Hay oportunidades pendientes de renovación - COPIA", Templates.EMAIL_OPORTUNIDADES_NEGOCIOS_RENOVACION, mapVariables);
+			}
 		} catch(Exception exception) { }
 	}
 	

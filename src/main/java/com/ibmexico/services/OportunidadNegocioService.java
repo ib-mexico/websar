@@ -73,6 +73,10 @@ public class OportunidadNegocioService {
 		return lstOportunidades;
 	}
 	
+	public List<OportunidadNegocioEntity> listOportunidadesNegociosRenovaciones(UsuarioEntity objUsuario, LocalDate ldFechaRenovacion) {
+		return oportunidadNegocioRepository.listOportunidadesNegociosRenovaciones(objUsuario.getIdUsuario(), ldFechaRenovacion);
+	}
+	
 	public String totalIngresoEstimado(int idOportunidadEstatus) {
 		
 		BigDecimal total = null;

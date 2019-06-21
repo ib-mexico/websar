@@ -46,6 +46,9 @@ public interface IOportunidadNegocioRepository extends JpaRepository<Oportunidad
 	@Query("SELECT objOportunidad FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.usuarioVendedor.idUsuario = ?1 AND objOportunidad.eliminado = 0 order by objOportunidad.creacionFecha DESC")
 	public abstract List<OportunidadNegocioEntity> listOportunidadesNegocios(int idUsuario);
 	
+	@Query("SELECT objOportunidad FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.usuarioVendedor.idUsuario = ?1 AND objOportunidad.eliminado = 0 AND objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = 3 AND objOportunidad.renovacionFecha = ?2")
+	public abstract List<OportunidadNegocioEntity> listOportunidadesNegociosRenovaciones(int idUsuario, LocalDate ldFechaRenovacion);
+	
 	
 	
 	

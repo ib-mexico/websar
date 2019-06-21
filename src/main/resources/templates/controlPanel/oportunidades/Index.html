@@ -58,6 +58,13 @@
 	    		<i class="material-icons">store</i>
 	    		<span>R2A</span>
 	    	</button>
+	    	
+	    	<th:block th:if="${rolOportunidadEmpresaUca}">
+		    	<button type="button" class="btn bg-purple btn-lg btn-empresa waves-effect" data-empresa="4">
+		    		<i class="material-icons">store</i>
+		    		<span>UCA</span>
+		    	</button>
+	    	</th:block>
     	</div>
 	</div>      	
 					    
@@ -2307,7 +2314,757 @@
 			</th:block>
     	</div> 
 	</div>
-      
+     
+    <th:block th:if="${rolOportunidadEmpresaUca}">
+	    <div class="row clearfix opn-deck m-t-10 empresa4">
+			<!-- ABIERTOS -->
+	    	<div class="col-md-3 col-sm-3 col-lg-4 componente-opn">
+	    		<div class="info-box bg-orange hover-zoom-effect">
+	                <div class="icon">
+	                    <i class="material-icons">attach_money</i>
+	                </div>
+	                <div class="content">
+	                    <div class="text">ABIERTOS</div>
+	                    <div class="number"><th:block th:utext="${totalAbiertosUca}"></th:block></div>
+	                </div>
+	            </div>
+	    	
+	    		<th:block th:each="itemAbierto : ${lstAbiertosUca}">
+		    		<div class="card">
+	    				<div class="header">
+	    					<h2 th:text="${itemAbierto.getOportunidad()}"></h2>
+	    					<small class="usuario" th:text="${itemAbierto.getUsuarioVendedor().getNombreCompleto()}"></small>
+	    					<br />
+	    					<small class="opn-id" th:text="${'OPN #' + itemAbierto.getIdOportunidadNegocio()}"></small>
+	    					<br />
+	    					<small th:text="${'&Uacute;ltima modificaci&oacute;n: ' + itemAbierto.getModificacionFechaNatural()}"></small>
+		   					<ul class="header-dropdown m-r--5">
+		                    	<li class="dropdown">
+		                        	<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+		                            	<i class="material-icons">more_vert</i>
+		                           	</a>
+		                           	<ul class="dropdown-menu pull-right">
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemAbierto.getIdOportunidadNegocio()} + '/create-actividad'}">Planificar Actividad</a></li>
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemAbierto.getIdOportunidadNegocio()} + '/upload-file'}" class="opn-adjuntar" th:attr="data-id_oportunidad=${itemAbierto.getIdOportunidadNegocio()}">Adjuntar Archivo</a></li>
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/create/' + {itemAbierto.getIdOportunidadNegocio()}}">Crear Cotizaci&oacute;n</a></li>
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/reporte-opn-pdf/' + {itemAbierto.getIdOportunidadNegocio()}}" target="_blank">Reporte OPN</a></li>
+		                               	<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemAbierto.getIdOportunidadNegocio()} + '/edit'}">Editar</a></li>
+	                            	   	<li><a href="javascript:void(0);" class="opn-eliminar" th:attr="data-id_oportunidad=${itemAbierto.getIdOportunidadNegocio()}">Eliminar</a></li>
+		                           	</ul>
+		                       	</li>
+		                   	</ul>
+		    			</div>
+		    			
+		    			<div class="body">
+							<div class="row cliente-div">
+								<div class="col-md-12 cliente-text">
+									Cliente: <th:block th:utext="${itemAbierto.getCliente().getCliente()}"></th:block>								
+								</div>
+								
+								<div class="col-md-12">
+									Ingreso estimado: <th:block th:utext="${itemAbierto.getIngresoEstimadoNatural()}"></th:block>								
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-6 align-left">						
+									<div th:if="${itemAbierto.getPrioridad() == 0}" style="color:gold;"><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>
+									<div th:if="${itemAbierto.getPrioridad() == 1}" style="color:gold;"><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>
+									<div th:if="${itemAbierto.getPrioridad() == 2}" style="color:gold;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+									<div th:if="${itemAbierto.getPrioridad() == 3}" style="color:gold;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+								</div>
+								
+								<div class="col-md-6 align-right">
+									<a class="popover-component" title="Cotizaciones" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="right" type="button" data-html="true" href="javascript:void(0);" th:id="${'c' + itemAbierto.getIdOportunidadNegocio()}">
+										<i class="material-icons">view_list</i>
+									</a>
+								
+									<a class="popover-component" title="Actividades" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="right" type="button" data-html="true" href="javascript:void(0);" th:id="${'p' + itemAbierto.getIdOportunidadNegocio()}">
+										<i class="material-icons">query_builder</i>
+									</a>
+									
+									<a class="popover-component" title="Ficheros" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="right" type="button" data-html="true" href="javascript:void(0);" th:id="${'f' + itemAbierto.getIdOportunidadNegocio()}">
+										<i class="material-icons">archive</i>
+									</a>
+									
+									<!-- COTIZACIONES -->
+									<div th:id="${'popover-content-c' + itemAbierto.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemCotizacion : ${itemAbierto.getCotizaciones()}">
+									 			<li class="list-group-item">								 												 				
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-12 align-left">														
+											 				<strong th:text="${itemCotizacion.getFolio()}"></strong>
+											 				<br />
+											 				<small th:if="${itemCotizacion.isMaestra()}">Cotizaci&oacute;n Maestra</small>
+											 				<small th:if="${itemCotizacion.isRenta()}">Cotizaci&oacute;n de Renta</small>
+											 				<small th:if="${itemCotizacion.isNormal()}">Cotizaci&oacute;n Normal</small>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<i class="material-icons">person</i> <span th:text="${itemCotizacion.getUsuario().getAliasCorreo()}"></span><br />
+								 						<i class="material-icons">monetization_on</i> <span th:text="${itemCotizacion.getTotalNatural()}"></span><br />
+								 						<i class="material-icons">public</i> <span th:text="${itemCotizacion.getCliente().getCliente()}"></span><br />
+								 						<i class="material-icons">contacts</i> <span th:text="${itemCotizacion.getClienteContacto().getContacto()}"></span><br />
+									 					<div class="col-md-12 align-right"><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {itemCotizacion.getIdCotizacion()} + '/partidas'}">Ver Partidas</a></div>								 					
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+									
+									<!-- ACTIVIDADES -->
+									<div th:id="${'popover-content-p' + itemAbierto.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemActividad : ${itemAbierto.getOportunidadesActividades()}">
+									 			<li class="list-group-item">								 												 				
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-8 align-left">														
+											 				<strong th:text="${itemActividad.getActividadTipo().getActividadTipo()}"></strong>
+														</div>	
+														
+														<div class="col-md-4 align-right">														
+											 				<span th:if="${itemActividad.isFinalizado()}"><i class="material-icons">check_box</i></span>
+								 							<span th:unless="${itemActividad.isFinalizado()}"><i class="material-icons">check_box_outline_blank</i></span>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<i class="material-icons">person</i> <span th:text="${itemActividad.getUsuario().getAliasCorreo()}"></span><br />
+									 					<th:block th:unless="${itemActividad.isFinalizado()}">
+									 						<i class="material-icons">query_builder</i> <span class="date-format" th:attr="data-fecha_vencimiento=${itemActividad.getVencimientoFecha()}">test</span><br />
+									 					</th:block>
+									 					<div class="col-md-12 align-right"><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemActividad.getIdActividad()} + '/edit-actividad'}">Ver Actividad</a></div>								 					
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+								    
+								    <!-- FICHEROS -->
+								    <div th:id="${'popover-content-f' + itemAbierto.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemFichero : ${itemAbierto.getFicheros()}">
+									 			<li class="list-group-item">								 												 				
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-12 text-center">														
+											 				<strong th:text="${itemFichero.getTitulo()}"></strong>
+											 				<p>
+											 					<th:block th:text="${itemFichero.getDescripcion()}"></th:block>
+											 				</p>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<div class="col-md-12 align-right"><a th:href="@{'/ficheros/oportunidades/' + ${itemFichero.getUrl()}}" target="_blank" role="button" class="btn btn-primary waves-effect" >Ver Fichero</a></div>								 					
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+								</div>					
+							</div>
+		    			</div>
+		    		</div>
+				</th:block>
+	    	</div>
+	    	
+	    	<!-- EN CURSO -->
+	    	<div class="col-md-3 col-sm-3 col-lg-4 componente-opn">
+	    		<div class="info-box bg-light-green hover-zoom-effect">
+	                <div class="icon">
+	                    <i class="material-icons">attach_money</i>
+	                </div>
+	                <div class="content">
+	                    <div class="text">EN CURSO</div>
+	                    <div class="number"><th:block th:utext="${totalProgresoUca}"></th:block></div>
+	                </div>
+	            </div>
+	    	
+	    		<th:block th:each="itemProgreso : ${lstProgresoUca}">
+		    		<div class="card">
+	    				<div class="header">
+	    					<h2 th:text="${itemProgreso.getOportunidad()}"></h2>
+	    					<small class="usuario" th:text="${itemProgreso.getUsuarioVendedor().getNombreCompleto()}"></small>
+	    					<br />
+	    					<small class="opn-id" th:text="${'OPN #' + itemProgreso.getIdOportunidadNegocio()}"></small>
+	    					<br />
+	    					<small th:text="${'&Uacute;ltima modificaci&oacute;n: ' + itemProgreso.getModificacionFechaNatural()}"></small>
+		   					<ul class="header-dropdown m-r--5">
+		                    	<li class="dropdown">
+		                        	<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+		                            	<i class="material-icons">more_vert</i>
+		                           	</a>
+		                           	<ul class="dropdown-menu pull-right">
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemProgreso.getIdOportunidadNegocio()} + '/create-actividad'}">Planificar Actividad</a></li>
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemProgreso.getIdOportunidadNegocio()} + '/upload-file'}" class="opn-adjuntar" th:attr="data-id_oportunidad=${itemProgreso.getIdOportunidadNegocio()}">Adjuntar Archivo</a></li>
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/create/' + {itemProgreso.getIdOportunidadNegocio()}}">Crear Cotizaci&oacute;n</a></li>
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/reporte-opn-pdf/' + {itemProgreso.getIdOportunidadNegocio()}}" target="_blank">Reporte OPN</a></li>
+		                               	<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemProgreso.getIdOportunidadNegocio()} + '/edit'}">Editar</a></li>
+	                            	   	<li><a href="javascript:void(0);" class="opn-eliminar" th:attr="data-id_oportunidad=${itemProgreso.getIdOportunidadNegocio()}">Eliminar</a></li>
+		                           	</ul>
+		                       	</li>
+		                   	</ul>
+		    			</div>
+		    			
+		    			<div class="body">
+							<div class="row cliente-div">
+								<div class="col-md-12 cliente-text">
+									Cliente: <th:block th:utext="${itemProgreso.getCliente().getCliente()}"></th:block>								
+								</div>
+								
+								<div class="col-md-12">
+									Ingreso estimado: <th:block th:utext="${itemProgreso.getIngresoEstimadoNatural()}"></th:block>								
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-6 align-left">						
+									<div th:if="${itemProgreso.getPrioridad() == 0}" style="color:gold;"><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>
+									<div th:if="${itemProgreso.getPrioridad() == 1}" style="color:gold;"><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>
+									<div th:if="${itemProgreso.getPrioridad() == 2}" style="color:gold;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+									<div th:if="${itemProgreso.getPrioridad() == 3}" style="color:gold;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+								</div>
+								
+								<div class="col-md-6 align-right">
+									<a class="popover-component" title="Cotizaciones" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="right" type="button" data-html="true" href="javascript:void(0);" th:id="${'c' + itemProgreso.getIdOportunidadNegocio()}">
+										<i class="material-icons">view_list</i>
+									</a>
+								
+									<a class="popover-component" title="Actividades" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="right" type="button" data-html="true" href="javascript:void(0);" th:id="${'p' + itemProgreso.getIdOportunidadNegocio()}">
+										<i class="material-icons">query_builder</i>
+									</a>
+									
+									<a class="popover-component" title="Ficheros" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="right" type="button" data-html="true" href="javascript:void(0);" th:id="${'f' + itemProgreso.getIdOportunidadNegocio()}">
+										<i class="material-icons">archive</i>
+									</a>
+									
+									<!-- COTIZACIONES -->
+									<div th:id="${'popover-content-c' + itemProgreso.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemCotizacion : ${itemProgreso.getCotizaciones()}">
+									 			<li class="list-group-item">								 												 				
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-12 align-left">														
+											 				<strong th:text="${itemCotizacion.getFolio()}"></strong>
+											 				<br />
+											 				<small th:if="${itemCotizacion.isMaestra()}">Cotizaci&oacute;n Maestra</small>
+											 				<small th:if="${itemCotizacion.isRenta()}">Cotizaci&oacute;n de Renta</small>
+											 				<small th:if="${itemCotizacion.isNormal()}">Cotizaci&oacute;n Normal</small>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<i class="material-icons">person</i> <span th:text="${itemCotizacion.getUsuario().getAliasCorreo()}"></span><br />
+								 						<i class="material-icons">monetization_on</i> <span th:text="${itemCotizacion.getTotalNatural()}"></span><br />
+								 						<i class="material-icons">public</i> <span th:text="${itemCotizacion.getCliente().getCliente()}"></span><br />
+								 						<i class="material-icons">contacts</i> <span th:text="${itemCotizacion.getClienteContacto().getContacto()}"></span><br />
+									 					<div class="col-md-12 align-right"><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {itemCotizacion.getIdCotizacion()} + '/partidas'}">Ver Partidas</a></div>								 					
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+									
+									<!-- ACTIVIDADES -->
+									<div th:id="${'popover-content-p' + itemProgreso.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemActividad : ${itemProgreso.getOportunidadesActividades()}">
+									 			<li class="list-group-item">								 												 				
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-8 align-left">														
+											 				<strong th:text="${itemActividad.getActividadTipo().getActividadTipo()}"></strong>
+														</div>	
+														
+														<div class="col-md-4 align-right">														
+											 				<span th:if="${itemActividad.isFinalizado()}"><i class="material-icons">check_box</i></span>
+								 							<span th:unless="${itemActividad.isFinalizado()}"><i class="material-icons">check_box_outline_blank</i></span>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<i class="material-icons">person</i> <span th:text="${itemActividad.getUsuario().getAliasCorreo()}"></span><br />
+									 					<th:block th:unless="${itemActividad.isFinalizado()}">
+									 						<i class="material-icons">query_builder</i> <span class="date-format" th:attr="data-fecha_vencimiento=${itemActividad.getVencimientoFecha()}">test</span><br />
+									 					</th:block>
+									 					<div class="col-md-12 align-right"><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemActividad.getIdActividad()} + '/edit-actividad'}">Ver Actividad</a></div>								 					
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+								    
+								    <!-- FICHEROS -->
+								    <div th:id="${'popover-content-f' + itemProgreso.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemFichero : ${itemProgreso.getFicheros()}">
+									 			<li class="list-group-item">								 												 				
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-12 text-center">														
+											 				<strong th:text="${itemFichero.getTitulo()}"></strong>
+											 				<p>
+											 					<th:block th:text="${itemFichero.getDescripcion()}"></th:block>
+											 				</p>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<div class="col-md-12 align-right"><a th:href="@{'/ficheros/oportunidades/' + ${itemFichero.getUrl()}}" target="_blank" role="button" class="btn btn-primary waves-effect" >Ver Fichero</a></div>								 					
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+								</div>					
+							</div>
+		    			</div>
+		    		</div>
+				</th:block>
+	    	</div>
+	    	
+	    	<!-- RENTAS -->
+	    	<div class="col-md-3 col-sm-3 col-lg-4 componente-opn">
+	    		<div class="info-box bg-pink hover-zoom-effect">
+	                <div class="icon">
+	                    <i class="material-icons">attach_money</i>
+	                </div>
+	                <div class="content">
+	                    <div class="text">RENTAS</div>
+	                    <div class="number"><th:block th:utext="${totalRentasUca}"></th:block></div>
+	                </div>
+	            </div>
+	    	
+	    		<th:block th:each="itemRenta : ${lstRentasUca}">
+		    		<div class="card">
+	    				<div class="header">
+	    					<h2 th:text="${itemRenta.getOportunidad()}"></h2>
+	    					<small class="usuario" th:text="${itemRenta.getUsuarioVendedor().getNombreCompleto()}"></small>
+	    					<br />
+	    					<small class="opn-id" th:text="${'OPN #' + itemRenta.getIdOportunidadNegocio()}"></small>
+	    					<br />
+	    					<small th:text="${'&Uacute;ltima modificaci&oacute;n: ' + itemRenta.getModificacionFechaNatural()}"></small>
+		   					<ul class="header-dropdown m-r--5">
+		                    	<li class="dropdown">
+		                        	<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+		                            	<i class="material-icons">more_vert</i>
+		                           	</a>
+		                           	<ul class="dropdown-menu pull-right">
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemRenta.getIdOportunidadNegocio()} + '/create-actividad'}">Planificar Actividad</a></li>
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemRenta.getIdOportunidadNegocio()} + '/upload-file'}" class="opn-adjuntar" th:attr="data-id_oportunidad=${itemRenta.getIdOportunidadNegocio()}">Adjuntar Archivo</a></li>
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/create/' + {itemRenta.getIdOportunidadNegocio()}}">Crear Cotizaci&oacute;n</a></li>
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/reporte-opn-pdf/' + {itemRenta.getIdOportunidadNegocio()}}" target="_blank">Reporte OPN</a></li>
+		                               	<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemRenta.getIdOportunidadNegocio()} + '/edit'}">Editar</a></li>
+	                            	   	<li><a href="javascript:void(0);" class="opn-eliminar" th:attr="data-id_oportunidad=${itemRenta.getIdOportunidadNegocio()}">Eliminar</a></li>
+		                           	</ul>
+		                       	</li>
+		                   	</ul>
+		    			</div>
+		    			
+		    			<div class="body">
+							<div class="row cliente-div">
+								<div class="col-md-12 cliente-text">
+									Cliente: <th:block th:utext="${itemRenta.getCliente().getCliente()}"></th:block>								
+								</div>
+								
+								<div class="col-md-12">
+									Ingreso estimado: <th:block th:utext="${itemRenta.getIngresoEstimadoNatural()}"></th:block>								
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-6 align-left">						
+									<div th:if="${itemRenta.getPrioridad() == 0}" style="color:gold;"><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>
+									<div th:if="${itemRenta.getPrioridad() == 1}" style="color:gold;"><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>
+									<div th:if="${itemRenta.getPrioridad() == 2}" style="color:gold;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+									<div th:if="${itemRenta.getPrioridad() == 3}" style="color:gold;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+								</div>
+								
+								<div class="col-md-6 align-right">
+									<a class="popover-component" title="Cotizaciones" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="right" type="button" data-html="true" href="javascript:void(0);" th:id="${'c' + itemRenta.getIdOportunidadNegocio()}">
+										<i class="material-icons">view_list</i>
+									</a>
+								
+									<a class="popover-component" title="Actividades" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="right" type="button" data-html="true" href="javascript:void(0);" th:id="${'p' + itemRenta.getIdOportunidadNegocio()}">
+										<i class="material-icons">query_builder</i>
+									</a>
+									
+									<a class="popover-component" title="Ficheros" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="right" type="button" data-html="true" href="javascript:void(0);" th:id="${'f' + itemRenta.getIdOportunidadNegocio()}">
+										<i class="material-icons">archive</i>
+									</a>
+									
+									<!-- COTIZACIONES -->
+									<div th:id="${'popover-content-c' + itemRenta.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemCotizacion : ${itemRenta.getCotizaciones()}">
+									 			<li class="list-group-item">								 												 				
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-12 align-left">														
+											 				<strong th:text="${itemCotizacion.getFolio()}"></strong>
+											 				<br />
+											 				<small th:if="${itemCotizacion.isMaestra()}">Cotizaci&oacute;n Maestra</small>
+											 				<small th:if="${itemCotizacion.isRenta()}">Cotizaci&oacute;n de Renta</small>
+											 				<small th:if="${itemCotizacion.isNormal()}">Cotizaci&oacute;n Normal</small>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<i class="material-icons">person</i> <span th:text="${itemCotizacion.getUsuario().getAliasCorreo()}"></span><br />
+								 						<i class="material-icons">monetization_on</i> <span th:text="${itemCotizacion.getTotalNatural()}"></span><br />
+								 						<i class="material-icons">public</i> <span th:text="${itemCotizacion.getCliente().getCliente()}"></span><br />
+								 						<i class="material-icons">contacts</i> <span th:text="${itemCotizacion.getClienteContacto().getContacto()}"></span><br />
+									 					<div class="col-md-12 align-right"><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {itemCotizacion.getIdCotizacion()} + '/partidas'}">Ver Partidas</a></div>								 					
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+									
+									<!-- ACTIVIDADES -->
+									<div th:id="${'popover-content-p' + itemRenta.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemActividad : ${itemRenta.getOportunidadesActividades()}">
+									 			<li class="list-group-item">								 												 				
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-8 align-left">														
+											 				<strong th:text="${itemActividad.getActividadTipo().getActividadTipo()}"></strong>
+														</div>	
+														
+														<div class="col-md-4 align-right">														
+											 				<span th:if="${itemActividad.isFinalizado()}"><i class="material-icons">check_box</i></span>
+								 							<span th:unless="${itemActividad.isFinalizado()}"><i class="material-icons">check_box_outline_blank</i></span>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<i class="material-icons">person</i> <span th:text="${itemActividad.getUsuario().getAliasCorreo()}"></span><br />
+									 					<th:block th:unless="${itemActividad.isFinalizado()}">
+									 						<i class="material-icons">query_builder</i> <span class="date-format" th:attr="data-fecha_vencimiento=${itemActividad.getVencimientoFecha()}">test</span><br />
+									 					</th:block>
+									 					<div class="col-md-12 align-right"><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemActividad.getIdActividad()} + '/edit-actividad'}">Ver Actividad</a></div>								 					
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+								    
+								    <!-- FICHEROS -->
+								    <div th:id="${'popover-content-f' + itemRenta.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemFichero : ${itemRenta.getFicheros()}">
+									 			<li class="list-group-item">								 												 				
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-12 text-center">														
+											 				<strong th:text="${itemFichero.getTitulo()}"></strong>
+											 				<p>
+											 					<th:block th:text="${itemFichero.getDescripcion()}"></th:block>
+											 				</p>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<div class="col-md-12 align-right"><a th:href="@{'/ficheros/oportunidades/' + ${itemFichero.getUrl()}}" target="_blank" role="button" class="btn btn-primary waves-effect" >Ver Fichero</a></div>								 					
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+								</div>					
+							</div>
+		    			</div>
+		    		</div>
+				</th:block>
+	    	</div>
+	    	
+	    	<!-- CERRADO -->
+	    	<div class="col-md-3 col-sm-3 col-lg-4 componente-opn">
+	    		<div class="info-box bg-indigo hover-zoom-effect">
+	                <div class="icon">
+	                    <i class="material-icons">attach_money</i>
+	                </div>
+	                <div class="content">
+	                    <div class="text">CERRADO</div>
+	                    <div class="number"><th:block th:utext="${totalCerradoUca}"></th:block></div>
+	                </div>
+	            </div>
+	    	
+	    		<th:block th:each="itemCerrado : ${lstCerradoUca}">
+		    		<div class="card">
+	    				<div class="header">
+	    					<h2 th:text="${itemCerrado.getOportunidad()}"></h2>
+	    					<small class="usuario" th:text="${itemCerrado.getUsuarioVendedor().getNombreCompleto()}"></small>
+	    					<br />
+	    					<small class="opn-id" th:text="${'OPN #' + itemCerrado.getIdOportunidadNegocio()}"></small>
+	    					<br />
+	    					<small th:text="${'&Uacute;ltima modificaci&oacute;n: ' + itemCerrado.getModificacionFechaNatural()}"></small>
+		   					<ul class="header-dropdown m-r--5">
+		                    	<li class="dropdown">
+		                        	<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+		                            	<i class="material-icons">more_vert</i>
+		                           	</a>
+		                           	<ul class="dropdown-menu pull-right">
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemCerrado.getIdOportunidadNegocio()} + '/create-actividad'}">Planificar Actividad</a></li>
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemCerrado.getIdOportunidadNegocio()} + '/upload-file'}" class="opn-adjuntar" th:attr="data-id_oportunidad=${itemCerrado.getIdOportunidadNegocio()}">Adjuntar Archivo</a></li>
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/create/' + {itemCerrado.getIdOportunidadNegocio()}}">Crear Cotizaci&oacute;n</a></li>
+		                       			<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/reporte-opn-pdf/' + {itemCerrado.getIdOportunidadNegocio()}}" target="_blank">Reporte OPN</a></li>
+		                               	<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemCerrado.getIdOportunidadNegocio()} + '/edit'}">Editar</a></li>
+	                            	   	<li><a href="javascript:void(0);" class="opn-eliminar" th:attr="data-id_oportunidad=${itemCerrado.getIdOportunidadNegocio()}">Eliminar</a></li>
+		                           	</ul>
+		                       	</li>
+		                   	</ul>
+		    			</div>
+		    			
+		    			<div class="body">
+							<div class="row cliente-div">
+								<div class="col-md-12 cliente-text">
+									Cliente: <th:block th:utext="${itemCerrado.getCliente().getCliente()}"></th:block>								
+								</div>
+								
+								<div class="col-md-12">
+									Ingreso estimado: <th:block th:utext="${itemCerrado.getIngresoEstimadoNatural()}"></th:block>								
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-6 align-left">						
+									<div th:if="${itemCerrado.getPrioridad() == 0}" style="color:gold;"><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>
+									<div th:if="${itemCerrado.getPrioridad() == 1}" style="color:gold;"><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>
+									<div th:if="${itemCerrado.getPrioridad() == 2}" style="color:gold;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+									<div th:if="${itemCerrado.getPrioridad() == 3}" style="color:gold;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+								</div>
+								
+								<div class="col-md-6 align-right">
+									<a class="popover-component" title="Cotizaciones" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="right" type="button" data-html="true" href="javascript:void(0);" th:id="${'c' + itemCerrado.getIdOportunidadNegocio()}">
+										<i class="material-icons">view_list</i>
+									</a>
+								
+									<a class="popover-component" title="Actividades" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="right" type="button" data-html="true" href="javascript:void(0);" th:id="${'p' + itemCerrado.getIdOportunidadNegocio()}">
+										<i class="material-icons">query_builder</i>
+									</a>
+									
+									<a class="popover-component" title="Ficheros" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="right" type="button" data-html="true" href="javascript:void(0);" th:id="${'f' + itemCerrado.getIdOportunidadNegocio()}">
+										<i class="material-icons">archive</i>
+									</a>
+									
+									<!-- COTIZACIONES -->
+									<div th:id="${'popover-content-c' + itemCerrado.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemCotizacion : ${itemCerrado.getCotizaciones()}">
+									 			<li class="list-group-item">								 												 				
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-12 align-left">														
+											 				<strong th:text="${itemCotizacion.getFolio()}"></strong>
+											 				<br />
+											 				<small th:if="${itemCotizacion.isMaestra()}">Cotizaci&oacute;n Maestra</small>
+											 				<small th:if="${itemCotizacion.isRenta()}">Cotizaci&oacute;n de Renta</small>
+											 				<small th:if="${itemCotizacion.isNormal()}">Cotizaci&oacute;n Normal</small>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<i class="material-icons">person</i> <span th:text="${itemCotizacion.getUsuario().getAliasCorreo()}"></span><br />
+								 						<i class="material-icons">monetization_on</i> <span th:text="${itemCotizacion.getTotalNatural()}"></span><br />
+								 						<i class="material-icons">public</i> <span th:text="${itemCotizacion.getCliente().getCliente()}"></span><br />
+								 						<i class="material-icons">contacts</i> <span th:text="${itemCotizacion.getClienteContacto().getContacto()}"></span><br />
+									 					<div class="col-md-12 align-right"><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {itemCotizacion.getIdCotizacion()} + '/partidas'}">Ver Partidas</a></div>								 					
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+									
+									<!-- ACTIVIDADES -->
+									<div th:id="${'popover-content-p' + itemCerrado.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemActividad : ${itemCerrado.getOportunidadesActividades()}">
+									 			<li class="list-group-item">								 												 				
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-8 align-left">														
+											 				<strong th:text="${itemActividad.getActividadTipo().getActividadTipo()}"></strong>
+														</div>	
+														
+														<div class="col-md-4 align-right">														
+											 				<span th:if="${itemActividad.isFinalizado()}"><i class="material-icons">check_box</i></span>
+								 							<span th:unless="${itemActividad.isFinalizado()}"><i class="material-icons">check_box_outline_blank</i></span>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<i class="material-icons">person</i> <span th:text="${itemActividad.getUsuario().getAliasCorreo()}"></span><br />
+									 					<th:block th:unless="${itemActividad.isFinalizado()}">
+									 						<i class="material-icons">query_builder</i> <span class="date-format" th:attr="data-fecha_vencimiento=${itemActividad.getVencimientoFecha()}">test</span><br />
+									 					</th:block>
+									 					<div class="col-md-12 align-right"><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemActividad.getIdActividad()} + '/edit-actividad'}">Ver Actividad</a></div>								 					
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+								    
+								    <!-- FICHEROS -->
+								    <div th:id="${'popover-content-f' + itemCerrado.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemFichero : ${itemCerrado.getFicheros()}">
+									 			<li class="list-group-item">								 												 				
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-12 text-center">														
+											 				<strong th:text="${itemFichero.getTitulo()}"></strong>
+											 				<p>
+											 					<th:block th:text="${itemFichero.getDescripcion()}"></th:block>
+											 				</p>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<div class="col-md-12 align-right"><a th:href="@{'/ficheros/oportunidades/' + ${itemFichero.getUrl()}}" target="_blank" role="button" class="btn btn-primary waves-effect" >Ver Fichero</a></div>								 					
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+								</div>					
+							</div>
+		    			</div>
+		    		</div>
+				</th:block>
+	    	</div>
+	    	
+	    	<!-- PERDIDA -->
+	    	<div class="col-md-3 col-sm-3 col-lg-4 componente-opn">
+	    		<div class="info-box bg-cyan hover-zoom-effect">
+	                <div class="icon">
+	                    <i class="material-icons">attach_money</i>
+	                </div>
+	                <div class="content">
+	                    <div class="text">PERDIDOS</div>
+	                    <div class="number"><th:block th:utext="${totalPerdidosUca}"></th:block></div>
+	                </div>
+	            </div>
+	            
+	    		<th:block th:each="itemPerdido : ${lstPerdidosUca}">
+		    		<div class="card">
+		    			<div class="header">
+		    				<h2 th:text="${itemPerdido.getOportunidad()}"></h2>
+		    				<small class="usuario" th:text="${itemPerdido.getUsuarioVendedor().getNombreCompleto()}"></small>
+		    				<br />
+	    					<small class="opn-id" th:text="${'OPN #' + itemPerdido.getIdOportunidadNegocio()}"></small>
+		    				<br />
+	    					<small th:text="${'&Uacute;ltima modificaci&oacute;n: ' + itemPerdido.getModificacionFechaNatural()}"></small>
+		    				<ul class="header-dropdown m-r--5">
+		                       <li class="dropdown">
+		                           <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+		                               <i class="material-icons">more_vert</i>
+		                           </a>
+		                           <ul class="dropdown-menu pull-right">
+		                           		<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/reporte-opn-pdf/' + {itemPerdido.getIdOportunidadNegocio()}}" target="_blank">Reporte OPN</a></li>
+		                               	<li><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemPerdido.getIdOportunidadNegocio()} + '/edit'}">Editar</a></li>
+	                            	   	<li><a href="javascript:void(0);" class="opn-eliminar" th:attr="data-id_oportunidad=${itemPerdido.getIdOportunidadNegocio()}">Eliminar</a></li>
+		                           </ul>
+		                       </li>
+		                   </ul>
+		    			</div>
+		    			
+		    			<div class="body">
+							<div class="row cliente-div">
+								<div class="col-md-12 cliente-text">
+									Cliente: <th:block th:utext="${itemPerdido.getCliente().getCliente()}"></th:block>								
+								</div>
+								
+								<div class="col-md-12">
+									Ingreso estimado: <th:block th:utext="${'$' + itemPerdido.getIngresoEstimadoNatural()}"></th:block>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-6  align-left">
+									<div th:if="${itemPerdido.getPrioridad() == 0}" style="color:gold;"><i class="far fa-star "></i><i class="far fa-star "></i><i class="far fa-star "></i></div>
+									<div th:if="${itemPerdido.getPrioridad() == 1}" style="color:gold;"><i class="fas fa-star "></i><i class="far fa-star "></i><i class="far fa-star "></i></div>
+									<div th:if="${itemPerdido.getPrioridad() == 2}" style="color:gold;"><i class="fas fa-star "></i><i class="fas fa-star "></i><i class="far fa-star "></i></div>
+									<div th:if="${itemPerdido.getPrioridad() == 3}" style="color:gold;"><i class="fas fa-star "></i><i class="fas fa-star "></i><i class="fas fa-star "></i></div>
+								</div>
+								
+								<div class="col-md-6  align-right">
+									<a class="popover-component" title="Cotizaciones" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="left" type="button" data-html="true" href="javascript:void(0);" th:id="${'c' + itemPerdido.getIdOportunidadNegocio()}">
+										<i class="material-icons">view_list</i>
+									</a>
+								
+									<a class="popover-component" title="Actividades" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="left" type="button" data-html="true" href="javascript:void(0);" th:id="${'p' + itemPerdido.getIdOportunidadNegocio()}">
+										<i class="material-icons">query_builder</i>
+									</a>
+									
+									<a class="popover-component" title="Ficheros" data-trigger="focus" data-toggle="popover" data-container="body" data-placement="left" type="button" data-html="true" href="javascript:void(0);" th:id="${'f' + itemPerdido.getIdOportunidadNegocio()}">
+										<i class="material-icons">archive</i>
+									</a>
+									
+									<!-- COTIZACIONES -->
+									<div th:id="${'popover-content-c' + itemPerdido.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemCotizacion : ${itemPerdido.getCotizaciones()}">
+									 			<li class="list-group-item">								 												 				
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-12 align-left">														
+											 				<strong th:text="${itemCotizacion.getFolio()}"></strong>
+											 				<br />
+											 				<small th:if="${itemCotizacion.isMaestra()}">Cotizaci&oacute;n Maestra</small>
+											 				<small th:if="${itemCotizacion.isRenta()}">Cotizaci&oacute;n de Renta</small>
+											 				<small th:if="${itemCotizacion.isNormal()}">Cotizaci&oacute;n Normal</small>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<i class="material-icons">person</i> <span th:text="${itemCotizacion.getUsuario().getAliasCorreo()}"></span><br />
+								 						<i class="material-icons">monetization_on</i> <span th:text="${itemCotizacion.getTotalNatural()}"></span><br />
+								 						<i class="material-icons">public</i> <span th:text="${itemCotizacion.getCliente().getCliente()}"></span><br />
+								 						<i class="material-icons">contacts</i> <span th:text="${itemCotizacion.getClienteContacto().getContacto()}"></span><br />
+									 					<div class="col-md-12 align-right"><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {itemCotizacion.getIdCotizacion()} + '/partidas'}">Ver Partidas</a></div>								 					
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+									
+									<!-- ACTIVIDADES -->
+									<div th:id="${'popover-content-p' + itemPerdido.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemActividad : ${itemPerdido.getOportunidadesActividades()}">
+									 			<li class="list-group-item">
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-8 align-left">														
+											 				<strong th:text="${itemActividad.getActividadTipo().getActividadTipo()}"></strong>
+														</div>	
+														
+														<div class="col-md-4 align-right">														
+											 				<span th:if="${itemActividad.isFinalizado()}"><i class="material-icons">check_box</i></span>
+								 							<span th:unless="${itemActividad.isFinalizado()}"><i class="material-icons">check_box_outline_blank</i></span>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<i class="material-icons">person</i> <span th:text="${itemActividad.getUsuario().getAliasCorreo()}"></span><br />
+									 					<th:block th:unless="${itemActividad.isFinalizado()}">
+									 						<i class="material-icons">query_builder</i> <span class="date-format" th:attr="data-fecha_vencimiento=${itemActividad.getVencimientoFecha()}">test</span><br />
+									 					</th:block>
+									 					<div class="col-md-12 align-right"><a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + {itemActividad.getIdActividad()} + '/edit-actividad'}">Ver Actividad</a></div>
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+								    
+								    <!-- FICHEROS -->
+								    <div th:id="${'popover-content-f' + itemPerdido.getIdOportunidadNegocio()}" class="hide">
+							      		<ul class="list-group">
+							      			<th:block th:each="itemFichero : ${itemPerdido.getFicheros()}">
+									 			<li class="list-group-item">								 												 				
+									 				<div class="row clearfix pop-header">
+														<div class="col-md-12 text-center">														
+											 				<strong th:text="${itemFichero.getTitulo()}"></strong>
+											 				<p>
+											 					<th:block th:text="${itemFichero.getDescripcion()}"></th:block>
+											 				</p>
+														</div>					 				
+									 				</div>								 				
+									 				<div class="row pop-body">
+									 					<div class="col-md-12 align-right"><a th:href="@{'/ficheros/oportunidades/' + ${itemFichero.getUrl()}}" target="_blank" role="button" class="btn btn-primary waves-effect" >Ver Fichero</a></div>								 					
+									 				</div>									 												 					
+									 			</li>
+									 		</th:block>
+										</ul>
+								    </div>
+								</div>
+							</div>
+		    			</div>
+		    		</div>
+				</th:block>
+	    	</div>
+	    </div>  
+	</th:block>
 </th:block>
 
 <th:block th:fragment="script">
@@ -2317,11 +3074,12 @@
 			
 			$('.empresa2').hide();
 			$('.empresa3').hide();
+			$('.empresa4').hide();
 			
 			$('.btn-empresa').click(function() {
 				var data = $(this).data("empresa");
 				
-				for(var i = 1; i < 4; i++) {
+				for(var i = 1; i < 5; i++) {
 					if(data == i) {
 						var element = $('.empresa' + i);
 					} else {

@@ -35,7 +35,7 @@
 	                            <p><b>Empresa *</b></p>
 	                            <select class="form-control show-tick" name="cmbEmpresa" id="cmbEmpresa" data-live-search="true" >
 	                       			<th:block th:each="itemEmpresa : ${lstEmpresas}" >
-	                       				<option th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.empresa}"></option>
+	                       				<option th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.razonSocial}"></option>
 	                       			</th:block>
 	                       		</select>
 	                        </div>

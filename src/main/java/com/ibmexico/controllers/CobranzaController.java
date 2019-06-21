@@ -2,7 +2,6 @@ package com.ibmexico.controllers;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 import org.thymeleaf.context.Context;
 
 import com.ibmexico.components.ModelAndViewComponent;
 import com.ibmexico.components.PdfComponent;
-import com.ibmexico.configurations.GeneralConfiguration;
 import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.libraries.Templates;
 import com.ibmexico.services.CotizacionService;

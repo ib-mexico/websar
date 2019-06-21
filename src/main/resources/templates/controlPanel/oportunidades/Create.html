@@ -24,14 +24,42 @@
 						</div>
 						
 						<div class="row clearfix">
+							<div class="col-md-3">
+								<b>Moneda *</b>
+	                            <select class="form-control show-tick" name="cmbMoneda" id="cmbMoneda" data-live-search="true">
+	                            	<option th:each="itemMoneda : ${lstMonedas}" th:value="${itemMoneda.idMoneda}" th:text="${itemMoneda.moneda}"></option>
+	                       		</select>
+							</div>
+							
+							<div class="col-md-3 moneda-extranjera">
+								<b>Tipo de Cambio</b>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <div class="form-line">
+                                        <input type="text" id="txtTipoCambio" name="txtTipoCambio" class="form-control moneda-calcular" />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3 moneda-extranjera">
+								<b>Ingreso (Moneda Extranjera)</b>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <div class="form-line">
+                                        <input type="text" id="txtValorMonedaExtranjera" name="txtValorMonedaExtranjera" class="form-control moneda-calcular" />
+                                    </div>
+                                </div>
+                            </div>
+						</div>
+						
+						<div class="row clearfix">
 							<div class="col-md-4">
 								<b>Ingreso estimado *</b>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
                                     <div class="form-line">
-                                        <input type="text" name="txtIngresoEstimado" class="form-control" />
+                                        <input type="text" id="txtIngresoEstimado" name="txtIngresoEstimado" class="form-control" />
                                     </div>
-                                    <span class="input-group-addon">.00</span>
                                 </div>
                             </div>
                             
@@ -322,6 +350,36 @@
 			$('#cmbCliente').on('change', function() {
 				buscarContactos();
 			});
+			
+			
+			//MONEDA Y TIPO DE CAMBIO
+			$('.moneda-extranjera').hide();
+			
+			$('.moneda-calcular').focusout(function() {
+				calcularTotal();
+			});
+			
+
+			$('#cmbMoneda').on('change', function() {
+				if($(this).val() != 1) {
+					$('.moneda-extranjera').show();
+					$("#txtIngresoEstimado").attr("readonly", true);
+				} else {
+					$('.moneda-extranjera').hide();
+					$("#txtIngresoEstimado").attr("readonly", false);
+				}
+			});
+			
+			function calcularTotal() {
+				
+				var tipoCambio = parseFloat($('#txtTipoCambio').val());
+				var valor = parseFloat($('#txtValorMonedaExtranjera').val());
+				
+				if(tipoCambio > 0) {
+					$('#txtIngresoEstimado').val(tipoCambio * valor);
+				}				
+			}
+			////////////////////////
 			
 			// FORM SUBMIT
 			$('#formOportunidad').submit(function(e){

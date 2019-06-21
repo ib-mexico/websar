@@ -36,14 +36,57 @@
 						</div>
 						
 						<div class="row clearfix">
+							<div class="col-md-3">
+								<b>Moneda *</b>
+	                            <select class="form-control show-tick" name="cmbMoneda" id="cmbMoneda" data-live-search="true">
+	                            	<th:block th:each="itemMoneda : ${lstMonedas}">	
+	                            		<option th:if="${objOportunidad.getMoneda().getIdMoneda() == itemMoneda.idMoneda}" selected="selected" th:value="${itemMoneda.idMoneda}" th:text="${itemMoneda.moneda}"></option>
+	                            		<option th:unless="${objOportunidad.getMoneda().getIdMoneda() == itemMoneda.idMoneda}" th:value="${itemMoneda.idMoneda}" th:text="${itemMoneda.moneda}"></option>                            	
+	                            	</th:block>	                            	
+	                       		</select>
+							</div>
+							
+							<div class="col-md-3 moneda-extranjera">
+								<b>Tipo de Cambio</b>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <div class="form-line">
+                                        <input type="text" id="txtTipoCambio" name="txtTipoCambio" th:value="${objOportunidad.tipoCambio}" class="form-control moneda-calcular" />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3 moneda-extranjera">
+								<b>Ingreso (Moneda Extranjera)</b>
+                                <div class="input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <div class="form-line">
+                                        <input type="text" id="txtValorMonedaExtranjera" name="txtValorMonedaExtranjera" th:value="${objOportunidad.valorMonedaExtranjera}" class="form-control moneda-calcular" />
+                                    </div>
+                                </div>
+                            </div>
+						
+							<div class="col-md-3 fecha-renovacion">
+								<b>Fecha de Renovaci&oacute;n</b>
+	                        	<div class="input-group">
+                        			<span class="input-group-addon">
+                                        <i class="material-icons">date_range</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control text-center" id="txtRenovacionFecha" name="txtRenovacionFecha" th:attr="data-fecha_renovacion=${objOportunidad.renovacionFecha}" />
+                                    </div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="row clearfix">
 							<div class="col-md-4">
 								<b>Ingreso estimado *</b>
                                 <div class="input-group">
                                     <span class="input-group-addon">$</span>
                                     <div class="form-line">
-                                        <input type="text" name="txtIngresoEstimado" th:value="${objOportunidad.ingresoEstimado}" class="form-control" />
+                                        <input type="text" id="txtIngresoEstimado" name="txtIngresoEstimado" th:value="${objOportunidad.ingresoEstimado}" class="form-control" />
                                     </div>
-                                    <span class="input-group-addon">.00</span>
                                 </div>
                             </div>
                             
@@ -59,7 +102,7 @@
                             
                             <div class="col-md-4">
                             	<div class="form-group">                            	
-		                            <p><b>Empresa *</b></p>
+		                            <b>Empresa *</b>
 		                            <select class="form-control show-tick" name="cmbEmpresa" id="cmbEmpresa" data-live-search="true" >
 		                            	<th:block th:each="itemEmpresa : ${lstEmpresas}">	
 		                            		<option th:if="${objOportunidad.getEmpresa().getIdEmpresa() == itemEmpresa.idEmpresa}" selected="selected" th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.empresa}"></option>
@@ -220,7 +263,7 @@
 						
 							<div class="col-md-4">
 	                        	<div class="form-group">
-	                        		<p><b>Raz&oacute;n social*</b></p>
+	                        		<p><b>Raz&oacute;n social *</b></p>
 	                                <div class="form-line">
 	                                    <input type="text" name="txtRazonSocial" class="form-control" required="required" />
 	                                </div>
@@ -328,23 +371,86 @@
 		var prioridad = [[${objOportunidad.prioridad}]];
 	
 		$(document).ready(function() {
-			var date = $('#txtCierreFecha').data('fecha_cierre');					
 			
 			//DATEPICKER
+			var date = $('#txtCierreFecha').data('fecha_cierre');
+			var dateRenovacion = $('#txtRenovacionFecha').data('fecha_renovacion');
+			
 			$('#txtCierreFecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false});
+			$('#txtRenovacionFecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false});
 			
 			if(date != null) {
 				var arrDate = date.split("-");				
 				$('#txtCierreFecha').bootstrapMaterialDatePicker('setDate', arrDate[2]+"/"+arrDate[1]+"/"+arrDate[0]);
 			}
 			
+			if(dateRenovacion != null) {
+				var arrDate2 = dateRenovacion.split("-");				
+				$('#txtRenovacionFecha').bootstrapMaterialDatePicker('setDate', arrDate2[2]+"/"+arrDate2[1]+"/"+arrDate2[0]);
+			}
+			
+			//PRIORIDAD DE LA OPORTUNIDAD
 			$('.starrr').starrr({
 			  max		: 3,
 			  rating	: prioridad,
 			  change	: function(e, value){
 				    $('#txtPrioridad').val(value);
 			  }
-			})			
+			});
+			
+			/**
+			* ESTATUS DE LAS OPORTUNIDADES
+			*/
+			if($('#cmbEstatus').val() == 3) {
+				$('.fecha-renovacion').show();
+			} else {
+				$('.fecha-renovacion').hide();
+			}
+			
+			$('#cmbEstatus').on('change', function() {
+				if($(this).val() == 3) {
+					$('.fecha-renovacion').show();
+				} else {
+					$('.fecha-renovacion').hide();
+				}
+			});
+			
+			/**
+			* MONEDA Y TIPO DE CAMBIO
+			*/
+			if($('#cmbMoneda').val() != 1) {
+				$('.moneda-extranjera').show();
+				$("#txtIngresoEstimado").attr("readonly", true);
+			} else {
+				$('.moneda-extranjera').hide();
+				$("#txtIngresoEstimado").attr("readonly", false);
+			}
+			
+			$('.moneda-calcular').focusout(function() {
+				calcularTotal();
+			});
+			
+
+			$('#cmbMoneda').on('change', function() {
+				if($(this).val() != 1) {
+					$('.moneda-extranjera').show();
+					$("#txtIngresoEstimado").attr("readonly", true);
+				} else {
+					$('.moneda-extranjera').hide();
+					$("#txtIngresoEstimado").attr("readonly", false);
+				}
+			});
+			
+			function calcularTotal() {
+				
+				var tipoCambio = parseFloat($('#txtTipoCambio').val());
+				var valor = parseFloat($('#txtValorMonedaExtranjera').val());
+				
+				if(tipoCambio > 0) {
+					$('#txtIngresoEstimado').val(tipoCambio * valor);
+				}				
+			}
+			
 			
 			$('#cmbCliente').on('change', function() {
 				buscarContactos();
@@ -354,7 +460,7 @@
 			$('#formOportunidad').submit(function(e){
 				var flag = false;
 				
-				if($('#cmbCliente').val() == 'default' || $('#cmbClienteContacto').val() == 'default') {
+				if($('#cmbCliente').val() == 'default' || $('#cmbClienteContacto').val() == 'default' || isNaN($('#txtIngresoEstimado').val())) {
 					flag = true;
 				}				
 				

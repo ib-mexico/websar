@@ -38,7 +38,7 @@ public class OportunidadNegocioEntity {
 	@JoinColumn(name = "id_usuario_encargado", nullable = true)
 	private UsuarioEntity usuarioEncargado;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_cliente", nullable = true)
 	private ClienteEntity cliente;
 	
@@ -54,11 +54,24 @@ public class OportunidadNegocioEntity {
 	private String oportunidad;
 	
 	@Column(nullable = true)
-	private LocalDate cierreFecha;		
+	private LocalDate cierreFecha;
+	
+	@Column(nullable = true)
+	private LocalDate renovacionFecha;	
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_oportunidad_negocio_estatus", nullable = true)
 	private OportunidadNegocioEstatusEntity oportunidadNegocioEstatus;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_moneda", nullable = true)
+	private MonedaEntity moneda;
+	
+	@Column(nullable = true, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
+	private BigDecimal tipoCambio;
+	
+	@Column(nullable = true, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
+	private BigDecimal valorMonedaExtranjera;
 	
 	@Column(nullable = false, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
 	private BigDecimal ingresoEstimado;
@@ -171,6 +184,18 @@ public class OportunidadNegocioEntity {
 	public void setCierreFecha(LocalDate cierreFecha) {
 		this.cierreFecha = cierreFecha;
 	}
+	
+	public LocalDate getRenovacionFecha() {
+		return renovacionFecha;
+	}
+	
+	public String getRenovacionFechaNatural() {
+		return renovacionFecha.format(GeneralConfiguration.getInstance().getDateFormatterNatural());
+	}
+
+	public void setRenovacionFecha(LocalDate renovacionFecha) {
+		this.renovacionFecha = renovacionFecha;
+	}
 
 	public OportunidadNegocioEstatusEntity getOportunidadNegocioEstatus() {
 		return oportunidadNegocioEstatus;
@@ -178,6 +203,51 @@ public class OportunidadNegocioEntity {
 
 	public void setOportunidadNegocioEstatus(OportunidadNegocioEstatusEntity oportunidadNegocioEstatus) {
 		this.oportunidadNegocioEstatus = oportunidadNegocioEstatus;
+	}
+	
+	public MonedaEntity getMoneda() {
+		return moneda;
+	}
+
+	public void setMoneda(MonedaEntity moneda) {
+		this.moneda = moneda;
+	}
+	
+	public BigDecimal getTipoCambio() {
+		return tipoCambio;
+	}
+	
+	public String getTipoCambioNatural() {
+		
+		String valor = "0.00";
+		
+		if(tipoCambio != null) {
+			valor = GeneralConfiguration.getInstance().getNumberFormat().format(tipoCambio);			
+		}
+		
+		return valor;
+	}
+	
+	public void setTipoCambio(BigDecimal tipoCambio) {
+		this.tipoCambio = tipoCambio;
+	}
+	
+	public BigDecimal getValorMonedaExtranjera() {
+		return valorMonedaExtranjera;
+	}
+	
+	public String getValorMonedaExtranjeraNatural() {
+		String valor = "0.00";
+		
+		if(valorMonedaExtranjera != null) {			
+			valor = GeneralConfiguration.getInstance().getNumberFormat().format(valorMonedaExtranjera);
+		}
+		
+		return valor;
+	}
+
+	public void setValorMonedaExtranjera(BigDecimal valorMonedaExtranjera) {
+		this.valorMonedaExtranjera = valorMonedaExtranjera;
 	}
 
 	public BigDecimal getIngresoEstimado() {
