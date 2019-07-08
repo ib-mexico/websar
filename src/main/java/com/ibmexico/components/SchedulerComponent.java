@@ -175,8 +175,7 @@ public class SchedulerComponent {
 		} catch(Exception exception) { }
 	}*/
 	
-	//@Scheduled(cron = "0 0 7 ? * *")
-	@Scheduled(cron = "10 0 17 ? * *")
+	@Scheduled(cron = "0 0 7 ? * *")
 	public void cronJobNotificadorVencimientoEquipoProduccion() {
 		
 		LocalDate ldNow = LocalDate.now().plusDays(30);

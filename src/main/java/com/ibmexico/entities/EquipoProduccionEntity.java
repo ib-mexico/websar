@@ -28,15 +28,15 @@ public class EquipoProduccionEntity {
 	@Column(nullable = true)
 	private LocalDate renovacionFecha;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_cliente", nullable = false)
 	private ClienteEntity cliente;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_equipo_marca", nullable = false)
 	private EquipoMarcaEntity equipoMarca;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_equipo_produccion_estatus", nullable = false)
 	private EquipoProduccionEstatusEntity equipoEstatus;
 		
