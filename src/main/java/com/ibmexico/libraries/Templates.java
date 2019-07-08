@@ -88,6 +88,13 @@ public class Templates {
 	
 	
 	
+	// EQUIPOS EN PRODUCCION
+	public static final String CONTROL_PANEL_EQUIPOS_PRODUCCION_INDEX = PATH_CONTROL_PANEL + "equiposProduccion/Index";
+	public static final String CONTROL_PANEL_EQUIPOS_PRODUCCION_CREATE = PATH_CONTROL_PANEL + "equiposProduccion/Create";
+	public static final String CONTROL_PANEL_EQUIPOS_PRODUCCION_EDIT = PATH_CONTROL_PANEL + "equiposProduccion/Edit";
+	
+	
+	
 	
 	// TAREAS
 	public static final String CONTROL_PANEL_TAREAS_INDEX = PATH_CONTROL_PANEL + "tareas/Index";
@@ -131,6 +138,7 @@ public class Templates {
 	
 	public static final String EMAIL_COTIZACIONES_POR_COBRAR = PATH_EMAIL + "cronJobs/CotizacionesPorCobrar";
 	public static final String EMAIL_OPORTUNIDADES_NEGOCIOS_RENOVACION = PATH_EMAIL + "cronJobs/OportunidadesNegociosRenovacion";
+	public static final String EMAIL_EQUIPOS_PRODUCCION_RENOVACION = PATH_EMAIL + "cronJobs/EquiposProduccionRenovacion";
 	public static final String EMAIL_REPORTE_MENSUAL = PATH_EMAIL + "cronJobs/reportes/Mensual";
 	public static final String EMAIL_TICKETS_CREATE = PATH_EMAIL + "tickets/Create";
 

@@ -110,6 +110,7 @@ public class GarantiasController {
 	public ModelAndView index() {		
 		
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_GARANTIAS_INDEX);
+		objModelAndView.addObject("rolNuevaGarantia", sessionService.hasRol("GARANTIAS_CREATE"));
 		
 		return objModelAndView;
 	}
@@ -133,6 +134,7 @@ public class GarantiasController {
 			jsonRows.add(Json.createObjectBuilder()
 				.add("idGarantia", itemGarantia.getIdGarantia())
 				.add("folio", itemGarantia.getFolio())
+				.add("proveedor", itemGarantia.getProveedor().getProveedor())
 				.add("cliente", itemGarantia.getCliente().getCliente())
 				.add("contacto", itemGarantia.getClienteContacto().getContacto())
 				.add("idEstatus", itemGarantia.getGarantiaEstatus().getIdGarantiaEstatus())

@@ -106,6 +106,7 @@ public class TareasController {
 		
 		
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_TAREAS_INDEX);
+		objModelAndView.addObject("rolNuevaTarea", sessionService.hasRol("TAREAS_CREATE"));
 		objModelAndView.addObject("jsonTareas", jsonTareas.build().toString());
 		
 		return objModelAndView;

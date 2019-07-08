@@ -5,10 +5,12 @@
     
     <div class="row clearfix">
     	<div class="col-md-6">
-    		<a href="#" type="button" class="btn bg-indigo waves-effect">
-    			<i class="material-icons">trending_up</i>
-    			<span>GENERAR GR&Aacute;FICOS</span>
-    		</a>
+    		<th:block th:if="${rolNuevaOportunidad}">
+	    		<a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/create'}" type="button" class="btn bg-purple waves-effect">
+	    			<i class="material-icons">add_circle</i> 
+	    			<span>NUEVA OPORTUNIDAD</span>
+	    		</a>
+    		</th:block>
     		
     		<a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/calendario'}" type="button" class="btn bg-teal waves-effect">
     			<i class="material-icons">date_range</i>

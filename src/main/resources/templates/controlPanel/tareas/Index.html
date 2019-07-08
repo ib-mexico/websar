@@ -11,6 +11,12 @@
     			</div>
     			
     			<div class="body">
+    				<div class="row clearfix" th:if="${rolNuevaTarea}">
+    					<div class="col-md-4 col-md-offset-8 text-right">
+    						<a th:href="${ {_PATH_} + 'controlPanel/tareas/create'}" role="button" class="btn bg-purple waves-effect"><i class="material-icons">add_circle</i> Nueva Tarea</a>
+    					</div>
+    				</div>
+    			
 	    			<div class="row clearfix">
 						<div class="col-sm-12 col-md-12">
 							<div id='divCalendario'></div>

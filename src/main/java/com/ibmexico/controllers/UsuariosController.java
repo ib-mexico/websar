@@ -70,6 +70,7 @@ public class UsuariosController {
 	@GetMapping({"", "/"})
 	public ModelAndView index() {
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_USUARIOS_INDEX);
+		objModelAndView.addObject("rolNuevoUsuario", sessionService.hasRol("USUARIOS_CREATE"));
 		return objModelAndView;
 	}
 	

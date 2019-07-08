@@ -109,8 +109,8 @@ public class EntregasController {
 	
 	@GetMapping({"", "/"})
 	public ModelAndView index() {		
-		
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_ENTREGAS_INDEX);
+		objModelAndView.addObject("rolNuevaEntrega", sessionService.hasRol("ENTREGAS_CREATE"));
 		
 		return objModelAndView;
 	}

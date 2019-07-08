@@ -173,6 +173,7 @@ public class OportunidadesNegociosController {
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_OPORTUNIDADES_INDEX);
 		
 		objModelAndView.addObject("rolOportunidadEmpresaUca", sessionService.hasRol("OPORTUNIDADES_EMPRESA_UCA"));
+		objModelAndView.addObject("rolNuevaOportunidad", sessionService.hasRol("OPORTUNIDADES_CREATE"));
 		
 		objModelAndView.addObject("totalAbiertos", totalAbiertos);
 		objModelAndView.addObject("totalProgreso", totalProgreso);

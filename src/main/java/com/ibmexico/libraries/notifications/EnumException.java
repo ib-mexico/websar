@@ -191,8 +191,7 @@ public enum EnumException {
 	PROVEEDORES_CONTACTOS_LOCK_001("Error en bloqueo de contacto", "El objeto contacto no existe, póngase en contacto con el administrador del sistema."),
 	PROVEEDORES_CONTACTOS_UNLOCK_001("Error en desbloqueo de contacto", "El objeto contacto no existe, póngase en contacto con el administrador del sistema."),
 	
-	
-	
+		
 	//GARANTIAS
 	GARANTIAS_CREATE_001("Error en creación de garantía", "El objeto garantía no es válido, póngase en contacto con el administrador del sistema."),
 	GARANTIAS_UPDATE_001("Error en modificación de garantía", "El objeto garantía no existe, póngase en contacto con el administrador del sistema."),
@@ -200,6 +199,11 @@ public enum EnumException {
 	GARANTIAS_FICHEROS_ADD_FILE_002("Error de fichero de garantía", "Ocurrio un error con el fichero de garantía, es posible que el archivo presente errores."),
 	GARANTIAS_FICHEROS_ADD_FILE_003("Error de fichero de garantía", "Ocurrio un error con el fichero, es posible que el archivo presente errores."),
 	GARANTIAS_FICHEROS_ADD_FILE_004("Error de fichero de garantía", "El fichero requiere un nombre."),
+	
+	
+	//EQUIPOS PRODUCCION
+	EQUIPOS_PRODUCCION_CREATE_001("Error en creación de equipo", "El objeto equipo no es válido, póngase en contacto con el administrador del sistema."),
+	EQUIPOS_PRODUCCION_UPDATE_001("Error en modificación de equipo", "El objeto equipo no existe, póngase en contacto con el administrador del sistema."),
 	
 	;
 	

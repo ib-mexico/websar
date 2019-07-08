@@ -173,7 +173,7 @@ public class CotizacionService {
 				porcentajeFacturados =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(3, ldFechaInicio, ldFechaFin, sessionService.getCurrentUser().getIdUsuario())).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
 				porcentajePagados =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(4, ldFechaInicio, ldFechaFin, sessionService.getCurrentUser().getIdUsuario())).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
 				porcentajeCancelados =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(5, ldFechaInicio, ldFechaFin, sessionService.getCurrentUser().getIdUsuario())).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
-				porcentajeEnCobranza =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(5, ldFechaInicio, ldFechaFin, sessionService.getCurrentUser().getIdUsuario())).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
+				porcentajeEnCobranza =  new BigDecimal(cotizacionRepository.countCotizacionesEstatusPeriodo(6, ldFechaInicio, ldFechaFin, sessionService.getCurrentUser().getIdUsuario())).divide(new BigDecimal(totalCotizaciones), 2, RoundingMode.HALF_UP);
 			} else {
 				porcentajeActivos = new BigDecimal(0);
 				porcentajeAprobados = new BigDecimal(0);

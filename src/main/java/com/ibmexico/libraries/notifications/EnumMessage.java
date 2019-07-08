@@ -51,6 +51,11 @@ public enum EnumMessage {
 	GARANTIAS_FIRMA_001("Entrega de Producto", "La entrega de producto se realizó satisfactoriamente."),
 	
 	
+	//EQUIPOS EN PRODUCCION
+	EQUIPOS_PRODUCCION_CREATE_001("Creación de equipo", "El equipo en producción se creó satisfactoriamente."),
+	EQUIPOS_PRODUCCION_EDIT_001("Modificación de equipo", "El equipo en producción se modificó satisfactoriamente."),
+	
+	
 	//ACTIVIDADES
 	ACTIVIDADES_CREATE_001("Creación de actividad", "La actividad se creó satisfactoriamente."),
 	ACTIVIDADES_UPDATE_001("Modificación de actividad", "La actividad se modificó satisfactoriamente."),

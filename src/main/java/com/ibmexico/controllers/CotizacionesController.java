@@ -161,6 +161,7 @@ public class CotizacionesController {
 		objModelAndView.addObject("lstCotizacionEstatus", lstCotizacionEstatus);
 		objModelAndView.addObject("rolCotizacionExpediente", sessionService.hasRol("COTIZACIONES_EXPEDIENTES"));
 		objModelAndView.addObject("rolCotizacionCobranza", sessionService.hasRol("COTIZACIONES_COBRANZA"));
+		objModelAndView.addObject("rolNuevaCotizacion", sessionService.hasRol("COTIZACIONES_CREATE"));
 		
 		return objModelAndView;
 	}

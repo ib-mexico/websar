@@ -78,6 +78,7 @@ public class ClientesController {
 	@GetMapping({"", "/"})
 	public ModelAndView index() {
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_CLIENTES_INDEX);
+		objModelAndView.addObject("rolNuevoCliente", sessionService.hasRol("CLIENTES_CREATE"));
 		return objModelAndView;
 	}
 	

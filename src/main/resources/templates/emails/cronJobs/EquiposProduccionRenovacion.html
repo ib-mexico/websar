@@ -1,0 +1,28 @@
+<th:block th:fragment="title">
+	<h1>Notificaci&oacute;n de Equipos en Producci&oacute;n</h1>
+</th:block>
+
+
+<th:block th:fragment="body">
+	<h1 style="color:#000000;">Hola <span th:text="${alias}"></span>: </h1>
+	<p style="display:inline"><th:block th:text="${titulo}"></th:block>:</p>
+	
+	<table align="center" border="0" cellpadding="10" cellspacing="10" width="100%" style="border-collapse: collapse; border:solid 1px #333333">		
+		<tr>
+			<th style="background-color: #333333; text-align: left; border: solid 1px #333333; color: #FFF" width="10%"># ID</th>
+			<th style="background-color: #333333; text-align: left; border: solid 1px #333333; color: #FFF" width="30%">Cliente</th>
+			<th style="background-color: #333333; text-align: left; border: solid 1px #333333; color: #FFF" width="20%">Modelo</th>
+			<th style="background-color: #333333; text-align: center; border: solid 1px #333333; color: #FFF" width="20%">No. Serie</th>
+			<th style="background-color: #333333; text-align: right; border: solid 1px #333333; color: #FFF" width="20%">Fecha Renovaci&oacute;n</th>
+		</tr>
+		
+		<tr th:each="item : ${lstEquipos}">
+			<td style="text-align: left; border: solid 1px #333333" th:text="${item.id_equipo}"></td>
+			<td style="text-align: left; border: solid 1px #333333" th:text="${item.cliente}"></td>
+			<td style="text-align: left; border: solid 1px #333333" th:text="${item.modelo}"></td>
+			<td style="text-align: center; border: solid 1px #333333" th:text="${item.numero_serie}"></td>
+			<td style="text-align: right; border: solid 1px #333333" th:text="${item.fecha_renovacion}"></td>
+		</tr>		
+	</table>
+</th:block>
+

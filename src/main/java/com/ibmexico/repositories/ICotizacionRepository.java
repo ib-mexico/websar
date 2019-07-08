@@ -26,7 +26,7 @@ public interface ICotizacionRepository  extends JpaRepository<CotizacionEntity, 
 	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.cotizacionEstatus.idCotizacionEstatus != 5")
 	public abstract List<CotizacionEntity> findCotizacionesActivas();
 	
-	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE (objCotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objCotizacion.cotizacionEstatus.idCotizacionEstatus = 6) AND objCotizacion.boolNormal = true AND objCotizacion.formaPago.idFormaPago = 1")
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE (objCotizacion.cotizacionEstatus.idCotizacionEstatus = 3) AND objCotizacion.boolNormal = true AND objCotizacion.formaPago.idFormaPago = 1")
 	public abstract List<CotizacionEntity> lstCotizacionesNoCobradas();
 	
 	

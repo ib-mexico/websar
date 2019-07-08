@@ -48,6 +48,7 @@ public class ProveedoresController {
 	@GetMapping({"", "/"})
 	public ModelAndView index() {
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_PROVEEDORES_INDEX);
+		objModelAndView.addObject("rolNuevoProveedor", sessionService.hasRol("PROVEEDORES_CREATE"));
 		return objModelAndView;
 	}
 	

@@ -1,0 +1,176 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>EQUIPOS EN PRODUCCI&Oacute;N</h2>
+    </div>
+    
+    <ol class="breadcrumb breadcrumb-bg-red">
+      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+    	<li><a th:href="${ {_PATH_} + 'controlPanel/garantias'}"><i class="material-icons">build</i> Soporte</a></li>
+    	<li> Equipos en Producci&oacute;n</li>
+    	<li class="active"> Modificar</li>
+  	</ol>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>Modificar Equipo</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<form id="formEquipo" th:action="${ {_PATH_} + 'controlPanel/equipos-produccion/' + objEquipo.idEquipoProduccion}" th:method="PUT">
+						<div class="row clearfix">
+							<div class="col-md-4">
+								<b>Cliente *</b>
+								<div class="input-group">								
+		                            <select class="form-control show-tick" name="cmbCliente" id="cmbCliente" data-live-search="true">
+										<th:block th:each="item : ${lstClientes}">										
+			                            	<option th:if="${objEquipo.getCliente().getIdCliente() == item.idCliente}" th:value="${item.idCliente}" th:text="${item.cliente}" selected="selected"></option>
+			                            	<option th:unless="${objEquipo.getCliente().getIdCliente() == item.idCliente}" th:value="${item.idCliente}" th:text="${item.cliente}"></option>
+										</th:block>	                            	
+		                       		</select>
+								</div>	                           
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                        	<b>Fecha de Renovaci&oacute;n *</b>
+	                        	<div class="input-group">
+                        			<span class="input-group-addon">
+                                        <i class="material-icons">date_range</i>
+                                    </span>
+                                    <div class="form-line">
+                                        <input type="text" class="form-control text-center" id="txtFechaRenovacion" name="txtFechaRenovacion" th:attr="data-fecha_renovacion=${objEquipo.getRenovacionFecha()}" />
+                                    </div>
+								</div>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+								<b>Marcas de Equipos *</b>
+								<div class="input-group">								
+		                            <select class="form-control show-tick" name="cmbEquipoMarca" id="cmbEquipoMarca" data-live-search="true">
+		                            <th:block th:each="item : ${lstEquiposMarcas}">										
+			                            	<option th:if="${objEquipo.getEquipoMarca().getIdEquipoMarca() == item.idEquipoMarca}" th:value="${item.idEquipoMarca}" th:text="${item.marca}" selected="selected"></option>
+			                            	<option th:unless="${objEquipo.getEquipoMarca().getIdEquipoMarca() == item.idEquipoMarca}" th:value="${item.idEquipoMarca}" th:text="${item.marca}"></option>
+										</th:block>
+		                       		</select>
+								</div>	                           
+	                        </div>
+						</div>
+						
+						<div class="row clearfix">								                        
+	                        <div class="col-md-4">
+	                        	<div class="form-group">
+	                        		<b>Modelo *</b>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtModelo" class="form-control" th:value="${objEquipo.modelo}" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                        	<div class="form-group">
+	                        		<b>N&uacute;mero de Serie *</b>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtNumeroSerie" class="form-control" th:value="${objEquipo.numeroSerie}" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                        	<input name="modalidadUso" type="radio" id="rdVenta" class="with-gap radio-col-red" value="venta" th:if="${objEquipo.isBoolVenta()}" checked="checked" />
+	                        	<input name="modalidadUso" type="radio" id="rdVenta" class="with-gap radio-col-red" value="venta" th:unless="${objEquipo.isBoolVenta()}" />
+                                <label for="rdVenta">Venta</label>
+                                
+                                <input name="modalidadUso" type="radio" id="rdRenta" class="with-gap radio-col-indigo" value="renta" th:if="${objEquipo.isBoolRenta()}" checked="checked" />
+                                <input name="modalidadUso" type="radio" id="rdRenta" class="with-gap radio-col-indigo" value="renta" th:unless="${objEquipo.isBoolRenta()}" />
+                                <label for="rdRenta">Renta</label>
+	                        </div>
+                  		</div>
+						
+						<div class="row clearfix">
+							<div class="col-md-12">							
+								<div class="form-group">
+									<p><b>Observaciones</b></p>
+	                              	<div class="form-line">
+	                                  	<textarea rows="4" name="txtObservaciones" class="form-control no-resize">
+	                                  		<th:block th:utext="${objEquipo.observaciones}"></th:block>
+	                                  	</textarea>
+	                              	</div>
+	                       		</div>
+							</div>
+						</div>											
+					
+						<div class="row clearfix">
+							<div class="col-md-3 col-md-offset-8 text-right">
+								<a th:href="${ {_PATH_} + 'controlPanel/equipos-produccion'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<button type="submit" class="btn btn-primary m-t-15 waves-effect">MODIFICAR</button>
+							</div>
+						</div>
+					</form>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
+			
+		var idUsuario = [[${_USER_.getIdUsuario()}]];
+	
+		$(document).ready(function() {
+			
+			var date = $('#txtFechaRenovacion').data('fecha_renovacion');
+			
+			//DATEPICKER
+			$('#txtFechaRenovacion').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false, minDate : new Date()});
+			if(date != null && date != '') {
+				var arrDate = date.split("-");				
+				$('#txtFechaRenovacion').bootstrapMaterialDatePicker('setDate', arrDate[2]+"/"+arrDate[1]+"/"+arrDate[0]);
+			}							
+			
+			// FORM SUBMIT
+			$('#formEquipo').submit(function(e){
+				var flag = false;
+				
+				if($('#cmbCliente').val() == 'default') {
+					flag = true;
+				}				
+				
+				if(flag) {
+					swal('Hey!', 'Los campos con (*) son obligatorios', 'warning');
+					e.preventDefault();
+				}
+		  	});
+
+		});
+		
+		$(function () {
+			// VALIDADOR DE FORMULARIO
+			$('#formEquipo').validate({
+		        rules: {
+		            'txtCantidad': {
+		                number: true
+		            }
+		        },
+		        highlight: function (input) {
+		            $(input).parents('.form-line').addClass('error');
+		        },
+		        unhighlight: function (input) {
+		            $(input).parents('.form-line').removeClass('error');
+		        },
+		        errorPlacement: function (error, element) {
+		            $(element).parents('.form-group').append(error);
+		        }
+		    });
+			
+			//Custom Validations ===============================================================================
+		    //Number
+		    $.validator.addMethod('number', function (value, element) {
+		        return value.match('[0-9]+');
+		    },
+		        'Por favor ingresa un n&uacute;mero.'
+		    );
+		});	
+		/*]]>*/</script>
+</th:block>

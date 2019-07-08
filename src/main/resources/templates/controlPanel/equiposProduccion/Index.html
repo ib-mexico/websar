@@ -1,28 +1,29 @@
 <th:block th:fragment="body">
 	<div class="block-header">
-        <h2>GARANT&Iacute;AS</h2>
+        <h2>EQUIPOS EN PRODUCCI&Oacute;N</h2>
     </div>
     
     <ol class="breadcrumb breadcrumb-bg-red">
       	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
-    	<li class="active"><i class="material-icons">build</i> Garant&iacute;as</li>
+    	<li><i class="material-icons">build</i> Soporte</li>
+    	<li class="active">Equipos en Producci&oacute;n</li>
   	</ol>
     
     <div class="row clearfix">
     	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     		<div class="card">
     			<div class="header">
-    				<h2>LISTA DE GARANT&Iacute;AS</h2>
+    				<h2>LISTA DE EQUIPOS EN PRODUCCI&Oacute;N</h2>
     			</div>
     			
     			<div class="body">
-    				<div class="row clearfix" th:if="${rolNuevaGarantia}">
+    				<div class="row clearfix" th:if="${rolNuevoEquipo}">
     					<div class="col-md-4 col-md-offset-8 text-right">
-    						<a th:href="${ {_PATH_} + 'controlPanel/garantias/create'}" role="button" class="btn bg-purple waves-effect"><i class="material-icons">add_circle</i> Nueva Garant&iacute;a</a>
+    						<a th:href="${ {_PATH_} + 'controlPanel/equipos-produccion/create'}" role="button" class="btn bg-purple waves-effect"><i class="material-icons">add_circle</i> Nuevo Equipo</a>
     					</div>
     				</div>
-    				
-    				<div class="row clearfix" id="dtGarantiasToolBar" data-toolbar-align="left">
+    			
+    				<div class="row clearfix" id="dtEquiposToolBar" data-toolbar-align="left">
 						<div class="col-xs-3 col-sm-3 col-md-3">
     						<div class="input-group">
    								<span class="input-group-addon">
@@ -48,20 +49,18 @@
 					
 					<div class="table-responsive">
 						<div class="container">						
-							<table id="dtGarantias" class="table table-bordered table-striped table-hover">
+							<table id="dtEquipos" class="table table-bordered table-striped table-hover">
 								<thead>
 									<tr>
-										<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
+										<th data-width="20%" data-field="fecha_renovacion" data-halign="center" data-align="center">Renovaci&oacute;n</th>
 										<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
-										<th data-width="30%" data-formatter="progresoFormatter" data-align="center">Progreso</th>
-										<th data-width="20%" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>										
-										<th data-width="30%" data-field="proveedor" data-halign="center" data-align="left">Proveedor</th>
-										<th data-width="30%" data-field="cliente" data-halign="center" data-align="left">Cliente</th>
-										<th data-width="30%" data-field="contacto" data-halign="center" data-align="left">Contacto</th>								
-										<th data-width="40%" data-field="producto" data-halign="center" data-align="left">Producto</th>
-
+										<th data-width="20%" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>
+										<th data-width="35%" data-field="cliente" data-halign="center" data-align="left">Cliente</th>
+										<th data-width="20%" data-field="marca" data-halign="center" data-align="left">Marca</th>								
+										<th data-width="20%" data-field="modelo" data-halign="center" data-align="left">Modelo</th>
+										<th data-width="20%" data-field="numero_serie" data-halign="center" data-align="left">No. Serie</th>
 										
-										<th data-width="20%" data-field="creacionUsuario" data-halign="center" data-align="center">Creaci&oacute;n/Usuario</th>
+										<th data-width="25%" data-field="creacionUsuario" data-halign="center" data-align="center">Creaci&oacute;n/Usuario</th>
 										<th data-width="20%" data-field="creacionFecha" data-halign="center" data-align="center">Creaci&oacute;n/Fecha</th>																			
 									</tr>
 								</thead>
@@ -82,9 +81,14 @@
 	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
 	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
 	<script type="application/javascript" th:inline="javascript">
-		$(document).ready(function() {			
-			$("#dtGarantias").bootstrapTable({
-				url					: [[@{/controlPanel/garantias/table}]],
+			
+		var rolEdit = [[${rolEditarEquipo}]];
+		
+		$(document).ready(function() {
+			
+			
+			$("#dtEquipos").bootstrapTable({
+				url					: [[@{/controlPanel/equipos-produccion/table}]],
 				method				: 'post',
 				contentType 		: 'application/x-www-form-urlencoded',
 				sidePagination		: "server",
@@ -97,7 +101,7 @@
 				striped				: true,
 				pageSize 			: 50,
 				exportTypes			: ["excel"],
-				toolbar				: "#dtGarantiasToolBar",
+				toolbar				: "#dtEquiposToolBar",
 				queryParams 		: function(params) {
 											params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
 											params['txtBootstrapTableDesde'] = $('#txtBootstrapTableDesde').val();
@@ -110,63 +114,21 @@
 			
 		function accionesFormatter(value, row, index) {
 			
-			urlEdit = [[@{/controlPanel/garantias/}]] + row.idGarantia + '/edit';
-			urlPdf = [[@{/controlPanel/garantias/}]] + row.idGarantia + '/pdf';
-			urlFirma = [[@{/controlPanel/garantias/}]] + row.idGarantia + '/firma';
+			var urlEdit = [[@{/controlPanel/equipos-produccion/}]] + row.idEquipo + '/edit'; 
 			
-			if(row.nombreRecibe == null || row.nombreRecibe == '') {
+			if(rolEdit) { 
 				return [
 			    	'<a href="' + urlEdit + '" title="Editar">',
-		        		'<i class="material-icons" >mode_edit</i>',
-		        	'</a>',
-		        	'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
-		        		'<i class="material-icons">print</i>',
+		        		'<i class="material-icons">mode_edit</i>',
 		        	'</a>',
 			    ].join(' ');
-			} else {				
-			    return [
-			    	'<a title="Deshabilitado" >',
+			} else {
+				return [
+			    	'<a title="Deshabilitado">',
 		        		'<i class="material-icons" style="color:grey">mode_edit</i>',
 		        	'</a>',
-		        	'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
-		        		'<i class="material-icons">print</i>',
-		        	'</a>',
 			    ].join(' ');
-			}
-			
-		}
-		
-		function progresoFormatter(value, row, index) {
-			var progressBar = '';
-			
-			switch(row.idEstatus) {
-				case 1:
-					progressBar = '<div class="progress">';
-						progressBar += '<div class="progress-bar bg-blue" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%"></div>';
-                    progressBar += '</div>';
-				break;
-					
-				case 2:
-					progressBar = '<div class="progress">';
-						progressBar += '<div class="progress-bar bg-orange" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 45%"></div>';
-	                progressBar += '</div>';
-				break;
-					
-				case 3:
-					progressBar = '<div class="progress">';
-						progressBar += '<div class="progress-bar bg-red" role="progressbar" aria-valuenow="79" aria-valuemin="0" aria-valuemax="100" style="width: 79%"></div>';
-	                progressBar += '</div>';
-				break;
-					
-				case 4:
-					progressBar = '<div class="progress">';
-						progressBar += '<div class="progress-bar bg-green" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>';
-	                progressBar += '</div>';
-				break;
-			
-			}
-			
-			return progressBar;
+			}					
 		}
 		
 		function estatusFormatter(value, row, index) {

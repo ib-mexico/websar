@@ -13,10 +13,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.ibmexico.entities.CotizacionEntity;
+import com.ibmexico.entities.EquipoProduccionEntity;
 import com.ibmexico.entities.OportunidadNegocioEntity;
 import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.libraries.Templates;
 import com.ibmexico.services.CotizacionService;
+import com.ibmexico.services.EquipoProduccionService;
 import com.ibmexico.services.OportunidadNegocioService;
 import com.ibmexico.services.SessionService;
 import com.ibmexico.services.UsuarioService;
@@ -34,6 +36,10 @@ public class SchedulerComponent {
 	@Autowired
 	@Qualifier("oportunidadNegocioService")
 	private OportunidadNegocioService oportunidadNegocioService;
+	
+	@Autowired
+	@Qualifier("equipoProduccionService")
+	private EquipoProduccionService equipoProduccionService;
 	
 	@Autowired
 	@Qualifier("usuarioService")
@@ -62,8 +68,10 @@ public class SchedulerComponent {
 				
 				if(diff > Integer.parseInt(itemCotizacion.getDiasCredito().trim())) {
 					myMap1.put("folio", itemCotizacion.getFolio());
+					myMap1.put("fecha_aprobacion", itemCotizacion.getAprobacionFechaNatural());
+					myMap1.put("dias_credito", itemCotizacion.getDiasCredito());
 					myMap1.put("fecha_factura", itemCotizacion.getFacturacionFechaNatural());
-					myMap1.put("estatus", itemCotizacion.getCotizacionEstatus().getCotizacionEstatus());
+					myMap1.put("factura", itemCotizacion.getFacturaNumero());
 					myMap1.put("cliente", itemCotizacion.getCliente().getCliente());
 					myMap1.put("total", itemCotizacion.getTotalNatural());
 					
@@ -98,7 +106,7 @@ public class SchedulerComponent {
 		try {
 			mapVariables.put("titulo", "Cotizaciones pendientes por cobrar");
 			mapVariables.put("alias", "Cobranza");
-			mailerComponent.send("cobranza@ib-mexico.com", "Hay cotizaciones con falta de pago", Templates.EMAIL_COTIZACIONES_POR_COBRAR, mapVariables);
+			mailerComponent.send("cobranza@ib-mexico.com", "Reporte: Facturas pendientes de pago.", Templates.EMAIL_COTIZACIONES_POR_COBRAR, mapVariables);
 		} catch(Exception exception) { }
 	}
 	
@@ -106,7 +114,7 @@ public class SchedulerComponent {
 	public void cronJobNotificadorOportunidadesRenovacion() {
 		
 		List<UsuarioEntity> lstUsuarios = usuarioService.listUsuariosActivos();
-		LocalDate ldNow = LocalDate.now();
+		LocalDate ldNow = LocalDate.now().plusDays(30);
 		
 		for(UsuarioEntity itemUsuario : lstUsuarios) {
 			List<OportunidadNegocioEntity> lstOportunidades = oportunidadNegocioService.listOportunidadesNegociosRenovaciones(itemUsuario, ldNow);
@@ -166,4 +174,46 @@ public class SchedulerComponent {
 			}
 		} catch(Exception exception) { }
 	}*/
+	
+	//@Scheduled(cron = "0 0 7 ? * *")
+	@Scheduled(cron = "10 0 17 ? * *")
+	public void cronJobNotificadorVencimientoEquipoProduccion() {
+		
+		LocalDate ldNow = LocalDate.now().plusDays(30);
+		System.out.println(ldNow.toString());
+		List<EquipoProduccionEntity> lstEquipos = equipoProduccionService.listEquiposProduccionVencimiento(ldNow);
+		
+		List<Map<String , String>> mapEquipos  = new ArrayList<Map<String,String>>();
+		Integer iterator = 0;
+		
+		if(!lstEquipos.isEmpty()) {			
+			for(EquipoProduccionEntity itemEquipo : lstEquipos) {
+				
+				Map<String,String> myMap1 = new HashMap<String, String>();
+				myMap1.put("id_equipo",  Integer.toString(itemEquipo.getIdEquipoProduccion()));
+				myMap1.put("cliente", itemEquipo.getCliente().getCliente());
+				myMap1.put("modelo", itemEquipo.getModelo());
+				myMap1.put("numero_serie", itemEquipo.getNumeroSerie());
+				myMap1.put("fecha_renovacion", itemEquipo.getRenovacionFechaNatural());
+				
+				mapEquipos.add(iterator, myMap1);				
+				iterator++;
+			}
+			
+			Map<String, Object> mapVariables = new HashMap<String, Object>();
+			mapVariables.put("lstEquipos", mapEquipos);
+			
+			cronJobNotificadorVencimientoEquipoProduccionEnviarMails(mapVariables);
+		}
+	}
+	
+	private void cronJobNotificadorVencimientoEquipoProduccionEnviarMails(Map<String, Object> mapVariables) {
+		try {
+			mapVariables.put("titulo", "Equipos en Producción proximos a vencer");
+			mapVariables.put("alias", "Soporte");
+			
+			mailerComponent.send("jorge.cortes@ib-mexico.com", "Hay equipos en producción próximos a renovación.", Templates.EMAIL_EQUIPOS_PRODUCCION_RENOVACION, mapVariables);
+			
+		} catch(Exception exception) { }
+	}
 }

@@ -27,6 +27,7 @@ import com.ibmexico.libraries.Templates;
 import com.ibmexico.libraries.notifications.ApplicationException;
 import com.ibmexico.libraries.notifications.EnumMessage;
 import com.ibmexico.services.NoticiaService;
+import com.ibmexico.services.SessionService;
 
 @Controller
 @RequestMapping("controlPanel/noticias")
@@ -40,9 +41,14 @@ public class NoticiasController {
 	@Qualifier("noticiaService")
 	private NoticiaService noticiaService;
 	
+	@Autowired
+	@Qualifier("sessionService")
+	private SessionService sessionService;
+	
 	@GetMapping({"", "/"})
 	public ModelAndView index() {
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_NOTICIAS_INDEX);
+		objModelAndView.addObject("rolNuevaNoticia", sessionService.hasRol("NOTICIAS_CREATE"));
 		return objModelAndView;
 	}
 	

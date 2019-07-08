@@ -18,6 +18,7 @@ import com.ibmexico.components.ModelAndViewComponent;
 import com.ibmexico.entities.SucursalEntity;
 import com.ibmexico.libraries.DataTable;
 import com.ibmexico.libraries.Templates;
+import com.ibmexico.services.SessionService;
 import com.ibmexico.services.SucursalService;
 
 @Controller
@@ -32,9 +33,14 @@ public class SucursalesController {
 	@Qualifier("sucursalService")
 	private SucursalService sucursalService;
 	
+	@Autowired
+	@Qualifier("sessionService")
+	private SessionService sessionService;
+	
 	@GetMapping({"", "/"})
 	public ModelAndView index() {
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_SUCURSALES_INDEX);
+		objModelAndView.addObject("rolNuevaSucursal", sessionService.hasRol("SUCURSALES_CREATE"));
 		return objModelAndView;
 	}
 	
