@@ -87,9 +87,13 @@
 	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
 		$(document).ready(function() {
 			var idUsuario = [[${_USER_.getIdUsuario()}]];
-			var dolarObj;
+			var dolarObj = null;
 	
-			getDivisaResponse();
+			$('.check-dollar').click(function() {
+				if(dolarObj == null) {					
+					getDivisaResponse();
+				}
+			});
 			
 			function getDivisaResponse(){
 				var url = "https://openexchangerates.org/api/latest.json?app_id=f82801874c054d53ab539b49b9940a04";
@@ -100,7 +104,7 @@
 				xmlhttp.onreadystatechange = function(){
 					if (xmlhttp.readyState === 4 && xmlhttp.status === 200){
 						try{
-							var dolarObj = JSON.parse(this.responseText);
+						 	dolarObj = JSON.parse(this.responseText);
 							$('#txtDollarV').text('$' + dolarObj.rates.MXN)
 							
 						}catch(exception){console.log("Error Code: PE0002"); return;}												

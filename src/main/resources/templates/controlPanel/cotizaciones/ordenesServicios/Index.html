@@ -81,6 +81,11 @@
 </th:block>
 
 <th:block th:fragment="script">
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
 	<script type="application/javascript" th:inline="javascript">
 		var idCotizacion = [[${objCotizacion.getIdCotizacion()}]];
 		

@@ -74,13 +74,23 @@
 						</div>
 						
 						<div class="row clearfix">
-	                        <div class="col-md-12">
+	                        <div class="col-md-8">
 	                        	<div class="form-group">
 	                        		<p><b>Direcci&oacute;n</b></p>
 	                                <div class="form-line">
 	                                    <input type="text" name="txtDireccion" th:value="${objUsuario.getDireccion()}" class="form-control"  />
 	                                </div>
 	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                            <p><b>Empresa *</b></p>
+	                            <select class="form-control show-tick" name="cmbEmpresa" id="cmbEmpresa" data-live-search="true" >
+	                            	<th:block th:each="itemEmpresa : ${lstEmpresas}">	
+	                            		<option th:if="${objUsuario.getEmpresa().getIdEmpresa() == itemEmpresa.idEmpresa}" selected="selected" th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.razonSocial}"></option>
+	                            		<option th:unless="${objUsuario.getEmpresa().getIdEmpresa() == itemEmpresa.idEmpresa}" th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.razonSocial}"></option>                            	
+	                            	</th:block>
+	                       		</select>
 	                        </div>
 						</div>
 						

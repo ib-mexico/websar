@@ -30,12 +30,14 @@ import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.entities.UsuarioRolEntity;
 import com.ibmexico.libraries.DataTable;
 import com.ibmexico.libraries.Templates;
+import com.ibmexico.services.EmpresaService;
 import com.ibmexico.services.RolesService;
 import com.ibmexico.services.SessionService;
 import com.ibmexico.services.SucursalService;
 import com.ibmexico.services.UsuarioRolService;
 import com.ibmexico.services.UsuarioService;
 import com.pusher.rest.Pusher;
+import com.ibmexico.entities.EmpresaEntity;
 import com.ibmexico.entities.RolCategoriaEntity;
 import com.ibmexico.entities.RolEntity;
 
@@ -62,6 +64,10 @@ public class UsuariosController {
 	@Autowired
 	@Qualifier("usuarioRolService")
 	private UsuarioRolService usuarioRolService;
+	
+	@Autowired
+	@Qualifier("empresaService")
+	private EmpresaService empresaService;
 	
 	@Autowired
 	@Qualifier("sessionService")
@@ -118,8 +124,11 @@ public class UsuariosController {
 	public ModelAndView create() {
 		
 		List<SucursalEntity> lstSucursales = sucursalService.listSucursales();
+		List<EmpresaEntity> lstEmpresas = empresaService.listEmpresas();
+		
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_USUARIOS_CREATE);
 		objModelAndView.addObject("lstSucursales", lstSucursales);
+		objModelAndView.addObject("lstEmpresas", lstEmpresas);
 		
 		return objModelAndView;
 	}
@@ -132,6 +141,7 @@ public class UsuariosController {
 								@RequestParam(value="txtPuesto") String txtPuesto,
 								@RequestParam(value="txtClave") String txtClave,
 								@RequestParam(value="txtDireccion", required=false) String txtDireccion,
+								@RequestParam(value="cmbEmpresa") int cmbEmpresa,
 								@RequestParam(value="txtTelefono", required=false) String txtTelefono,
 								@RequestParam(value="txtCelular", required=false) String txtCelular,
 								@RequestParam(value="cmbSucursal") int cmbSucursal,
@@ -153,6 +163,7 @@ public class UsuariosController {
 			objUsuario.setPuesto(txtPuesto);
 			objUsuario.setClave(txtClave);
 			objUsuario.setDireccion(txtDireccion);
+			objUsuario.setEmpresa(empresaService.findByIdEmpresa(cmbEmpresa));
 			objUsuario.setTelefono(txtTelefono);
 			objUsuario.setCelular(txtCelular);
 			objUsuario.setSucursal(sucursalService.findByIdSucursal(cmbSucursal));
@@ -173,12 +184,14 @@ public class UsuariosController {
 	@GetMapping({"{paramIdUsuario}/edit", "{paramIdUsuario}/edit/"})
 	public ModelAndView edit(@PathVariable("paramIdUsuario") int paramIdUsuario) {
 		
-		UsuarioEntity objUsuario = usuarioService.findByIdUsuario(paramIdUsuario);
-		
+		UsuarioEntity objUsuario = usuarioService.findByIdUsuario(paramIdUsuario);		
 		List<SucursalEntity> lstSucursales = sucursalService.listSucursales();
+		List<EmpresaEntity> lstEmpresas = empresaService.listEmpresas();
+		
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_USUARIOS_EDIT);
 		objModelAndView.addObject("objUsuario", objUsuario);
 		objModelAndView.addObject("lstSucursales", lstSucursales);
+		objModelAndView.addObject("lstEmpresas", lstEmpresas);
 		
 		return objModelAndView;
 	}
@@ -191,6 +204,7 @@ public class UsuariosController {
 								@RequestParam(value="txtApellidoMaterno") String txtApellidoMaterno,
 								@RequestParam(value="txtPuesto") String txtPuesto,
 								@RequestParam(value="txtDireccion", required=false) String txtDireccion,
+								@RequestParam(value="cmbEmpresa") int cmbEmpresa,
 								@RequestParam(value="txtTelefono", required=false) String txtTelefono,
 								@RequestParam(value="txtCelular", required=false) String txtCelular,
 								@RequestParam(value="cmbSucursal") int cmbSucursal,
@@ -210,11 +224,12 @@ public class UsuariosController {
 				objUsuario.setApellidoMaterno(txtApellidoMaterno);
 				objUsuario.setPuesto(txtPuesto);
 				objUsuario.setDireccion(txtDireccion);
+				objUsuario.setEmpresa(empresaService.findByIdEmpresa(cmbEmpresa));
 				objUsuario.setTelefono(txtTelefono);
 				objUsuario.setCelular(txtCelular);
 				objUsuario.setSucursal(sucursalService.findByIdSucursal(cmbSucursal));
 				
-				if(!txtPassword.equals("empty")) {				
+				if(!txtPassword.equals("empty")) {		
 					objUsuario.setPassword(txtPassword);
 				}								
 				

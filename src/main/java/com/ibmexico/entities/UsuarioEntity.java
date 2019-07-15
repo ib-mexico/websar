@@ -42,6 +42,10 @@ public class UsuarioEntity {
 	private SucursalEntity sucursal;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_empresa", nullable = true)
+	private EmpresaEntity empresa;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_usuario_grupo", nullable = true)
 	private UsuarioGrupoEntity usuarioGrupo;
 
@@ -127,6 +131,14 @@ public class UsuarioEntity {
 
 	public void setSucursal(SucursalEntity sucursal) {
 		this.sucursal = sucursal;
+	}
+	
+	public EmpresaEntity getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(EmpresaEntity empresa) {
+		this.empresa = empresa;
 	}
 	
 	public UsuarioGrupoEntity getUsuarioGrupo() {

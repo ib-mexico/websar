@@ -139,38 +139,57 @@
 	</table>
 	
 	
-	<!--/* SOPORTE INFO */-->
-	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
-		<tr>
-			<td width="100%" colspan="3" class="tituloTH6">Para soporte t&eacute;cnico: Networking, Firewall, Sistemas Operativos Windows, CCTV, Equipo SOHO, contamos con los siguientes recursos.</td>
-		</tr>
-		<tr>
-			<td width="33%" class="tituloTH6">E-mail:</td>
-			<td width="34%" class="tituloTH6">Tel&eacute;fonos M&oacute;viles:</td>
-			<td width="33%" class="tituloTH6">Tel&eacute;fonos de Oficina:</td>
-		</tr>
-		<tr>
-			<td width="33%" class="celdaH6">soporte@ib-mexico.com</td>
-			<td width="34%" class="celdaH6">(993) 311-32-75</td>
-			<td width="33%" class="celdaH6">(993) 351-19-16</td>
-		</tr>
-	</table>
+	<!--/* SOPORTE IB-MEXICO INFO */-->
+	<th:block th:if="${objCotizacion.empresa.idEmpresa == 1}">	
+		<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+			<tr>
+				<td width="100%" colspan="3" class="tituloTH6">Para soporte t&eacute;cnico: Networking, Firewall, Sistemas Operativos Windows, CCTV, Equipo SOHO, contamos con los siguientes recursos.</td>
+			</tr>
+			<tr>
+				<td width="33%" class="tituloTH6">E-mail:</td>
+				<td width="34%" class="tituloTH6">Tel&eacute;fonos M&oacute;viles:</td>
+				<td width="33%" class="tituloTH6">Tel&eacute;fonos de Oficina:</td>
+			</tr>
+			<tr>
+				<td width="33%" class="celdaH6" th:text="${'soporte@' + objCotizacion.empresa.dominio}"></td>
+				<td width="34%" class="celdaH6">(993) 311-32-75</td>
+				<td width="33%" class="celdaH6">(993) 351-19-16</td>
+			</tr>
+		</table>
+		
+		<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+			<tr>
+				<td width="100%" colspan="3" class="tituloTH6">Para soporte t&eacute;cnico: Infraestructura(Cableado Estructurado, Torres Arriostradas, etc.) y Conmutadores.</td>
+			</tr>
+			<tr>
+				<td width="33%" class="tituloTH6">E-mail:</td>
+				<td width="34%" class="tituloTH6">Tel&eacute;fonos M&oacute;viles:</td>
+				<td width="33%" class="tituloTH6">Tel&eacute;fonos de Oficina:</td>
+			</tr>
+			<tr>
+				<td width="33%" class="celdaH6" th:text="${'servicios@' + objCotizacion.empresa.dominio}"></td>
+				<td width="34%" class="celdaH6">(993) 190-33-23</td>
+				<td width="33%" class="celdaH6">(993) 351-19-16</td>
+			</tr>
+		</table>
+	</th:block>
 	
-	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
-		<tr>
-			<td width="100%" colspan="3" class="tituloTH6">Para soporte t&eacute;cnico: Infraestructura(Cableado Estructurado, Torres Arriostradas, etc.) y Conmutadores.</td>
-		</tr>
-		<tr>
-			<td width="33%" class="tituloTH6">E-mail:</td>
-			<td width="34%" class="tituloTH6">Tel&eacute;fonos M&oacute;viles:</td>
-			<td width="33%" class="tituloTH6">Tel&eacute;fonos de Oficina:</td>
-		</tr>
-		<tr>
-			<td width="33%" class="celdaH6">servicios@ib-mexico.com</td>
-			<td width="34%" class="celdaH6">(993) 190-33-23</td>
-			<td width="33%" class="celdaH6">(993) 351-19-16</td>
-		</tr>
-	</table>
+	<!--/* SOPORTE S3S INFO */-->
+	<th:block th:if="${objCotizacion.empresa.idEmpresa == 2}">	
+		<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+			<tr>
+				<td width="100%" colspan="2" class="tituloTH6">Para soporte t&eacute;cnico y/o aclaraciones.</td>
+			</tr>
+			<tr>
+				<td width="50%" class="tituloTH6">E-mail:</td>
+				<td width="50%" class="tituloTH6">Tel&eacute;fonos de Oficina:</td>
+			</tr>
+			<tr>
+				<td width="50%" class="celdaH6" th:text="${'soporte@' + objCotizacion.empresa.dominio}"></td>
+				<td width="50%" class="celdaH6">(993) 310-09-50</td>
+			</tr>
+		</table>
+	</th:block>
 	
 	<!--/* FIRMAS INFO */-->
 	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 50px;">
