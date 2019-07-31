@@ -128,11 +128,20 @@ public enum EnumException {
 	//ENTREGAS
 	ENTREGAS_CREATE_001("Error en creación de entrega", "El objeto entrega no es válido, póngase en contacto con el administrador del sistema."),
 	ENTREGAS_UPDATE_001("Error en modificación de entrega", "El objeto entrega no es válido, póngase en contacto con el administrador del sistema."),
-	
+		
 	ENTREGAS_PRODUCTOS_CREATE_001("Error en creación de producto", "El objeto producto no es válido, póngase en contacto con el administrador del sistema."),
-	ENTREGAS_FICHEROS_ADD_FILE_001("Error de fichero de entrega", "Ocurrio un error con el fichero, es posible que el archivo presente errores."),
-	ENTREGAS_FICHEROS_ADD_FILE_002("Error de fichero de entrega", "Ocurrio un error con el fichero de entrega, es posible que el archivo presente errores."),
-	ENTREGAS_FICHEROS_ADD_FILE_003("Error de fichero de entrega", "Ocurrio un error con el fichero de recepción, es posible que el archivo presente errores."),
+	ENTREGAS_FICHEROS_ADD_FILE_001("Error de firma de entrega", "Ocurrio un error con el fichero, es posible que el archivo presente errores."),
+	ENTREGAS_FICHEROS_ADD_FILE_002("Error de firma de entrega", "Ocurrio un error con el fichero de entrega, es posible que el archivo presente errores."),
+	ENTREGAS_FICHEROS_ADD_FILE_003("Error de firma de entrega", "Ocurrio un error con el fichero de recepción, es posible que el archivo presente errores."),
+	
+	//RESGUARDOS
+	RESGUARDOS_CREATE_001("Error en creación de resguardo", "El objeto resguardo no es válido, póngase en contacto con el administrador del sistema."),
+	RESGUARDOS_UPDATE_001("Error en modificación de resguardo", "El objeto resguardo no es válido, póngase en contacto con el administrador del sistema."),
+	RESGUARDOS_PARTIDAS_CREATE_001("Error en creación de partida", "El objeto partida no es válido, póngase en contacto con el administrador del sistema."),
+	RESGUARDOS_FICHEROS_ADD_FILE_001("Error de firma de resguardo", "Ocurrio un error con la firma, es posible que el archivo presente errores."),
+	RESGUARDOS_FICHEROS_ADD_FILE_002("Error de firma de resguardo", "Ocurrio un error con la firma de entrega, es posible que el archivo presente errores."),
+	RESGUARDOS_FICHEROS_ADD_FILE_003("Error de firma de resguardo", "Ocurrio un error con la firma de recepción, es posible que el archivo presente errores."),
+	
 	
 	//ACTIVIDADES
 	ACTIVIDADES_CREATE_001("Error en creación de actividad", "El objeto actividad no es válido, póngase en contacto con el administrador del sistema."),

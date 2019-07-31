@@ -30,6 +30,7 @@ import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.entities.UsuarioRolEntity;
 import com.ibmexico.libraries.DataTable;
 import com.ibmexico.libraries.Templates;
+import com.ibmexico.services.DepartamentoService;
 import com.ibmexico.services.EmpresaService;
 import com.ibmexico.services.RolesService;
 import com.ibmexico.services.SessionService;
@@ -37,6 +38,7 @@ import com.ibmexico.services.SucursalService;
 import com.ibmexico.services.UsuarioRolService;
 import com.ibmexico.services.UsuarioService;
 import com.pusher.rest.Pusher;
+import com.ibmexico.entities.DepartamentoEntity;
 import com.ibmexico.entities.EmpresaEntity;
 import com.ibmexico.entities.RolCategoriaEntity;
 import com.ibmexico.entities.RolEntity;
@@ -68,6 +70,10 @@ public class UsuariosController {
 	@Autowired
 	@Qualifier("empresaService")
 	private EmpresaService empresaService;
+	
+	@Autowired
+	@Qualifier("departamentoService")
+	private DepartamentoService departamentoService;
 	
 	@Autowired
 	@Qualifier("sessionService")
@@ -125,10 +131,12 @@ public class UsuariosController {
 		
 		List<SucursalEntity> lstSucursales = sucursalService.listSucursales();
 		List<EmpresaEntity> lstEmpresas = empresaService.listEmpresas();
+		List<DepartamentoEntity> lstDepartamentos = departamentoService.listDepartamentos();
 		
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_USUARIOS_CREATE);
 		objModelAndView.addObject("lstSucursales", lstSucursales);
 		objModelAndView.addObject("lstEmpresas", lstEmpresas);
+		objModelAndView.addObject("lstDepartamentos", lstDepartamentos);
 		
 		return objModelAndView;
 	}
@@ -138,6 +146,7 @@ public class UsuariosController {
 								@RequestParam(value="txtApellidoPaterno") String txtApellidoPaterno,
 								@RequestParam(value="txtApellidoMaterno") String txtApellidoMaterno,
 								@RequestParam(value="txtCorreo") String txtCorreo,
+								@RequestParam(value="cmbDepartamento") int cmbDepartamento,
 								@RequestParam(value="txtPuesto") String txtPuesto,
 								@RequestParam(value="txtClave") String txtClave,
 								@RequestParam(value="txtDireccion", required=false) String txtDireccion,
@@ -153,13 +162,13 @@ public class UsuariosController {
 		RedirectView objRedirectView = null;
 		UsuarioEntity objUsuario = new UsuarioEntity();
 		
-		try {
-							
+		try {							
 			objUsuario.setNombre(txtNombre);
 			objUsuario.setApellidoPaterno(txtApellidoPaterno);
 			objUsuario.setApellidoMaterno(txtApellidoMaterno);
 			objUsuario.setUsername(txtUsername);
 			objUsuario.setCorreo(txtCorreo);
+			objUsuario.setDepartamento(departamentoService.findByIdDepartamento(cmbDepartamento));
 			objUsuario.setPuesto(txtPuesto);
 			objUsuario.setClave(txtClave);
 			objUsuario.setDireccion(txtDireccion);
@@ -187,11 +196,13 @@ public class UsuariosController {
 		UsuarioEntity objUsuario = usuarioService.findByIdUsuario(paramIdUsuario);		
 		List<SucursalEntity> lstSucursales = sucursalService.listSucursales();
 		List<EmpresaEntity> lstEmpresas = empresaService.listEmpresas();
+		List<DepartamentoEntity> lstDepartamentos = departamentoService.listDepartamentos();
 		
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_USUARIOS_EDIT);
 		objModelAndView.addObject("objUsuario", objUsuario);
 		objModelAndView.addObject("lstSucursales", lstSucursales);
 		objModelAndView.addObject("lstEmpresas", lstEmpresas);
+		objModelAndView.addObject("lstDepartamentos", lstDepartamentos);
 		
 		return objModelAndView;
 	}
@@ -202,6 +213,7 @@ public class UsuariosController {
 								@RequestParam(value="txtNombre") String txtNombre,								
 								@RequestParam(value="txtApellidoPaterno") String txtApellidoPaterno,
 								@RequestParam(value="txtApellidoMaterno") String txtApellidoMaterno,
+								@RequestParam(value="cmbDepartamento") int cmbDepartamento,
 								@RequestParam(value="txtPuesto") String txtPuesto,
 								@RequestParam(value="txtDireccion", required=false) String txtDireccion,
 								@RequestParam(value="cmbEmpresa") int cmbEmpresa,
@@ -222,6 +234,7 @@ public class UsuariosController {
 				objUsuario.setNombre(txtNombre);
 				objUsuario.setApellidoPaterno(txtApellidoPaterno);
 				objUsuario.setApellidoMaterno(txtApellidoMaterno);
+				objUsuario.setDepartamento(departamentoService.findByIdDepartamento(cmbDepartamento));
 				objUsuario.setPuesto(txtPuesto);
 				objUsuario.setDireccion(txtDireccion);
 				objUsuario.setEmpresa(empresaService.findByIdEmpresa(cmbEmpresa));

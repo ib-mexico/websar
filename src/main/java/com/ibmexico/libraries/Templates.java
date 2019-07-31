@@ -80,6 +80,14 @@ public class Templates {
 	
 	
 	
+	// RESGUARDOS
+	public static final String CONTROL_PANEL_RESGUARDOS_INDEX = PATH_CONTROL_PANEL + "resguardos/Index";
+	public static final String CONTROL_PANEL_RESGUARDOS_CREATE = PATH_CONTROL_PANEL + "resguardos/Create";
+	public static final String CONTROL_PANEL_RESGUARDOS_EDIT = PATH_CONTROL_PANEL + "resguardos/Edit";
+	public static final String CONTROL_PANEL_RESGUARDOS_FIRMA = PATH_CONTROL_PANEL + "resguardos/Firma";
+	
+	
+	
 	// GARANTIAS
 	public static final String CONTROL_PANEL_GARANTIAS_INDEX = PATH_CONTROL_PANEL + "garantias/Index";
 	public static final String CONTROL_PANEL_GARANTIAS_CREATE = PATH_CONTROL_PANEL + "garantias/Create";
@@ -151,6 +159,8 @@ public class Templates {
 	public static final String PDF_REPORTE_FACTURA = PATH_DOCUMENTS_PDF + "cotizaciones/ReporteFactura";
 	public static final String PDF_REPORTE_UTILIDAD = PATH_DOCUMENTS_PDF + "cotizaciones/ReporteUtilidad";
 	public static final String PDF_ENTREGA_PRODUCTO = PATH_DOCUMENTS_PDF + "entregas/EntregaProducto";
+	public static final String PDF_RESGUARDO_UNIFORME_CREDENCIAL = PATH_DOCUMENTS_PDF + "resguardos/FormatoUniformeCredencial";
+	public static final String PDF_RESGUARDO_EQUIPO = PATH_DOCUMENTS_PDF + "resguardos/FormatoEquipo";
 	public static final String PDF_ORDEN_SERVICIO = PATH_DOCUMENTS_PDF + "ordenesServicios/OrdenServicio";
 	public static final String PDF_GARANTIA = PATH_DOCUMENTS_PDF + "garantias/Garantia";
 	public static final String PDF_REPORTE_UTILIDAD_GENERAL = PATH_DOCUMENTS_PDF + "general/ReporteUtilidad";

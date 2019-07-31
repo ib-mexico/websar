@@ -42,28 +42,26 @@
 			<td width="100%" colspan="10"></td>
 		</tr>
 		<tr>
-			<td width="15%" class="tituloTH5">Cotizaci&oacute;n</td>
-			<td width="15%" class="tituloTH5">Concepto</td>		
+			<td width="20%" class="tituloTH5">Cotizaci&oacute;n</td>
+			<td width="18%" class="tituloTH5">Concepto</td>		
 			<td width="8%" class="tituloTH5">Fecha</td>
 			<td width="9%" class="tituloTH5" style="text-align:right">Subtotal</td>
 			<td width="9%" class="tituloTH5" style="text-align:right">G.I.</td>
 			<td width="9%" class="tituloTH5" style="text-align:right">Compras</td>
 			<td width="9%" class="tituloTH5" style="text-align:right">U.B.</td>
 			<td width="10%" class="tituloTH5" style="text-align:right">Acumulado Cuota</td>
-			<td width="8%" class="tituloTH5">Acumulado Comisi&oacute;n</td>
-			<td width="8%" class="tituloTH5" style="text-align:right">Comisi&oacute;n</td>
+			<td width="8%" class="tituloTH5">Acumulado Porcentaje</td>
 		</tr>
 		<tr th:each="item : ${cotizacionesMap}">
-			<td width="15%" class="celdaH6" th:text="${item.folio}"></td>			
-			<td width="15%" class="celdaH6" th:text="${item.concepto}"></td>
+			<td width="20%" class="celdaH6" th:text="${item.folio}"></td>			
+			<td width="13%" class="celdaH6" th:text="${item.concepto}"></td>
 			<td width="8%" class="celdaH6" th:text="${item.fecha_facturacion}"></td>
 			<td width="9%" class="celdaH6" style="text-align:right" th:text="${item.subtotal}"></td>
 			<td width="9%" class="celdaH6" style="text-align:right" th:text="${'$' + item.gastos_indirectos}"></td>
 			<td width="9%" class="celdaH6" style="text-align:right" th:text="${'$' + item.compras}"></td>
 			<td width="9%" class="celdaH6" style="text-align:right" th:text="${'$' + item.utilidad_bruta}"></td>
 			<td width="10%" class="celdaH6" style="text-align:right" th:text="${'$' + item.acumulado_cuota}"></td>
-			<td width="8%" class="celdaH6" th:text="${item.acumulado_comision + '%'}"></td>
-			<td width="8%" class="celdaH6" style="text-align:right" th:text="${'$' + item.total_comision}"></td>
+			<td width="8%" class="celdaH6" th:text="${item.acumulado_porcentaje + '%'}"></td>
 		</tr>
 		<tr>
 			<td colspan="2"></td>
@@ -74,7 +72,6 @@
 			<td width="9%" class="celdaH6" style="text-align:right" th:text="${'$' + totalUtilidad}"></td>
 			<td width="10%" class="celdaH6" style="text-align:right" th:text="${'$' + totalAcumuladoCuota}"></td>
 			<td width="8%"></td>
-			<td width="8%" class="celdaH6" style="text-align:right" th:text="${'$' + totalAcumuladoComision}"></td>
 		</tr>
 	</table>
 	

@@ -45,6 +45,12 @@ public enum EnumMessage {
 	ENTREGAS_FIRMA_001("Entrega de Producto", "La entrega de producto se realizó satisfactoriamente."),
 	
 	
+	//RESGUARDOS
+	RESGUARDOS_CREATE_001("Creación de resguardo", "El resguardo se creó satisfactoriamente."),
+	RESGUARDOS_EDIT_001("Modificación de resguardo", "El resguardo se modificó satisfactoriamente."),
+	RESGUARDOS_FIRMA_001("Entrega de resguardo", "El resguardo se realizó satisfactoriamente."),
+	
+	
 	//GARANTIAS
 	GARANTIAS_CREATE_001("Creación de garantía", "La garantía del producto se creó satisfactoriamente."),
 	GARANTIAS_EDIT_001("Modificación de garantía", "La garantía del producto se modificó satisfactoriamente."),

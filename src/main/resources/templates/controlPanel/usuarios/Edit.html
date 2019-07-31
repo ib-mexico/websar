@@ -45,13 +45,14 @@
 						</div>
 						
 						<div class="row clearfix">
-							 <div class="col-md-4">
-	                        	<div class="form-group">
-	                        		<p><b>Correo</b></p>
-	                                <div class="form-line">
-	                                    <input type="text" th:value="${objUsuario.getCorreo()}" class="form-control" readonly="readonly" />
-	                                </div>
-	                            </div>
+							<div class="col-md-4">
+	                            <p><b>Departamento *</b></p>
+	                            <select class="form-control show-tick" name="cmbDepartamento" id="cmbDepartamento" data-live-search="true" >
+	                       			<th:block th:each="item : ${lstDepartamentos}" >
+	                       				<option th:if="${objUsuario.getDepartamento().getIdDepartamento() == item.idDepartamento}" th:value="${item.idDepartamento}" th:text="${item.departamento}" selected="selected"></option>
+	                       				<option th:unless="${objUsuario.getDepartamento().getIdDepartamento() == item.idDepartamento}" th:value="${item.idDepartamento}" th:text="${item.departamento}"></option>
+	                       			</th:block>
+	                       		</select>
 	                        </div>
 	                        
 	                        <div class="col-md-4">
@@ -130,6 +131,15 @@
 	                        		<p><b>Usuario *</b></p>
 	                                <div class="form-line">
 	                                    <input type="text" id="txtUsername" class="form-control" readonly="readonly" th:value="${objUsuario.username}" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                        	<div class="form-group">
+	                        		<p><b>Correo</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" th:value="${objUsuario.getCorreo()}" class="form-control" readonly="readonly" />
 	                                </div>
 	                            </div>
 	                        </div>

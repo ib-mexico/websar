@@ -21,6 +21,8 @@ public class GeneralConfiguration {
 	private String objPatternDateNatural;
 	private String objPatternDate;
 	private String emailSender;
+	private String twilio_ACCOUNT_SID;
+	private String twilio_AUTH_TOKEN;
 	
 	public static GeneralConfiguration Instance = new GeneralConfiguration();
 	
@@ -61,6 +63,10 @@ public class GeneralConfiguration {
 		objPatternDate = "\\d{4}-\\d{2}-\\d{2}";
 		
 		emailSender = "jorge.cortes@ib-mexico.com";
+		
+		twilio_ACCOUNT_SID = "ACd6081dd6ea62e62d4e70f3354e635da0";
+		twilio_AUTH_TOKEN = "75263e6ecfc8e45f99eec630d8ab266d";
+		
 	}
 	
 	public DateTimeFormatter getMonthFormatterNatural() {
@@ -153,5 +159,13 @@ public class GeneralConfiguration {
 	public Boolean isValidEmail(String email) {
 		String regex = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
 		return email.matches(regex);
+	}
+	
+	public String getTwilioAccountSID() {
+		return twilio_ACCOUNT_SID;
+	}
+	
+	public String getTwilioAuthToken() {
+		return twilio_AUTH_TOKEN;
 	}
 }

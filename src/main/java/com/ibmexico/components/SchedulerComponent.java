@@ -1,5 +1,6 @@
 package com.ibmexico.components;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -12,12 +13,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.ibmexico.configurations.GeneralConfiguration;
 import com.ibmexico.entities.CotizacionEntity;
+import com.ibmexico.entities.EmpresaEntity;
 import com.ibmexico.entities.EquipoProduccionEntity;
 import com.ibmexico.entities.OportunidadNegocioEntity;
 import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.libraries.Templates;
 import com.ibmexico.services.CotizacionService;
+import com.ibmexico.services.EmpresaService;
 import com.ibmexico.services.EquipoProduccionService;
 import com.ibmexico.services.OportunidadNegocioService;
 import com.ibmexico.services.SessionService;
@@ -42,6 +46,10 @@ public class SchedulerComponent {
 	private EquipoProduccionService equipoProduccionService;
 	
 	@Autowired
+	@Qualifier("empresaService")
+	private EmpresaService empresaService;
+	
+	@Autowired
 	@Qualifier("usuarioService")
 	private UsuarioService usuarioService;
 	
@@ -51,40 +59,44 @@ public class SchedulerComponent {
 	
 	@Scheduled(cron = "0 0 8 ? * 3")
 	public void cronJobNotificadorCotizacionesPorCobrar() {
-		
-		List<CotizacionEntity> lstCotizaciones = cotizacionService.lstCotizacionesNoCobradas();
-		//List<UsuarioEntity> lstUsuarios = usuarioService.listUsuariosActivos();
-		List<Map<String , String>> mapCotizacionesFiltradas  = new ArrayList<Map<String,String>>();
-		Integer iterator = 0;
-		
 		LocalDate ldNow = LocalDate.now();
 		
-		for(CotizacionEntity itemCotizacion : lstCotizaciones) {
+		List<EmpresaEntity> lstEmpresas = empresaService.listEmpresas();
+		
+		for(EmpresaEntity itemEmpresa : lstEmpresas) {
 			
-			Map<String,String> myMap1 = new HashMap<String, String>();
-			if(itemCotizacion.getAprobacionFecha() != null) {
-				
-				int diff = (int) ChronoUnit.DAYS.between(itemCotizacion.getAprobacionFecha(), ldNow);
-				
-				if(diff > Integer.parseInt(itemCotizacion.getDiasCredito().trim())) {
-					myMap1.put("folio", itemCotizacion.getFolio());
-					myMap1.put("fecha_aprobacion", itemCotizacion.getAprobacionFechaNatural());
-					myMap1.put("dias_credito", itemCotizacion.getDiasCredito());
-					myMap1.put("fecha_factura", itemCotizacion.getFacturacionFechaNatural());
-					myMap1.put("factura", itemCotizacion.getFacturaNumero());
-					myMap1.put("cliente", itemCotizacion.getCliente().getCliente());
-					myMap1.put("total", itemCotizacion.getTotalNatural());
+			List<CotizacionEntity> lstCotizaciones = cotizacionService.lstCotizacionesNoCobradas(itemEmpresa);
+			//List<UsuarioEntity> lstUsuarios = usuarioService.listUsuariosActivos();
+			List<Map<String , String>> mapCotizacionesFiltradas  = new ArrayList<Map<String,String>>();
+			Integer iterator = 0;
+			BigDecimal totalCotizaciones = new BigDecimal(0);
+						
+			for(CotizacionEntity itemCotizacion : lstCotizaciones) {				
+				Map<String,String> myMap1 = new HashMap<String, String>();
+				if(itemCotizacion.getAprobacionFecha() != null) {
 					
-					mapCotizacionesFiltradas.add(iterator, myMap1);
+					int diff = (int) ChronoUnit.DAYS.between(itemCotizacion.getAprobacionFecha(), ldNow);
 					
-					iterator++;
+					if(diff > Integer.parseInt(itemCotizacion.getDiasCredito().trim())) {
+						myMap1.put("folio", itemCotizacion.getFolio());
+						myMap1.put("fecha_aprobacion", itemCotizacion.getAprobacionFechaNatural());
+						myMap1.put("dias_credito", itemCotizacion.getDiasCredito());
+						myMap1.put("fecha_factura", itemCotizacion.getFacturacionFechaNatural());
+						myMap1.put("factura", itemCotizacion.getFacturaNumero());
+						myMap1.put("cliente", itemCotizacion.getCliente().getCliente());
+						myMap1.put("total", itemCotizacion.getTotalNatural());
+						
+						mapCotizacionesFiltradas.add(iterator, myMap1);
+						
+						iterator++;
+						totalCotizaciones = totalCotizaciones.add(itemCotizacion.getTotal());
+					}
 				}
 			}
-		}
-		
-		if(!mapCotizacionesFiltradas.isEmpty() ) {
 			
-			/*for(UsuarioEntity itemUsuario : lstUsuarios) {
+			if(!mapCotizacionesFiltradas.isEmpty() ) {
+				
+				/*for(UsuarioEntity itemUsuario : lstUsuarios) {
 				if(sessionService.hasRol("COTIZACIONES_COBRANZA", itemUsuario)) {
 					Map<String, Object> mapVariables = new HashMap<String, Object>();
 					mapVariables.put("objUsuario", itemUsuario);
@@ -94,12 +106,14 @@ public class SchedulerComponent {
 					cronJobCobranzaEnviarMails(itemUsuario, mapVariables);
 				}
 			}*/
-			Map<String, Object> mapVariables = new HashMap<String, Object>();
-			mapVariables.put("lstCotizaciones", mapCotizacionesFiltradas);
-			
-			cronJobCobranzaEnviarMails(mapVariables);
-		}
-		
+				Map<String, Object> mapVariables = new HashMap<String, Object>();
+				mapVariables.put("lstCotizaciones", mapCotizacionesFiltradas);
+				mapVariables.put("empresa", itemEmpresa.getEmpresa());
+				mapVariables.put("total_cotizaciones_natural", GeneralConfiguration.getInstance().getNumberFormat().format(totalCotizaciones));
+				
+				cronJobCobranzaEnviarMails(mapVariables);
+			}
+		}		
 	}
 	
 	private void cronJobCobranzaEnviarMails(Map<String, Object> mapVariables) {

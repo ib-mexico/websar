@@ -1,0 +1,259 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>RESGUARDOS</h2>
+    </div>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>Nuevo Resguardo</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<form id="formResguardo" th:action="${ {_PATH_} + 'controlPanel/resguardos'}" th:method="POST">
+						<div class="row clearfix">
+							<div class="col-md-4">
+	                            <p><b>Empresa *</b></p>
+	                            <select class="form-control show-tick" name="cmbEmpresa" id="cmbEmpresa" data-live-search="true" >
+	                       			<th:block th:each="itemEmpresa : ${lstEmpresas}" >
+	                       				<option th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.empresa}"></option>
+	                       			</th:block>
+	                       		</select>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                            <p><b>Tipo de Resguardo *</b></p>
+	                            <select class="form-control show-tick" name="cmbResguardoTipo" id="cmbResguardoTipo" data-live-search="true" >
+	                       			<th:block th:each="item : ${lstResguardosTipos}" >
+	                       				<option th:value="${item.idResguardoTipo}" th:text="${item.resguardoTipo}"></option>
+	                       			</th:block>
+	                       		</select>
+	                        </div>
+						</div>
+						
+						<div class="row clearfix">
+	                        <div class="col-md-4">
+	                            <b>Entrega *</b>                           
+	                            <select class="form-control show-tick" name="cmbUsuarioEntrega" id="cmbUsuarioEntrega" data-live-search="true" >
+	                            	<option value="" selected="selected">Selecciona un usuario...</option>
+		                            <option th:each="itemUsuario : ${lstUsuarios}" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}"></option>
+	                            </select>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                            <b>Recibe *</b>                           
+	                            <select class="form-control show-tick" name="cmbUsuarioRecibe" id="cmbUsuarioRecibe" data-live-search="true" >
+	                            	<option value="" selected="selected">Selecciona un usuario...</option>
+		                            <option th:each="itemUsuario : ${lstUsuarios}" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}"></option>
+	                            </select>
+	                        </div>
+                  		</div>
+                  		
+						
+						<div class="row clearfix">
+							<div class="col-md-12">							
+								<div class="form-group">
+									<p><b>Observaciones</b></p>
+	                              	<div class="form-line">
+	                                  	<textarea rows="4" name="txtObservaciones" class="form-control no-resize"></textarea>
+	                              	</div>
+	                       		</div>
+							</div>
+						</div>
+						
+						<br />
+						
+						
+						
+						<div id="inputContainer" class="row clearfix">
+							<div class="col-md-2">
+								<div class="form-group">	
+									<p><b>Cantidad *</b></p>							
+									<div class="form-line">
+										<input type="text" id="inputCantidad" name="txtCantidad[]" class="form-control" placeholder="Cantidad" required="required"/>
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-3">
+								<div class="form-group">								
+									<div class="form-line">
+										<p><b>Descripci&oacute;n *</b></p>
+										<input type="text" id="inputDescripcion" name="txtDescripcion[]" class="form-control" placeholder="Descripci&oacute;n" required="required"/>
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-2">
+								<div class="form-group">
+									<p><b>Marca</b></p>								
+									<div class="form-line">
+										<input type="text" id="inputNumeroParte" name="txtMarca[]" class="form-control" placeholder="Marca" value="" />
+									</div>
+								</div>
+							</div>
+							
+							
+							<div class="col-md-2">
+								<div class="form-group">
+									<p><b>N&uacute;mero de Serie</b></p>							
+									<div class="form-line">
+										<input type="text" id="inputNumeroSerie" name="txtNumeroSerie[]" class="form-control" placeholder="Numero de Serie" value="" />
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-2">
+								<div class="form-group">
+									<p><b>Modelo</b></p>							
+									<div class="form-line">
+										<input type="text" id="inputModelo" name="txtModelo[]" class="form-control" placeholder="Modelo" value="" />
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-md-1">
+								<a class="add-product" href="javascript:void(0)" type="button"><i class="material-icons">playlist_add</i></a>
+							</div>
+						</div>
+						
+						<div id="productoContainer" data-cardinality="1" ></div>				
+					
+						<div class="row clearfix">
+							<div class="col-md-3 col-md-offset-8 text-right">
+								<a th:href="${ {_PATH_} + 'controlPanel/resguardos'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<button type="submit" class="btn btn-primary m-t-15 waves-effect">CREAR</button>
+							</div>
+						</div>
+					</form>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+ </th:block>
+
+<th:block th:fragment="script">
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
+			
+		var idUsuario = [[${_USER_.getIdUsuario()}]];
+	
+		$(document).ready(function() {				
+		
+			
+			// FORM SUBMIT
+			$('#formResguardo').submit(function(e){
+				var flag = false;
+				
+				if($('#cmbUsuarioEntrega').val() == "" && $('#cmbUsuarioRecibe').val() == "") {
+					flag = true;
+				}				
+				
+				if(flag) {
+					swal('Hey!', 'Los campos con (*) son obligatorios', 'warning');
+					e.preventDefault();
+				}
+		  	});
+			
+			$(document).on('click', '.add-product', function() {
+				
+				cardinality = parseInt($('#productoContainer').data('cardinality')) + 1;
+				
+				strNewTag = '<div class="row clearfix">';
+					strNewTag += '<div class="col-md-2">';
+						strNewTag += '<div class="form-group">';								
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input type="text" name="txtCantidad[]" class="form-control" placeholder="Cantidad" required="required" />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';
+					
+					strNewTag += '<div class="col-md-3">';
+						strNewTag += '<div class="form-group">';							
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input type="text" name="txtDescripcion[]" class="form-control" placeholder="Descripci&oacute;n" required="required" />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';
+					
+					strNewTag += '<div class="col-md-2">';
+						strNewTag += '<div class="form-group">';							
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input type="text" name="txtMarca[]" class="form-control" placeholder="Marca" value="" />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';									
+					
+					strNewTag += '<div class="col-md-2">';
+						strNewTag += '<div class="form-group">';							
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input type="text" name="txtNumeroSerie[]" class="form-control" placeholder="Numero de Serie" value="" />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';
+					
+					strNewTag += '<div class="col-md-2">';
+						strNewTag += '<div class="form-group">';							
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input type="text" name="txtModelo[]" class="form-control" placeholder="Modelo" value=" " />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';
+					
+					strNewTag += '<div class="col-md-1">';
+						strNewTag += '<a class="add-product" href="javascript:void(0)" type="button"><i class="material-icons">playlist_add</i></a>';
+						strNewTag += '<a class="delete-product" href="javascript:void(0)" type="button"><i class="material-icons">delete</i></a>';
+					strNewTag += '</div>';
+				strNewTag += '</div>';
+				
+				$('#productoContainer').append(strNewTag);
+	            $('#productoContainer').data('cardinality', cardinality);
+			});
+			
+			$(document).on('click', '.delete-product', function() {
+				var _this = this;
+				swal({
+					title	: "&iquest;Est&aacute;s seguro?",
+					text	: "Una vez eliminado, la partida sera eliminada del resguardo.",
+					type	: "warning",
+					showCancelButton: true,
+					cancelButtonText: 'Cancelar',
+					confirmButtonText: 'Eliminar',
+				}).then((result) => {
+					if(result) {
+						$(_this).parent().parent().remove();																				
+					}
+				}).catch(swal.noop);				
+			});
+		});
+		
+		
+		$(function () {
+			// VALIDADOR DE FORMULARIO
+			$('#formResguardo').validate({
+		        rules: {
+		            'txtCantidad[]': {
+		                number: true
+		            }
+		        },
+		        highlight: function (input) {
+		            $(input).parents('.form-line').addClass('error');
+		        },
+		        unhighlight: function (input) {
+		            $(input).parents('.form-line').removeClass('error');
+		        },
+		        errorPlacement: function (error, element) {
+		            $(element).parents('.form-group').append(error);
+		        }
+		    });
+			
+			//Custom Validations ===============================================================================
+		    //Number
+		    $.validator.addMethod('number', function (value, element) {
+		        return value.match('[0-9]+');
+		    },
+		        'Por favor ingresa un n&uacute;mero.'
+		    );
+		});	
+		/*]]>*/</script>
+</th:block>

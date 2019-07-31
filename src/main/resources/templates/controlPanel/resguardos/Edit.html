@@ -1,0 +1,271 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>RESGUARDOS</h2>
+    </div>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>Editar Resguardo</h2>
+    			</div>
+    			
+    			<div class="body">
+    				<form id="formResguardo" th:action="${ {_PATH_} + 'controlPanel/resguardos/' + objResguardo.getIdResguardo() + '/edit'}" th:method="PUT">
+						<div class="row clearfix">
+							<div class="col-md-4">
+	                            <p><b>Empresa *</b></p>
+	                            <select class="form-control show-tick" name="cmbEmpresa" id="cmbEmpresa" data-live-search="true" >
+	                            	<th:block th:each="itemEmpresa : ${lstEmpresas}">	
+	                            		<option th:if="${objResguardo.getEmpresa().getIdEmpresa() == itemEmpresa.idEmpresa}" selected="selected" th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.empresa}"></option>
+	                            		<option th:unless="${objResguardo.getEmpresa().getIdEmpresa() == itemEmpresa.idEmpresa}" th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.empresa}"></option>                            	
+	                            	</th:block>
+	                       		</select>
+	                        </div>
+						
+							<div class="col-md-4">
+	                            <p><b>Tipo de Resguardo *</b></p>
+	                            <select class="form-control show-tick" name="cmbResguardoTipo" id="cmbResguardoTipo" data-live-search="true" >
+	                            	<th:block th:each="item : ${lstResguardosTipos}">
+	                            		<option th:if="${objResguardo.getResguardoTipo().getIdResguardoTipo() == item.idResguardoTipo}" selected="selected" th:value="${item.idResguardoTipo}" th:text="${item.resguardoTipo}"></option>
+	                            		<option th:unless="${objResguardo.getResguardoTipo().getIdResguardoTipo() == item.idResguardoTipo}" th:value="${item.idResguardoTipo}" th:text="${item.resguardoTipo}"></option>                            	
+	                            	</th:block>
+	                       		</select>
+	                        </div>
+						</div>
+						
+						<div class="row clearfix">
+	                        <div class="col-md-4">
+	                            <b>Entrega *</b>                           
+	                            <select class="form-control show-tick" name="cmbUsuarioEntrega" id="cmbUsuarioEntrega" data-live-search="true" >
+	                            	<th:block th:each="item : ${lstUsuarios}">	                            	
+			                            <option th:if="${objResguardo.getUsuarioEntrega().getIdUsuario() == item.idUsuario}" th:value="${item.idUsuario}" th:text="${item.nombreCompleto}" selected="selected"></option>
+			                            <option th:unless="${objResguardo.getUsuarioEntrega().getIdUsuario() == item.idUsuario}" th:value="${item.idUsuario}" th:text="${item.nombreCompleto}"></option>
+	                            	</th:block>
+	                            </select>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                            <b>Recibe *</b>                           
+	                            <select class="form-control show-tick" name="cmbUsuarioRecibe" id="cmbUsuarioRecibe" data-live-search="true" >
+	                            	<th:block th:each="item : ${lstUsuarios}">	                            	
+			                            <option th:if="${objResguardo.getUsuarioRecibe().getIdUsuario() == item.idUsuario}" th:value="${item.idUsuario}" th:text="${item.nombreCompleto}" selected="selected"></option>
+			                            <option th:unless="${objResguardo.getUsuarioRecibe().getIdUsuario() == item.idUsuario}" th:value="${item.idUsuario}" th:text="${item.nombreCompleto}"></option>
+	                            	</th:block>
+	                            </select>
+	                        </div>
+                  		</div>                  		       
+						
+						<div class="row clearfix">
+							<div class="col-md-12">							
+								<div class="form-group">
+									<p><b>Observaciones</b></p>
+	                              	<div class="form-line">
+	                                  	<textarea rows="4" name="txtObservaciones" class="form-control no-resize">
+	                                  		<th:block th:utext="${objResguardo.observaciones}"></th:block>
+	                                  	</textarea>
+	                              	</div>
+	                       		</div>
+							</div>
+						</div>
+						
+						<br />
+						
+						<div class="row clearfix">
+							<div class="col-md-2">
+								<div class="form-group">	
+									<p><b>Cantidad *</b></p>
+								</div>
+							</div>
+							
+							<div class="col-md-3">
+								<div class="form-group">								
+									<p><b>Descripci&oacute;n *</b></p>
+								</div>
+							</div>
+							
+							<div class="col-md-2">
+								<div class="form-group">
+									<p><b>Marca</b></p>
+								</div>
+							</div>
+							
+							
+							<div class="col-md-2">
+								<div class="form-group">
+									<p><b>N&uacute;mero de Serie</b></p>
+								</div>
+							</div>
+							
+							<div class="col-md-2">
+								<div class="form-group">
+									<p><b>Modelo</b></p>
+								</div>
+							</div>
+						</div>
+						
+						<div id="inputContainer">						
+							<th:block th:each="item, iterator : ${lstPartidas}">						
+								<div class="row clearfix">
+									<div class="col-md-2">
+										<div class="form-group">								
+											<div class="form-line">
+												<input type="text" name="txtCantidad[]" class="form-control inputCantidad" placeholder="Cantidad" th:value="${item.cantidad}" required="required" />
+											</div>
+										</div>
+									</div>
+									
+									<div class="col-md-3">
+										<div class="form-group">								
+											<div class="form-line">
+												<input type="text" name="txtDescripcion[]" class="form-control inputDescripcion" placeholder="Descripci&oacute;n" th:value="${item.descripcion}" required="required"/>
+											</div>
+										</div>
+									</div>
+									
+									<div class="col-md-2">
+										<div class="form-group">								
+											<div class="form-line">
+												<input type="text" name="txtMarca[]" class="form-control inputMarca" placeholder="Marca" th:value="${item.marca}" />
+											</div>
+										</div>
+									</div>
+									
+									
+									<div class="col-md-2">
+										<div class="form-group">								
+											<div class="form-line">
+												<input type="text" name="txtNumeroSerie[]" class="form-control inputNumeroSerie" placeholder="Numero de Serie" th:value="${item.numeroSerie}" />
+											</div>
+										</div>
+									</div>
+									
+									<div class="col-md-2">
+										<div class="form-group">								
+											<div class="form-line">
+												<input type="text" name="txtModelo[]" class="form-control inputModelo" placeholder="Modelo" th:value="${item.modelo}" />
+											</div>
+										</div>
+									</div>
+									
+									<div class="col-md-1">
+										<a class="add-product" href="javascript:void(0)" type="button"><i class="material-icons">playlist_add</i></a>
+										<th:block th:if="${iterator.index != 0}">										
+											<a class="delete-product" href="javascript:void(0)" type="button"><i class="material-icons">delete</i></a>
+										</th:block>
+									</div>
+								</div>
+							</th:block>
+						</div>
+						
+						<div id="productoContainer" data-cardinality="1" ></div>						
+					
+						<div class="row clearfix">
+							<div class="col-md-3 col-md-offset-8 text-right">
+								<a th:href="${ {_PATH_} + 'controlPanel/resguardos'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<button type="submit" class="btn btn-primary m-t-15 waves-effect">MODIFICAR</button>
+							</div>
+						</div>
+					</form>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
+			
+		var idUsuario = [[${_USER_.getIdUsuario()}]];
+	
+		$(document).ready(function() {	
+	
+			
+			// FORM SUBMIT
+			$('#formResguardo').submit(function(e){
+				var flag = false;
+				
+				if($('#cmbUsuarioEntrega').val() == '' || $('#cmbUsuarioRecibe').val() == '') {
+					flag = true;
+				}				
+				
+				if(flag) {
+					swal('Hey!', 'Los campos con (*) son obligatorios', 'warning');
+					e.preventDefault();
+				}
+		  	});
+			
+			$(document).on('click', '.add-product', function() {
+				
+				cardinality = parseInt($('#productoContainer').data('cardinality')) + 1;
+				
+				strNewTag = '<div class="row clearfix">';
+					strNewTag += '<div class="col-md-2">';
+						strNewTag += '<div class="form-group">';								
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input type="text" name="txtCantidad[]" class="form-control" placeholder="Cantidad" required="required" />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';
+					
+					strNewTag += '<div class="col-md-3">';
+						strNewTag += '<div class="form-group">';							
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input type="text" name="txtDescripcion[]" class="form-control" placeholder="Descripci&oacute;n" required="required" />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';
+					
+					strNewTag += '<div class="col-md-2">';
+						strNewTag += '<div class="form-group">';							
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input type="text" name="txtMarca[]" class="form-control" placeholder="Marca" />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';
+					
+					
+					strNewTag += '<div class="col-md-2">';
+						strNewTag += '<div class="form-group">';							
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input type="text" name="txtNumeroSerie[]" class="form-control" placeholder="Numero de Serie" />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';
+					
+					strNewTag += '<div class="col-md-2">';
+						strNewTag += '<div class="form-group">';							
+							strNewTag += '<div class="form-line">';
+								strNewTag += '<input type="text" name="txtModelo[]" class="form-control" placeholder="Modelo" />';
+							strNewTag += '</div>';
+						strNewTag += '</div>';
+					strNewTag += '</div>';
+					
+					strNewTag += '<div class="col-md-1">';
+						strNewTag += '<a class="add-product" href="javascript:void(0)" type="button"><i class="material-icons">playlist_add</i></a>';
+						strNewTag += '<a class="delete-product" href="javascript:void(0)" type="button"><i class="material-icons">delete</i></a>';
+					strNewTag += '</div>';
+				strNewTag += '</div>';
+				
+				$('#productoContainer').append(strNewTag);
+	            $('#productoContainer').data('cardinality', cardinality);
+			});
+			
+			$(document).on('click', '.delete-product', function() {
+				var _this = this;
+				swal({
+					title	: "&iquest;Est&aacute;s seguro?",
+					text	: "Una vez eliminado, la partida sera eliminado del resguardo.",
+					type	: "warning",
+					showCancelButton: true,
+					cancelButtonText: 'Cancelar',
+					confirmButtonText: 'Eliminar',
+				}).then((result) => {
+					if(result) {
+						$(_this).parent().parent().remove();																				
+					}
+				}).catch(swal.noop);				
+			});
+		});			
+		/*]]>*/</script>
+</th:block>

@@ -70,6 +70,9 @@ import com.ibmexico.services.UsuarioRolService;
 import com.ibmexico.services.UsuarioService;
 import com.lowagie.text.DocumentException;
 import com.pusher.rest.Pusher;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 
 @Controller
 @RequestMapping("controlPanel/cotizaciones")
@@ -292,8 +295,11 @@ public class CotizacionesController {
 			objCotizacion.setIva(new BigDecimal(0));
 			objCotizacion.setTotal(new BigDecimal(0));
 			
-			cotizacionService.create(objCotizacion);
+			cotizacionService.create(objCotizacion);						
 			
+			/**
+			 * NOTIFICACIONES DE PUSHER
+			 */						
 			Pusher pusher = new Pusher("575478", "7b4b9197d41e13beb30d", "8c116fb03f6b79d32085");
 			pusher.setCluster("us2");
 			
@@ -314,6 +320,9 @@ public class CotizacionesController {
 			
 				pusher.trigger("notifications", "new-notification", jsonReturn2.build());
 			}
+			/**
+			 * 
+			 */
 			
 			objRedirectView = new RedirectView("/WebSar/controlPanel/cotizaciones");
 			modelAndViewComponent.addResult(objRedirectAttributes, EnumMessage.COTIZACIONES_CREATE_001);
@@ -603,6 +612,15 @@ public class CotizacionesController {
 				if(cmbEstatus.equals(2) && objCotizacion.getAprobacionFecha() == null) {
 					LocalDate ldNow = LocalDate.now();
 					objCotizacion.setAprobacionFecha(ldNow);
+					
+					//ESTA NOTIFICACION IRIA EN LA PARTE DE APROBACION AL MOMENTO QUE SE APRUEBE UNA COTIZACION MAYOR A 10,000
+					Twilio.init(GeneralConfiguration.getInstance().getTwilioAccountSID(), GeneralConfiguration.getInstance().getTwilioAuthToken());
+					
+					Message message = Message.creator(new PhoneNumber("whatsapp:+5219931695789"), 
+							new PhoneNumber("whatsapp:+14155238886"),
+							"Your appointment is coming up on July 21 at 3PM").create();
+					
+					System.out.println(message.getSid());
 				}
 				
 				if(cmbEstatus.equals(3) && objCotizacion.getCotizacionEstatus().getIdCotizacionEstatus() != 3) {

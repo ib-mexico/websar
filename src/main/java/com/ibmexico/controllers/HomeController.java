@@ -268,58 +268,10 @@ public class HomeController {
 			BigDecimal totalCuota = cotizacionUsuarioQuotaService.totalUsuarioQuotaCotizacionPeriodo(objUsuario, itemCotizacion, fechaInicio, fechaFin);
 			String totalCuotaNatural = GeneralConfiguration.getInstance().getNumberFormat().format(totalCuota);
 			
-			/*COMISION DEL USUARIO */
-			CotizacionComisionEntity objComision = cotizacionComisionService.comisionUsuarioCotizacionPeriodo(objUsuario, itemCotizacion, fechaInicio, fechaFin);					
 			
-			BigDecimal comisionEjecutivo = new BigDecimal(0);
-			BigDecimal comisionCotizante = new BigDecimal(0);
-			BigDecimal comisionVendedor = new BigDecimal(0);
-			BigDecimal comisionImplementador = new BigDecimal(0);
-			
-			BigDecimal porcentajeEjecutivo = new BigDecimal(0);
-			BigDecimal porcentajeCotizante = new BigDecimal(0);
-			BigDecimal porcentajeVendedor = new BigDecimal(0);
-			BigDecimal porcentajeImplementador = new BigDecimal(0);
-			
-			
-			if(objComision != null) {
-				
-				System.out.println("----------------- OBJCOMISION ---------------------");
-				System.out.println(objComision.toString());
-				System.out.println("----------------- ********* ---------------------");
-				System.out.println("----------------- ********* ---------------------");
-				
-				if(objComision.getUsuarioCotizante().getIdUsuario() == objUsuario.getIdUsuario()){
-					comisionCotizante = objComision.getComisionCotizante();
-					porcentajeCotizante = objComision.getPorcentajeCotizante();
-				}
-				
-				if(objComision.getUsuarioVendedor().getIdUsuario() == objUsuario.getIdUsuario()){
-					comisionVendedor = objComision.getComisionVendedor();
-					porcentajeVendedor = objComision.getPorcentajeVendedor();
-				}
-				
-				if(objComision.getUsuarioEjecutivo() != null) {
-					if(objComision.getUsuarioEjecutivo().getIdUsuario() == objUsuario.getIdUsuario()){
-						comisionEjecutivo = objComision.getComisionEjecutivo();
-						porcentajeEjecutivo = objComision.getPorcentajeEjecutivo();
-					}
-				}
-				
-				if(objComision.getUsuarioImplementador() != null) {
-					if(objComision.getUsuarioImplementador().getIdUsuario() == objUsuario.getIdUsuario()){
-						comisionImplementador = objComision.getComisionImplementador();
-						porcentajeImplementador =objComision.getPorcentajeImplementador();
-					}
-				}				
-			}
-			
-			BigDecimal totalPorcentaje = porcentajeEjecutivo.add(porcentajeCotizante).add(porcentajeVendedor).add(porcentajeImplementador);
+			BigDecimal totalPorcentaje = new BigDecimal(0);;
 			BigDecimal acumuladoPorcentaje = totalPorcentaje.multiply(new BigDecimal(0.1));
 			String acumuladoPorcentajeNatural = GeneralConfiguration.getInstance().getNumberFormat().format(acumuladoPorcentaje);
-			
-			BigDecimal totalComision = comisionEjecutivo.add(comisionCotizante).add(comisionVendedor).add(comisionImplementador);
-			String totalComisionNatural = GeneralConfiguration.getInstance().getNumberFormat().format(totalComision);
 			
 			//******************************************************************
 			//CALCULO DE TOTALES
@@ -328,7 +280,6 @@ public class HomeController {
 			totalCompras	= totalCompras.add(importeCompra);
 			totalUtilidad	= totalUtilidad.add(utilidadBruta);
 			totalAcumuladoCuota = totalAcumuladoCuota.add(totalCuota);
-			totalAcumuladoComision = totalAcumuladoComision.add(totalComision);
 			//*******************************************************************
 			
 			myMap1.put("folio", itemCotizacion.getFolio());
@@ -339,8 +290,7 @@ public class HomeController {
 			myMap1.put("compras", importeCompraNatural);
 			myMap1.put("utilidad_bruta", utilidadBrutaNatural);
 			myMap1.put("acumulado_cuota", totalCuotaNatural);
-			myMap1.put("acumulado_comision", acumuladoPorcentajeNatural);
-			myMap1.put("total_comision", totalComisionNatural);
+			myMap1.put("acumulado_porcentaje", acumuladoPorcentajeNatural);
 			
 			myMap.add(iterator,myMap1);
 			
@@ -528,32 +478,45 @@ public class HomeController {
 		
 		LocalDate fechaMesInicio = null;
 		LocalDate fechaMesFin = null;
+		int dayFlag = LocalDate.now().getDayOfMonth();
 		
 		UsuarioEntity objUsuario = null;
 		EmpresaEntity objEmpresa = empresaService.findByIdEmpresa(idEmpresa);
 		
-		//USUARIO
+		//USUARIO CON PRIVILEGIO DE COBRANZA (OBTIENE REPORTE POR 15 DIAS Y POR MES COMPLETO)
 		if((idUsuario != null && idUsuario >= 1) && sessionService.hasRol("COTIZACIONES_COBRANZA")) {
 			objUsuario = usuarioService.findByIdUsuario(idUsuario);
+			
+			if(!fecha.equals("") && fecha.contains("-")) {
+				
+				String[] arrFecha = fecha.split("-");
+				int year = Integer.parseInt(arrFecha[2]);
+				int month = Integer.parseInt(arrFecha[1]);
+				int day = Integer.parseInt(arrFecha[0]);
+				
+				fechaMesInicio = LocalDate.of(year, month, day).withDayOfMonth(1);
+				fechaMesFin = LocalDate.of(year, month, day).withDayOfMonth(LocalDate.of(year, month, day).lengthOfMonth());
+				
+			} else {			
+				if(dayFlag >= 1 && dayFlag <= 15) {
+					fechaMesInicio = LocalDate.now().minusMonths(1).withDayOfMonth(16);
+					fechaMesFin = LocalDate.now().minusMonths(1).withDayOfMonth(LocalDate.now().minusMonths(1).lengthOfMonth());
+				} else {
+					fechaMesInicio = LocalDate.now().withDayOfMonth(1);
+					fechaMesFin = LocalDate.now().withDayOfMonth(15);
+				}
+			}
+			
 		} else {
-			objUsuario = sessionService.getCurrentUser();
-		}
-		
-		 
-		//PERIODO
-		if(!fecha.equals("") && fecha.contains("-")) {
+			objUsuario = sessionService.getCurrentUser();			
 			
-			String[] arrFecha = fecha.split("-");
-			int year = Integer.parseInt(arrFecha[2]);
-			int month = Integer.parseInt(arrFecha[1]);
-			int day = Integer.parseInt(arrFecha[0]);
-			
-			fechaMesInicio = LocalDate.of(year, month, day).withDayOfMonth(1);
-			fechaMesFin = LocalDate.of(year, month, day).withDayOfMonth(LocalDate.of(year, month, day).lengthOfMonth());
-			
-		} else {			
-			fechaMesInicio = LocalDate.now().withDayOfMonth(1);
-			fechaMesFin = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+			if(dayFlag >= 1 && dayFlag <= 15) {
+				fechaMesInicio = LocalDate.now().minusMonths(1).withDayOfMonth(16);
+				fechaMesFin = LocalDate.now().minusMonths(1).withDayOfMonth(LocalDate.now().minusMonths(1).lengthOfMonth());
+			} else {
+				fechaMesInicio = LocalDate.now().withDayOfMonth(1);
+				fechaMesFin = LocalDate.now().withDayOfMonth(15);
+			}
 		}
 		
 		//TOTALES DEL REPORTE DE UTILIDAD
@@ -775,6 +738,7 @@ public class HomeController {
 			
 			BigDecimal comisionCobranza = new BigDecimal(0);			
 			String comisionCobranzaNatural = "-";
+			String porcentajeCobranzaNatural = "-";
 			
 			
 			if(objComision != null) {
@@ -783,8 +747,9 @@ public class HomeController {
 					if(objComision.getUsuarioCobranza().getIdUsuario() == objUsuario.getIdUsuario()){
 						comisionCobranza = objComision.getComisionCobranza();
 						comisionCobranzaNatural = GeneralConfiguration.getInstance().getNumberFormat().format(objComision.getComisionCobranza());
+						porcentajeCobranzaNatural = objComision.getPorcentajeCobranzaNatural();
 					}
-				}				
+				}	
 			}
 			
 			//TOTAL DE COMISIÓN GENERADA POR LA COTIZACIÓN
@@ -795,7 +760,7 @@ public class HomeController {
 			myMap1.put("dias_credito", itemCotizacion.getDiasCredito());
 			myMap1.put("fecha_cobranza", itemCotizacion.getInicioCobranzaFechaNatural());
 			myMap1.put("fecha_pago", itemCotizacion.getPagoFechaNatural());
-			myMap1.put("porcentaje_cobranza", objComision.getPorcentajeCobranzaNatural());
+			myMap1.put("porcentaje_cobranza", porcentajeCobranzaNatural);
 			myMap1.put("comision_cobranza", comisionCobranzaNatural);
 			
 			myMap.add(iterator,myMap1);
@@ -841,6 +806,7 @@ public class HomeController {
 			List<CotizacionEntity> lstCotizaciones = cotizacionService.lstCotizacionesNoCobradas();
 			List<Map<String , String>> mapCotizacionesFiltradas  = new ArrayList<Map<String,String>>();
 			Integer iterator = 0;
+			BigDecimal totalCotizaciones = new BigDecimal(0);
 			
 			LocalDate ldNow = LocalDate.now();		
 			
@@ -853,14 +819,17 @@ public class HomeController {
 					
 					if(diff > Integer.parseInt(itemCotizacion.getDiasCredito().trim())) {
 						myMap1.put("folio", itemCotizacion.getFolio());
+						myMap1.put("fecha_aprobacion", itemCotizacion.getAprobacionFechaNatural());
+						myMap1.put("dias_credito", itemCotizacion.getDiasCredito());
 						myMap1.put("fecha_factura", itemCotizacion.getFacturacionFechaNatural());
-						myMap1.put("estatus", itemCotizacion.getCotizacionEstatus().getCotizacionEstatus());
+						myMap1.put("factura", itemCotizacion.getFacturaNumero());
 						myMap1.put("cliente", itemCotizacion.getCliente().getCliente());
 						myMap1.put("total", itemCotizacion.getTotalNatural());
 						
 						mapCotizacionesFiltradas.add(iterator, myMap1);
 						
 						iterator++;
+						totalCotizaciones = totalCotizaciones.add(itemCotizacion.getTotal());
 					}
 				}
 			}
@@ -869,6 +838,8 @@ public class HomeController {
 				try {
 					Map<String, Object> mapVariables = new HashMap<String, Object>();
 					mapVariables.put("lstCotizaciones", mapCotizacionesFiltradas);
+					mapVariables.put("total_cotizaciones_natural", GeneralConfiguration.getInstance().getNumberFormat().format(totalCotizaciones));
+					mapVariables.put("empresa", "");
 					mapVariables.put("titulo", "Cotizaciones pendientes por cobrar");
 					mapVariables.put("alias", sessionService.getCurrentUser().getAlias());
 					mailerComponent.send(sessionService.getCurrentUser().getCorreo(), "Hay cotizaciones con falta de pago", Templates.EMAIL_COTIZACIONES_POR_COBRAR, mapVariables);

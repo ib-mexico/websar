@@ -1,5 +1,8 @@
 <th:block th:fragment="title">
 	<h1>Notificaci&oacute;n de Cotizaciones</h1>
+	<th:block th:if="${empresa != ''}">
+		<h2 th:text="${empresa}"></h2>
+	</th:block>
 </th:block>
 
 
@@ -26,6 +29,11 @@
 			<td style="text-align: left; border: solid 1px #333333" th:text="${itemCotizacion.factura}"></td>
 			<td style="text-align: left; border: solid 1px #333333" th:text="${itemCotizacion.cliente}"></td>
 			<td style="text-align: right; border: solid 1px #333333" th:text="${itemCotizacion.total}"></td>
+		</tr>
+		
+		<tr>
+			<td colspan="6"></td>
+			<td style="text-align: right; border: solid 1px #333333" th:text="${'$' + total_cotizaciones_natural}"></td>
 		</tr>		
 	</table>
 </th:block>

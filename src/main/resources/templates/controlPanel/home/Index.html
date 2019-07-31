@@ -312,7 +312,7 @@
 			});
 			
 			$('#btnGenerarReporteComision').click(function(e){
-				e.preventDefault();
+				/*e.preventDefault();
 				var urlRedirect = '';
 				
 				if($('#txtFecha').val() != '') {					
@@ -325,7 +325,22 @@
 					urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-comision-pdf/actual/' + $('#cmbEmpresa').val() + '/0';
 				}
 				
-				window.open(urlRedirect);				
+				window.open(urlRedirect);*/
+				
+				e.preventDefault();
+				var urlRedirect = '';
+				
+				if($('#cmbUsuario').length) {					
+					if($('#txtFecha').val() != '') {
+						urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-comision-pdf/' + $('#txtFecha').val() + '/' + $('#cmbEmpresa').val() + '/' + $('#cmbUsuario').val();
+					} else {						
+						urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-comision-pdf/actual/' + $('#cmbEmpresa').val() + '/' + $('#cmbUsuario').val();
+					}					
+				} else {
+					urlRedirect = [[${_PATH_}]] + 'controlPanel/reporte-comision-pdf/actual/' + $('#cmbEmpresa').val() + '/0';
+				}
+				
+				window.open(urlRedirect);
 			});
 			
 			$('#btnGenerarReporteCobranza').click(function(e){

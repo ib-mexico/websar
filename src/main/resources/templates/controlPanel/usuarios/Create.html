@@ -42,13 +42,13 @@
 						</div>
 						
 						<div class="row clearfix">
-							 <div class="col-md-4">
-	                        	<div class="form-group">
-	                        		<p><b>Correo *</b></p>
-	                                <div class="form-line">
-	                                    <input type="text" name="txtCorreo" class="form-control" required="required" />
-	                                </div>
-	                            </div>
+							<div class="col-md-4">
+	                            <p><b>Departamento *</b></p>
+	                            <select class="form-control show-tick" name="cmbDepartamento" id="cmbDepartamento" data-live-search="true" >
+	                       			<th:block th:each="item : ${lstDepartamentos}" >
+	                       				<option th:value="${item.idDepartamento}" th:text="${item.departamento}"></option>
+	                       			</th:block>
+	                       		</select>
 	                        </div>
 	                        
 	                        <div class="col-md-4">
@@ -125,6 +125,15 @@
 	                        		<p><b>Usuario *</b></p>
 	                                <div class="form-line">
 	                                    <input type="text" id="txtUsername" name="txtUsername" class="form-control" required="required" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        
+	                        <div class="col-md-4">
+	                        	<div class="form-group">
+	                        		<p><b>Correo *</b></p>
+	                                <div class="form-line">
+	                                    <input type="text" name="txtCorreo" class="form-control" required="required" />
 	                                </div>
 	                            </div>
 	                        </div>

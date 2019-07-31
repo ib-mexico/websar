@@ -1,0 +1,139 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+        <h2>RESGUARDOS</h2>
+    </div>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>Firma de Resguardo/<th:block th:text="${objResguardo.getResguardoTipo().getResguardoTipo()}"></th:block></h2>
+    			</div>
+    			
+    			<div class="body">    			
+    				<div class="row clearfix table-responsive">
+    					<div class="col-md-12">				
+	    					<h3>PARTIDAS DEL RESGUARDO</h3>
+	    					<table class="table table-bordered">
+	    						<thead>    						
+		    						<tr>
+		    							<th># Cantidad</th>
+		    							<th>Descripci&oacute;n</th>
+		    							<th>Marca</th>
+		    							<th>N&uacute;mero de Serie</th>
+		    							<th>Modelo</th>
+		    						</tr>
+	    						</thead>
+	    						
+	    						<tbody>
+	    							<th:block th:each="item : ${lstPartidas}">
+	    								<tr>
+	    									<td scope="row" th:text="${item.getCantidad()}"></td>
+	    									<td th:text="${item.getDescripcion()}"></td>
+	    									<td th:text="${item.getMarca()}"></td>
+	    									<td th:text="${item.getNumeroSerie()}"></td>
+	    									<td th:text="${item.getModelo()}"></td>
+	    								</tr>
+	    							</th:block>
+	    						</tbody>
+	    					</table>
+    					</div>
+    				</div>
+    			
+    				<form id="formResguardo" th:action="${ {_PATH_} + 'controlPanel/resguardos/firma'}" th:method="POST">
+    					<input type="hidden" name="hddIdResguardo" th:value="${objResguardo.getIdResguardo()}" />
+    					<input type="hidden" id="imgFirmaEntrega" name="imgFirmaEntrega" value="" />
+    					<input type="hidden" id="imgFirmaRecepcion" name="imgFirmaRecepcion" value="" />
+    				
+						<div class="row clearfix">
+							<div class="col-md-12">
+								<h3>Firma de entrega</h3>
+								<div id="firmaEntrega" style="border: 2px dotted black; background-color: lightgrey;"></div>
+								<div class="align-right">
+									<button id="btnRestaurar1" type="button" class="btn btn-warning waves-effect">RESTAURAR</button>
+									<button id="btnGuardar1" type="button" class="btn btn-success waves-effect">GUARDAR</button>
+								</div>
+	                        </div>
+						</div>										
+						
+						<br />	
+						
+						<div class="row clearfix m-t-20">
+							<div class="col-md-12">
+								<h3>Firma de recepci&oacute;n</h3>
+								<div id="firmaRecepcion" style="border: 2px dotted black; background-color: lightgrey;"></div>
+								<div class="align-right">
+									<button id="btnRestaurar2" type="button" class="btn btn-warning waves-effect">RESTAURAR</button>
+									<button id="btnGuardar2" type="button" class="btn btn-success waves-effect">GUARDAR</button>
+								</div>
+	                        </div>
+						</div>				
+					
+						<div class="row clearfix">
+							<div class="col-md-3 col-md-offset-8 text-right">
+								<a th:href="${ {_PATH_} + 'controlPanel/resguardos'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<button type="submit" class="btn btn-primary m-t-15 waves-effect">FINALIZAR</button>
+							</div>
+						</div>
+					</form>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- JSignature -->
+	<script th:src="@{/plugins/jsignature/jSignature.min.js}"></script>
+	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
+			
+		var idUsuario = [[${_USER_.getIdUsuario()}]];
+	
+		$(document).ready(function() {				
+			//JSIGNATURE
+			$("#firmaEntrega").jSignature()
+			$("#firmaRecepcion").jSignature()
+
+			
+			// FORM SUBMIT
+			$('#formResguardo').submit(function(e){
+				
+				var flag = true;
+				
+				if($('#imgFirmaRecepcion').val() != "" && $('#imgFirmaEntrega').val() != "") {
+					flag = false
+				}
+				if(flag) {									
+					e.preventDefault();
+					swal("Hey!", "Es necesario colocar las firmas solicitadas.", "warning");
+				}
+		  	});
+			
+			$('#btnRestaurar1').click(function() {
+				$("#firmaEntrega").jSignature("reset");
+				$("#firmaEntrega").jSignature("enable");
+				$('#imgFirmaEntrega').val("");
+			});
+			
+			$('#btnGuardar1').click(function() {
+				$("#firmaEntrega").jSignature("disable");
+				var data = $("#firmaEntrega").jSignature("getData", "image");
+				$('#imgFirmaEntrega').val(data[1]);
+			});
+			
+			$('#btnRestaurar2').click(function() {
+				$("#firmaRecepcion").jSignature("reset");
+				$("#firmaRecepcion").jSignature("enable");
+				$('#imgFirmaRecepcion').val("");
+			});
+			
+			$('#btnGuardar2').click(function() {
+				$("#firmaRecepcion").jSignature("disable");
+				var data = $("#firmaRecepcion").jSignature("getData", "image");	
+				$('#imgFirmaRecepcion').val(data[1]);
+				
+			});
+
+		});			
+		/*]]>*/</script>
+</th:block>

@@ -1,0 +1,219 @@
+<th:block th:fragment="body">
+	<!--/* HEADER */-->
+	<table width="100%">
+		<tr>			
+			<td style="width:139px;">
+				<img th:src="@{'http://localhost:8080/WebSar/assets/images/' + ${objResguardo.empresa.logotipo}}" />
+			</td>
+			
+			<td style="width:10px"></td>
+			<td style="width:278px">
+				<table width="100%">
+				<tr>
+					<td class="tituloH2">Resguardo de <th:block th:text="${objResguardo.resguardoTipo.resguardoTipo}"></th:block></td>
+				</tr>
+				</table>
+			</td>
+			<td style="width:10px"></td>
+				
+			
+			<td style="width:139px">
+				<table width="100%">
+					<tr>
+						<td class="tituloTH2">FOLIO</td>
+					</tr>
+					
+					<tr>
+						<td class="celdaH3" th:text="${objResguardo.folio}"></td>
+					</tr>
+				</table>
+			</td>
+			
+		</tr>
+	</table>
+	
+	<!--/* GENERAL INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 30px;">
+		<tr>
+			<td width="35%" class="tituloTH5">APELLIDO PATERNO:</td>
+			<td width="35%" class="tituloTH5">APELLIDO MATERNO:</td>
+			<td width="30%" class="tituloTH5">NOMBRE(S):</td>
+		</tr>	
+		<tr>
+			<td width="35%" class="celdaH6" th:text="${objResguardo.usuarioRecibe.apellidoPaterno}"></td>
+			<td width="35%" class="celdaH6" th:text="${objResguardo.usuarioRecibe.apellidoMaterno}"></td>
+			<td width="30%" class="celdaH6" th:text="${objResguardo.usuarioRecibe.nombre}"></td>
+		</tr>
+		<tr>
+			<td width="35%" class="tituloTH5">PUESTO:</td>
+			<td width="35%"></td>
+			<td width="30%" class="tituloTH5">FECHA DE ENTREGA:</td>
+		</tr>
+		<tr>
+			<td width="35%" class="celdaH6" th:text="${objResguardo.usuarioRecibe.puesto}"></td>
+			<td width="35%"></td>
+			<td width="30%" class="celdaH6" th:text="${objResguardo.creacionFechaNatural}"></td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="50%">
+				<table width="100%" cellpadding="2" cellspacing="0">
+					<tr>
+						<td width="10%" class="tituloTH5">Cantidad</td>
+						<td width="40%" class="tituloTH5">Descripci&oacute;n</td>
+					</tr>
+					<tr th:each="itemProducto : ${lstPartidas}">
+						<td width="10%" class="celdaH6" th:text="${itemProducto.cantidad}"></td>
+						<td width="40%" class="celdaH6" style="text-align:left" th:text="${itemProducto.descripcion}"></td>
+					</tr>
+					<tr>
+						<td colspan="2" style="font-size: 8px;"><b>Nota:</b> El uso de <th:block th:text="${objResguardo.resguardoTipo.resguardoTipo}"></th:block> es de car&aacute;cter obligatorio</td>
+					</tr>
+				</table>
+			</td>
+			<td width="50%">
+				<span class="textoH6" style="padding-left: 20px; padding-right: 20px; text-align:center;">LA DOTACION QUE AQUI SE ENTREGA ES Y SERA DE LA EMPRESA EN TODO MOMENTO, EN CASO DE TERMINACION DE LA RELACION LABORAL,
+					ME COMPROMETO A HACER LA DEVOLUCION DE LA DOTACION SI LA EMPRESA ME LO SOLICITA.</span>
+					
+				<br /><br />
+				
+				<span class="textoH6" style="padding-left: 20px; padding-right: 20px; text-align:center; font-weight: bold;">ACEPTO DE CONFORMIDAD EL CONTENIDO DE ESTE DOCUMENTO, SIN FORMULAR OBSERVACI&Oacute;N ALGUNA.</span>
+			</td>
+		</tr>
+	</table>
+	
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 50px;">
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Nombre y Firma:</td>
+			<td class="subrayadoH6" width="30%" th:text="${objResguardo.usuarioEntrega.nombreCompleto}"></td>
+			<td class="tituloH6" width="10%" style="text-align:left"></td>
+			<td class="tituloH6" width="15%" style="text-align:left">Nombre y Firma</td>
+			<td class="subrayadoH6" width="30%" th:text="${objResguardo.usuarioRecibe.nombreCompleto}"></td>
+		</tr>
+		
+		<tr>
+			<td class="subrayadoH6" colspan="2" width="40%" style="text-align:center">
+				<img style="width: 250px;" th:src="@{'http://localhost:8080/WebSar/ficheros/resguardos/' + ${objResguardo.urlFirmaEntrega}}" />
+			</td>
+			<td class="tituloH6" width="10%"></td>
+			<td class="subrayadoH6" colspan="2" width="40%" style="text-align:center">
+				<img style="width: 250px;" th:src="@{'http://localhost:8080/WebSar/ficheros/resguardos/' + ${objResguardo.urlFirmaRecibe}}" />
+			</td>
+		</tr>
+		
+	</table>
+	
+	<br />
+	<hr />
+	
+	<!--/* HEADER */-->
+	<table width="100%">
+		<tr>			
+			<td style="width:139px;">
+				<img th:src="@{'http://localhost:8080/WebSar/assets/images/' + ${objResguardo.empresa.logotipo}}" />
+			</td>
+			
+			<td style="width:10px"></td>
+			<td style="width:278px">
+				<table width="100%">
+				<tr>
+					<td class="tituloH2">Resguardo de <th:block th:text="${objResguardo.resguardoTipo.resguardoTipo}"></th:block></td>
+				</tr>
+				</table>
+			</td>
+			<td style="width:10px"></td>
+				
+			
+			<td style="width:139px">
+				<table width="100%">
+					<tr>
+						<td class="tituloTH2">FOLIO</td>
+					</tr>
+					
+					<tr>
+						<td class="celdaH3" th:text="${objResguardo.folio}"></td>
+					</tr>
+				</table>
+			</td>
+			
+		</tr>
+	</table>
+	
+	<!--/* GENERAL INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 30px;">
+		<tr>
+			<td width="35%" class="tituloTH5">APELLIDO PATERNO:</td>
+			<td width="35%" class="tituloTH5">APELLIDO MATERNO:</td>
+			<td width="30%" class="tituloTH5">NOMBRE(S):</td>
+		</tr>	
+		<tr>
+			<td width="35%" class="celdaH6" th:text="${objResguardo.usuarioRecibe.apellidoPaterno}"></td>
+			<td width="35%" class="celdaH6" th:text="${objResguardo.usuarioRecibe.apellidoMaterno}"></td>
+			<td width="30%" class="celdaH6" th:text="${objResguardo.usuarioRecibe.nombre}"></td>
+		</tr>
+		<tr>
+			<td width="35%" class="tituloTH5">PUESTO:</td>
+			<td width="35%"></td>
+			<td width="30%" class="tituloTH5">FECHA DE ENTREGA:</td>
+		</tr>
+		<tr>
+			<td width="35%" class="celdaH6" th:text="${objResguardo.usuarioRecibe.puesto}"></td>
+			<td width="35%"></td>
+			<td width="30%" class="celdaH6" th:text="${objResguardo.creacionFechaNatural}"></td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="50%">
+				<table width="100%" cellpadding="2" cellspacing="0">
+					<tr>
+						<td width="10%" class="tituloTH5">Cantidad</td>
+						<td width="40%" class="tituloTH5">Descripci&oacute;n</td>
+					</tr>
+					<tr th:each="itemProducto : ${lstPartidas}">
+						<td width="10%" class="celdaH6" th:text="${itemProducto.cantidad}"></td>
+						<td width="40%" class="celdaH6" style="text-align:left" th:text="${itemProducto.descripcion}"></td>
+					</tr>
+					<tr>
+						<td colspan="2" style="font-size: 8px;"><b>Nota:</b> El uso de <th:block th:text="${objResguardo.resguardoTipo.resguardoTipo}"></th:block> es de car&aacute;cter obligatorio</td>
+					</tr>
+				</table>
+			</td>
+			<td width="50%">
+				<span class="textoH6" style="padding-left: 20px; padding-right: 20px; text-align:center;">LA DOTACION QUE AQUI SE ENTREGA ES Y SERA DE LA EMPRESA EN TODO MOMENTO, EN CASO DE TERMINACION DE LA RELACION LABORAL,
+					ME COMPROMETO A HACER LA DEVOLUCION DE LA DOTACION SI LA EMPRESA ME LO SOLICITA.</span>
+					
+				<br /><br />
+				
+				<span class="textoH6" style="padding-left: 20px; padding-right: 20px; text-align:center; font-weight: bold;">ACEPTO DE CONFORMIDAD EL CONTENIDO DE ESTE DOCUMENTO, SIN FORMULAR OBSERVACI&Oacute;N ALGUNA.</span>
+			</td>
+		</tr>
+	</table>
+	
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 50px;">
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Nombre y Firma:</td>
+			<td class="subrayadoH6" width="30%" th:text="${objResguardo.usuarioEntrega.nombreCompleto}"></td>
+			<td class="tituloH6" width="10%" style="text-align:left"></td>
+			<td class="tituloH6" width="15%" style="text-align:left">Nombre y Firma</td>
+			<td class="subrayadoH6" width="30%" th:text="${objResguardo.usuarioRecibe.nombreCompleto}"></td>
+		</tr>
+		
+		<tr>
+			<td class="subrayadoH6" colspan="2" width="40%" style="text-align:center">
+				<img style="width: 250px;" th:src="@{'http://localhost:8080/WebSar/ficheros/resguardos/' + ${objResguardo.urlFirmaEntrega}}" />
+			</td>
+			<td class="tituloH6" width="10%"></td>
+			<td class="subrayadoH6" colspan="2" width="40%" style="text-align:center">
+				<img style="width: 250px;" th:src="@{'http://localhost:8080/WebSar/ficheros/resguardos/' + ${objResguardo.urlFirmaRecibe}}" />
+			</td>
+		</tr>
+		
+	</table>
+		
+</th:block>

@@ -191,6 +191,41 @@
 		</table>
 	</th:block>
 	
+	<!--/* SOPORTE R2A INFO */-->
+	<th:block th:if="${objCotizacion.empresa.idEmpresa == 3}">	
+		<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+			<tr>
+				<td width="100%" colspan="3" class="tituloTH6">Para soporte t&eacute;cnico: Cercos Electricos, Control de Accesos, Enlaces, C&aacute;maras y Alarmas.</td>
+			</tr>
+			<tr>
+				<td width="33%" class="tituloTH6">E-mail:</td>
+				<td width="34%" class="tituloTH6">Tel&eacute;fonos M&oacute;viles:</td>
+				<td width="33%" class="tituloTH6">Tel&eacute;fonos de Oficina:</td>
+			</tr>
+			<tr>
+				<td width="33%" class="celdaH6" th:text="${'soporte@' + objCotizacion.empresa.dominio}"></td>
+				<td width="34%" class="celdaH6">(55) 1069-3187, (993) 342-07-55</td>
+				<td width="33%" class="celdaH6">(993) 351-18-28</td>
+			</tr>
+		</table>
+		
+		<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+			<tr>
+				<td width="100%" colspan="3" class="tituloTH6">Para soporte t&eacute;cnico: Radios, GPS, Torres Arriostradas, Aires Acondicionados e Instalaciones Electricas.</td>
+			</tr>
+			<tr>
+				<td width="33%" class="tituloTH6">E-mail:</td>
+				<td width="34%" class="tituloTH6">Tel&eacute;fonos M&oacute;viles:</td>
+				<td width="33%" class="tituloTH6">Tel&eacute;fonos de Oficina:</td>
+			</tr>
+			<tr>
+				<td width="33%" class="celdaH6" th:text="${'operaciones@' + objCotizacion.empresa.dominio}"></td>
+				<td width="34%" class="celdaH6">(55) 1069-3187, (993) 342-07-55</td>
+				<td width="33%" class="celdaH6">(993) 351-18-28</td>
+			</tr>
+		</table>
+	</th:block>
+	
 	<!--/* FIRMAS INFO */-->
 	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 50px;">
 		<tr>

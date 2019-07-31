@@ -1,0 +1,115 @@
+<th:block th:fragment="body">
+	<!--/* HEADER */-->
+	<table width="100%">
+		<tr>			
+			<td style="width:139px;">
+				<img th:src="@{'http://localhost:8080/WebSar/assets/images/' + ${objResguardo.empresa.logotipo}}" />
+			</td>
+			
+			<td style="width:10px"></td>
+			<td style="width:278px">
+				<table width="100%">
+				<tr>
+					<td class="tituloH2">Resguardo de Equipos</td>
+				</tr>
+				</table>
+			</td>
+			<td style="width:10px"></td>
+				
+			
+			<td style="width:139px">
+				<table width="100%">
+					<tr>
+						<td class="tituloTH2">FOLIO</td>
+					</tr>
+					
+					<tr>
+						<td class="celdaH3" th:text="${objResguardo.folio}"></td>
+					</tr>
+				</table>
+			</td>			
+		</tr>
+	</table>
+	
+	<!--/* GENERAL INFO */-->
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="25%" class="tituloTH5">Nombre:</td>
+			<td width="75%" class="celdaH6" th:text="${objResguardo.usuarioRecibe.nombreCompleto}"></td>
+		</tr>
+		<tr>
+			<td width="25%" class="tituloTH5">Puesto:</td>
+			<td width="75%" class="celdaH6" th:text="${objResguardo.usuarioRecibe.puesto}"></td>
+		</tr>
+		<tr>
+			<td width="25%" class="tituloTH5">Fecha de Entrega:</td>
+			<td width="75%" class="celdaH6" th:text="${objResguardo.creacionFechaNatural}"></td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%">
+				<span style="text-align:left; font-size:9pt;">Al firmar el presente resguardo me obligo a:</span><br />
+				<ol>
+					<li>Devolver el equipo en el momento en el que me sea requerido por <th:block th:text="${objResguardo.empresa.razonSocial}"></th:block></li>
+					<li>Cubrir&eacute; por mi cuenta el importe de los da&ntilde;os, faltante de equipo, accesorios o herramientas durante el tiempo que el bien est&eacute; bajo mi resguardo.</li>
+					<li>Conservar en &oacute;ptimas condiciones de funcionamiento del bien, as&iacute; como vigilar el oportuno mantenimiento del mismo mediante el Departamento de Soporte T&eacute;cnico.</li>
+					<li>En caso de que me exceda en tiempo o llamadas que no est&eacute;n dentro del plan tarifario que me corresponde pagar&eacute; oportunamente el excedente de la cuenta.</li>
+					<li>Que se me responsabilice de lo que proceda en caso de incumplimiento a cualquiera de los puntos anteriores.</li>
+				</ol>
+			</td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="10%" class="tituloTH5">Cantidad</td>
+			<td width="35%" class="tituloTH5">Descripci&oacute;n</td>
+			<td width="20%" class="tituloTH5">Marca</td>
+			<td width="15%" class="tituloTH5">Modelo</td>
+			<td width="20%" class="tituloTH5">N&uacute;mero de Serie</td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0">
+		<tr th:each="itemProducto : ${lstPartidas}">
+			<td width="10%" class="celdaH6" th:text="${itemProducto.cantidad}"></td>
+			<td width="35%" class="celdaH6" style="text-align:left" th:text="${itemProducto.descripcion}"></td>
+			<td width="20%" class="celdaH6" th:text="${itemProducto.marca}"></td>
+			<td width="15%" class="celdaH6" th:text="${itemProducto.modelo}"></td>
+			<td width="20%" class="celdaH6" th:text="${itemProducto.numeroSerie}"></td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0">
+		<tr>
+			<td width="100%" rowspan="4">
+				<span class="tituloH6" style="text-align:left">Observaciones:</span><br />
+				<span class="textoH6" style="text-align:left; font-style: italic;" th:text="${objResguardo.observaciones}"></span><br />
+			</td>
+		</tr>
+	</table>
+	
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 50px;">
+		<tr>
+			<td class="tituloH6" width="15%" style="text-align:left">Nombre y Firma:</td>
+			<td class="subrayadoH6" width="30%" th:text="${objResguardo.usuarioEntrega.nombreCompleto}"></td>
+			<td class="tituloH6" width="10%" style="text-align:left"></td>
+			<td class="tituloH6" width="15%" style="text-align:left">Nombre y Firma</td>
+			<td class="subrayadoH6" width="30%" th:text="${objResguardo.usuarioRecibe.nombreCompleto}"></td>
+		</tr>
+		
+		<tr>
+			<td class="subrayadoH6" colspan="2" width="40%" style="text-align:center">
+				<img style="width: 250px;" th:src="@{'http://localhost:8080/WebSar/ficheros/resguardos/' + ${objResguardo.urlFirmaEntrega}}" />
+			</td>
+			<td class="tituloH6" width="10%"></td>
+			<td class="subrayadoH6" colspan="2" width="40%" style="text-align:center">
+				<img style="width: 250px;" th:src="@{'http://localhost:8080/WebSar/ficheros/resguardos/' + ${objResguardo.urlFirmaRecibe}}" />
+			</td>
+		</tr>
+		
+	</table>	
+
+</th:block>

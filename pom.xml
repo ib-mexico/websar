@@ -138,6 +138,14 @@
 		  	<version>1.0.0</version>
 		</dependency>
 		
+		
+		<!-- TWILIO -->
+		<dependency>
+  			<groupId>com.twilio.sdk</groupId>
+  			<artifactId>twilio</artifactId>
+  			<version>7.40.1</version>
+		</dependency>
+		
 	</dependencies>
 
 	<build>

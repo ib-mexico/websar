@@ -26,18 +26,18 @@ public interface ICotizacionUsuarioQuotaRepository extends JpaRepository<Cotizac
 	@Query("DELETE FROM CotizacionUsuarioQuotaEntity objQuota WHERE objQuota.cotizacion.idCotizacion = ?1")
 	public void removeCotizacionCuota(int idCotizacion);
 	
-	@Query("SELECT objQuota FROM CotizacionUsuarioQuotaEntity objQuota WHERE objQuota.usuario.idUsuario = ?1 AND (objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 4)")
+	@Query("SELECT objQuota FROM CotizacionUsuarioQuotaEntity objQuota WHERE objQuota.usuario.idUsuario = ?1 AND (objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 4 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 6)")
 	public abstract List<CotizacionUsuarioQuotaEntity> listUsuarioQuotas(int idUsuario);
 	
-	@Query("SELECT objQuota FROM CotizacionUsuarioQuotaEntity objQuota WHERE objQuota.usuario.idUsuario = ?1 AND (objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 4) AND (CONVERT(objQuota.cotizacion.facturacionFecha, DATE) BETWEEN ?2 AND ?3)")
+	@Query("SELECT objQuota FROM CotizacionUsuarioQuotaEntity objQuota WHERE objQuota.usuario.idUsuario = ?1 AND (objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 4 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 6) AND (CONVERT(objQuota.cotizacion.facturacionFecha, DATE) BETWEEN ?2 AND ?3)")
 	public abstract List<CotizacionUsuarioQuotaEntity> listUsuarioQuotasPeriodo(int idUsuario, LocalDate ldFechaInicio, LocalDate ldFechaFin);
 	
-	@Query("SELECT COALESCE(SUM(objQuota.valorQuota), 0) FROM CotizacionUsuarioQuotaEntity objQuota WHERE objQuota.usuario.idUsuario = ?1 AND (objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 4) AND (CONVERT(objQuota.cotizacion.facturacionFecha, DATE) BETWEEN ?2 AND ?3)")
+	@Query("SELECT COALESCE(SUM(objQuota.valorQuota), 0) FROM CotizacionUsuarioQuotaEntity objQuota WHERE objQuota.usuario.idUsuario = ?1 AND (objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 4 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 6) AND (CONVERT(objQuota.cotizacion.facturacionFecha, DATE) BETWEEN ?2 AND ?3)")
 	public abstract BigDecimal sumUsuarioQuotaPeriodo(int idUsuario,  LocalDate ldFechaInicio, LocalDate ldFechaFin);
 	
-	@Query("SELECT COALESCE(SUM(objQuota.valorQuota), 0) FROM CotizacionUsuarioQuotaEntity objQuota WHERE objQuota.usuario.idUsuario = ?1 AND objQuota.cotizacion.empresa.idEmpresa = ?4 AND (objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 4) AND (CONVERT(objQuota.cotizacion.facturacionFecha, DATE) BETWEEN ?2 AND ?3)")
+	@Query("SELECT COALESCE(SUM(objQuota.valorQuota), 0) FROM CotizacionUsuarioQuotaEntity objQuota WHERE objQuota.usuario.idUsuario = ?1 AND objQuota.cotizacion.empresa.idEmpresa = ?4 AND (objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 4 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 6) AND (CONVERT(objQuota.cotizacion.facturacionFecha, DATE) BETWEEN ?2 AND ?3)")
 	public abstract BigDecimal sumUsuarioQuotaPeriodo(int idUsuario,  LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEmpresa);
 	
-	@Query("SELECT COALESCE(SUM(objQuota.valorQuota), 0) FROM CotizacionUsuarioQuotaEntity objQuota WHERE objQuota.usuario.idUsuario = ?1 AND (objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 4) AND objQuota.cotizacion.idCotizacion = ?2 AND (CONVERT(objQuota.cotizacion.facturacionFecha, DATE) BETWEEN ?3 AND ?4)")
+	@Query("SELECT COALESCE(SUM(objQuota.valorQuota), 0) FROM CotizacionUsuarioQuotaEntity objQuota WHERE objQuota.usuario.idUsuario = ?1 AND (objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 4 OR objQuota.cotizacion.cotizacionEstatus.idCotizacionEstatus = 6) AND objQuota.cotizacion.idCotizacion = ?2 AND (CONVERT(objQuota.cotizacion.facturacionFecha, DATE) BETWEEN ?3 AND ?4)")
 	public abstract BigDecimal sumUsuarioQuotaCotizacionPeriodo(int idUsuario, int idCotizacion,  LocalDate ldFechaInicio, LocalDate ldFechaFin);
 }

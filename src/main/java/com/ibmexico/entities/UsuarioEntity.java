@@ -73,6 +73,10 @@ public class UsuarioEntity {
 	@Column(unique = true, nullable = false, length = 25)
 	private String clave;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_departamento", nullable = true)
+	private DepartamentoEntity departamento;
+	
 	@Column(length = 25)
 	private String puesto;
 	
@@ -108,8 +112,7 @@ public class UsuarioEntity {
 
 	@Column
 	private boolean eliminado = false;
-	
-	
+		
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "usuario", cascade = CascadeType.ALL)
 	private List<UsuarioRolEntity> usuarioRoles = new ArrayList<UsuarioRolEntity>();
 	
@@ -271,6 +274,20 @@ public class UsuarioEntity {
 	
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
+	}
+	
+	public DepartamentoEntity getDepartamento() {
+		
+		DepartamentoEntity objDepartamento = null;
+		
+		if(departamento != null) {
+			objDepartamento = departamento;
+		}
+		return objDepartamento;
+	}
+
+	public void setDepartamento(DepartamentoEntity departamento) {
+		this.departamento = departamento;
 	}
 	
 	public String getPuesto() {

@@ -238,6 +238,10 @@ public class CotizacionService {
 		return cotizacionRepository.lstCotizacionesNoCobradas();
 	}
 	
+	public List<CotizacionEntity> lstCotizacionesNoCobradas(EmpresaEntity objEmpresa) {		
+		return cotizacionRepository.lstCotizacionesNoCobradas(objEmpresa.getIdEmpresa());
+	}
+	
 	/* REPORTE DE APROBADOS */
 	public List<CotizacionEntity> listCotizacionesAprobados(LocalDate ldFechaActual, int condicional) {
 		

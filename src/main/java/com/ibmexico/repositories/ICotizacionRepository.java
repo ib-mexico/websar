@@ -29,6 +29,9 @@ public interface ICotizacionRepository  extends JpaRepository<CotizacionEntity, 
 	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE (objCotizacion.cotizacionEstatus.idCotizacionEstatus = 3) AND objCotizacion.boolNormal = true AND objCotizacion.formaPago.idFormaPago = 1")
 	public abstract List<CotizacionEntity> lstCotizacionesNoCobradas();
 	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE (objCotizacion.cotizacionEstatus.idCotizacionEstatus = 3) AND objCotizacion.boolNormal = true AND objCotizacion.formaPago.idFormaPago = 1 AND objCotizacion.empresa.idEmpresa = ?1")
+	public abstract List<CotizacionEntity> lstCotizacionesNoCobradas(int idEmpresa);
+	
 	
 	//GRAFICAS
 	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE (CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?1 AND ?2)")	
