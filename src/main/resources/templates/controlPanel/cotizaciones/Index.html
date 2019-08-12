@@ -1,180 +1,415 @@
 <th:block th:fragment="body">
-	<div class="block-header">
-        <h2>COTIZACIONES</h2>
-    </div>
-    
-    <ol class="breadcrumb breadcrumb-bg-red">
-      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
-    	<li class="active"><i class="material-icons">view_list</i> Cotizaciones</li>
-  	</ol>
-    
-    <div class="row clearfix">
-    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-    		<div class="card">
-    			<div class="header">
-    				<h2>LISTA DE COTIZACIONES</h2>
-    			</div>
-    			
-    			<div class="body">
-    				<div class="row clearfix" th:if="${rolNuevaCotizacion}">
-    					<div class="col-md-4 col-md-offset-8 text-right">
-    						<a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/create'}" role="button" class="btn bg-purple waves-effect"><i class="material-icons">add_circle</i> Nueva Cotizaci&oacute;n</a>
-    					</div>
-    				</div>
-    			
-    				<div class="row clearfix" id="dtCotizacionesToolBar" data-toolbar-align="left">
-						<div class="col-xs-3 col-sm-3 col-md-3">
-    						<div class="input-group">
-   								<span class="input-group-addon">
-                                	<i class="material-icons">date_range</i>
-	                           	</span>
-	                           	<div class="form-line" id='groupDesde'>
-                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
-	                           	</div>
-							</div>
-    					</div>
-    					
-    					<div class="col-xs-3 col-sm-3 col-md-3">
-    						<div class="input-group">
-    							<span class="input-group-addon">
-                                	<i class="material-icons">date_range</i>
-	                           	</span>
-	                           	<div class="form-line" id='groupHasta'>
-                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
-	                           	</div>
-							</div>
-    					</div>							
+	<div id="appCotizaciones">
+		<div class="block-header">
+			<h2>COTIZACIONES</h2>
+		</div>
+		
+		<ol class="breadcrumb breadcrumb-bg-red">
+			<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+			<li class="active"><i class="material-icons">view_list</i> Cotizaciones</li>
+		</ol>
+		
+		<div class="row clearfix">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="card">
+					<div class="header">
+						<h2>LISTA DE COTIZACIONES</h2>
 					</div>
 					
-					<div class="table-responsive">
-						<div class="container">						
-							<table id="dtCotizaciones" class="table table-bordered table-striped table-hover">
-								<thead>
-									<tr>
-										<th data-width="10%" data-field="idCotizacion" data-halign="left" data-align="center">ID</th>
-										<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
-										<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
-										<th data-width="20%" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>
-										<th data-width="40%" data-field="concepto" data-halign="left">Concepto</th>
-																			
-										<th data-width="20%" data-field="subtotal" data-halign="left" data-align="right">Subtotal</th>
-										<th data-width="20%" data-field="iva" data-halign="left" data-align="right" data-visible="false">Iva</th>
-										<th data-width="20%" data-field="total" data-halign="left" data-align="right">Total</th>
-										
-										<th data-width="25%" data-field="requisicion_folio" data-halign="center" data-visible="false">Folio Requisici&oacute;n</th>
-										<th data-width="30%" data-field="usuario" data-halign="center">Usuario</th>
-										<th data-width="30%" data-field="cliente" data-halign="center">Cliente</th>
-										<th data-width="30%" data-field="ejecutivo" data-halign="center">Ejecutivo</th>
-										
-										<th data-width="150px" data-field="creacionFecha" data-halign="center">Creaci&oacute;n Fecha</th>														
-									</tr>
-								</thead>
-							</table>		
+					<div class="body">
+						<div class="row clearfix" th:if="${rolNuevaCotizacion}">
+							<div class="col-md-4 col-md-offset-8 text-right">
+								<a href="#" role="button" class="btn bg-purple waves-effect" data-toggle="modal" data-target="#modalNuevaCotizacion" v-on:click="loadModal">
+									<i class="material-icons">add_circle</i> Nueva Cotizaci&oacute;n
+								</a>
+							</div>
+						</div>
+					
+						<div class="row clearfix" id="dtCotizacionesToolBar" data-toolbar-align="left">
+							<div class="col-xs-3 col-sm-3 col-md-3">
+								<div class="input-group">
+									<span class="input-group-addon">
+										<i class="material-icons">date_range</i>
+									</span>
+									<div class="form-line" id='groupDesde'>
+										<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-xs-3 col-sm-3 col-md-3">
+								<div class="input-group">
+									<span class="input-group-addon">
+										<i class="material-icons">date_range</i>
+									</span>
+									<div class="form-line" id='groupHasta'>
+										<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
+									</div>
+								</div>
+							</div>							
+						</div>
+						
+						<div class="table-responsive">
+							<div class="container">						
+								<table id="dtCotizaciones" class="table table-bordered table-striped table-hover">
+									<thead>
+										<tr>
+											<th data-width="10%" data-field="idCotizacion" data-halign="left" data-align="center">ID</th>
+											<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+											<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
+											<th data-width="20%" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>
+											<th data-width="40%" data-field="concepto" data-halign="left">Concepto</th>
+																				
+											<th data-width="20%" data-field="subtotal" data-halign="left" data-align="right">Subtotal</th>
+											<th data-width="20%" data-field="iva" data-halign="left" data-align="right" data-visible="false">Iva</th>
+											<th data-width="20%" data-field="total" data-halign="left" data-align="right">Total</th>
+											
+											<th data-width="25%" data-field="requisicion_folio" data-halign="center" data-visible="false">Folio Requisici&oacute;n</th>
+											<th data-width="30%" data-field="usuario" data-halign="center">Usuario</th>
+											<th data-width="30%" data-field="cliente" data-halign="center">Cliente</th>
+											<th data-width="30%" data-field="ejecutivo" data-halign="center">Ejecutivo</th>
+											
+											<th data-width="150px" data-field="creacionFecha" data-halign="center">Creaci&oacute;n Fecha</th>														
+										</tr>
+									</thead>
+								</table>		
+							</div>
 						</div>
 					</div>
-					
-    			</div>
-    		</div>
-    	</div>
-    </div>
-    
-    <!-- ESTATUS COTIZACION MODAL -->
-    <div class="modal fade" id="popUpEstatus" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-            	<form id="formEstatus" th:action="${ {_PATH_} + 'controlPanel/cotizaciones/modificar-estatus'}" th:method="POST">
-	                <div class="modal-header">
-	                    <h4 class="modal-title">Modificar Estatus de Cotizaci&oacute;n</h4>
-	                </div>
-	                <div class="modal-body">                	
-	                    <input type="hidden" id="hddIdCotizacion" name="hddIdCotizacion" value="" />
-	                    <div class="row m-t-20">
-	                    	<div class="col-md-4">
-								<div class="form-group">
-		                       		<p><b>Cotizaci&oacute;n</b></p>
-	                               <div class="form-line">
-	                                   <input type="text" id="txtCotizacion" class="form-control" readonly="readonly" />
-	                               </div>
-	                           </div>
-							</div>
-							
-							<div class="col-md-4">
-								<p><b>Estatus *</b></p>					
-	                            <select class="form-control show-tick" name="cmbEstatus" id="cmbEstatus" data-live-search="true" >
-	                            	<th:block th:each="itemEstatus : ${lstCotizacionEstatus}">
-	                            		<th:block th:if="${rolCotizacionCobranza}">	                            		
-			                            	<option th:value="${itemEstatus.idCotizacionEstatus}" th:text="${itemEstatus.cotizacionEstatus}"></option>
-	                            		</th:block>
-	                            		
-	                            		<th:block th:unless="${rolCotizacionCobranza}">
-	                            			<th:block th:if="${itemEstatus.idCotizacionEstatus != 3 and itemEstatus.idCotizacionEstatus != 4 and itemEstatus.idCotizacionEstatus != 6}">
-	                            				<option th:value="${itemEstatus.idCotizacionEstatus}" th:text="${itemEstatus.cotizacionEstatus}"></option>
-	                            			</th:block>
-	                            		</th:block>	                          	
-	                            	</th:block>
-	                       		</select>
-							</div>	
-	                    </div>
-	                    
-	                    <hr />
-	                    
-	                    <div id="divFactura" class="row">
-	                    	<div class="col-md-4">
-								<b>Factura/fecha</b>
-	                        	<div class="input-group">
-	                       			<span class="input-group-addon">
-	                                       <i class="material-icons">date_range</i>
-	                                   </span>
-	                                   <div class="form-line">
-	                                       <input type="text" class="form-control text-center" id="txtFacturaFecha" name="txtFacturaFecha" />
-	                                   </div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- NUEVA COTIZACION -->
+		<div class="modal fade" id="modalNuevaCotizacion" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<form id="formCotizacion" v-on:submit.prevent="createCotizacion" method="POST" role="form">
+						<div class="modal-header">
+							<h4 class="modal-title">Nueva Cotizaci&oacute;n</h4>
+						</div>
+						
+						<div class="modal-body">
+							<div class="row clearfix">
+								<div class="col-md-4" v-if="rolcotizacionAdmin">
+									<p><b>Usuario *</b></p>
+									<select class="form-control show-tick cmbUsuario" name="cmbUsuario" id="cmbUsuario" v-model="newCotizacion.id_usuario" data-live-search="true" >
+										<option value="default" selected="selected">Selecciona un Usuario...</option>
+										<option v-for="usuario in usuarios" :value="usuario.id_usuario">{{ usuario.nombre_completo }}</option>
+									</select>
+								</div>
+								
+								<div class="col-md-4">
+									<p><b>Empresa *</b></p>
+									<select class="form-control show-tick cmbEmpresa" name="cmbEmpresa" id="cmbEmpresa" v-model="newCotizacion.id_empresa" >
+										<option value="default" selected="selected">Selecciona una Empresa...</option>
+										<option v-for="empresa in empresas" :value="empresa.id_empresa">{{ empresa.razon_social }}</option>
+									</select>
+								</div>
+								
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Concepto *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtConcepto" class="form-control" required="required" v-model="newCotizacion.concepto" />
+										</div>
+									</div>
 								</div>
 							</div>
 							
-							<div class="col-md-6">
-								<div class="form-group">
-		                       		<b>Factura/n&uacute;mero</b>
-	                               <div class="form-line">
-	                                   <input type="text" id="txtFacturaNumero" name="txtFacturaNumero" class="form-control" />
-	                               </div>
-	                           </div>
-							</div>	
-	                    </div>
-	                    
-	                    <div id="divPago" class="row hide">
-	                    	<div class="col-md-4">
-								<b>Pago/fecha</b>
-	                        	<div class="input-group">
-	                       			<span class="input-group-addon">
-	                                       <i class="material-icons">date_range</i>
-	                                   </span>
-	                                   <div class="form-line">
-	                                       <input type="text" class="form-control text-center" id="txtPagoFecha" name="txtPagoFecha" />
-	                                   </div>
+							<div class="row clearfix">
+								<div class="col-md-4">
+									<b>Fecha de solicitud *</b>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="material-icons">date_range</i>
+										</span>
+										<div class="form-line">
+											<input type="text" class="form-control solicitud-fecha text-center" id="txtSolicitudFecha" name="txtSolicitudFecha" readonly="readonly" />
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-md-4">
+									<b>Cliente *</b>
+									<div class="input-group">								
+										<select class="form-control show-tick cmbCliente" name="cmbCliente" id="cmbCliente" v-model="newCotizacion.id_cliente" data-live-search="true" >
+											<option value="default" selected="selected">Selecciona un Cliente...</option>
+											<option v-for="item in clientes" :value="item.id_cliente">{{ item.cliente }}</option>
+										</select>
+									</div>	                           
+								</div>
+								
+								<div class="col-md-4">
+									<b>Contacto *</b>
+									<div class="input-group">	                            
+										<select class="form-control show-tick cmbClienteContacto" name="cmbClienteContacto" id="cmbClienteContacto" v-model="newCotizacion.id_contacto">
+											<option value="default" selected="selected">Selecciona un Contacto...</option>
+											<option v-for="item in contactos" :value="item.id_contacto" :data-subtext="item.correo">{{ item.contacto }}</option>
+										</select>
+									</div>
 								</div>
 							</div>
 							
-							<div class="col-md-6">
-								<div class="form-group">
-		                       		<b>Pago/referencia</b>
-	                               <div class="form-line">
-	                                   <input type="text" id="txtPagoReferencia" name="txtPagoReferencia" class="form-control" />
-	                               </div>
-	                           </div>
-							</div>	
-	                    </div>                    
-	                </div>
-	                <div class="modal-footer">
-	                    <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">CERRAR</button>
-	                    <button id="btnCambioEstatus" type="submit" class="btn btn-primary waves-effect">ACTUALIZAR</button>
-	                </div>
-                </form>
-            </div>
-        </div>
-    </div>
+							<div class="row clearfix">
+								<div class="col-md-3">
+									<div class="form-group">
+										<p><b>Ubicaci&oacute;n *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtUbicacion" class="form-control" v-model="newCotizacion.ubicacion" required="required" />
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-md-3">
+									<div class="form-group">
+										<p><b>Lugar de entrega *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtLugarEntrega" class="form-control" v-model="newCotizacion.entrega" required="required" />
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-md-3">
+									<div class="form-group">
+										<p><b>Tiempo de entrega *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtTiempoEntrega" class="form-control" placeholder="D&iacute;as h&aacute;biles" v-model="newCotizacion.tiempo_entrega" required="required" />
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-md-3">
+									<div class="form-group">
+										<p><b>Vigencia de precios *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtVigenciaPrecios" class="form-control" placeholder="D&iacute;as h&aacute;biles" v-model="newCotizacion.vigencia_precios" required="required" />
+										</div>
+									</div>
+								</div>
+							</div>
+						
+							<div class="row clearfix">
+								<div class="col-md-3">
+									<p><b>Moneda *</b></p>
+									<select class="form-control show-tick cmbMoneda" name="cmbMoneda" id="cmbMoneda" v-model="newCotizacion.id_moneda" data-live-search="true">
+											<option v-for="item in monedas" :value="item.id_moneda">{{ item.moneda }}</option>
+									</select>
+								</div>
+								
+								<div class="col-md-3">
+									<p><b>Forma de pago *</b></p>
+									<select class="form-control show-tick cmbFormaPago" name="cmbFormaPago" id="cmbFormaPago" v-model="newCotizacion.id_forma_pago" data-live-search="true">
+											<option v-for="item in formasPagos" :value="item.id_forma_pago">{{ item.forma_pago }}</option>
+									</select>
+								</div>
+								
+								<div class="col-md-2">
+									<div class="form-group">
+										<p><b>D&iacute;as de cr&eacute;dito</b></p>
+										<div class="form-line">
+											<input type="text" name="txtDiasCredito" class="form-control" placeholder="e.g. 3 d&iacute;as" v-model="newCotizacion.dias_credito" required="required" />
+										</div>
+									</div>
+								</div>							
+							</div>
+							
+							<hr />
+							<div style="margin-bottom: 30px;">						
+								<h4>Venta e Implementaci&oacute;n</h4>
+							</div>
+							
+							<div class="row clearfix">
+								<div class="col-md-4">
+									<p><b>Vendedor *</b></p>
+									<select class="form-control show-tick cmbVendedor" name="cmbVendedor" id="cmbVendedor" v-model="newCotizacion.id_usuario_vendedor" data-live-search="true" disabled="disabled">
+										<option value="default" selected="selected">Selecciona un Vendedor...</option>
+										<option v-for="usuario in usuarios" :value="usuario.id_usuario">{{ usuario.nombre_completo }}</option>
+									</select>
+								</div>
+								
+								<div class="col-md-2">
+									<input type="checkbox" id="chkVentaCompartida" name="chkVentaCompartida" value="true" class="chk-col-red" v-model="newCotizacion.chkVenta" />
+									<label for="chkVentaCompartida">&iquest;VENTA COMPARTIDA?</label>
+								</div>
+								
+								<div class="col-md-2">
+									<input type="checkbox" id="chkImplementacion" name="chkImplementacion" value="true" class="chk-col-purple" v-model="newCotizacion.chkImplementa" />
+									<label for="chkImplementacion">&iquest;REQUIERE IMPLEMENTACI&Oacute;N?</label>
+								</div>
+								
+								<div class="col-md-4">
+									<p><b>Implementador</b></p>
+									<select class="form-control show-tick cmbImplementador" name="cmbImplementador" id="cmbImplementador" v-model="newCotizacion.id_usuario_implementador" data-live-search="true" disabled="disabled" >
+										<option value="default" selected="selected">Selecciona un Implementador...</option>
+										<option v-for="usuario in grupos" :value="usuario.id_usuario" :data-subtext="usuario.grupo">{{ usuario.nombre_completo }}</option>
+									</select>
+								</div>
+							</div>
+							
+							<hr />
+							<div style="margin-bottom: 30px;">
+								<h4>Tipo de Cotizaci&oacute;n</h4>
+							</div>
+							
+							<div class="row clearfix">
+								<div class="col-md-8">
+									<input name="rdTipoCotizacion" type="radio" id="rdMaster" class="with-gap radio-col-red" value="master" v-model="newCotizacion.rdTipoCotizacion" />
+									<label for="rdMaster"><strong>Maestra</strong> (Ej. Cotizaci&oacute;n principal de una p&oacute;liza)</label>
+								</div>
+							</div>
+
+							<div class="row clearfix">
+								<div class="col-md-8">
+									<input name="rdTipoCotizacion" type="radio" id="rdRenta" class="with-gap radio-col-purple" value="renta" v-model="newCotizacion.rdTipoCotizacion" />
+									<label for="rdRenta"><strong>Renta</strong> (Ej. Cotizaci&oacute;n mensual de una p&oacute;liza)</label>
+								</div>
+							</div>
+
+							<div class="row clearfix">
+								<div class="col-md-8">
+									<input name="rdTipoCotizacion" type="radio" id="rdNormal" class="with-gap radio-col-blue" value="normal" checked="checked" v-model="newCotizacion.rdTipoCotizacion" />
+									<label for="rdNormal"><strong>Normal</strong> (Ej. Cualquier tipo de cotizaci&oacute;n que no sea p&oacute;liza)</label>
+								</div>
+							</div>
+							
+							<hr />
+							<div style="margin-bottom: 30px;">						
+								<h4>Informaci&oacute;n Adicional</h4>
+							</div>
+						
+							<div class="row clearfix">
+								<div class="col-md-6">
+									<div class="form-group">
+										<p><b>Condiciones de pago</b></p>
+										<div class="form-line">
+											<textarea rows="4" name="txtCondicionesPago" class="form-control no-resize" v-model="newCotizacion.condiciones"></textarea>
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-md-6">
+									<div class="form-group">
+										<p><b>Observaciones</b></p>
+										<div class="form-line">
+											<textarea rows="4" name="txtObservaciones" class="form-control no-resize" v-model="newCotizacion.observaciones"></textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">CANCELAR</button>
+							<button type="submit" class="btn btn-primary waves-effect">CREAR</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<!-- ESTATUS COTIZACION MODAL -->
+		<div class="modal fade" id="popUpEstatus" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<form id="formEstatus" th:action="${ {_PATH_} + 'controlPanel/cotizaciones/modificar-estatus'}" th:method="POST">
+						<div class="modal-header">
+							<h4 class="modal-title">Modificar Estatus de Cotizaci&oacute;n</h4>
+						</div>
+						<div class="modal-body">                	
+							<input type="hidden" id="hddIdCotizacion" name="hddIdCotizacion" value="" />
+							<div class="row m-t-20">
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Cotizaci&oacute;n</b></p>
+									<div class="form-line">
+										<input type="text" id="txtCotizacion" class="form-control" readonly="readonly" />
+									</div>
+								</div>
+								</div>
+								
+								<div class="col-md-4">
+									<p><b>Estatus *</b></p>					
+									<select class="form-control show-tick" name="cmbEstatus" id="cmbEstatus" data-live-search="true" >
+										<th:block th:each="itemEstatus : ${lstCotizacionEstatus}">
+											<th:block th:if="${rolCotizacionCobranza}">	                            		
+												<option th:value="${itemEstatus.idCotizacionEstatus}" th:text="${itemEstatus.cotizacionEstatus}"></option>
+											</th:block>
+											
+											<th:block th:unless="${rolCotizacionCobranza}">
+												<th:block th:if="${itemEstatus.idCotizacionEstatus != 3 and itemEstatus.idCotizacionEstatus != 4 and itemEstatus.idCotizacionEstatus != 6}">
+													<option th:value="${itemEstatus.idCotizacionEstatus}" th:text="${itemEstatus.cotizacionEstatus}"></option>
+												</th:block>
+											</th:block>	                          	
+										</th:block>
+									</select>
+								</div>	
+							</div>
+							
+							<hr />
+							
+							<div id="divFactura" class="row">
+								<div class="col-md-4">
+									<b>Factura/fecha</b>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="material-icons">date_range</i>
+										</span>
+										<div class="form-line">
+											<input type="text" class="form-control text-center" id="txtFacturaFecha" name="txtFacturaFecha" />
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-md-6">
+									<div class="form-group">
+										<b>Factura/n&uacute;mero</b>
+									<div class="form-line">
+										<input type="text" id="txtFacturaNumero" name="txtFacturaNumero" class="form-control" />
+									</div>
+								</div>
+								</div>	
+							</div>
+							
+							<div id="divPago" class="row hide">
+								<div class="col-md-4">
+									<b>Pago/fecha</b>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="material-icons">date_range</i>
+										</span>
+										<div class="form-line">
+											<input type="text" class="form-control text-center" id="txtPagoFecha" name="txtPagoFecha" />
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-md-6">
+									<div class="form-group">
+										<b>Pago/referencia</b>
+									<div class="form-line">
+										<input type="text" id="txtPagoReferencia" name="txtPagoReferencia" class="form-control" />
+									</div>
+								</div>
+								</div>	
+							</div>                    
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">CERRAR</button>
+							<button id="btnCambioEstatus" type="submit" class="btn btn-primary waves-effect">ACTUALIZAR</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 </th:block>
 
 <th:block th:fragment="script">
+	<script th:src="@{/plugins/vue/vue.js}"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script th:src="@{/assets/js/script.js}"></script>
+
 	<!-- Wenzhixin DataTable -->
 	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
 	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
@@ -183,8 +418,14 @@
 	<script type="application/javascript" th:inline="javascript">
 	
 		var rolExpediente = [[${rolCotizacionExpediente}]];
+		var rolCotizacionAdmin = [[${rolCotizacionAdmin}]];
+		var idUsuario = [[${_USER_.getIdUsuario()}]];
 	
-		$(document).ready(function() {			
+		$(document).ready(function() {
+
+			app3.usuarioActivo = idUsuario;
+			app3.rolcotizacionAdmin = rolCotizacionAdmin;
+
 			$("#dtCotizaciones").bootstrapTable({
 				url					: [[@{/controlPanel/cotizaciones/table}]],
 				method				: 'post',
@@ -306,7 +547,31 @@
 					}
 				});
 		  	});
-					
+			
+			//DATEPICKER
+			$('.solicitud-fecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false, minDate : new Date()});
+			$('.solicitud-fecha').bootstrapMaterialDatePicker('setDate', moment());
+
+			$('#chkVentaCompartida').on('change', function() {				
+				if($(this).prop('checked')) {
+					$('#cmbVendedor').prop('disabled', false);
+					$('#cmbVendedor').selectpicker('refresh');
+				} else {
+					$('#cmbVendedor').prop('disabled', true);
+					$('#cmbVendedor').selectpicker('refresh');
+				}
+			});
+			
+			
+			$('#chkImplementacion').on('change', function() {				
+				if($(this).prop('checked')) {
+					$('#cmbImplementador').prop('disabled', false);
+					$('#cmbImplementador').selectpicker('refresh');
+				} else {
+					$('#cmbImplementador').prop('disabled', true);
+					$('#cmbImplementador').selectpicker('refresh');
+				}
+			});
 		});
 			
 		function accionesFormatter(value, row, index) {
@@ -433,6 +698,40 @@
 			$('#txtFacturaFecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
 			$('#txtPagoFecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
 			
-	 	});						
+		 });
+		 
+		 $(function () {
+			// VALIDADOR DE FORMULARIO
+			$('#formCotizacion').validate({
+		        rules: {
+		            'txtTiempoEntrega': {
+		                number: true
+		            },
+		            'txtVigenciaPrecios': {
+		                number: true
+		            },
+		            'txtDiasCredito': {
+		                number: true
+		            }
+		        },
+		        highlight: function (input) {
+		            $(input).parents('.form-line').addClass('error');
+		        },
+		        unhighlight: function (input) {
+		            $(input).parents('.form-line').removeClass('error');
+		        },
+		        errorPlacement: function (error, element) {
+		            $(element).parents('.form-group').append(error);
+		        }
+		    });
+			
+			//Custom Validations ===============================================================================
+		    //Number
+		    $.validator.addMethod('number', function (value, element) {
+		        return value.match('[0-9]+');
+		    },
+		        'Por favor ingresa un n&uacute;mero.'
+		    );
+		});	
 	</script>
 </th:block>

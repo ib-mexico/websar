@@ -116,7 +116,7 @@ public class CotizacionesPartidasController {
 		return objModelAndView;
 	}
 	
-	@RequestMapping(value = "{paramIdCotizacion}/partidas", method = RequestMethod.POST)
+	/*@RequestMapping(value = "{paramIdCotizacion}/partidas", method = RequestMethod.POST)
 	public RedirectView store(	@RequestParam(value="hddIdCotizacion") int hddIdCotizacion,
 								@RequestParam(value="txtNumeroParte") String txtNumeroParte,
 								@RequestParam(value="txtTiempoEntrega") int txtTiempoEntrega,
@@ -156,6 +156,51 @@ public class CotizacionesPartidasController {
 			
 		
 		return objRedirectView;
+	}*/
+
+	@RequestMapping(value = "{paramIdCotizacion}/partidas", method = RequestMethod.POST)
+	public @ResponseBody String store( @RequestParam(value="hddIdCotizacion") int hddIdCotizacion,
+										@RequestParam(value="txtNumeroParte") String txtNumeroParte,
+										@RequestParam(value="txtTiempoEntrega") int txtTiempoEntrega,
+										@RequestParam(value="txtDescripcion") String txtDescripcion,
+										@RequestParam(value="txtCantidad") int txtCantidad,
+										@RequestParam(value="txtPrecioUnitarioLista") String txtPrecioUnitarioLista,
+										@RequestParam(value="txtDescuento") String txtDescuento) {
+		
+		CotizacionPartidaEntity objCotizacionPartida = new CotizacionPartidaEntity();
+		Boolean respuesta = false;
+		String titulo = "Oops!";
+		String mensaje = "Ocurrió un error al crear la partida en la cotización.";
+		
+		
+		try {
+			objCotizacionPartida.setCotizacion(cotizacionService.findByIdCotizacion(hddIdCotizacion));
+			objCotizacionPartida.setNumeroParte(txtNumeroParte);;
+			objCotizacionPartida.setEntregaDiasHabiles(txtTiempoEntrega);
+			objCotizacionPartida.setDescripcion(txtDescripcion.trim());
+			objCotizacionPartida.setCantidad(txtCantidad);
+			objCotizacionPartida.setPrecioUnitarioLista(new BigDecimal(txtPrecioUnitarioLista));
+			objCotizacionPartida.setDescuentoPorcentaje(new BigDecimal(txtDescuento));
+			objCotizacionPartida.setUsuario(sessionService.getCurrentUser());
+			objCotizacionPartida.setOrdenIndex(0);
+			
+			cotizacionPartidaService.create(objCotizacionPartida);
+
+			respuesta = true;
+			titulo = "Excelente!";
+			mensaje = "La partida de la cotización se creó exitosamente.";
+			
+		} catch(ApplicationException exception) {
+			throw new ApplicationException(EnumException.COTIZACIONES_PARTIDAS_DELETE_001);
+		}
+		
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("titulo", titulo)
+					.add("mensaje", mensaje);
+
+										
+		return jsonReturn.build().toString();
 	}
 	
 	@GetMapping({"{paramIdCotizacion}/partidas/{paramIdCotizacionPartida}/edit", "{paramIdCotizacion}/partidas/{paramIdCotizacionPartida}/edit/"})
@@ -315,37 +360,43 @@ public class CotizacionesPartidasController {
 		CotizacionPartidaEntity objPartida = cotizacionPartidaService.findByIdCotizacionPartida(idCotizacionPartida);
 		CotizacionEntity objCotizacion = cotizacionService.findByIdCotizacion(paramIdCotizacion);
 		Boolean respuesta = false;
+		Boolean flagCalculate = false;
 		String titulo = "";
 		String mensaje = "";
 		String subtotal = "";
 		String totalPartida = "";
-		
-		
+				
 		try {
 			if(objPartida != null) {			
-				
-				
 				switch (campo) {
+					case "descripcion":
+						objPartida.setDescripcion(valor);
+					break;
+
 					case "cantidad":
-						objPartida.setCantidad(new Integer(valor));;
-						break;
+						objPartida.setCantidad(new Integer(valor));
+						flagCalculate = true;
+					break;
 						
 					case "precioUnitario":
 						objPartida.setPrecioUnitarioLista(new BigDecimal(valor));
-						break;
+						flagCalculate = true;
+					break;
 						
 					case "descuentoPorcentaje":
 						objPartida.setDescuentoPorcentaje(new BigDecimal(valor));
-						break;
+						flagCalculate = true;
+					break;
 	
 					default:
-						break;
+					break;
 				}
+								
+				cotizacionPartidaService.update(objPartida);
 				
-				
-				
-				cotizacionPartidaService.update(objPartida);							
-				cotizacionTotalesService.calcularTotales(objCotizacion);
+				if(flagCalculate) {
+					cotizacionTotalesService.calcularTotales(objCotizacion);
+				}
 				
 				respuesta = true;
 				totalPartida = objPartida.getTotalNatural();

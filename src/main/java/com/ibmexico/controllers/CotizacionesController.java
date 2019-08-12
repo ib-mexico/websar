@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,6 +166,7 @@ public class CotizacionesController {
 		objModelAndView.addObject("rolCotizacionExpediente", sessionService.hasRol("COTIZACIONES_EXPEDIENTES"));
 		objModelAndView.addObject("rolCotizacionCobranza", sessionService.hasRol("COTIZACIONES_COBRANZA"));
 		objModelAndView.addObject("rolNuevaCotizacion", sessionService.hasRol("COTIZACIONES_CREATE"));
+		objModelAndView.addObject("rolCotizacionAdmin", sessionService.hasRol("COTIZACIONES_ADMINISTRADOR"));
 		
 		return objModelAndView;
 	}
@@ -333,6 +335,141 @@ public class CotizacionesController {
 		}
 		
 		return objRedirectView;
+	}
+
+	@RequestMapping(value = "storeAJAX", method = RequestMethod.POST)
+	public @ResponseBody String store( @RequestParam(value="cmbUsuario", required=false) Integer cmbUsuario,								
+										@RequestParam(value="cmbEmpresa") Integer cmbEmpresa,
+										@RequestParam(value="txtConcepto") String txtConcepto,
+										@RequestParam(value="txtSolicitudFecha", required=false) String txtSolicitudFecha,
+										@RequestParam(value="cmbCliente") int cmbCliente,
+										@RequestParam(value="cmbClienteContacto") int cmbClienteContacto,
+										@RequestParam(value="txtUbicacion") String txtUbicacion,
+										@RequestParam(value="txtLugarEntrega") String txtLugarEntrega,
+										@RequestParam(value="txtTiempoEntrega") String txtTiempoEntrega,
+										@RequestParam(value="txtVigenciaPrecios") String txtVigenciaPrecios,
+										@RequestParam(value="cmbMoneda") int cmbMoneda,
+										@RequestParam(value="cmbFormaPago") int cmbFormaPago,
+										@RequestParam(value="txtDiasCredito") String txtDiasCredito,
+										@RequestParam(value="chkVentaCompartida", required=false, defaultValue="false") String chkVentaCompartida,
+										@RequestParam(value="cmbVendedor", required=false) Integer cmbVendedor,
+										@RequestParam(value="chkImplementacion", required=false, defaultValue="false") String chkImplementacion,
+										@RequestParam(value="rdTipoCotizacion", required=false, defaultValue="false") String rdTipoCotizacion,
+										@RequestParam(value="cmbImplementador", required=false) Integer cmbImplementador,
+										@RequestParam(value="txtCondicionesPago", required=false) String txtCondicionesPago,
+										@RequestParam(value="txtObservaciones", required=false) String txtObservaciones) {
+		
+		Boolean respuesta = false;
+		String titulo = "Oops!";
+		String mensaje = "Ocurrió un error al crear la cotización en el sistema.";
+
+		CotizacionEntity objCotizacion = new CotizacionEntity();
+		
+		try {
+					
+			if(sessionService.hasRol("COTIZACIONES_ADMINISTRADOR")) {
+				UsuarioEntity objUsuario = usuarioService.findByIdUsuario(cmbUsuario);
+				objCotizacion.setUsuario(objUsuario);
+				objCotizacion.setSucursal(sucursalService.findByIdSucursal(objUsuario.getSucursal().getIdSucursal()));
+			} else {
+				objCotizacion.setUsuario(sessionService.getCurrentUser());
+				objCotizacion.setSucursal(sucursalService.findByIdSucursal(sessionService.getCurrentUser().getSucursal().getIdSucursal()));
+			}
+					
+			objCotizacion.setEmpresa(empresaService.findByIdEmpresa(cmbEmpresa));
+			objCotizacion.setConcepto(txtConcepto);
+			objCotizacion.setSolicitudFecha(LocalDate.parse(txtSolicitudFecha, GeneralConfiguration.getInstance().getDateFormatterNatural()));
+			objCotizacion.setCliente(clienteService.findByIdCliente(cmbCliente));
+			objCotizacion.setClienteContacto(clienteContactoService.findByIdClienteContacto(cmbClienteContacto));
+			objCotizacion.setUbicacion(txtUbicacion);
+			objCotizacion.setEntregaLugar(txtLugarEntrega);
+			objCotizacion.setEntregaDiasHabiles(txtTiempoEntrega);
+			objCotizacion.setVigenciaPrecioDiasHabiles(txtVigenciaPrecios);
+			objCotizacion.setMoneda(monedaService.find(cmbMoneda));
+			objCotizacion.setFormaPago(formaPagoService.find(cmbFormaPago));
+			objCotizacion.setDiasCredito(txtDiasCredito);
+			objCotizacion.setCondicionesPago(txtCondicionesPago.trim());
+			objCotizacion.setObservaciones(txtObservaciones.trim());
+			objCotizacion.setCotizacionEstatus(cotizacionEstatusService.findByIdCotizacionEstatus(1));
+			
+			//VENTA COMPARTIDA
+			if(chkVentaCompartida.equals("true")) {
+				objCotizacion.setVentaCompartida(true);
+				objCotizacion.setUsuarioVendedor(usuarioService.findByIdUsuario(cmbVendedor));
+			} else {
+				objCotizacion.setVentaCompartida(false);
+				objCotizacion.setUsuarioVendedor(sessionService.getCurrentUser());
+			}
+			
+			
+			//IMPLEMENTACION
+			if(chkImplementacion.equals("true")) {
+				objCotizacion.setImplementacion(true);
+				objCotizacion.setUsuarioImplementador(usuarioService.findByIdUsuario(cmbImplementador));
+			} else {
+				objCotizacion.setImplementacion(false);
+			}
+			
+			
+			
+			//TIPO DE COTIZACION
+			if(rdTipoCotizacion.equals("master")) {
+				objCotizacion.setMaestra(true);
+			} else if(rdTipoCotizacion.equals("renta")) {
+				objCotizacion.setRenta(true);
+			} else {
+				objCotizacion.setNormal(true);
+			}
+			
+			objCotizacion.setSubtotal(new BigDecimal(0));
+			objCotizacion.setIvaPorcentaje(new BigDecimal(0));
+			objCotizacion.setIva(new BigDecimal(0));
+			objCotizacion.setTotal(new BigDecimal(0));
+			
+			cotizacionService.create(objCotizacion);						
+			
+			/**
+			 * NOTIFICACIONES DE PUSHER
+			 */						
+			Pusher pusher = new Pusher("575478", "7b4b9197d41e13beb30d", "8c116fb03f6b79d32085");
+			pusher.setCluster("us2");
+			
+			//NOTIFICACION USUARIO VENDEDOR
+			JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+			jsonReturn	.add("id_usuario", objCotizacion.getUsuarioVendedor().getIdUsuario())
+						.add("message", "Te agregaron como vendedor(a) en la cotización: " + objCotizacion.getIdCotizacion());						
+
+			pusher.trigger("notifications", "new-notification", jsonReturn.build());
+			
+
+			if(chkImplementacion.equals("true")) {
+				
+				//NOTIFICACION USUARIO IMPLEMENTADOR
+				JsonObjectBuilder jsonReturn2 = Json.createObjectBuilder();
+				jsonReturn2	.add("id_usuario", objCotizacion.getUsuarioImplementador().getIdUsuario())
+				.add("message", "Te agregaron como implementador(a) en la cotización: " + objCotizacion.getIdCotizacion());						
+			
+				pusher.trigger("notifications", "new-notification", jsonReturn2.build());
+			}
+			/**
+			 * 
+			 */
+
+			respuesta = true;
+			titulo = "Excelente!";
+			mensaje = "La cotización se creó exitosamente.";
+			
+		} catch(ApplicationException exception) {
+			throw new ApplicationException(EnumException.COTIZACIONES_CREATE_001);
+		}
+		
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("titulo", titulo)
+					.add("mensaje", mensaje);
+
+										
+		return jsonReturn.build().toString();
 	}
 	
 	@GetMapping({"{paramIdCotizacion}/edit", "{paramIdCotizacion}/edit/"})
@@ -752,5 +889,41 @@ public class CotizacionesController {
 		return jsonReturn.build().toString();
 	}
 
+	@RequestMapping(value = "get-cotizacion-data-form", method = RequestMethod.GET)
+	public @ResponseBody String getDataForm() {
+								
+		Boolean respuesta = false;
+		JsonObject jsonEmpresas = null;
+		JsonObject jsonMonedas = null;
+		JsonObject jsonFormasPagos = null;
+		JsonObject jsonUsuarios = null;
+		JsonObject jsonUsuariosGrupos = null;
+		JsonObject jsonClientes = null;
+				
+		try {
+			jsonEmpresas = empresaService.jsonEmpresas();
+			jsonMonedas = monedaService.jsonMonedas();
+			jsonFormasPagos = formaPagoService.jsonFormasPagos();
+			jsonUsuarios = usuarioService.jsonUsuariosActivos();
+			jsonUsuariosGrupos = usuarioService.jsonUsuariosGruposActivos();
+			jsonClientes = clienteService.jsonClientesActivos();
+
+			respuesta = true;
+		} catch(ApplicationException exception) {
+
+		}
+					
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("jsonEmpresas", jsonEmpresas)
+					.add("jsonMonedas", jsonMonedas)
+					.add("jsonFormasPagos", jsonFormasPagos)
+					.add("jsonUsuarios", jsonUsuarios)
+					.add("jsonUsuariosGrupos", jsonUsuariosGrupos)
+					.add("jsonClientes", jsonClientes);
+
+		
+		return jsonReturn.build().toString();
+	}
 
 }

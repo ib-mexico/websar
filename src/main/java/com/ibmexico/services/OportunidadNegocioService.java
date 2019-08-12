@@ -5,6 +5,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -12,7 +17,10 @@ import org.springframework.stereotype.Service;
 import com.ibmexico.libraries.notifications.ApplicationException;
 import com.ibmexico.libraries.notifications.EnumException;
 import com.ibmexico.configurations.GeneralConfiguration;
+import com.ibmexico.entities.ActividadEntity;
+import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.OportunidadNegocioEntity;
+import com.ibmexico.entities.OportunidadNegocioFicheroEntity;
 import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.repositories.IOportunidadNegocioRepository;
 
@@ -71,6 +79,128 @@ public class OportunidadNegocioService {
 		}
 		
 		return lstOportunidades;
+	}
+	
+	public JsonObject jsonOportunidadesNegociosEmpresa(int idOportunidadEstatus, int idEmpresa) {
+		
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		String estatus_key;
+		
+		List<OportunidadNegocioEntity> lstOportunidades = listOportunidadesNegociosEmpresa(idOportunidadEstatus, idEmpresa);
+		
+		lstOportunidades.forEach((itemOportunidad)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_oportunidad", itemOportunidad.getIdOportunidadNegocio())
+				.add("oportunidad", itemOportunidad.getOportunidad())
+				.add("vendedor", itemOportunidad.getUsuarioVendedor().getNombreCompleto())
+				.add("ultima_modificacion", itemOportunidad.getModificacionFechaNatural())
+				.add("cliente", itemOportunidad.getCliente().getCliente())
+				.add("ingreso_estimado", itemOportunidad.getIngresoEstimadoNatural())
+				.add("prioridad", itemOportunidad.getPrioridad())
+				.add("oportunidad", itemOportunidad.getOportunidad())
+			);
+		});
+		
+		switch (idOportunidadEstatus) {
+			case 1:
+				estatus_key = "abiertos";
+				break;
+				
+			case 2:
+				estatus_key = "en_curso";
+				break;
+				
+			case 3:
+				estatus_key = "rentas";
+				break;
+		
+			case 4:
+				estatus_key = "cerrados";
+				break;
+		
+			case 5:
+				estatus_key = "perdidos";
+				break;
+	
+			default:
+				estatus_key = "abiertos";
+				break;
+		}
+		
+		jsonReturn.add(estatus_key, jsonRows);
+		jsonReturn.add("total_" + estatus_key, totalIngresoEstimadoEmpresa(idOportunidadEstatus, idEmpresa));
+		
+		return jsonReturn.build();
+	}
+	
+	public JsonObject jsonOportunidadesNegociosCotizaciones(OportunidadNegocioEntity objOportunidad) {
+		
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		
+		List<CotizacionEntity> lstCotizaciones = objOportunidad.getCotizaciones();
+		
+		lstCotizaciones.forEach((itemCotizacion)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_cotizacion", itemCotizacion.getIdCotizacion())
+				.add("folio", itemCotizacion.getFolio())
+				.add("maestra", itemCotizacion.isMaestra())
+				.add("renta", itemCotizacion.isRenta())
+				.add("normal", itemCotizacion.isNormal())
+				.add("usuario", itemCotizacion.getUsuario().getAliasCorreo())
+				.add("total", itemCotizacion.getTotalNatural())
+				.add("cliente", itemCotizacion.getCliente().getCliente())
+				.add("contacto", itemCotizacion.getClienteContacto().getContacto())
+			);
+		});
+		
+		jsonReturn.add("cotizaciones", jsonRows);
+		
+		return jsonReturn.build();
+	}
+	
+	public JsonObject jsonOportunidadesNegociosFicheros(OportunidadNegocioEntity objOportunidad) {
+		
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		
+		List<OportunidadNegocioFicheroEntity> lstFicheros = objOportunidad.getFicheros();
+		
+		lstFicheros.forEach((itemFichero)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_oportunidad_fichero", itemFichero.getIdOportunidadNegocioFichero())
+				.add("titulo", itemFichero.getTitulo())
+				.add("descripcion", itemFichero.getDescripcion())
+				.add("url", itemFichero.getUrl())
+			);
+		});
+		
+		jsonReturn.add("ficheros", jsonRows);
+		
+		return jsonReturn.build();
+	}
+	
+	public JsonObject jsonOportunidadesNegociosActividades(OportunidadNegocioEntity objOportunidad) {
+		
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		
+		List<ActividadEntity> lstActividades = objOportunidad.getOportunidadesActividades();
+		
+		lstActividades.forEach((itemActividad)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_actividad", itemActividad.getIdActividad())
+				.add("actividad_tipo", itemActividad.getActividadTipo().getActividadTipo())
+				.add("finalizado", itemActividad.isFinalizado())
+				.add("usuario", itemActividad.getUsuario().getAliasCorreo())
+				.add("fecha_vencimiento", itemActividad.getVencimientoFecha().toString())
+			);
+		});
+		
+		jsonReturn.add("actividades", jsonRows);
+		
+		return jsonReturn.build();
 	}
 	
 	public List<OportunidadNegocioEntity> listOportunidadesNegociosRenovaciones(UsuarioEntity objUsuario, LocalDate ldFechaRenovacion) {

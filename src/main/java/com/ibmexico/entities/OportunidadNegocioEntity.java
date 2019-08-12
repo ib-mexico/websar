@@ -166,7 +166,7 @@ public class OportunidadNegocioEntity {
 	}
 
 	public String getOportunidad() {
-		return oportunidad;
+		return oportunidad.toUpperCase();
 	}
 
 	public void setOportunidad(String oportunidad) {

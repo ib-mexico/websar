@@ -3,9 +3,10 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     	<meta charset="utf-8" />
     	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    	<meta name="viewport" content="width=device-width, initial-scale=1" />
-    	
-    	<sec:csrfMetaTags/>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<meta name="_csrf" th:content="${_csrf.token}" />
+		<meta name="_csrf_header" th:content="${_csrf.headerName}" />
     	
     	<!--  <link rel="shortcut icon" th:href="@{/assets/imagenes/icono_16.png}" type="image/png" />-->
     	

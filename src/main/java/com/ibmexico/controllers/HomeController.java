@@ -478,13 +478,13 @@ public class HomeController {
 		
 		LocalDate fechaMesInicio = null;
 		LocalDate fechaMesFin = null;
-		int dayFlag = LocalDate.now().getDayOfMonth();
+		//int dayFlag = LocalDate.now().getDayOfMonth();
 		
 		UsuarioEntity objUsuario = null;
 		EmpresaEntity objEmpresa = empresaService.findByIdEmpresa(idEmpresa);
 		
 		//USUARIO CON PRIVILEGIO DE COBRANZA (OBTIENE REPORTE POR 15 DIAS Y POR MES COMPLETO)
-		if((idUsuario != null && idUsuario >= 1) && sessionService.hasRol("COTIZACIONES_COBRANZA")) {
+		/*if((idUsuario != null && idUsuario >= 1) && sessionService.hasRol("COTIZACIONES_COBRANZA")) {
 			objUsuario = usuarioService.findByIdUsuario(idUsuario);
 			
 			if(!fecha.equals("") && fecha.contains("-")) {
@@ -517,7 +517,30 @@ public class HomeController {
 				fechaMesInicio = LocalDate.now().withDayOfMonth(1);
 				fechaMesFin = LocalDate.now().withDayOfMonth(15);
 			}
+		}*/
+		
+		if((idUsuario != null && idUsuario >= 1) && sessionService.hasRol("COTIZACIONES_COBRANZA")) {
+			objUsuario = usuarioService.findByIdUsuario(idUsuario);
+		} else {
+			objUsuario = sessionService.getCurrentUser();
 		}
+		
+		
+		if(!fecha.equals("") && fecha.contains("-")) {
+			
+			String[] arrFecha = fecha.split("-");
+			int year = Integer.parseInt(arrFecha[2]);
+			int month = Integer.parseInt(arrFecha[1]);
+			int day = Integer.parseInt(arrFecha[0]);
+			
+			fechaMesInicio = LocalDate.of(year, month, day).withDayOfMonth(1);
+			fechaMesFin = LocalDate.of(year, month, day).withDayOfMonth(LocalDate.of(year, month, day).lengthOfMonth());
+			
+		} else {			
+			fechaMesInicio = LocalDate.now().withDayOfMonth(1);
+			fechaMesFin = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+		}
+		
 		
 		//TOTALES DEL REPORTE DE UTILIDAD
 		BigDecimal totalEjecutivo = new BigDecimal(0);

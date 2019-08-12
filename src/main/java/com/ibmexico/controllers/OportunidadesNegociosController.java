@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,110 +132,137 @@ public class OportunidadesNegociosController {
 	@GetMapping({"", "/"})
 	public ModelAndView index() {
 		
-		List<OportunidadNegocioEntity> lstAbiertos = oportunidadNegocioService.listOportunidadesNegociosEmpresa(1,1);
-		List<OportunidadNegocioEntity> lstProgreso = oportunidadNegocioService.listOportunidadesNegociosEmpresa(2,1);
-		List<OportunidadNegocioEntity> lstRentas = oportunidadNegocioService.listOportunidadesNegociosEmpresa(3,1);
-		List<OportunidadNegocioEntity> lstCerrado = oportunidadNegocioService.listOportunidadesNegociosEmpresa(4,1);
-		List<OportunidadNegocioEntity> lstPerdidos = oportunidadNegocioService.listOportunidadesNegociosEmpresa(5,1);
-		
-		List<OportunidadNegocioEntity> lstAbiertosS3s = oportunidadNegocioService.listOportunidadesNegociosEmpresa(1,2);
-		List<OportunidadNegocioEntity> lstProgresoS3s = oportunidadNegocioService.listOportunidadesNegociosEmpresa(2,2);
-		List<OportunidadNegocioEntity> lstRentasS3s = oportunidadNegocioService.listOportunidadesNegociosEmpresa(3,2);
-		List<OportunidadNegocioEntity> lstCerradoS3s = oportunidadNegocioService.listOportunidadesNegociosEmpresa(4,2);
-		List<OportunidadNegocioEntity> lstPerdidosS3s = oportunidadNegocioService.listOportunidadesNegociosEmpresa(5,2);
-		
-		List<OportunidadNegocioEntity> lstAbiertosR2a = oportunidadNegocioService.listOportunidadesNegociosEmpresa(1,3);
-		List<OportunidadNegocioEntity> lstProgresoR2a = oportunidadNegocioService.listOportunidadesNegociosEmpresa(2,3);
-		List<OportunidadNegocioEntity> lstRentasR2a = oportunidadNegocioService.listOportunidadesNegociosEmpresa(3,3);
-		List<OportunidadNegocioEntity> lstCerradoR2a = oportunidadNegocioService.listOportunidadesNegociosEmpresa(4,3);
-		List<OportunidadNegocioEntity> lstPerdidosR2a = oportunidadNegocioService.listOportunidadesNegociosEmpresa(5,3);
-		
-		
-		String totalAbiertos = oportunidadNegocioService.totalIngresoEstimadoEmpresa(1,1);
-		String totalProgreso = oportunidadNegocioService.totalIngresoEstimadoEmpresa(2,1);
-		String totalRentas = oportunidadNegocioService.totalIngresoEstimadoEmpresa(3,1);
-		String totalCerrado = oportunidadNegocioService.totalIngresoEstimadoEmpresa(4,1);
-		String totalPerdidos = oportunidadNegocioService.totalIngresoEstimadoEmpresa(5,1);
-		
-		String totalAbiertosS3s = oportunidadNegocioService.totalIngresoEstimadoEmpresa(1,2);
-		String totalProgresoS3s = oportunidadNegocioService.totalIngresoEstimadoEmpresa(2,2);
-		String totalRentasS3s = oportunidadNegocioService.totalIngresoEstimadoEmpresa(3,2);
-		String totalCerradoS3s = oportunidadNegocioService.totalIngresoEstimadoEmpresa(4,2);
-		String totalPerdidosS3s = oportunidadNegocioService.totalIngresoEstimadoEmpresa(5,2);
-		
-		String totalAbiertosR2a = oportunidadNegocioService.totalIngresoEstimadoEmpresa(1,3);
-		String totalProgresoR2a = oportunidadNegocioService.totalIngresoEstimadoEmpresa(2,3);
-		String totalRentasR2a = oportunidadNegocioService.totalIngresoEstimadoEmpresa(3,3);
-		String totalCerradoR2a = oportunidadNegocioService.totalIngresoEstimadoEmpresa(4,3);
-		String totalPerdidosR2a = oportunidadNegocioService.totalIngresoEstimadoEmpresa(5,3);
-		
-		
-		
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_OPORTUNIDADES_INDEX);
 		
 		objModelAndView.addObject("rolOportunidadEmpresaUca", sessionService.hasRol("OPORTUNIDADES_EMPRESA_UCA"));
 		objModelAndView.addObject("rolNuevaOportunidad", sessionService.hasRol("OPORTUNIDADES_CREATE"));
 		
-		objModelAndView.addObject("totalAbiertos", totalAbiertos);
-		objModelAndView.addObject("totalProgreso", totalProgreso);
-		objModelAndView.addObject("totalRentas", totalRentas);
-		objModelAndView.addObject("totalCerrado", totalCerrado);
-		objModelAndView.addObject("totalPerdidos", totalPerdidos);		
-		objModelAndView.addObject("lstAbiertos", lstAbiertos);
-		objModelAndView.addObject("lstProgreso", lstProgreso);
-		objModelAndView.addObject("lstRentas", lstRentas);
-		objModelAndView.addObject("lstCerrado", lstCerrado);
-		objModelAndView.addObject("lstPerdidos", lstPerdidos);
+		return objModelAndView;
+	}
+	
+	@RequestMapping(value = {"{paramIdEmpresa}/get-oportunidades", "{paramIdEmpresa}/get-oportunidades/"}, method = RequestMethod.GET)
+	public @ResponseBody String showOportunidades( @PathVariable("paramIdEmpresa") int paramIdEmpresa) {
 		
-		objModelAndView.addObject("totalAbiertosS3s", totalAbiertosS3s);
-		objModelAndView.addObject("totalProgresoS3s", totalProgresoS3s);
-		objModelAndView.addObject("totalRentasS3s", totalRentasS3s);
-		objModelAndView.addObject("totalCerradoS3s", totalCerradoS3s);
-		objModelAndView.addObject("totalPerdidosS3s", totalPerdidosS3s);		
-		objModelAndView.addObject("lstAbiertosS3s", lstAbiertosS3s);
-		objModelAndView.addObject("lstProgresoS3s", lstProgresoS3s);
-		objModelAndView.addObject("lstRentasS3s", lstRentasS3s);
-		objModelAndView.addObject("lstCerradoS3s", lstCerradoS3s);
-		objModelAndView.addObject("lstPerdidosS3s", lstPerdidosS3s);
-		
-		objModelAndView.addObject("totalAbiertosR2a", totalAbiertosR2a);
-		objModelAndView.addObject("totalProgresoR2a", totalProgresoR2a);
-		objModelAndView.addObject("totalRentasR2a", totalRentasR2a);
-		objModelAndView.addObject("totalCerradoR2a", totalCerradoR2a);
-		objModelAndView.addObject("totalPerdidosR2a", totalPerdidosR2a);		
-		objModelAndView.addObject("lstAbiertosR2a", lstAbiertosR2a);
-		objModelAndView.addObject("lstProgresoR2a", lstProgresoR2a);
-		objModelAndView.addObject("lstRentasR2a", lstRentasR2a);
-		objModelAndView.addObject("lstCerradoR2a", lstCerradoR2a);
-		objModelAndView.addObject("lstPerdidosR2a", lstPerdidosR2a);
-		
-		if(sessionService.hasRol("OPORTUNIDADES_EMPRESA_UCA")) {
+		EmpresaEntity objEmpresa = empresaService.findByIdEmpresa(paramIdEmpresa);
+		Boolean respuesta = false;
+		JsonObject dataAbiertos = null;
+		JsonObject dataEnCurso = null;
+		JsonObject dataRentas = null;
+		JsonObject dataCerrados = null;
+		JsonObject dataPerdidos = null;
+				
+		try {
+			if(objEmpresa != null) {				
+				dataAbiertos = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(1, objEmpresa.getIdEmpresa());
+				dataEnCurso	 = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(2, objEmpresa.getIdEmpresa());
+				dataRentas	 = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(3, objEmpresa.getIdEmpresa());
+				dataCerrados = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(4, objEmpresa.getIdEmpresa());
+				dataPerdidos = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(5, objEmpresa.getIdEmpresa());
+				
+				respuesta = true;
+			}
+			else {
+				throw new ApplicationException(EnumException.OPORTUNIDADES_SHOW_001);
+			}
 			
-			List<OportunidadNegocioEntity> lstAbiertosUca = oportunidadNegocioService.listOportunidadesNegociosEmpresa(1,4);
-			List<OportunidadNegocioEntity> lstProgresoUca = oportunidadNegocioService.listOportunidadesNegociosEmpresa(2,4);
-			List<OportunidadNegocioEntity> lstRentasUca = oportunidadNegocioService.listOportunidadesNegociosEmpresa(3,4);
-			List<OportunidadNegocioEntity> lstCerradoUca = oportunidadNegocioService.listOportunidadesNegociosEmpresa(4,4);
-			List<OportunidadNegocioEntity> lstPerdidosUca = oportunidadNegocioService.listOportunidadesNegociosEmpresa(5,4);
-			
-			String totalAbiertosUca = oportunidadNegocioService.totalIngresoEstimadoEmpresa(1,4);
-			String totalProgresoUca = oportunidadNegocioService.totalIngresoEstimadoEmpresa(2,4);
-			String totalRentasUca = oportunidadNegocioService.totalIngresoEstimadoEmpresa(3,4);
-			String totalCerradoUca = oportunidadNegocioService.totalIngresoEstimadoEmpresa(4,4);
-			String totalPerdidosUca = oportunidadNegocioService.totalIngresoEstimadoEmpresa(5,4);
-			
-			objModelAndView.addObject("totalAbiertosUca", totalAbiertosUca);
-			objModelAndView.addObject("totalProgresoUca", totalProgresoUca);
-			objModelAndView.addObject("totalRentasUca", totalRentasUca);
-			objModelAndView.addObject("totalCerradoUca", totalCerradoUca);
-			objModelAndView.addObject("totalPerdidosUca", totalPerdidosUca);		
-			objModelAndView.addObject("lstAbiertosUca", lstAbiertosUca);
-			objModelAndView.addObject("lstProgresoUca", lstProgresoUca);
-			objModelAndView.addObject("lstRentasUca", lstRentasUca);
-			objModelAndView.addObject("lstCerradoUca", lstCerradoUca);
-			objModelAndView.addObject("lstPerdidosUca", lstPerdidosUca);
+		} catch(ApplicationException exception) {
+			throw new ApplicationException(EnumException.OPORTUNIDADES_SHOW_002);
 		}
 		
-		return objModelAndView;
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("dataAbiertos", dataAbiertos)
+					.add("dataEnCurso", dataEnCurso)
+					.add("dataRentas", dataRentas)
+					.add("dataCerrados", dataCerrados)
+					.add("dataPerdidos", dataPerdidos);
+
+										
+		return jsonReturn.build().toString();
+	}
+	
+	@RequestMapping(value = {"{paramIdOportunidad}/get-cotizaciones", "{paramIdOportunidad}/get-cotizaciones/"}, method = RequestMethod.GET)
+	public @ResponseBody String showOportunidadCotizaciones( @PathVariable("paramIdOportunidad") int paramIdOportunidad) {
+		
+		OportunidadNegocioEntity objOportunidad = oportunidadNegocioService.findByIdOportunidadNegocio(paramIdOportunidad);
+		Boolean respuesta = false;
+		JsonObject dataCotizaciones = null;
+				
+		try {
+			if(objOportunidad != null) {				
+				dataCotizaciones = oportunidadNegocioService.jsonOportunidadesNegociosCotizaciones(objOportunidad);
+				respuesta = true;
+			}
+			else {
+				throw new ApplicationException(EnumException.OPORTUNIDADES_SHOW_COTIZACIONES_001);
+			}
+			
+		} catch(ApplicationException exception) {
+			throw new ApplicationException(EnumException.OPORTUNIDADES_SHOW_COTIZACIONES_002);
+		}
+		
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("dataCotizaciones", dataCotizaciones);
+
+										
+		return jsonReturn.build().toString();
+	}
+	
+	@RequestMapping(value = {"{paramIdOportunidad}/get-ficheros", "{paramIdOportunidad}/get-ficheros/"}, method = RequestMethod.GET)
+	public @ResponseBody String showOportunidadFicheros( @PathVariable("paramIdOportunidad") int paramIdOportunidad) {
+		
+		OportunidadNegocioEntity objOportunidad = oportunidadNegocioService.findByIdOportunidadNegocio(paramIdOportunidad);
+		Boolean respuesta = false;
+		JsonObject dataFicheros = null;
+				
+		try {
+			if(objOportunidad != null) {				
+				dataFicheros = oportunidadNegocioService.jsonOportunidadesNegociosFicheros(objOportunidad);
+				respuesta = true;
+			}
+			else {
+				throw new ApplicationException(EnumException.OPORTUNIDADES_SHOW_FICHEROS_001);
+			}
+			
+		} catch(ApplicationException exception) {
+			throw new ApplicationException(EnumException.OPORTUNIDADES_SHOW_FICHEROS_002);
+		}
+		
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("dataFicheros", dataFicheros);
+
+										
+		return jsonReturn.build().toString();
+	}
+	
+	@RequestMapping(value = {"{paramIdOportunidad}/get-actividades", "{paramIdOportunidad}/get-actividades/"}, method = RequestMethod.GET)
+	public @ResponseBody String showOportunidadActividades( @PathVariable("paramIdOportunidad") int paramIdOportunidad) {
+		
+		OportunidadNegocioEntity objOportunidad = oportunidadNegocioService.findByIdOportunidadNegocio(paramIdOportunidad);
+		Boolean respuesta = false;
+		JsonObject dataActividades = null;
+				
+		try {
+			if(objOportunidad != null) {				
+				dataActividades = oportunidadNegocioService.jsonOportunidadesNegociosActividades(objOportunidad);
+				respuesta = true;
+			}
+			else {
+				throw new ApplicationException(EnumException.OPORTUNIDADES_SHOW_ACTIVIDADES_001);
+			}
+			
+		} catch(ApplicationException exception) {
+			throw new ApplicationException(EnumException.OPORTUNIDADES_SHOW_ACTIVIDADES_002);
+		}
+		
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("dataActividades", dataActividades);
+
+										
+		return jsonReturn.build().toString();
 	}
 	
 	@GetMapping("/create")
@@ -450,13 +478,12 @@ public class OportunidadesNegociosController {
 	}
 	
 	@RequestMapping(value = {"{paramIdOportunidad}/delete", "{paramIdOportunidad}/delete/"}, method = RequestMethod.POST)
-	public @ResponseBody String delete( @PathVariable("paramIdOportunidad") int paramIdOportunidad,
-										@RequestParam("idOportunidad") int idOportunidad) {
+	public @ResponseBody String delete( @PathVariable("paramIdOportunidad") int paramIdOportunidad) {
 		
-		OportunidadNegocioEntity objOportunidad = oportunidadNegocioService.findByIdOportunidadNegocio(idOportunidad);	
+		OportunidadNegocioEntity objOportunidad = oportunidadNegocioService.findByIdOportunidadNegocio(paramIdOportunidad);	
 		Boolean respuesta = false;
-		String titulo = "";
-		String mensaje = "";
+		String titulo = "Oops!";
+		String mensaje = "Ocurrió un error al intentar eliminar la oportunidad.";
 				
 		try {
 			if(objOportunidad != null) {
@@ -466,7 +493,7 @@ public class OportunidadesNegociosController {
 				
 				respuesta = true;
 				titulo = "Eliminado!";
-				mensaje = "La partida ha sido eliminada exitosamente.";
+				mensaje = "La oportunidad ha sido eliminada exitosamente.";
 			}
 			else {
 				throw new ApplicationException(EnumException.OPORTUNIDADES_DELETE_001);
@@ -637,7 +664,6 @@ public class OportunidadesNegociosController {
 		
 		return pdfComponent.generate(path_file, objTemplates.FOUNDATION_PDF, objContext);	
 	}
-	
 	
 	//CALENDARIO
 	@GetMapping({"calendario", "calendario/"})

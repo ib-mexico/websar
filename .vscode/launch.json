@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-WebSarApplication<WebSar>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "com.ibmexico.WebSarApplication",
+            "projectName": "WebSar",
+            "args": ""
+        }
+    ]
+}

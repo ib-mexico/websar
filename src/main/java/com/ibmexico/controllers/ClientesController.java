@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -414,7 +415,29 @@ public class ClientesController {
 		return jsonClientes.build().toString();
 	}
 	
-	//OBTENER CONTACTOS DEL CLIENTE MEDIANTE AJAX
+	//OBTENER CONTACTOS DEL CLIENTE MEDIANTE AXIOS
+	@RequestMapping(value = "get-contactos/{paramIdCliente}", method = RequestMethod.GET)
+	public @ResponseBody String getContactos(@PathVariable("paramIdCliente") int paramIdCliente) {
+								
+		Boolean respuesta = false;
+		JsonObject jsonContactos = null;
+				
+		try {
+			jsonContactos = clienteContactoService.jsonClienteContactosActivos(paramIdCliente);
+
+			respuesta = true;
+		} catch(ApplicationException exception) {
+
+		}
+					
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("jsonContactos", jsonContactos);
+
+		
+		return jsonReturn.build().toString();
+	}
+
 	@RequestMapping(value = "/get-clientes-contactos", method = RequestMethod.GET)
 	public @ResponseBody String getClientesContactos( @RequestParam("idCliente") int idCliente) {
 		

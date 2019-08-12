@@ -3,6 +3,10 @@ package com.ibmexico.services;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,6 +36,24 @@ public class ClienteService {
 	
 	public List<ClienteEntity> listClientesActivos() {
 		return clienteRepository.findActivos();
+	}
+
+	public JsonObject jsonClientesActivos() {
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+
+		List<ClienteEntity> lstClientes = clienteRepository.findActivos();
+
+		lstClientes.forEach((item)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_cliente", item.getIdCliente())
+				.add("cliente", item.getCliente())
+			);
+		});
+
+		jsonReturn.add("rows", jsonRows);
+		
+		return jsonReturn.build();
 	}
 	
 	public DataTable<ClienteEntity> dataTable(String search, int offset, int limit, String txtBootstrapTableDesde, String txtBootstrapTableHasta) {

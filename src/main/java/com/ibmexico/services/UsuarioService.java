@@ -8,6 +8,10 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -65,6 +69,24 @@ public class UsuarioService {
 	public List<UsuarioEntity> listUsuariosActivos(int idUsuario) {
 		return usuarioRepository.listUsuariosActivos(idUsuario);
 	}
+
+	public JsonObject jsonUsuariosActivos() {
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+
+		List<UsuarioEntity> lstUsuarios = usuarioRepository.listUsuariosActivos();
+
+		lstUsuarios.forEach((item)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_usuario", item.getIdUsuario())
+				.add("nombre_completo", item.getNombreCompleto())
+			);
+		});
+
+		jsonReturn.add("rows", jsonRows);
+		
+		return jsonReturn.build();
+	}
 	
 	public List<UsuarioEntity> listUsuariosGruposActivos() {
 		return usuarioRepository.listUsuariosGruposActivos();
@@ -74,6 +96,24 @@ public class UsuarioService {
 		return usuarioRepository.listUsuariosGruposActivos(idUsuarioGrupo);
 	}
 	
+	public JsonObject jsonUsuariosGruposActivos() {
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+
+		List<UsuarioEntity> lstUsuarios = usuarioRepository.listUsuariosGruposActivos();
+
+		lstUsuarios.forEach((item)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_usuario", item.getIdUsuario())
+				.add("nombre_completo", item.getNombreCompleto())
+				.add("grupo", item.getUsuarioGrupo().getUsuarioGrupo())
+			);
+		});
+
+		jsonReturn.add("rows", jsonRows);
+		
+		return jsonReturn.build();
+	}
 	
 	public UsuarioEntity findByIdUsuarioNoEliminado(Integer idUsuario) {
 		UsuarioEntity objReturn = null;

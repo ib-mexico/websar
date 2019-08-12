@@ -3,7 +3,6 @@
 </th:block>
 
 <th:block th:fragment="body">
-<div id="appCotizacionesPartidas">
 	<div class="block-header">
         <h2>COTIZACI&Oacute;N: <th:block th:text="${objCotizacion.folio}"></th:block></h2>
     </div>
@@ -19,17 +18,21 @@
     		<div class="card">
     			<div class="header">
     				<h2>LISTA DE PARTIDAS</h2>
+    				<ul class="header-dropdown m-r--5">
+                        <li class="dropdown">
+                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <i class="material-icons">more_vert</i>
+                            </a>
+                            <ul class="dropdown-menu pull-right">
+                                <li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {objCotizacion.idCotizacion} + '/partidas/create'}">Nueva Partida</a></li>
+                                <li><a id="ordenarModal" href="#" data-toggle="modal" data-target="#sortableModal">Ordenar Partidas</a></li>
+                            </ul>
+                        </li>
+                    </ul>
     			</div>
     			
     			<div class="body">
-    				<div class="row clearix">    				
-    					<div class="col-md-6 col-md-offset-6 text-right">
-    						<a class="btn bg-indigo btn-lg waves-effect" role="button" href="#" data-toggle="modal" data-target="#partidaModal"> NUEVA PARTIDA</a>							
-							<a id="ordenarModal" class="btn bg-indigo btn-lg waves-effect" role="button" href="#" data-toggle="modal" data-target="#sortableModal"> ORDENAR PARTIDAS</a>
-    					</div>
-    				</div>
-    			
-    				<div class="row clearix">    				
+    				<div class="row">    				
     					<div class="col-md-6 col-md-offset-6 text-right">
     						<button class="btn bg-blue btn-lg waves-effect" type="button">
     							SUBTOTAL DE COTIZACI&Oacute;N 
@@ -66,124 +69,24 @@
 									        <a href="#" class="delete-partida" th:attr="data-partida=${item.idCotizacionPartida}" title="Eliminar"><i class="material-icons">delete</i></a>
 	    								</td>
 	    								<td th:text="${item.numeroParte}"></td>
+	    								<td th:text="${item.descripcion}"></td>
 	    								<td>
-											<a href="javascript:void(0)" class="row-editable" th:attr="data-partida=${item.idCotizacionPartida}" data-tipo="textarea" data-name="descripcion"><th:block  th:text="${item.descripcion}"></th:block></a>
-										</td>
-	    								<td>
-	    									<a href="javascript:void(0)" class="row-editable" th:attr="data-partida=${item.idCotizacionPartida}" data-tipo="text" data-name="cantidad"><th:block  th:text="${item.cantidad}"></th:block></a>
+	    									<a href="javascript:void(0)" class="row-editable" th:attr="data-partida=${item.idCotizacionPartida}" data-name="cantidad"><th:block  th:text="${item.cantidad}"></th:block></a>
 	    								</td>
 	    								<td>
-	    									<a href="javascript:void(0)" class="row-editable" th:attr="data-partida=${item.idCotizacionPartida}" data-tipo="text" data-name="precioUnitario"><th:block  th:text="${item.precioUnitarioListaNatural}"></th:block></a>
+	    									<a href="javascript:void(0)" class="row-editable" th:attr="data-partida=${item.idCotizacionPartida}" data-name="precioUnitario"><th:block  th:text="${item.precioUnitarioListaNatural}"></th:block></a>
 	    								</td>
 	    								<td>
-	    									<a href="javascript:void(0)" class="row-editable" th:attr="data-partida=${item.idCotizacionPartida}" data-tipo="text" data-name="descuentoPorcentaje"><th:block  th:text="${item.descuentoPorcentajeNatural}"></th:block></a>
+	    									<a href="javascript:void(0)" class="row-editable" th:attr="data-partida=${item.idCotizacionPartida}" data-name="descuentoPorcentaje"><th:block  th:text="${item.descuentoPorcentajeNatural}"></th:block></a>
 	    								</td>
 	    								<td th:class="${'total' + {item.idCotizacionPartida}}" th:text="${item.totalNatural}"></td>
 	    							</tr>
     							</th:block>
     						</tbody>
-    					</table>
+    					</table>					
 					</div>
 					
     			</div>
-    		</div>
-    	</div>
-    </div>
-    
-    <!-- PARTIDA NUEVA MODAL -->
-    <div class="modal fade" id="partidaModal" tabindex="-1" role="dialog">
-    	<div class="modal-dialog modal-lg" role="document">
-    		<div class="modal-content">
-	    		<form id="formPartida" v-on:submit.prevent="createPartida" method="POST" role="form">
-					<input type="hidden" name="hddIdCotizacion" id="hddIdCotizacion" th:value="${objCotizacion.idCotizacion}" />
-
-	    			<div class="modal-header">
-	    				<h4 class="modal-title">Nueva Partida</h4>
-	    			</div>
-	    			<div class="modal-body">
-	    				<div class="row clearfix">
-	                        <div class="col-md-6">
-	                        	<div class="form-group">
-	                        		<p><b>No. parte *</b></p>
-	                                <div class="form-line">
-	                                    <input type="text" name="txtNumeroParte" class="form-control" v-model="newPartida.txtNumeroParte" required="required" />
-	                                </div>
-	                            </div>
-	                        </div>
-	                        
-	                        <div class="col-md-3">
-	                        	<div class="form-group">
-	                        		<p><b>Tiempo de entrega *</b></p>
-	                                <div class="form-line">
-	                                    <input type="text" id="txtTiempoEntrega" name="txtTiempoEntrega" class="form-control" placeholder="D&iacute;as h&aacute;biles" v-model="newPartida.txtTiempoEntrega" required="required" />
-	                                </div>
-	                            </div>
-	                        </div>
-						</div>
-						
-						<div class="row clearfix">
-							<div class="col-md-12">
-								<div class="form-group">
-	                        		<p><b>Descripci&oacute;n *</b></p>
-                                    <div class="form-line">
-                                        <textarea rows="6" name="txtDescripcion" class="form-control no-resize" placeholder="..." v-model="newPartida.txtDescripcion" required="required"></textarea>
-                                    </div>
-                                 </div>
-							</div>
-						</div>						
-						
-						<div class="row clearfix">
-	                        <div class="col-md-3">
-                        		<b>Cantidad *</b>
-	                        	<div class="input-group">
-	                                <div class="form-line">
-	                                    <input type="text" id="txtCantidad" name="txtCantidad" class="form-control" v-model="newPartida.txtCantidad" required="required" />
-	                                </div>
-	                            </div>
-	                        </div>
-	                        
-	                        <div class="col-md-3">
-	                        	<b>P/U Lista *</b>
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="material-icons">attach_money</i>
-                                    </span>
-                                    <div class="form-line">
-                                        <input type="text" id="txtPrecioUnitarioLista" name="txtPrecioUnitarioLista" v-model="newPartida.txtPrecioUnitario" class="form-control" />
-                                    </div>
-                                </div>
-	                        </div>
-	                        
-	                        <div class="col-md-3">
-	                        	<b>Descuento</b>
-	                        	<div class="input-group">
-	                                <div class="form-line">
-	                                    <input type="text" id="txtDescuento" name="txtDescuento" maxlength="6" class="form-control" v-model="newPartida.txtDescuento" required="required" />
-	                                </div>
-	                                <span class="input-group-addon">
-                                       <b>%</b>
-                                    </span>
-	                            </div>
-	                        </div>
-	                        
-	                        <div class="col-md-3">
-	                        	<b>Total</b>
-                                <div class="input-group">
-                                    <span class="input-group-addon">
-                                        <i class="material-icons">attach_money</i>
-                                    </span>
-                                    <div class="form-line">
-                                        <input type="text" id="txtTotalF" class="form-control" v-model="total" readonly="readonly" />
-                                    </div>
-                                </div>
-	                        </div>
-						</div>
-	    			</div> 		
-	    			<div class="modal-footer">
-	    				<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">CANCELAR</button>
-	                    <button type="submit" class="btn btn-primary waves-effect">CREAR</button>
-	    			</div>
-	    		</form>
     		</div>
     	</div>
     </div>
@@ -213,13 +116,9 @@
             </div>
         </div>
     </div>
-</div>
 </th:block>
 
 <th:block th:fragment="script">
-	<script th:src="@{/plugins/vue/vue.js}"></script>
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-	<script th:src="@{/assets/js/script.js}"></script>
 	
 	<!-- Jquery DataTable Plugin Js -->
     <script th:src="@{/plugins/jquery-datatable/jquery.dataTables.js}"></script>
@@ -239,8 +138,6 @@
 		var idCotizacion = [[${objCotizacion.getIdCotizacion()}]];
 	
 		$(document).on("ready", function() {
-
-			app2.idCotizacion = idCotizacion;
 			
 			var table = $('#dtPartidas').DataTable({
 		        responsive: true,
@@ -325,17 +222,15 @@
 			$(document).on('click', '.row-editable', function() {
 				var _this = this;
 				var idPartida = $(this).data("partida");
-				var tipoEditor = $(this).data("tipo");
 				
 				$(this).editable({
-					type: tipoEditor,
-					placement: 'left',
+					type: 'text',
 				    pk: idPartida,
 				    url: function(params) {				    	
 				    	var d = new $.Deferred();
 				    	var flag = true;
 
-				    	if(($.isNumeric(params.value) && params.pk > 0 && params.name != "") || (params.name == "descripcion" && params.value != "")) {
+				    	if($.isNumeric(params.value) && params.pk > 0 && params.name != "") {
 				    		
 				    		if(params.name == "cantidad") {
 				    			if(Math.floor(params.value) != +params.value) {
@@ -452,42 +347,32 @@
 		  return comparison;
 		}
 		
-		$(function () {
-			// VALIDADOR DE FORMULARIO
-			$('#formPartida').validate({
-		        rules: {
-					'txtTiempoEntrega': {
-						number: true
-					},
-		            'txtCantidad': {
-		                number: true
-		            },
-		            'txtPrecioUnitarioLista': {
-		                number: true
-		            },
-		            'txtDescuento': {
-		                number: true
-		            }
-		        },
-		        highlight: function (input) {
-		            $(input).parents('.form-line').addClass('error');
-		        },
-		        unhighlight: function (input) {
-		            $(input).parents('.form-line').removeClass('error');
-		        },
-		        errorPlacement: function (error, element) {
-		            $(element).parents('.input-group').append(error);
-		        }
-		    });
+		/*function accionesFormatter(value, row, index) {
 			
-			//Custom Validations ===============================================================================
-		    //Number
-		    $.validator.addMethod('number', function (value, element) {
-		        return value.match('[0-9]+');
-		    },
-		        'Por favor ingresa un n&uacute;mero.'
-		    );
-		});	
+			urlEdit = [[@{/controlPanel/cotizaciones/}]] + idCotizacion + '/partidas/' + row.idCotizacionPartida + '/edit';
+			
+		    return [
+		    	'<a href="' + urlEdit + '" title="Editar">',
+		        	'<i class="material-icons">mode_edit</i>',
+		        '</a>',
+		        '<a href="#" class="clone-partida" data-cotizacion="'+ idCotizacion +'" data-partida="'+ row.idCotizacionPartida +'" title="Clonar partida">',
+		        	'<i class="material-icons">flip_to_front</i>',
+		        '</a>',
+		        '<a href="#" class="delete-partida" data-cotizacion="'+ idCotizacion +'" data-partida="'+ row.idCotizacionPartida +'" title="Eliminar">',
+		        	'<i class="material-icons">delete</i>',
+		        '</a>'
+		    ].join('');
+		}*/
+		
+		//Datetimepicker plugin
+		/*$(function () {
+			$('#txtBootstrapTableHasta').bootstrapMaterialDatePicker({format: 'MM/DD/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+			$('#txtBootstrapTableDesde').bootstrapMaterialDatePicker({format: 'MM/DD/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false}).on('change', function(e, date)
+			{
+				$('#txtBootstrapTableHasta').bootstrapMaterialDatePicker('setMinDate', date);
+			});					
+			
+	 	});*/
 	
 		/*]]>*/</script>
 </th:block>

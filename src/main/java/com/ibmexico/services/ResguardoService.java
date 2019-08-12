@@ -45,7 +45,7 @@ public class ResguardoService {
 		long totalResguardos = 100;
 		
 		if(search != null) {				
-			if(sessionService.hasRol("ENTREGAS_ADMINISTRADOR")) {
+			if(sessionService.hasRol("RESGUARDOS_ADMINISTRADOR")) {
 				lstResguardoEntity = resguardoRepository.findForDataTable(search, DataTable.getPageRequest(offset, limit));
 				totalResguardos = resguardoRepository.countForDataTable(search);
 			} else {

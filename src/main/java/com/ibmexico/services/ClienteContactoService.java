@@ -2,6 +2,10 @@ package com.ibmexico.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,6 +35,25 @@ public class ClienteContactoService {
 	
 	public List<ClienteContactoEntity> listClienteContactosActivos(int idCliente) {
 		return clienteContactoRepository.findContactosActivos(idCliente);
+	}
+
+	public JsonObject jsonClienteContactosActivos(int idCliente) {
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+
+		List<ClienteContactoEntity> lstClientes = clienteContactoRepository.findContactosActivos(idCliente);
+
+		lstClientes.forEach((item)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_contacto", item.getIdClienteContacto())
+				.add("contacto", item.getContacto())
+				.add("correo", item.getCorreo())
+			);
+		});
+
+		jsonReturn.add("rows", jsonRows);
+		
+		return jsonReturn.build();
 	}
 	
 	public DataTable<ClienteContactoEntity> dataTable(int idCliente, String search, int offset, int limit, String txtBootstrapTableDesde, String txtBootstrapTableHasta) {
