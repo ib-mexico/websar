@@ -71,9 +71,9 @@ import com.ibmexico.services.UsuarioRolService;
 import com.ibmexico.services.UsuarioService;
 import com.lowagie.text.DocumentException;
 import com.pusher.rest.Pusher;
-import com.twilio.Twilio;
-import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.type.PhoneNumber;
+//import com.twilio.Twilio;
+//import com.twilio.rest.api.v2010.account.Message;
+//import com.twilio.type.PhoneNumber;
 
 @Controller
 @RequestMapping("controlPanel/cotizaciones")
@@ -180,14 +180,14 @@ public class CotizacionesController {
 			objOportunidad = oportunidadNegocioService.findByIdOportunidadNegocio(paramIdOportunidad);
 		}
 		
-		List<EmpresaEntity> lstEmpresas = empresaService.listEmpresas();
-		List<MonedaEntity> lstMonedas = monedaService.listMonedas();
-		List<FormaPagoEntity> lstFormasPagos = formaPagoService.listFormasPagos();
-		List<UsuarioEntity> lstUsuarios = usuarioService.listUsuariosActivos();
-		List<UsuarioEntity> lstUsuariosGrupos = usuarioService.listUsuariosGruposActivos();
-		List<ClienteEntity> lstClientes = clienteService.listClientesActivos();
-		List<SucursalEntity> lstSucursales = sucursalService.listSucursales();
-		List<ClienteGiroEntity> lstClientesGiros = clienteGiroService.listClientesGiros();
+		List<EmpresaEntity> lstEmpresas 			= empresaService.listEmpresas();
+		List<MonedaEntity> lstMonedas 				= monedaService.listMonedas();
+		List<FormaPagoEntity> lstFormasPagos 		= formaPagoService.listFormasPagos();
+		List<UsuarioEntity> lstUsuarios 			= usuarioService.listUsuariosActivos();
+		List<UsuarioEntity> lstUsuariosGrupos 		= usuarioService.listUsuariosGruposActivos();
+		List<ClienteEntity> lstClientes 			= clienteService.listClientesActivos();
+		List<SucursalEntity> lstSucursales 			= sucursalService.listSucursales();
+		List<ClienteGiroEntity> lstClientesGiros 	= clienteGiroService.listClientesGiros();
 		
 		
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_COTIZACIONES_CREATE);
@@ -751,13 +751,13 @@ public class CotizacionesController {
 					objCotizacion.setAprobacionFecha(ldNow);
 					
 					//ESTA NOTIFICACION IRIA EN LA PARTE DE APROBACION AL MOMENTO QUE SE APRUEBE UNA COTIZACION MAYOR A 10,000
-					Twilio.init(GeneralConfiguration.getInstance().getTwilioAccountSID(), GeneralConfiguration.getInstance().getTwilioAuthToken());
+					/*Twilio.init(GeneralConfiguration.getInstance().getTwilioAccountSID(), GeneralConfiguration.getInstance().getTwilioAuthToken());
 					
 					Message message = Message.creator(new PhoneNumber("whatsapp:+5219931695789"), 
 							new PhoneNumber("whatsapp:+14155238886"),
 							"Your appointment is coming up on July 21 at 3PM").create();
 					
-					System.out.println(message.getSid());
+					System.out.println(message.getSid());*/
 				}
 				
 				if(cmbEstatus.equals(3) && objCotizacion.getCotizacionEstatus().getIdCotizacionEstatus() != 3) {

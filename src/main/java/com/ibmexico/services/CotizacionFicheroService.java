@@ -89,7 +89,6 @@ public class CotizacionFicheroService {
 		if(objCotizacionFichero != null) {
 			if(file != null) {
 	            try {
-	            	
 	            	if(!file.getOriginalFilename().trim().equals("")) {
 		            	String ficheroNombre = UUID.randomUUID().toString();
 		            	String[] arrNombreFichero = file.getOriginalFilename().split("\\.");
@@ -105,9 +104,13 @@ public class CotizacionFicheroService {
 	                
 	            } catch (Exception e) {
 	            	throw new ApplicationException(EnumException.COTIZACIONES_FICHEROS_ADD_FILE_003);
-	            }				
+	            }
 			} else {
-				throw new ApplicationException(EnumException.COTIZACIONES_FICHEROS_ADD_FILE_002);
+				LocalDateTime ldtFecha = LocalDateTime.now();
+				objCotizacionFichero.setCreacionUsuario(sessionService.getCurrentUser());
+				objCotizacionFichero.setCreacionFecha(ldtFecha);
+
+				cotizacionFicheroRepository.save(objCotizacionFichero);
 			}
 		} else {
 			throw new ApplicationException(EnumException.COTIZACIONES_FICHEROS_ADD_FILE_001);

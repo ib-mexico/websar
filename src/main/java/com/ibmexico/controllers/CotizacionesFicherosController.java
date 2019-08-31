@@ -103,7 +103,7 @@ public class CotizacionesFicherosController {
 								@RequestParam(value="txtBanco", required=false, defaultValue="") String txtBanco,
 								@RequestParam(value="txtFechaVencimiento", required=false, defaultValue="") String txtFechaVencimiento,
 								@RequestParam(value="txtDescripcion") String txtDescripcion,
-								@RequestParam("fichero") MultipartFile fichero,
+								@RequestParam(value="fichero", required=false) MultipartFile fichero,
 								
 								RedirectAttributes objRedirectAttributes) {
 		
@@ -212,10 +212,10 @@ public class CotizacionesFicherosController {
 				
 				cotizacionFicheroService.updateFile(objFichero, fichero);
 				
-				if(cmbTipoFichero == 3 || cmbTipoFichero == 4) {					
+				if(cmbTipoFichero == 3 || cmbTipoFichero == 4) {
 					if(objFichero.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() >= 3 &&  objFichero.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() != 5) {	
 						cotizacionService.recalcularCotizacion(objFichero.getCotizacion());
-					}				
+					}
 				}
 				
 				objRedirectView = new RedirectView("/WebSar/controlPanel/cotizaciones/" + paramIdCotizacion + "/ficheros");
@@ -224,7 +224,7 @@ public class CotizacionesFicherosController {
 			}
 			else {
 				throw new ApplicationException(EnumException.COTIZACIONES_FICHEROS_UPDATE_001);
-			}			
+			}
 		} catch(ApplicationException exception) {
 			objRedirectView = new RedirectView("/WebSar/controlPanel/cotizaciones/" + paramIdCotizacion + "/ficheros/" + paramIdCotizacionFichero);
 			modelAndViewComponent.addResult(objRedirectAttributes, exception);

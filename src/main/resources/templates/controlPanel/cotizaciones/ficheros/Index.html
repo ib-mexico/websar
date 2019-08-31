@@ -73,10 +73,11 @@
 	    								<td class="text-left">
 	    									<div class="row">
 	    										<div class="col-md-4">
-			    									<a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {objCotizacion.idCotizacion} + '/ficheros/' + {itemFichero.getIdCotizacionFichero()} + '/edit'}" class="btn btn-warning">Editar</a>	    										
+			    									<a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {objCotizacion.idCotizacion} + '/ficheros/' + {itemFichero.getIdCotizacionFichero()} + '/edit'}" class="btn btn-warning">Editar</a>
 	    										</div>
 	    										<div class="col-md-4">
-			    									<a target="_blank" th:href="@{'/ficheros/cotizaciones/' + ${itemFichero.getUrl()}}" class="btn btn-primary">Ver Archivo</a>	    										
+													<a th:if="${itemFichero.getUrl() != null}" target="_blank" th:href="@{'/ficheros/cotizaciones/' + ${itemFichero.getUrl()}}" class="btn btn-primary">Ver Archivo</a>
+													<a th:unless="${itemFichero.getUrl() != null}" href="#" class="btn btn-primary disabled">Ver Archivo</a>
 	    										</div>
 	    										<div class="col-md-4" th:if="${rolExpedienteAdministrador}">
 	    											<a href="#" th:attr="data-id_fichero=${itemFichero.getIdCotizacionFichero()}" class="delete-file btn btn-danger">Eliminar</a>
@@ -189,14 +190,12 @@
 	                        </div>
 	                	</div>
 	                	
-	                	<div class="row clearfix">                	
+	                	<div class="row clearfix">
 		                    <div class="col-md-12">
-	                        	<div class="form-group">
-	                        		<p><b>Fichero *</b></p>
-	                                <div class="form-line">
-	                                    <input id="fichero" type="file" name="fichero" class="form-control" required="required" />
-	                                </div>
-	                            </div>
+								<div class="form-group files color">
+									<p><b>Fichero</b></p>
+									<input id="fichero" type="file" name="fichero" class="form-control-drop" />
+								</div>
 	                        </div>
 	                	</div>
 	                	
@@ -210,8 +209,8 @@
 	                	</div>
 	                </div>
 	                <div class="modal-footer">	                    
-	                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CANCELAR</button>
-	                    <button id="btnCargar" type="submit" class="btn btn-link waves-effect">CARGAR</button>
+	                    <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">CANCELAR</button>
+	                    <button id="btnCargar" type="submit" class="btn btn-primary waves-effect">CARGAR</button>
 	                </div>
                 </form>
             </div>
@@ -238,7 +237,7 @@
 			
 			var dtable = $('.tbl-expediente').DataTable({
 		        responsive: true
-		    });
+			});
 			
 			//DATEPICKER
 			$('#txtFechaVencimiento').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false});
@@ -339,9 +338,14 @@
 				data.append("txtBanco", $('#txtBanco').val());
 				data.append("txtFechaVencimiento", $('#txtFechaVencimiento').val());
 				data.append("txtDescripcion", $('#txtDescripcion').val());
-				data.append("fichero", $("#fichero")[0].files[0]);	
+
+				//VALIDAR SI HAY FICHERO O NO Y ADJUNTARLO
+				if($("#fichero")[0].files.length >= 1) {
+					data.append("fichero", $("#fichero")[0].files[0]);	
+				}
 								
 				$("#btnCargar").prop("disabled", true);
+				$progressBar = $('#progressBar');
 									
 				$.ajax({
 					url					: $('#formFichero').attr('action'),
@@ -357,38 +361,47 @@
 				        var xhr = new window.XMLHttpRequest();
 				        xhr.upload.addEventListener("progress", function (evt) {
 				            if (evt.lengthComputable) {
-				                var percentComplete = evt.loaded / evt.total;				                
-				                $('.progress-bar').css({
-				                    width: percentComplete * 100 + '%'
+				                var percentComplete = Math.round((evt.loaded / evt.total) * 100);			                
+				                $progressBar.css({
+				                    width: percentComplete + '%'
 				                });
 				                
-				                $('#progressBar').text = (percentComplete * 100) + '%'
+				                $progressBar.text(percentComplete + '%');
 				            }
 				        }, false);
 				        xhr.addEventListener("progress", function (evt) {
 				            if (evt.lengthComputable) {
-				                var percentComplete = evt.loaded / evt.total;
-				                $('.progress-bar').css({
-				                    width: percentComplete * 100 + '%'
+				                $progressBar.css({
+				                    width: '100%'
 				                });
 				                
-				                $('#progressBar').text = (percentComplete * 100) + '%'
+				                $progressBar.text('100%');
 				            }
 				        }, false);
 				        return xhr;
 				    },
 					success				: function(data) {
-						console.log(data);
 						if(data.respuesta) {																					
 							$('#ficheroModal').modal('hide');
 							location.reload();
 						} else{
+							$progressBar.css({
+								width: '0%'
+							});
+									
+							$progressBar.text('0%');
+
 							swal('Error!', 'Ocurrio un error al cargar el fichero, verifique su informacion.', 'error');
 						}
 						
 						$("#btnCargar").prop("disabled", false);
 					},
 					error				: function(e) {
+						$progressBar.css({
+							width: '0%'
+						});
+				                
+						$progressBar.text('0%');
 						console.log(e);
 					}
 				});

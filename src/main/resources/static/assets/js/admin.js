@@ -35,7 +35,7 @@ $(document).ready(function() {
 				scrollBorderRadius: '0',
 				scrollRailBorderRadius: '0',
 				scrollActiveItemWhenPageLoad: true,
-				breakpointWidth: 1170
+				breakpointWidth: 2560
 			},
 			dropdownMenu: {
 				effectIn: 'fadeIn',
