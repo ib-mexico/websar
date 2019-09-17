@@ -172,4 +172,14 @@ public class Templates {
 
 	// PRINTERS
 	public static final String PRINTER_USUARIOS_CARTERA_RECIBO = PATH_PRINTER + "usuarios/cartera/Recibo";
+	
+	
+	
+	//CatalogoActivos
+	public static final String CATALOGO_ACTIVO=PATH_CONTROL_PANEL+"adminRecursos/catalogo/Index";
+	public static final String CATALOGO_CREATE=PATH_CONTROL_PANEL+"adminRecursos/catalogo/Create";
+
+
+	//New Activos
+	public static final String ACTIVO_INDEX=PATH_CONTROL_PANEL+"adminRecursos/activos/Index";
 }
