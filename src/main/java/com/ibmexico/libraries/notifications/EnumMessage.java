@@ -83,8 +83,10 @@ public enum EnumMessage {
 	//TAREAS
 	TAREAS_CREATE_001("Creación de tarea", "La tarea se creó satisfactoriamente."),
 	TAREAS_UPDATE_001("Modificación de tarea", "La tarea se modificó satisfactoriamente."),
-	;
 	
+	
+	//ACTIVOS
+	ACTIVOS_CREATE_001("Creación de activos","Nuevo Activo de la Empresa creada Satisfactoriamente");
 	
 	private String title;
 	private String message; 

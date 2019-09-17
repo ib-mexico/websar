@@ -1,7 +1,10 @@
 package com.ibmexico.libraries.notifications;
 
 public enum EnumException {
-
+	
+	//ACTIVOS
+	ACTIVO_CREATE_001("Error en creación de activos","El objeto activo no es válido, póngase en contacto con el administrador de sistema"),
+	ACTIVO_DELETE_001("Error de eliminación activo","El objeto activo no es válido, consulte a su administrador de sistema"),
 	//GENERALES
 	GENERAL_FORM("Error de formulario", "Es necesario completar el formulario."),
 	GENERAL_COMUNICATION("Error de comunicación", "Ocurrio un error de comunicación entre el cliente y el servidor."),
