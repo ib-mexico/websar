@@ -27,46 +27,21 @@
 								<i class="material-icons">add_circle</i> Nuevo Catalogo</a>
     					</div>
     				</div>
-    			
-    				<div class="row clearfix" id="dtActivosToolBar">
-    					<div class="col-xs-3 col-sm-3 col-md-3">
-    						<div class="input-group">
-   								<span class="input-group-addon">
-                                	<i class="material-icons">date_range</i>
-	                           	</span>
-	                           	<div class="form-line" id='groupDesde'>
-                               		<input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
-	                           	</div>
-							</div>
-    					</div>
-    					
-    					<div class="col-xs-3 col-sm-3 col-md-3">
-    						<div class="input-group">
-    							<span class="input-group-addon">
-                                	<i class="material-icons">date_range</i>
-	                           	</span>
-	                           	<div class="form-line" id='groupHasta'>
-                               		<input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
-	                           	</div>
-							</div>
-    					</div>					
-					</div>
 
 					<div class="table-responsive">
 						<table id="dtActivos" class="table table-bordered table-striped table-hover">
 							<thead>
 								<tr>
 									<th class="col-md-1" data-field="idCatalogoActivo" data-halign="left" data-align="center">ID</th>
+									<th class="col-md-1" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+									<th class="col-md-2" data-formatter="imgFormatter" data-halign="center" data-align="center" data-visible="false">Imagen</th>
+									<th class="col-md-1" data-field="clave" data-halign="left" data-align="center">Clave</th>
 									<th class="col-md-3" data-field="nombre" data-halign="left">Nombre</th>
 									<th class="col-md-4" data-field="descripcion" data-halign="left">Descripci&oacute;n</th>
-
 									<th class="col-md-1" data-field="fecharegistro" data-halign="left" data-align="center" data-visible="false">Fecha registro</th>
-		
-									<th class="col-md-1" data-formatter="accionesFormatter" data-align="center">Acciones</th>
 								</tr>
 							</thead>
 						</table>
-		
 					</div>
 					
     			</div>
@@ -87,7 +62,7 @@
 						<div class="modal-body">
 							<div class="row clearfix">
 
-								<div class="col-md-4">
+								<div class="col-md-12">
 									<div class="form-group">
 										<p><b>Nombre *</b></p>
 										<div class="form-line">
@@ -96,7 +71,24 @@
 									</div>
 								</div>
 								
-								<div class="col-md-4">
+								<div class="col-md-12">
+									<div class="form-group">
+										<p><b>Clave</b></p>
+										<div class="form-line">
+											<input type="text" name="txtClave" class="form-control" required="required" v-model="clave"/>
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-md-12">
+									<div class="form-group files color">
+										<p><b>Fichero</b></p>
+										<input id="fichero" type="file" name="fichero" class="form-control-drop"/>
+									</div>
+								</div>
+									
+
+								<div class="col-md-12">
 									<div class="form-group">
 										<p><b>Descripci&oacute;n *</b></p>
 										<div class="form-line">
@@ -186,7 +178,7 @@
 								});																													
 							}
 						}).catch(swal.noop);
-
+						
 				});
 
 			}
@@ -197,8 +189,20 @@
 		    return [
 		        '<a href="#" title="Eliminar" class="deleteCatalogo" data-catalogo="'+row.idCatalogoActivo+'">',
 		        	'<i class="material-icons remove">delete</i>',
-		        '</a>'
+				'</a>'
+				
 			].join(''); 
+		}
+		function imgFormatter(value, row, index){
+			var lblEstatus='';
+			var url=[[@{/ficheros/catalogo/}]]+row.file_name;
+			console.log(row.file_name!=null);
+			if(row.file_name!="N/A"){
+				lblEstatus ='<a type="button" href="'+url+'" class="btn btn-primary waves-effect" target="_blank"> Ver imagen </a>';
+			}else{
+				lblEstatus='<a type="button" class="btn btn-primary waves-effect disabled" href="#" > Desconocido </a>';
+			}
+			return lblEstatus;
 		}
 
 		$(function () {
@@ -210,7 +214,10 @@
 		            },
 		            'txtDescripcion': {
 		                required: true
-		            }
+					},
+					'txtClave':{
+						required:true
+					}
 		        },
 		        highlight: function (input) {
 		            $(input).parents('.form-line').addClass('error');
@@ -225,5 +232,4 @@
 		});
 		
 	</script>
-
 </th:block>

@@ -24,26 +24,48 @@
 							<!--th:href="${ {_PATH_} + 'controlPanel/activos/create'}" -->
 							<a href="#" role="button" class="btn bg-purple waves-effect" 
 								data-toggle="modal" data-target="#modalNuevoActivo" v-on:click="loadModal">
-								<i class="material-icons">add_circle</i> Nuevo</a>
-    					</div>
-    				</div>
+								<i class="material-icons">add_circle</i> Nuevo Activo</a>
+						</div>
+					</div>
+					<!-- <div class="row clearfix" id="dtClientesToolBar">
+							<div class="col-xs-3 col-sm-3 col-md-3">
+								<div class="input-group">
+									   <span class="input-group-addon">
+										<i class="material-icons">filter_list</i>
+									   </span>
+									   <div class="form-line" id='groupDesde'>
+											<select class="form-control text-center" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde...">
+													<option>1</option>
+													<option>2</option>
+													<option>3</option>
+													<option>4</option>
+													<option>5</option>
+											</select>
+										   <input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
+									   </div>
+								</div>
+							</div>
+					</div> -->
 
 					<div class="table-responsive">
-						<table id="dtActivo" class="table table-bordered table-striped table-hover">
+						<table id="dtActivo" class="table table-bordered table-striped table-hover" data-height="600">
 							<thead>
 								<tr>
-									<th class="col-md-1" data-field="id_activo_mobiliario" data-halign="left" data-align="center">ID</th>
-									<th class="col-md-3" data-field="nombre" data-halign="left">Nombre</th>
-                                    <th class="col-md-4" data-field="marca" data-halign="left">Marca</th>
-                                    <th class="col-md-3" data-field="modelo" data-halign="left">Modelo</th>
-                                    <th class="col-md-3" data-field="color" data-halign="left">Color</th>
-                                    <th class="col-md-3" data-field="Catalogo" data-halign="left">Catalogo</th>
+									<th scope="col" class="col-md-1" data-field="id_activo_mobiliario" data-sortable="true" data-halign="left" data-align="center">ID</th>
+									<th class="col-md-2" data-formatter="accionesFormatter" data-align="center" style="display: inline">Acciones</th>
+									<th class="col-md-2" data-field="nombre" data-halign="left">Nombre</th>
+                                    <th class="col-md-2" data-field="marca" data-halign="left">Marca</th>
+                                    <th class="col-md-1" data-field="modelo" data-sortable="true" data-halign="left">Modelo</th>
+									<th class="col-md-1" data-field="color" data-halign="left">Color</th>
+									<th class="col-md-2" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>
+                                    <th class="col-md-3" data-field="catalogo" data-sortable="true" data-halign="left">Catalogo</th>
 
-
+									<th class="col-md-1" data-field="placa" data-halign="left" data-align="center" data-visible="false">Num. de placa</th>
+									<th class="col-md-1" data-field="departamento" data-halign="left" data-align="center" data-visible="false">Departamento asig.</th>
+									<th class="col-md-1" data-field="usuario_asignado" data-halign="left" data-align="center" data-visible="false">Usuario asig.</th>
                                     <th class="col-md-1" data-field="creacion_fecha" data-halign="left" data-align="center" data-visible="false">Fecha registro</th>
                                     <th class="col-md-1" data-field="creacion_id_usuario" data-halign="left" data-align="center" data-visible="false">Registrado :</th>
 		
-									<th class="col-md-1" data-formatter="accionesFormatter" data-align="center">Acciones</th>
 								</tr>
 							</thead>
 						</table>
@@ -62,7 +84,7 @@
 		<div class="modal fade" id="modalNuevoActivo" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
-					<form id="formActivo" v-on:submit.prevent="createActivo" method="POST" role="form">
+					<form id="formActivo" v-on:submit.prevent="createActivo" method="POST" role="form" enctype="multipart/form-data">
 						<div class="modal-header">
 							<h4 class="modal-title">Nuevo Activo</h4>
 						</div>
@@ -98,61 +120,104 @@
                                             </select>
                                         </div>
 								</div>
-								<div class="col-md-4">
-									
-									<div class="form-group" v-if="newActivo.id_activo==2">
-										<p><b>Opcionales</b></p>
-										<div class="form-line">
-											<input type="text" name="txtOpcional" class="form-control" placeholder="opcional"/>
-										</div>
-									</div>
-
-								</div>
 
                             </div>
                             
                             <div class="row clearfix">
-
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                            <p><b>Marca</b></p>
-                                            <div class="form-line">
-												<input type="text" name="txtMarca" class="form-control" 
-												placeholder="Escriba la marca" required="required" v-model="newActivo.marca"/>
-                                            </div>
-                                        </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <p><b>Modelo</b></p>
-                                        <div class="form-line">
-											<input type="text" name="txtModelo" class="form-control" 
-											placeholder="Escriba el modelo" v-model="newActivo.modelo"/>
+										<p><b>Marca</b></p>
+										<div class="form-line">
+											<input type="text" name="txtMarca" class="form-control" 
+											placeholder="Escriba la marca" required="required" v-model="newActivo.marca"/>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                        <div class="form-group">
-                                            <p><b>Color</b></p>
-                                            <div class="form-line">
-												<input type="text" name="txtColor" class="form-control" required="required" 
-												placeholder="Escriba el color .." v-model="newActivo.color"/>
-                                            </div>
-                                        </div>
-								</div>
-
-							</div>
-							<div class="row clearfix">
-								<div class="col-md-4">
 									<div class="form-group">
-										<p><b>Serie</b></p>
+										<p><b>Num. de serie</b></p>
 										<div class="form-line">
 											<input type="text" name="txtSerie" class="form-control" required="required" 
-											placeholder="Escriba la serie" v-model="newActivo.serie"/>
+												placeholder="Escriba la serie" v-model="newActivo.serie"/>
+										</div>
+									</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <p><b>Color</b></p>
+                                        <div class="form-line">
+											<input type="text" name="txtColor" class="form-control" required="required" 
+											placeholder="Escriba el color .." v-model="newActivo.color"/>
+                                        </div>
+                                    </div>
+								</div>
+							</div>
+
+							<div class="row-clearfix" v-show="newActivo.id_activo==1">
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Num. de Placa</b></p>
+										<div class="form-line">
+											<input type="text" name="txtPlaca" class="form-control" 
+											placeholder="Escriba el num. de placa" v-model="newActivo.placa"/>
 										</div>
 									</div>
 								</div>
-								<div class="col-md-8">
+								<div class="col-md-4">
+										<div class="form-group">
+											<p><b>Modelo</b></p>
+											<div class="form-line">
+												<input type="text" name="txtModelo" class="form-control" 
+												placeholder="Escriba el modelo" v-model="newActivo.modelo"/>
+											</div>
+										</div>
+								</div>
+
+
+								<div class="col-md-4">
+                                    <b>Area asignada*</b>
+                                    <div class="input-group">	                            
+										<select class="form-control show-tick cmbDepartamento" name="cmbDepartamento" id="cmbDepartamento" v-model="newActivo.id_departamento" data-live-search="true">
+                                            <option value="default" selected="selected">Selecciona un Departamento...</option>
+                                            <option v-for="item in departamento" :value="item.id_departamento">{{ item.nombre_departamento }}</option>
+                                        </select>
+                                    </div>
+								</div>
+							</div>
+								<div class="row clearfix" v-show="newActivo.id_activo==1">
+										<div class="col-md-12">
+												<b>Usuario asignado </b>
+												<div class="input-group">	                            
+													<select class="form-control show-tick cmbUsuario" name="cmbUsuario" id="cmbUsuario" 
+													v-model="newActivo.id_usuario" data-live-search="true">
+														<option value="default" selected="selected">Selecciona un usuario...</option>
+														<option v-for="item in usuario" :value="item.id_usuario">{{ item.nombre_completo }}</option>
+													</select>
+												</div>
+										</div>
+		
+								</div>
+
+							<div class="row clearfix m-t-5">
+								<div class="col-md-12">
+									<div class="form-group" >	
+										<p><b>Im&aacute;gen de Activo</b></p>							
+										<div class="form-line">
+											<input type="file" name="fichero" id="idFileActivo" class="form-control-file" multiple="multiple" />
+											<!-- <input type="file" name="fichero" @change="onFileChange" class="form-control" multiple="multiple"/> -->
+										</div>
+									</div>
+									<!-- <div v-else>
+										<img :src="newActivo.fichero"/>
+										<button class="btn-danger" @click="removeImage">Quitar Imagen</button>
+									</div> -->
+								</div>
+	
+							</div>
+
+							<div class="row clearfix">
+<!-- iva num serie -->
+								<div class="col-md-12">
 									<p><b>Observaciones</b></p>
 									<div class="form-line">
 										<textarea rows="4"  name="txtObservaciones" class="form-control no-resize col-md-6" 
@@ -276,7 +341,37 @@
 							</form>
 						</div>
 					</div>
-				</div>
+			</div>
+
+			<div id="modalTable" class="modal fade" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <h5 class="modal-title">Historial de mantenimiento</h5>
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						  </button>
+						</div>
+						<div class="modal-body">
+						  <table id="table"
+							data-toggle="table"
+							data-height="299"
+							data-url="json/data1.json">
+							<thead>
+							  <tr>
+								<th data-field="id">ID</th>
+								<th data-field="name">Item Name</th>
+								<th data-field="price">Item Price</th>
+							  </tr>
+							</thead>
+						  </table>
+						</div>
+						<div class="modal-footer">
+						  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					  </div>
+					</div>
+			</div>
 
 	</div>
 
@@ -306,7 +401,7 @@
 			search				: true,
 			showExport			: true,
 			striped				: true,
-			pageSize 			: 30,
+			pageSize 			: 10,
 			exportTypes			: ["excel"],
 			toolbar				: "#dtActivoToolBar",
 			queryParams 		: function(params) {
@@ -315,47 +410,15 @@
 										params['txtBootstrapTableHasta'] = $('#txtBootstrapTableHasta').val();
 							        	return params;
 		    }, onLoadSuccess :function(data){
-				$(".deleteActivo").click(function(){
-					var idActivo=$(this).attr('data-activo');
-
-					swal({
-							title	: "Eliminar Activo",
-							text	: "Se eliminara un activo en el sistema.",
-							type	: "warning",
-							showCancelButton: true,
-							cancelButtonText: 'Cancelar',
-							confirmButtonText: 'Eliminar',
-						}).then((result) => {
-							if(result) {
-								
-								$.ajax({
-									url			: [[@{/controlPanel/BienActivo/}]] + idActivo + '/delete',
-									data		: {
-													idActivo : idActivo, 
-													[[${_csrf.parameterName}]] : [[${_csrf.token}]]
-									},							        
-									dataType	: 'json',
-									type		: "POST",
-									success		: function(data) {
-										if(data.respuesta) {				
-											$("#dtActivo").bootstrapTable('refresh');
-											swal(data.titulo, data.mensaje,'success');
-										}
-									},
-									error		: function(e) {
-										console.log(e);										
-									}
-								});																													
-							}
-						}).catch(swal.noop);
-
-				});
 
 			}
 		});
 
 		function edit(param){			
 			NuevoActivo.editActivo(param);
+		}
+		function deleteAct(param){
+			NuevoActivo.deleteActivo(param);
 		}
 
 		function accionesFormatter(value, row, index) {
@@ -364,11 +427,35 @@
 				'<a href="#" title="Editar" class="EditActivo" data-Edit="'+row.id_activo_mobiliario+'" data-toggle="modal" data-target="#modalEditActivo" onclick="edit('+row.id_activo_mobiliario+');" role="button">',
 					'<i class="material-icons edit">edit</i>',
 				'</a>',
-				'<a href="#" title="Eliminar" class="deleteActivo" data-activo="'+row.id_activo_mobiliario+'">',
+				'<a href="#" title="Eliminar" class="deleteActivo" onclick="deleteAct('+row.id_activo_mobiliario+')">',
 		        	'<i class="material-icons remove">delete</i>',
+				'</a>',
+				'<a href="#" title="Imprimir" class="ImprimirActivo">',
+					'<i class="material-icons print">print</i>',
+					'</a>',
+				'<a href="#" title="Historial" class="Historial" data-toggle="modal" data-target="#modalTable" role="button">',
+					'<i class="material-icons format_list_numbered">format_list_numbered</i>',
+				'</a>',
+				'<a href="#" title="EnviarMantenimiento" class="Mantenimiento">',
+				'<i class="material-icons build">build</i>',
 				'</a>'
 			].join(''); 
 		}
+
+
+		function estatusFormatter(value, row, index){
+			var lblEstatus='';
+			switch(row.estatus){
+				case true:
+					lblEstatus ='<a type="button" class="btn bg-green waves-effect" > Activo </a>';
+					break;
+				default:
+					lblEstatus='<a type="button" class="btn bg-green waves-effect" > Desconocido </a>';
+					break;
+			}
+			return lblEstatus;
+		}
+
 
 		$(function () {
 		// VALIDADOR DE FORMULARIO
@@ -391,7 +478,8 @@
 					},
 					'txtObservaciones':{
 						required: true
-					}
+					},
+
 		        },
 		        highlight: function (input) {
 		            $(input).parents('.form-line').addClass('error');

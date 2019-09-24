@@ -35,6 +35,17 @@ public class BienActivoEntity{
     @Column(nullable = true)
     private String serie;
 
+    @Column(nullable = true)
+    private String placa;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="id_departamento", nullable = true)
+    private DepartamentoEntity idDepartamento;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_usuario", nullable = true)
+	private UsuarioEntity usuario;
+
 	@Lob
 	@Column
 	private String observaciones;
@@ -190,6 +201,30 @@ public class BienActivoEntity{
 
     public void setEmpresa(EmpresaEntity empresa) {
         this.empresa = empresa;
+    }
+
+    public String getPlaca() {
+        return placa;
+    }
+
+    public void setPlaca(String placa) {
+        this.placa = placa;
+    }
+
+    public DepartamentoEntity getIdDepartamento() {
+        return idDepartamento;
+    }
+
+    public void setIdDepartamento(DepartamentoEntity idDepartamento) {
+        this.idDepartamento = idDepartamento;
+    }
+
+    public UsuarioEntity getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(UsuarioEntity usuario) {
+        this.usuario = usuario;
     }
 
 

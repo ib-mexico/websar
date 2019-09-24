@@ -1,5 +1,7 @@
 package com.ibmexico.controllers;
 
+import java.io.IOException;
+
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -29,57 +32,32 @@ import com.ibmexico.services.CatalogoActivoService;
 @Controller
 @RequestMapping("controlPanel/catalogoActivo")
 public class CatalogoActivoController {
-	
+
 	@Autowired
 	@Qualifier("catalogoActivoService")
 	private CatalogoActivoService catActivoService;
-	
+
 	@Autowired
 	@Qualifier("modelAndViewComponent")
 	private ModelAndViewComponent modelAndViewComponent;
-	
-	@GetMapping({"","/"})
+
+	@GetMapping({ "", "/" })
 	public ModelAndView index() {
-		ModelAndView modelAndView=modelAndViewComponent.createModelAndViewControlPanel(Templates.CATALOGO_ACTIVO);
+		ModelAndView modelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CATALOGO_ACTIVO);
 		return modelAndView;
 	}
-	
+
 	@GetMapping("/create")
 	public ModelAndView create() {
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CATALOGO_CREATE);
 		return objModelAndView;
 	}
-	
-	
-	
-	@RequestMapping(value = "", method = RequestMethod.POST)
-	public RedirectView store( @RequestParam(value="txtNombre") String txtNombre,
-								@RequestParam(value="txtDescripcion", required=false) String txtDescripcion,
-								RedirectAttributes objRedirectAttributes) {
-					
-		RedirectView objRedirectView = null;
-		CatalogoActivoEntity objCatActivo=new CatalogoActivoEntity();
-		
-		try {
-			objCatActivo.setNombre(txtNombre);
-			objCatActivo.setDescripcion(txtDescripcion);
-					
-									
-			catActivoService.create(objCatActivo);
-			objRedirectView = new RedirectView("/WebSar/controlPanel/catalogoActivo");
-			modelAndViewComponent.addResult(objRedirectAttributes, EnumMessage.ACTIVOS_CREATE_001);
-			
-		} catch(ApplicationException exception) {
-			objRedirectView = new RedirectView("/WebSar/controlPanel/catalogoActivo/create");
-			modelAndViewComponent.addResult(objRedirectAttributes, exception);
-		}
-		return objRedirectView;
-	}
-	
-	
-	@RequestMapping(value="storeCatalogoAjax", method=RequestMethod.POST)
-	public @ResponseBody String storeCatalogoAjax(@RequestParam(value="txtNombre", required=true) String txtNombre,
-												  @RequestParam(value="txtDescripcion", required=false) String txtDescripcion) {
+
+	@RequestMapping(value = "storeCatalogoAjax", method = RequestMethod.POST)
+	public @ResponseBody String storeCatalogoAjax(@RequestParam(value = "txtNombre", required = true) String txtNombre,
+			@RequestParam(value = "txtDescripcion", required = false) String txtDescripcion,
+			@RequestParam(value = "txtClave") String txtClave,
+			@RequestParam(value = "fichero", required = false) MultipartFile fichero) throws IOException {
 		Boolean respuesta = false;
 		String titulo = "Oops!";
 		String mensaje = "Ocurrió un error al crear los Activos en el sistema.";
@@ -88,7 +66,8 @@ public class CatalogoActivoController {
 		try {
 			objCatActivo.setNombre(txtNombre);
 			objCatActivo.setDescripcion(txtDescripcion);
-			catActivoService.create(objCatActivo);		
+			objCatActivo.setClave(txtClave);
+			catActivoService.addFile(objCatActivo, fichero);		
 			
 			respuesta = true;
 			titulo = "Excelente!";
@@ -126,7 +105,9 @@ public class CatalogoActivoController {
 				.add("idCatalogoActivo", itemCatActivo.getIdCatalogoActivo())
 				.add("nombre", itemCatActivo.getNombre())
 				.add("descripcion", itemCatActivo.getDescripcion())
-				.add("fecharegistro", itemCatActivo.getCreacionFechaNatural()));
+				.add("fecharegistro", itemCatActivo.getCreacionFechaNatural())
+				.add("clave", itemCatActivo.getClave() !=null ? itemCatActivo.getClave() :"N/A")
+				.add("file_name", itemCatActivo.getUrl()!=null ? itemCatActivo.getUrl() : "N/A"));
 		});
 		jsonReturn.add("rows", jsonRows);	
 
@@ -135,16 +116,13 @@ public class CatalogoActivoController {
 	
 	// @RequestMapping("{id}/delete")
 	// public RedirectView  delete(@PathVariable(name="id")int id) {
-
 	// 	catActivoService.delete(id);
 	// 	RedirectView objRedirectView = new RedirectView("/WebSar/controlPanel/activos");
 	// 	return objRedirectView;
-		
 	// }
 
 	@RequestMapping(value = {"{idCatalogo}/delete","{idCatalogo}/delete/"} ,method = RequestMethod.POST)
 	public @ResponseBody String deleteAjax(@PathVariable(name="idCatalogo")int idCatalogo){
-
 		Boolean respuesta = false;
 		String titulo = "Oops!";
 		String mensaje = "Ocurrió un error al intentar eliminar un Activo.";
@@ -165,13 +143,10 @@ public class CatalogoActivoController {
 			throw new ApplicationException(EnumException.ACTIVO_DELETE_001);
 		}
 
-
 		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
 		jsonReturn	.add("respuesta", respuesta)
 					.add("titulo", titulo)
-					.add("mensaje", mensaje);
-
-										
+					.add("mensaje", mensaje);		
 		return jsonReturn.build().toString();
 	}
 }

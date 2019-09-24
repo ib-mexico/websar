@@ -5,6 +5,14 @@ public enum EnumException {
 	//ACTIVOS
 	ACTIVO_CREATE_001("Error en creación de activos","El objeto activo no es válido, póngase en contacto con el administrador de sistema"),
 	ACTIVO_DELETE_001("Error de eliminación activo","El objeto activo no es válido, consulte a su administrador de sistema"),
+	ACTIVO_FICHEROS_ADD_FILE_001("Error de fichero de Activo","Ocurrio un error con el fichero, es posible que el archivo presente errores"),
+	ACTIVO_FICHEROS_ADD_FILE_002("Error de fichero de Activo","Ocurrio un error con el fichero de Activo es posible que el archivo presente erores"),
+	ACTIVO_FICHEROS_ADD_FILE_003("Error de fichero de Activo","Ocurrio un error con el fichero, es posible que el archivo presente errores"),
+	ACTIVO_FICHEROS_ADD_FILE_004("Error de fichero de Activo","El fichero requiere un nombre"),
+
+
+
+
 	//GENERALES
 	GENERAL_FORM("Error de formulario", "Es necesario completar el formulario."),
 	GENERAL_COMUNICATION("Error de comunicación", "Ocurrio un error de comunicación entre el cliente y el servidor."),

@@ -15,10 +15,11 @@ if (document.getElementById('appCatalogoActivos')) {
 		el:"#appCatalogoActivos",
 		data:{
 			nombre:"",
-			descripcion:""
+			descripcion:"",
+			clave:"",
+			file_name:"",
 		},
 		methods:{
-
 			validateForm(){
 				var response=false;
 
@@ -41,9 +42,10 @@ if (document.getElementById('appCatalogoActivos')) {
 						//Clean form
 						$("#formCatalogoActivo")[0].reset();
 						$("#modalNuevaCategoria").modal("hide");
-						this.nombre='';
-						this.descripcion='';
-
+						this.nombre=''
+						this.descripcion=''
+						this.clave=''
+						this.file_name=''
 						swal(response.data.titulo, response.data.mensaje, "success");
 						$("#dtActivos").bootstrapTable('refresh');
 
@@ -62,7 +64,6 @@ if (document.getElementById('appCatalogoActivos')) {
 			}
 		}
 		//finish method createCatalogo
-	
 		}
 	});
 }
@@ -74,15 +75,21 @@ if(document.getElementById('appActivos')){
 		data:{
 			catalogo:[],
 			empresas:[],
+			departamento:[],
+			usuario:[],
 			newActivo:{
 				nombre:"",
 				marca:"",
 				modelo:"",
 				color:"",
 				serie:"",
+				placa:"",
 				observaciones:"",
-				id_empresa:'default',
-				id_activo:'default'
+				id_empresa:'',
+				id_activo:'',
+				id_usuario:'',
+				id_departamento:'',
+				fichero:''
 			},
 			editData:{},
 			elegido:""
@@ -94,18 +101,40 @@ if(document.getElementById('appActivos')){
 				axios.get(url).then(response=>{
 					if(response.status==200 && response.data.respuesta){
 						this.catalogo=response.data.jsonCatalogoActivo.rows;
-						this.empresas 		= response.data.jsonEmpresas.rows;					
+						this.empresas 		= response.data.jsonEmpresas.rows;
+						this.departamento =	 response.data.jsonDepartamento.rows;
+						this.usuario =		response.data.jsonUsuarios.rows;			
 					}
 				})
 			}
 			,loadModal(){
 				$('.cmbCatalogo').selectpicker('refresh');
 				$('.cmbEmpresa').selectpicker('refresh');
+	
+				// $('#cmbCatalogo').on('change',function(){
+				// 	if($(this).val() ==1){
+				// 		$('.cmbDepartamento').show();
+				// 		$('.cmbUsuario').show();
+				// 		$('.cmbDepartamento').selectpicker('refresh');
+				// 		$('.cmbUsuario').selectpicker('refresh');
+				// 	}
+				// });
+
 			}
 			,
 			validateForm(){
 				var response = false;
 
+				// if(!this.newActivo.fichero){
+				// 	swal("Revisión!","Sube alguna imagen de referencia al activo");
+				// 	return response;
+				// }
+				var fileInput= document.getElementById('idFileActivo').files.length;
+				if(!fileInput){
+					swal("Revisión!","Sube alguna imagen de referencia al activo");
+					return response;
+				}
+				
 				if(!this.newActivo.nombre || !this.newActivo.marca){
 					swal("Revisión!", "Debes  de terminar de rellenar todos los campos.", "warning");
 					return response;
@@ -133,14 +162,18 @@ if(document.getElementById('appActivos')){
 							//Clean form
 							$("#formActivo")[0].reset();
 							$("#modalNuevoActivo").modal("hide");
-							this.newActivo.nombre='';
-							this.newActivo.marca='',
-							this.newActivo.modelo='',
-							this.newActivo.color='',
-							this.newActivo.serie='',
-							this.newActivo.observaciones='default',
+							this.newActivo.nombre=''
+							this.newActivo.marca=''
+							this.newActivo.modelo=''
+							this.newActivo.color=''
+							this.newActivo.serie=''
+							this.newActivo.placa=''
+							this.newActivo.observaciones='default'
 							this.newActivo.id_activo='default'
 							this.newActivo.id_empresa='default'
+							this.newActivo.id_departamento='default'
+							this.newActivo.id_usuario='default'
+							this.newActivo.fichero=''
 
 							swal(response.data.titulo, response.data.mensaje, "success");
 							$("#dtActivo").bootstrapTable('refresh');
@@ -217,9 +250,50 @@ if(document.getElementById('appActivos')){
 				})
 
 			}
+			,deleteActivo(param){
+				var url=host+'BienActivo/'+param+'/delete';
+				
+				swal({
+					title	: "Eliminar Activo",
+					text	: "Estas seguro de eliminar un activo en el sistema.",
+					type	: "warning",
+					showCancelButton: true,
+					cancelButtonText: 'Cancelar',
+					confirmButtonText: 'Eliminar',
+				}).then((result)=>{
+					if(result){
+						axios.post(url).then(resp=>{
+							if(resp.status==200 && resp.data.respuesta){
+
+								swal(resp.data.titulo, resp.data.mensaje, "success");
+								$("#dtActivo").bootstrapTable('refresh');
+							}else{
+								// console.log(resp);
+								swal(resp.data.titulo, resp.data.mensaje, "error");
+							}
+						}).catch(error=>{
+							swal("Algo malo pasó!", error.resp.data, "error");
+								// console.log(error);
+						});
+					}
+				}).catch(swal.noop);
+			}
 		}
 		,mounted(){
 			this.getFormData();
+		},
+		watch:{
+			'newActivo.id_activo':function(val){
+				console.log(val+"hola val");
+				if(val==1){
+					$('.cmbUsuario').selectpicker('refresh');
+                    $('.cmbDepartamento').selectpicker('refresh');
+				}
+                // if((val)==1) {
+				// 	$('.cmbUsuario').selectpicker('refresh');
+                //     $('.cmbDepartamento').selectpicker('refresh');
+				// }
+            },
 		}
 	})
 }
