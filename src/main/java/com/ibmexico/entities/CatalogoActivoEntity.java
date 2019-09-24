@@ -28,6 +28,12 @@ public class CatalogoActivoEntity {
 	
 	@Column
 	private boolean eliminado = false;
+
+	@Column
+	private String clave;
+
+	@Column
+	private String url;
 	
 	@Column(nullable = false)
 	private LocalDateTime fechaRegistro;
@@ -36,7 +42,6 @@ public class CatalogoActivoEntity {
 	@Column(nullable=false)
 	private LocalDateTime fechaModificacion;
 	
-
 	
 	public boolean isEliminado() {
 		return eliminado;
@@ -45,7 +50,6 @@ public class CatalogoActivoEntity {
 	public void setEliminado(boolean eliminado) {
 		this.eliminado = eliminado;
 	}
-
 
 	
 
@@ -101,6 +105,95 @@ public class CatalogoActivoEntity {
 				+ descripcion + ", fechaRegistro=" + fechaRegistro + "]";
 	}
 
+	public String getClave() {
+		return clave;
+	}
+
+	public void setClave(String clave) {
+		this.clave = clave;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+
+	public String getFicheroFullName() {
+		String objRetorno =  null;
+		
+		if(getFicheroNombre() != null && getFicheroExtension() != null) {
+			objRetorno = getFicheroNombre() + getFicheroExtension();
+		}
+		return objRetorno;
+	}
+	
+	public String getFicheroNombre() {
+		String objRetorno =  null;
+		
+		if(this.url != null) {
+			String[] arrNombreFichero = this.url.split("\\.");
+	    	
+	    	if(arrNombreFichero.length >= 2) {
+	    		objRetorno = this.url.substring(0, this.url.length() - arrNombreFichero[arrNombreFichero.length-1].length());
+	    	}
+		}
+		
+		return objRetorno;
+	}
+	
+	public String getFicheroExtension() {
+		String objRetorno =  null;
+		
+		if(this.url != null) {
+			String[] arrNombreFichero = this.url.split("\\.");
+	    	
+	    	if(arrNombreFichero.length >= 2) {
+	    		objRetorno = arrNombreFichero[arrNombreFichero.length-1];
+	    	}
+		}
+		
+		return objRetorno;
+	}
+	
+	public String getFicheroTipo() {
+		String objRetorno =  null;
+		
+		if(this.getFicheroExtension() != null) {
+			switch(this.getFicheroExtension().toLowerCase()) {
+				case "jpg":
+				case "jpeg":
+				case "png":
+				case "gif":
+				case "bmp":
+					objRetorno = "imagen";
+				break;
+				
+				case "pdf":
+					objRetorno = "pdf";
+				break;
+				
+				case "doc":
+				case "docx":
+					objRetorno = "documento";
+				break;
+				
+				case "xls":
+				case "xlsx":
+					objRetorno = "hojaCalculo";
+				break;
+				
+				default:
+					objRetorno = "otro";
+				break;
+			}
+		}
+		
+		return objRetorno;
+	}
 
 
 }

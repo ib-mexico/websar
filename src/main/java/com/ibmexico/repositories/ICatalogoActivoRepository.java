@@ -15,7 +15,7 @@ public interface ICatalogoActivoRepository extends JpaRepository<CatalogoActivoE
 	
 	public abstract CatalogoActivoEntity findByIdCatalogoActivo(int idCatalogoActivo);
 	
-	@Query("SELECT objCatalogo FROM CatalogoActivoEntity objCatalogo WHERE objCatalogo.eliminado!=0")
+	@Query("SELECT objCatalogo FROM CatalogoActivoEntity objCatalogo WHERE objCatalogo.eliminado=false")
 	public abstract List<CatalogoActivoEntity> listCatalogoActivo();
 	
 	
