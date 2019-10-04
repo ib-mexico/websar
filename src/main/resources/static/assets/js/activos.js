@@ -22,16 +22,13 @@ if (document.getElementById('appCatalogoActivos')) {
 		methods:{
 			validateForm(){
 				var response=false;
-
 				//Validacion de los campos
 				if((!this.nombre || !this.descripcion)) {
 					swal("Revisión!", "Debes  de terminar de rellenar todos los campos.", "warning");
 					return response;
 				}
 				return response=true;
-			}
-			,
-			//started method
+			},
 			createCatalogo(){
 				if(this.validateForm()){
 				var formCatalogoActivo=document.getElementById('formCatalogoActivo');
@@ -48,7 +45,6 @@ if (document.getElementById('appCatalogoActivos')) {
 						this.file_name=''
 						swal(response.data.titulo, response.data.mensaje, "success");
 						$("#dtActivos").bootstrapTable('refresh');
-
 					}else{
 						console.log(response);
 						swal(response.data.titulo, response.data.mensaje, "error");
@@ -78,21 +74,57 @@ if(document.getElementById('appActivos')){
 			departamento:[],
 			usuario:[],
 			newActivo:{
-				nombre:"",
+				descripcion:"",
 				marca:"",
 				modelo:"",
-				color:"",
 				serie:"",
-				placa:"",
-				observaciones:"",
+				color:"",
+				fecha_compra:"",
+				costo_recurso:"",
+				garantia_mes:"",
+				obsolencia:"",
+				//coste fecha mantenimiento
+				periodo_mant_estimado:"",
+				// costo_prom_mantenimiento:"",
+				// fechaUltimoMantenimiento:"",
+
+				//asignacion de recurso
 				id_empresa:'',
-				id_activo:'',
-				id_usuario:'',
 				id_departamento:'',
-				fichero:''
+				id_usuario_asignado:'',
+				id_catalogo:'',
+				//VHC
+				placa:"",
+				tipo_vehiculo:"",
+				//EAC
+				serie_evaporadora:"",
+				serie_condensadora:"",
+				control_remoto:false,
+				//HTC
+				fecha_entrega:"",
+				imei:"",
+				almacenamientoExterno:"",
+				//ECP
+				tipoEquipo:"",
+				tipoMemRam:"",
+				capacidadRam:"",
+				tipoProcesador:"",
+				marcaProcesador:"",
+				capacidadProcesador:"",
+				tipoHDD:"",
+				capacidadHDD:"",
+				tieneMonitor:false,
+					tamanioMonitor:"",
+					colorMonitor:"",
+					modeloMonitor:"",
+					numParte:"",
+				observaciones:"",
+				fichero:'',
+				// requiereMantenimiento:false,
+				// fecha_mantenimiento:''
 			},
 			editData:{},
-			elegido:""
+			elegido:''
 		
 		}
 		,methods:{
@@ -110,13 +142,14 @@ if(document.getElementById('appActivos')){
 			,loadModal(){
 				$('.cmbCatalogo').selectpicker('refresh');
 				$('.cmbEmpresa').selectpicker('refresh');
+				$('.cmbDepartamento').selectpicker('refresh');
+				$('.cmbUsuario').selectpicker('refresh');
 	
 				// $('#cmbCatalogo').on('change',function(){
 				// 	if($(this).val() ==1){
 				// 		$('.cmbDepartamento').show();
 				// 		$('.cmbUsuario').show();
-				// 		$('.cmbDepartamento').selectpicker('refresh');
-				// 		$('.cmbUsuario').selectpicker('refresh');
+
 				// 	}
 				// });
 
@@ -124,24 +157,22 @@ if(document.getElementById('appActivos')){
 			,
 			validateForm(){
 				var response = false;
-
-				// if(!this.newActivo.fichero){
-				// 	swal("Revisión!","Sube alguna imagen de referencia al activo");
-				// 	return response;
-				// }
-				var fileInput= document.getElementById('idFileActivo').files.length;
-				if(!fileInput){
-					swal("Revisión!","Sube alguna imagen de referencia al activo");
-					return response;
-				}
 				
-				if(!this.newActivo.nombre || !this.newActivo.marca){
+				if(!this.newActivo.descripcion || !this.newActivo.marca || !this.newActivo.modelo ||  !this.newActivo.serie ||
+					 !this.newActivo.color || !this.newActivo.costo_recurso){
 					swal("Revisión!", "Debes  de terminar de rellenar todos los campos.", "warning");
 					return response;
 				}
+				if(!this.newActivo.garantia_mes){
+					swal("Revisión!","Escriba cuanta garantia vigente tiene el activo.","warning");
+					return response;
+				}
+				/* if(!this.newActivo.periodo_mant_estimado){
+				// 	swal("Revisión!","Defina los dias que se pretende dar a mant.");
+				 }*/
 
 				//VALIDATION DE CATALOGO
-					if(isNaN(this.newActivo.id_activo)) {
+					if(isNaN(this.newActivo.id_catalogo)) {
 						swal("Revisión!", "Debes seleccionar un catalogo para continuar con el registro.", "warning");
 						return response;
 					}
@@ -149,6 +180,16 @@ if(document.getElementById('appActivos')){
 						swal("Revisión!","Debes seleccionar una empresa para continuar con el registro.","warning");
 						return response;
 					}
+					if(isNaN(this.newActivo.id_departamento)){
+						swal("Revisión!","Eliga un departamento para continuar","warning");
+						return response;
+					}
+
+				var fileInput= document.getElementById('idFileActivo').files.length;
+				if(!fileInput){
+					swal("Revisión!","Sube alguna imagen de referencia al activo");
+					return response;
+				}
 					return response = true;
 			},
 			createActivo(){
@@ -162,22 +203,50 @@ if(document.getElementById('appActivos')){
 							//Clean form
 							$("#formActivo")[0].reset();
 							$("#modalNuevoActivo").modal("hide");
-							this.newActivo.nombre=''
-							this.newActivo.marca=''
-							this.newActivo.modelo=''
-							this.newActivo.color=''
-							this.newActivo.serie=''
-							this.newActivo.placa=''
-							this.newActivo.observaciones='default'
-							this.newActivo.id_activo='default'
-							this.newActivo.id_empresa='default'
-							this.newActivo.id_departamento='default'
-							this.newActivo.id_usuario='default'
-							this.newActivo.fichero=''
+							this.newActivo.descripcion="",
+							this.newActivo.marca="",
+							this.newActivo.modelo="",
+							this.newActivo.serie="",
+							this.newActivo.color="",
+							this.newActivo.fecha_compra="",
+							this.newActivo.costo_recurso="",
+							this.newActivo.garantia_mes="",
+							this.newActivo.obsolencia="",
+							this.newActivo.periodo_mant_estimado="",
+							this.newActivo.id_empresa='',
+							this.newActivo.id_departamento='',
+							this.newActivo.id_usuario_asignado='',
+							this.newActivo.id_catalogo='',
+							//VHC
+							this.newActivo.placa="",
+							this.newActivo.tipo_vehiculo="",
+							//EAC
+							this.newActivo.serie_evaporadora="",
+							this.newActivo.serie_condensadora="",
+							this.newActivo.control_remoto=false,
+							//HTC
+							this.newActivo.fecha_entrega="",
+							this.newActivo.imei="",
+							this.newActivo.almacenamientoExterno="",
+							//ECP
+							this.newActivo.tipoEquipo="",
+							this.newActivo.tipoMemRam="",
+							this.newActivo.capacidadRam="",
+							this.newActivo.tipoProcesador="",
+							this.newActivo.marcaProcesador="",
+							this.newActivo.capacidadProcesador="",
+							this.newActivo.tipoHDD="",
+							this.newActivo.capacidadHDD="",
+							this.newActivo.tieneMonitor=false,
+								this.newActivo.tamanioMonitor="",
+								this.newActivo.colorMonitor="",
+								this.newActivo.modeloMonitor="",
+								this.newActivo.numParte="",
+							this.newActivo.observaciones="",
+							this.newActivo.fichero='',
 
 							swal(response.data.titulo, response.data.mensaje, "success");
 							$("#dtActivo").bootstrapTable('refresh');
-
 						}else{
 							console.log(response);
 							swal(response.data.titulo, response.data.mensaje, "error");
@@ -203,19 +272,43 @@ if(document.getElementById('appActivos')){
 					$('.cmbEmpresa').selectpicker('val', NuevoActivo.editData.id_empresa);
 					$('.cmbEmpresa').selectpicker('render');
 		
-					$('.cmbCatalogo').selectpicker('val', NuevoActivo.editData.id_activo);
+					$('.cmbCatalogo').selectpicker('val', NuevoActivo.editData.id_tipo_activo);
 					$('.cmbCatalogo').selectpicker('render');
-		
+
+					$('.cmbDepartamento').selectpicker('val', NuevoActivo.editData.id_departamento);
+					$('.cmbDepartamento').selectpicker('render');
+					if(NuevoActivo.editData.id_usuario!=0){
+						$('.cmbUsuario').selectpicker('val', NuevoActivo.editData.id_usuario);
+						$('.cmbUsuario').selectpicker('render');
+					}
+
+					var date = $('.txtFechaCompra').data('txtFechaCompra');
+					//DATEPICKER
+					$('.txtFechaCompra').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false, minDate : new Date()});
+					if(date != null && date != '') {
+						var arrDate = date.split("-");				
+						$('.txtFechaCompra').bootstrapMaterialDatePicker('setDate', arrDate[2]+"/"+arrDate[1]+"/"+arrDate[0]);
+					}
+
+					var dateObsolecencia = $('.txtObsolecencia').data('txtObsolecencia');
+					$('.txtObsolecencia').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false, minDate : new Date()});
+					if(dateObsolecencia != null && dateObsolecencia != '') {
+						var arrDateObsolencia = date.split("-");				
+						$('.txtObsolecencia').bootstrapMaterialDatePicker('setDate', arrDateObsolencia[2]+"/"+arrDateObsolencia[1]+"/"+arrDateObsolencia[0]);
+					}
+
+					var fechaentrega = $('.txtFechaEntrega').data('txtFechaEntrega');
+					$('.txtFechaEntrega').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false, minDate : new Date()});
+					
+					if(fechaentrega != null && fechaentrega != '') {
+						var arrDateFechaEntrega = date.split("-");				
+						$('.txtFechaEntrega').bootstrapMaterialDatePicker('setDate', arrDateFechaEntrega[2]+"/"+arrDateFechaEntrega[1]+"/"+arrDateFechaEntrega[0]);
+					}
+
 					this.loadModal();
 				// 	this.editData.nombre=data[0].nombre;
 				// 	this.editData.marca=data[0].marca;
-				// 	this.editData.modelo=data[0].modelo;
-				// 	this.editData.color=data[0].color;
-				// 	this.editData.serie=data[0].serie;
-				// 	this.editData.observaciones=data[0].observaciones;
 				// 	this.editData.id_empresa=data[0].id_empresa;
-				// 	this.editData.id_activo=data[0].id_activo;
-				// 	this.editData.id_activo_mobiliario=data[0].id_activo_mobiliario;
 				}).catch(error=>{
 					console.log(error);
 				});
@@ -223,20 +316,53 @@ if(document.getElementById('appActivos')){
 			update(){
 				var formEditActivo=document.getElementById('formEditActivo');
 				var formEditActivoData=new FormData(formEditActivo);
-				var url=host+'BienActivo/'+this.editData.id_activo_mobiliario+'/update';
+				
+				var url=host+'BienActivo/'+this.editData.id_activo+'/update';
 				axios.post(url,formEditActivoData).then(resp=>{
 					if(resp.status==200 && resp.data.respuesta){
 						$("#formEditActivo")[0].reset();
 						$("#modalEditActivo").modal("hide");
-							this.editData.nombre="";
-							this.editData.marca="";
-							this.editData.modelo="";
-							this.editData.color="";
-							this.editData.serie="";
-							this.editData.observaciones="";
-							this.editData.id_empresa='default';
-							this.editData.id_activo='default';
-							this.editData.id_activo_mobiliario='default';
+						this.editData.descripcion="",
+						this.editData.marca="",
+						this.editData.modelo="",
+						this.editData.serie="",
+						this.editData.color="",
+						this.editData.fecha_compra="",
+						this.editData.costo_recurso="",
+						this.editData.garantia_mes="",
+						this.editData.obsolencia="",
+						this.editData.periodo_mant_estimado="",
+						this.editData.id_empresa='',
+						this.editData.id_departamento='',
+						this.editData.id_usuario='',
+						this.editData.id_catalogo='',
+						//VHC
+						this.editData.placa="",
+						this.editData.tipo_vehiculo="",
+						//EAC
+						this.editData.serie_evaporadora="",
+						this.editData.serie_condensadora="",
+						this.editData.control_remoto=false,
+						//HTC
+						this.editData.fecha_entrega="",
+						this.editData.imei="",
+						this.editData.almacenamientoExterno="",
+						//ECP
+						this.editData.tipoEquipo="",
+						this.editData.tipoMemRam="",
+						this.editData.capacidadRam="",
+						this.editData.tipoProcesador="",
+						this.editData.marcaProcesador="",
+						this.editData.capacidadProcesador="",
+						this.editData.tipoHDD="",
+						this.editData.capacidadHDD="",
+						this.editData.tieneMonitor=false,
+							this.editData.tamanioMonitor="",
+							this.editData.colorMonitor="",
+							this.editData.modeloMonitor="",
+							this.editData.numParte="",
+						this.editData.observaciones="",
+						this.editData.fichero='',
 					
 						swal(resp.data.titulo, resp.data.mensaje, "success");
 							$("#dtActivo").bootstrapTable('refresh');
@@ -283,17 +409,13 @@ if(document.getElementById('appActivos')){
 			this.getFormData();
 		},
 		watch:{
-			'newActivo.id_activo':function(val){
-				console.log(val+"hola val");
-				if(val==1){
-					$('.cmbUsuario').selectpicker('refresh');
-                    $('.cmbDepartamento').selectpicker('refresh');
-				}
-                // if((val)==1) {
-				// 	$('.cmbUsuario').selectpicker('refresh');
-                //     $('.cmbDepartamento').selectpicker('refresh');
-				// }
-            },
+			// 'newActivo.id_catalogo':function(val){
+			// 	console.log(val+"hola val");
+			// 	if(val==1){
+			// 		$('.cmbUsuario').selectpicker('refresh');
+            //         $('.cmbDepartamento').selectpicker('refresh');
+			// 	}
+            // },
 		}
 	})
 }

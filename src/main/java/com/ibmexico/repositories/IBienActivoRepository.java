@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 public interface IBienActivoRepository extends JpaRepository<BienActivoEntity, Serializable>{
 
 
-    public abstract BienActivoEntity findByIdActivoMobiliario(int idActivoMobiliario);
+    public abstract BienActivoEntity findByIdRecursoActivo(int idRecursoActivo);
 
     //listar Activos con la condicion del id del catalogo
     @Query("SELECT objActivo FROM BienActivoEntity objActivo WHERE objActivo.idActivo.idCatalogoActivo=?1 AND objActivo.estatus=true")
@@ -25,6 +25,10 @@ public interface IBienActivoRepository extends JpaRepository<BienActivoEntity, S
     public abstract List<BienActivoEntity> lstCatalogoActivo();
 
 
+    //count mediante tipo de catalogo
+    @Query("SELECT COUNT(objActivo) FROM BienActivoEntity objActivo WHERE objActivo.idActivo.idCatalogoActivo=?1")
+    public abstract int countForCatalogo(int idCatalogo);
+
     //TABLE
 	@Query("SELECT COUNT(objActivo) FROM BienActivoEntity objActivo")	
 	public abstract long countForDataTable();
@@ -32,10 +36,10 @@ public interface IBienActivoRepository extends JpaRepository<BienActivoEntity, S
 	@Query("SELECT objActivo FROM BienActivoEntity objActivo  WHERE objActivo.estatus=true")
     public abstract List<BienActivoEntity> findForDataTable(Pageable page);
 
-    @Query("SELECT COUNT(objActivo) FROM BienActivoEntity objActivo WHERE objActivo.estatus=true AND (objActivo.idActivo.nombre LIKE %?1% OR objActivo.nombre LIKE %?1% OR objActivo.modelo LIKE %?1%) order by objActivo.idActivoMobiliario ASC")
+    @Query("SELECT COUNT(objActivo) FROM BienActivoEntity objActivo WHERE objActivo.estatus=true AND (objActivo.idActivo.nombre LIKE %?1%  OR objActivo.modelo LIKE %?1%) order by objActivo.idRecursoActivo ASC")
     public abstract long countForDataTable(String search);
 
-    @Query("SELECT objActivo FROM BienActivoEntity objActivo WHERE objActivo.estatus=true AND (objActivo.idActivo.nombre LIKE %?1% OR objActivo.nombre LIKE %?1% OR objActivo.modelo LIKE %?1%) order by objActivo.idActivoMobiliario ASC")
+    @Query("SELECT objActivo FROM BienActivoEntity objActivo WHERE objActivo.estatus=true AND (objActivo.idActivo.nombre LIKE %?1%  OR objActivo.modelo LIKE %?1%) order by objActivo.idRecursoActivo ASC")
     public abstract List<BienActivoEntity> findForDataTable(String search, Pageable page);
     
 }

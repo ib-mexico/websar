@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.ibmexico.components.ModelAndViewComponent;
 import com.ibmexico.entities.CatalogoActivoEntity;
@@ -26,7 +24,6 @@ import com.ibmexico.libraries.DataTable;
 import com.ibmexico.libraries.Templates;
 import com.ibmexico.libraries.notifications.ApplicationException;
 import com.ibmexico.libraries.notifications.EnumException;
-import com.ibmexico.libraries.notifications.EnumMessage;
 import com.ibmexico.services.CatalogoActivoService;
 
 @Controller

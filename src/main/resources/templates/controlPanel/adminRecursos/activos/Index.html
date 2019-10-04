@@ -1,10 +1,6 @@
 <th:block th:fragment="body">
 	<div id="appActivos">
 
-	<div class="block-header">
-		<h2>Recursos Activos de IBMEXICO</h2>
-	</div>
-
 	<ol class="breadcrumb breadcrumb-bg-red">
 		<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
 		<li class="active"><i class="material-icons">public</i> Nuevos Activos</li>
@@ -27,38 +23,19 @@
 								<i class="material-icons">add_circle</i> Nuevo Activo</a>
 						</div>
 					</div>
-					<!-- <div class="row clearfix" id="dtClientesToolBar">
-							<div class="col-xs-3 col-sm-3 col-md-3">
-								<div class="input-group">
-									   <span class="input-group-addon">
-										<i class="material-icons">filter_list</i>
-									   </span>
-									   <div class="form-line" id='groupDesde'>
-											<select class="form-control text-center" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde...">
-													<option>1</option>
-													<option>2</option>
-													<option>3</option>
-													<option>4</option>
-													<option>5</option>
-											</select>
-										   <input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
-									   </div>
-								</div>
-							</div>
-					</div> -->
 
-					<div class="table-responsive">
-						<table id="dtActivo" class="table table-bordered table-striped table-hover" data-height="600">
+					<div class="table-responsive-md table-responsive-lg table-responsive-xl">
+						<table id="dtActivo" class="table table-bordered table-striped table-hover table-dark" data-height="600">
 							<thead>
-								<tr>
-									<th scope="col" class="col-md-1" data-field="id_activo_mobiliario" data-sortable="true" data-halign="left" data-align="center">ID</th>
+								<tr class="container-fluid">
+									<th class="col-md-1" data-field="id_recurso_activo" data-sortable="true" data-halign="left" data-align="center" data-visible="false">ID</th>
+									<th class="col-md-2" data-field="numero_unico" data-sortable="true" data-halign="left" data-align="center">ID</th>
 									<th class="col-md-2" data-formatter="accionesFormatter" data-align="center" style="display: inline">Acciones</th>
-									<th class="col-md-2" data-field="nombre" data-halign="left">Nombre</th>
+									<th class="col-md-2" data-field="descripcion" data-halign="left">Activo</th>
                                     <th class="col-md-2" data-field="marca" data-halign="left">Marca</th>
                                     <th class="col-md-1" data-field="modelo" data-sortable="true" data-halign="left">Modelo</th>
-									<th class="col-md-1" data-field="color" data-halign="left">Color</th>
 									<th class="col-md-2" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>
-                                    <th class="col-md-3" data-field="catalogo" data-sortable="true" data-halign="left">Catalogo</th>
+                                    <th class="col-md-3" data-field="catalogo" data-sortable="true" data-halign="left">Catálogos</th>
 
 									<th class="col-md-1" data-field="placa" data-halign="left" data-align="center" data-visible="false">Num. de placa</th>
 									<th class="col-md-1" data-field="departamento" data-halign="left" data-align="center" data-visible="false">Departamento asig.</th>
@@ -78,29 +55,367 @@
 		</div>
 	</div>
 
-
-
 			<!-- NUEVA ACTIVO -->
 		<div class="modal fade" id="modalNuevoActivo" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
 					<form id="formActivo" v-on:submit.prevent="createActivo" method="POST" role="form" enctype="multipart/form-data">
 						<div class="modal-header">
-							<h4 class="modal-title">Nuevo Activo</h4>
+							<h3 class="modal-title text-primary">Registro de Activo</h3>
 						</div>
 						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />				
 						<div class="modal-body">
-							<div class="row clearfix">
+							<!-- Campos generales -->
+							<div class="row-clearfix">
+								<div class="col-md-6">
+									<p><b>Tipo de activo *</b></p>
+									<div class="input-group">	                            
+										<select class="form-control show-tick cmbCatalogo" name="cmbCatalogo" id="cmbCatalogo" v-model="newActivo.id_catalogo">
+											<option value="default" selected="selected">Selecciona un Catalogo...</option>
+											<option v-for="item in catalogo" :value="item.id_catalogo_activo" :data-subtext="item.nombre">{{ item.nombre }}</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-md-6">
+										<div class="form-group">
+											<p><b>Descripción</b></p>
+											<div class="form-line">
+												<input type="text" name="txtDescripcion" class="form-control" required="required" placeholder="Descripcion activo" v-model="newActivo.descripcion"/>
+											</div>
+										</div>
+								</div>
+							</div>
 
-								<div class="col-md-4">
+							<div class="row clearfix">
+								<div class="col-md-3">
 									<div class="form-group">
-										<p><b>Nombre *</b></p>
+										<p><b>Marca *</b></p>
 										<div class="form-line">
-											<input type="text" name="txtNombre" class="form-control" required="required" 
-											placeholder="Escriba el nombre " v-model="newActivo.nombre"/>
+											<input type="text" name="txtMarca" class="form-control" required="required" 
+											placeholder="Nombre de la marca.." v-model="newActivo.marca"/>
 										</div>
 									</div>
 								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<p><b>Modelo *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtModelo" class="form-control" required="required" 
+											placeholder="Modelo del producto" v-model="newActivo.modelo"/>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-3">
+										<div class="form-group">
+											<p><b>Serie *</b></p>
+											<div class="form-line">
+												<input type="text" name="txtSerie" class="form-control" required="required" 
+												placeholder="Num. Serie.." v-model="newActivo.serie"/>
+											</div>
+										</div>
+								</div>
+								<div class="col-md-3">
+										<div class="form-group">
+											<p><b>Color *</b></p>
+											<div class="form-line">
+												<input type="text" name="txtColor" class="form-control" placeholder="Color del recurso" v-model="newActivo.color"/>
+											</div>
+										</div>
+								</div>
+							</div>
+
+							<div class="row clearfix">
+								<div class="col-md-3">
+									<p><b>Fecha Compra *</b></p>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="material-icons">date_range</i>
+										</span>
+										<div class="form-line">
+											<input type="text" class="form-control text-center txtFechaCompra" id="txtFechaCompra" name="txtFechaCompra" 
+											placeholder="Selecciona una fecha..."/>
+										</div>
+									</div>	
+								</div>	
+								<div class="col-md-3">
+									<p><b>Costo Recurso *</b></p>
+									<div class="input-group">
+										<span class="input-group-addon">$</span>
+										<div class="form-line">
+											<input type="number" name="txtCosto" class="form-control txtCosto" v-model="newActivo.costo_recurso"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<p><b>Garantia (en Meses) *</b></p>
+										<div class="form-line">
+											<input type="number" min="1" max="56" name="txtGarantia" class="form-control" 
+											placeholder="Defina en numeros los meses" v-model="newActivo.garantia_mes"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<p><b>Obsolecencia</b></p>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="material-icons">date_range</i>
+										</span>
+										<div class="form-line" >
+											<input type="text" name="txtObsolecencia" id="txtObsolecencia" class="form-control txtObsolecencia" 
+											placeholder="Fecha de obsolencia"/>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Campos vehicular -->
+							<div class="row-clearfix" v-show="newActivo.id_catalogo==1">
+								<div class="col-md-6">
+									<div class="form-group">
+										<p><b>Num. de Placa</b></p>
+										<div class="form-line">
+											<input type="text" name="txtPlaca" class="form-control" 
+											placeholder="Escriba el num. de placa" v-model="newActivo.placa"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<p><b>Tipo Vehiculo </b></p>
+										<div class="form-line">
+											<input type="text" name="txtTipoVehiculo" class="form-control" 
+												placeholder="Escriba el tipo de vehiculo" v-model="newActivo.tipo_vehiculo"/>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+								<!-- Campos de HUR -->
+								<!-- campos exculusivamente no hay -->
+							
+								<!-- Campos de EAC -->
+							<div class="row-clearfix" v-show="newActivo.id_catalogo==2">
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Serie evaporadora</b></p>
+										<div class="form-line">
+											<input type="text" name="txtSerieEvaporadora" class="form-control"
+											v-model="newActivo.serie_evaporadora"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">	
+									<div class="form-group">
+										<p><b>Serie condensadora</b></p>
+										<div class="form-line">
+											<input type="text" name="txtSerieCondensadora" class="form-control"
+											v-model="newActivo.serie_condensadora"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<p><b></b></p>
+									<input type="checkbox" id="chkControlRemoto" class="filled-in chk-col-deep-purple" name="chkControlRemoto" v-model="newActivo.control_remoto"/>
+									<label for="chkControlRemoto">&iquest;Tiene control remoto?</label>
+								</div>
+							</div>
+
+								<!-- Campos de HTC -->
+							<div class="row-clearfix" v-show="newActivo.id_catalogo==3">
+								<div class="col-md-4">
+									<p><b>Fecha de Entrega</b></p>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="material-icons">date_range</i>
+										</span>
+										<div class="form-line">
+											<input type="text" class="form-control text-center txtFechaEntrega" id="txtFechaEntrega" name="txtFechaEntrega" 
+											placeholder="Selecciona una fecha..."/>
+										</div>
+									</div>	
+								</div>
+
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Imei</b></p>
+										<div class="form-line">
+											<input type="number" name="txtImei" class="form-control" placeholder="Num. Imei" v-model="newActivo.imei"/>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Almacenamiento Externa</b></p>
+										<div class="form-line">
+											<input type="number" name="txtAlmacenamientoExterna" class="form-control" 
+											placeholder="Almacenamiento Externo" v-model="newActivo.almacenamientoExterno"/>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Campos de ECP -->
+							<div class="row-clearfix" v-show="newActivo.id_catalogo==4">
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Tipo Equipo</b></p>
+										<div class="form-line">
+											<input type="text" name="txtTipoEquipo" class="form-control" v-model="newActivo.tipoEquipo"/>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Tipo de Mem. Ram</b></p>
+										<div class="form-line">
+											<input type="text" name="txtTipoRam" class="form-control" v-model="newActivo.tipoMemRam"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Capacidad Mem. Ram</b></p>
+										<div class="form-line">
+											<input type="number" name="txtCapMemRam" class="form-control" v-model="newActivo.capacidadRam"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Tipo Procesador</b></p>
+										<div class="form-line">
+											<input type="text" name="txtTipoProcesador" class="form-control" v-model="newActivo.tipoProcesador"/>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Marca Procesador</b></p>
+										<div class="form-line">
+											<input type="text" name="txtMarcaProcesador" class="form-control" v-model="newActivo.marcaProcesador"/> 
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Capacidad Procesador</b></p>
+										<div class="form-line">
+											<input type="number" name="txtCapProcesador" class="form-control" v-model="newActivo.capacidadProcesador"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Tipo HDD</b></p>
+										<div class="form-line">
+											<input type="text" name="txtTipoHDD" class="form-control" v-model="newActivo.tipoHDD"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Capacidad Int. HDD</b></p>
+										<div class="form-line">
+											<input type="number" name="txtCapIntHDD" class="form-control" v-model="newActivo.capacidadHDD"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<p><b></b></p>
+									<input type="checkbox" id="chkMonitor" class="filled-in chk-col-deep-purple" name="chkMonitor"
+									v-model="newActivo.tieneMonitor"/>
+									<label for="chkMonitor">&iquest;Tiene monitor?</label>
+								</div>
+							</div>
+							<div class="row-clearfix" v-show="newActivo.id_catalogo==4">
+								<div class="col-md-12">
+								</div>
+							</div>
+							<div class="row-clearfix" v-show="newActivo.tieneMonitor==true">
+								<div class="col-md-3">
+									<div class="form-group">
+										<p><b>Tamaño</b></p>
+										<div class="form-line">
+											<input type="number" name="txtTamanioMonitor" class="form-control"
+											v-model="newActivo.tamanioMonitor"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<p><b>Color monitor</b></p>
+										<div class="form-line">
+											<input type="text" name="txtColorMonitor" class="form-control" v-model="newActivo.colorMonitor"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<p><b>Modelo Monitor</b></p>
+										<div class="form-line">
+											<input type="text" name="txtModeloMonitor" class="form-control"
+											v-model="newActivo.modeloMonitor"/>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<p><b>Num. parte</b></p>
+										<div class="form-line">
+											<input type="text" name="txtNumParte" class="form-control" v-model="newActivo.numParte"/>
+										</div>
+									</div>
+								</div>
+
+							</div>
+							<!-- End campos de ECP -->
+
+							<div class="row-clearfix">
+								<div class="col-md-12">
+									<hr class="btn-secondary"/>
+								</div>
+							</div>
+
+							<div class="row-clearfix">	
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Periodo Mant. Estimado</b></p>
+										<div class="form-line">
+											<input type="number" name="txtPeridoMantenimiento" class="form-control" 
+											placeholder="Periodo de mant. estimado en dias" v-model="newActivo.periodo_mant_estimado"/>
+										</div>
+									</div>
+								</div>
+								
+								<div class="col-md-8">
+									<div class="form-group">	
+										<p><b>Im&aacute;gen</b></p>							
+										<div class="form-line">
+											<input type="file" name="fichero" id="idFileActivo" class="form-control-file" multiple="multiple"  
+											accept="image/x-png,image/gif,image/jpeg" />
+												<!-- <input type="file" name="fichero" @change="onFileChange" class="form-control" multiple="multiple"/> -->
+										</div>
+									</div>
+										<!-- <div v-else>
+											<img :src="newActivo.fichero"/>
+											<button class="btn-danger" @click="removeImage">Quitar Imagen</button>
+										</div> -->
+								</div>
+							</div>
+
+
+							<div class="row-clearfix">
+								<div class="col-md-12 text-center">
+									<hr class="btn-primary"/>
+									<h4  class="text-primary">Asignacion de activo</h4>
+								</div>
+							</div>
+							<div class="row-clearfix">
 								<div class="col-md-4">
 									<b>Empresa *</b>
 									<div class="input-group">
@@ -110,72 +425,8 @@
 										</select>
 									</div>
 								</div>
-                                
-                                <div class="col-md-4">
-                                        <b>Catalogo *</b>
-                                        <div class="input-group">	                            
-                                            <select class="form-control show-tick cmbCatalogo" name="cmbCatalogo" id="cmbCatalogo" v-model="newActivo.id_activo">
-                                                <option value="default" selected="selected">Selecciona un Catalogo...</option>
-                                                <option v-for="item in catalogo" :value="item.id_catalogo_activo" :data-subtext="item.nombre">{{ item.nombre }}</option>
-                                            </select>
-                                        </div>
-								</div>
-
-                            </div>
-                            
-                            <div class="row clearfix">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-										<p><b>Marca</b></p>
-										<div class="form-line">
-											<input type="text" name="txtMarca" class="form-control" 
-											placeholder="Escriba la marca" required="required" v-model="newActivo.marca"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-									<div class="form-group">
-										<p><b>Num. de serie</b></p>
-										<div class="form-line">
-											<input type="text" name="txtSerie" class="form-control" required="required" 
-												placeholder="Escriba la serie" v-model="newActivo.serie"/>
-										</div>
-									</div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <p><b>Color</b></p>
-                                        <div class="form-line">
-											<input type="text" name="txtColor" class="form-control" required="required" 
-											placeholder="Escriba el color .." v-model="newActivo.color"/>
-                                        </div>
-                                    </div>
-								</div>
-							</div>
-
-							<div class="row-clearfix" v-show="newActivo.id_activo==1">
 								<div class="col-md-4">
-									<div class="form-group">
-										<p><b>Num. de Placa</b></p>
-										<div class="form-line">
-											<input type="text" name="txtPlaca" class="form-control" 
-											placeholder="Escriba el num. de placa" v-model="newActivo.placa"/>
-										</div>
-									</div>
-								</div>
-								<div class="col-md-4">
-										<div class="form-group">
-											<p><b>Modelo</b></p>
-											<div class="form-line">
-												<input type="text" name="txtModelo" class="form-control" 
-												placeholder="Escriba el modelo" v-model="newActivo.modelo"/>
-											</div>
-										</div>
-								</div>
-
-
-								<div class="col-md-4">
-                                    <b>Area asignada*</b>
+                                    <b>Area *</b>
                                     <div class="input-group">	                            
 										<select class="form-control show-tick cmbDepartamento" name="cmbDepartamento" id="cmbDepartamento" v-model="newActivo.id_departamento" data-live-search="true">
                                             <option value="default" selected="selected">Selecciona un Departamento...</option>
@@ -183,40 +434,20 @@
                                         </select>
                                     </div>
 								</div>
-							</div>
-								<div class="row clearfix" v-show="newActivo.id_activo==1">
-										<div class="col-md-12">
-												<b>Usuario asignado </b>
-												<div class="input-group">	                            
-													<select class="form-control show-tick cmbUsuario" name="cmbUsuario" id="cmbUsuario" 
-													v-model="newActivo.id_usuario" data-live-search="true">
-														<option value="default" selected="selected">Selecciona un usuario...</option>
-														<option v-for="item in usuario" :value="item.id_usuario">{{ item.nombre_completo }}</option>
-													</select>
-												</div>
-										</div>
-		
-								</div>
 
-							<div class="row clearfix m-t-5">
-								<div class="col-md-12">
-									<div class="form-group" >	
-										<p><b>Im&aacute;gen de Activo</b></p>							
-										<div class="form-line">
-											<input type="file" name="fichero" id="idFileActivo" class="form-control-file" multiple="multiple" />
-											<!-- <input type="file" name="fichero" @change="onFileChange" class="form-control" multiple="multiple"/> -->
-										</div>
+								<div class="col-md-4">
+									<b>Usuario </b>
+									<div class="input-group">	                            
+										<select class="form-control show-tick cmbUsuario" name="cmbUsuario" id="cmbUsuario" 
+										v-model="newActivo.id_usuario_asignado" data-live-search="true">
+											<option value="" selected="selected">Selecciona un usuario...</option>
+											<option v-for="item in usuario" :value="item.id_usuario">{{ item.nombre_completo }}</option>
+										</select>
 									</div>
-									<!-- <div v-else>
-										<img :src="newActivo.fichero"/>
-										<button class="btn-danger" @click="removeImage">Quitar Imagen</button>
-									</div> -->
 								</div>
-	
 							</div>
 
 							<div class="row clearfix">
-<!-- iva num serie -->
 								<div class="col-md-12">
 									<p><b>Observaciones</b></p>
 									<div class="form-line">
@@ -246,93 +477,400 @@
 									<h4 class="modal-title">Editar Activo</h4>
 								</div>
 						<!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
-						<!-- v-for=" data in editData" -->
-								<div class="modal-body"> 
-									<div class="row clearfix">
-						<!-- <input type="hidden" :value="data.id_activo_mobiliario" name="txt_id_activo_mobiliario"/> -->
-										<div class="col-md-4">
-											<div class="form-group">
-												<p><b>Nombre *</b></p>
-												<div class="form-line">
-													<input type="text" name="txtNombre" class="form-control" required="required" 
-													   v-model="editData.nombre" />
-												</div>
-											</div>
+						<div class="modal-body">
+								<!-- Campos generales -->
+								<div class="row-clearfix">
+									<div class="col-md-6">
+										<p><b>Tipo de activo *</b></p>
+										<div class="input-group">
+											<input type="hidden" :value="editData.id_tipo_activo" name="cmbCatalogo"/>                        
+											<select class="form-control show-tick cmbCatalogo" id="cmbCatalogo" v-model="editData.id_tipo_activo" disabled="true">
+												<option value="default" selected="selected">Selecciona un Catalogo...</option>
+												<option v-for="item in catalogo" :value="item.id_catalogo_activo" :data-subtext="item.nombre">{{ item.nombre }}</option>
+											</select>
 										</div>
-										<div class="col-md-4">
-											<b>Empresa *</b>
-											<div class="input-group">
-												<select name="cmbEmpresa"  class="form-control show-tick cmbEmpresa" v-model="elegido" data-live-search="true">
-													<!-- <option v-if="data.id_empresa" value="data.id_empresa" selected="selected">{{data.id_empresa}}</option> -->
-													<!-- <option value="default" selected="selected">Selecciona la empresa...</option> -->
-													<option v-for="(item, key) in empresas" :value="item.id_empresa"> {{item.razon_social}} </option>
-												</select>
-												<!-- <span>{{editData.id_empresa}}</span> -->
-											</div>
-										</div>
-										
-										<div class="col-md-4">
-												<b>Catalogo *</b>
-												<div class="input-group">	                            
-													<select class="form-control show-tick cmbCatalogo" name="cmbCatalogo"  v-model="editData.id_activo">
-														<option value="default" selected="selected">Selecciona un Catalogo...</option>
-														<option v-for="item in catalogo" :value="item.id_catalogo_activo" :data-subtext="item.nombre">{{ item.nombre }}</option>
-													</select>
-												</div>
-										</div>
-		
 									</div>
-									
-									<div class="row clearfix">
-		
-										<div class="col-md-4">
+									<div class="col-md-6">
 											<div class="form-group">
-													<p><b>Marca</b></p>
-													<div class="form-line">
-														<input type="text" name="txtMarca" class="form-control" 
-														placeholder="Escriba la marca" required="required" v-model="editData.marca"/>
-													</div>
-												</div>
-										</div>
-										<div class="col-md-4">
-											<div class="form-group">
-												<p><b>Modelo</b></p>
+												<p><b>Descripción</b></p>
 												<div class="form-line">
-													<input type="text" name="txtModelo" class="form-control" 
-													placeholder="Escriba el modelo" v-model="editData.modelo"/>
+													<input type="text" name="txtDescripcion" class="form-control" required="required" placeholder="Descripcion activo" v-model="editData.descripcion"/>
 												</div>
 											</div>
-										</div>
-										<div class="col-md-4">
-												<div class="form-group">
-													<p><b>Color</b></p>
-													<div class="form-line">
-														<input type="text" name="txtColor" class="form-control" required="required" 
-														placeholder="Escriba el color .." v-model="editData.color"/>
-													</div>
-												</div>
-										</div>
-		
 									</div>
-									<div class="row clearfix">
-										<div class="col-md-4">
+								</div>
+	
+								<div class="row clearfix">
+									<div class="col-md-3">
+										<div class="form-group">
+											<p><b>Marca *</b></p>
+											<div class="form-line">
+												<input type="text" name="txtMarca" class="form-control" required="required" 
+												placeholder="Nombre de la marca.." v-model="editData.marca"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group">
+											<p><b>Modelo *</b></p>
+											<div class="form-line">
+												<input type="text" name="txtModelo" class="form-control" required="required" 
+												placeholder="Modelo del producto" v-model="editData.modelo"/>
+											</div>
+										</div>
+									</div>
+	
+									<div class="col-md-3">
 											<div class="form-group">
-												<p><b>Serie</b></p>
+												<p><b>Serie *</b></p>
 												<div class="form-line">
 													<input type="text" name="txtSerie" class="form-control" required="required" 
-													placeholder="Escriba la serie" v-model="editData.serie"/>
+													placeholder="Num. Serie.." v-model="editData.serie"/>
 												</div>
 											</div>
-										</div>
-										<div class="col-md-6">
-											<p><b>Observaciones</b></p>
+									</div>
+									<div class="col-md-3">
+											<div class="form-group">
+												<p><b>Color *</b></p>
+												<div class="form-line">
+													<input type="text" name="txtColor" class="form-control" placeholder="Color del recurso" v-model="editData.color"/>
+												</div>
+											</div>
+									</div>
+								</div>
+	
+								<div class="row clearfix">
+									<div class="col-md-3">
+										<p><b>Fecha Compra *</b></p>
+										<div class="input-group">
+											<span class="input-group-addon">
+												<i class="material-icons">date_range</i>
+											</span>
 											<div class="form-line">
-												<textarea rows="4"  name="txtObservaciones" class="form-control no-resize col-md-6" 
-												placeholder="Escriba en que condiciones se encuentra" v-model="editData.observaciones"></textarea>
+												<input type="text" class="form-control text-center txtFechaCompra"  name="txtFechaCompra" 
+												placeholder="Selecciona una fecha..." :value="editData.fechaCompra" readonly="true"/>
+											</div>
+										</div>	
+									</div>	
+									<div class="col-md-3">
+										<p><b>Costo Recurso *</b></p>
+										<div class="input-group">
+											<span class="input-group-addon">$</span>
+											<div class="form-line">
+												<input type="number" name="txtCosto" class="form-control" v-model="editData.costoActivo"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group">
+											<p><b>Garantia (en Meses) *</b></p>
+											<div class="form-line">
+												<input type="number" min="1" max="56" name="txtGarantia" class="form-control" 
+												placeholder="Defina en numeros los meses" v-model="editData.garantiames"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<p><b>Obsolecencia</b></p>
+										<div class="input-group">
+											<span class="input-group-addon">
+												<i class="material-icons">date_range</i>
+											</span>
+											<div class="form-line" >
+												<input type="text" name="txtObsolecencia" class="form-control txtObsolecencia" 
+												placeholder="Fecha de obsolencia" :value="editData.fecha_obsolescencia"/>
 											</div>
 										</div>
 									</div>
 								</div>
+	
+								<!-- Campos vehicular -->
+								<div class="row-clearfix" v-show="editData.id_tipo_activo==1">
+									<div class="col-md-6">
+										<div class="form-group">
+											<p><b>Num. de Placa</b></p>
+											<div class="form-line">
+												<input type="text" name="txtPlaca" class="form-control" 
+												placeholder="Escriba el num. de placa" v-model="editData.placa"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<p><b>Tipo Vehiculo </b></p>
+											<div class="form-line">
+												<input type="text" name="txtTipoVehiculo" class="form-control" 
+													placeholder="Escriba el tipo de vehiculo" v-model="editData.tipovehiculo"/>
+											</div>
+										</div>
+									</div>
+								</div>
+								
+									<!-- Campos de HUR -->
+									<!-- campos exculusivamente no hay -->
+								
+									<!-- Campos de EAC -->
+								<div class="row-clearfix" v-show="editData.id_tipo_activo==2">
+									<div class="col-md-4">
+										<div class="form-group">
+											<p><b>Serie evaporadora</b></p>
+											<div class="form-line">
+												<input type="text" name="txtSerieEvaporadora" class="form-control"
+												v-model="editData.serieEvaporadora"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-4">	
+										<div class="form-group">
+											<p><b>Serie condensadora</b></p>
+											<div class="form-line">
+												<input type="text" name="txtSerieCondensadora" class="form-control"
+												v-model="editData.serieCondensadora"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<p><b></b></p>
+										<input type="checkbox" id="chkControlRemoto2" class="filled-in chk-col-deep-purple" name="chkControlRemoto" v-model="editData.chkControlRemoto"/>
+										<label for="chkControlRemoto2">&iquest;Tiene control remoto?</label>
+									</div>
+								</div>
+	
+									<!-- Campos de HTC -->
+								<div class="row-clearfix" v-show="editData.id_tipo_activo==3">
+									<div class="col-md-4">
+										<p><b>Fecha de Entrega</b></p>
+										<div class="input-group">
+											<span class="input-group-addon">
+												<i class="material-icons">date_range</i>
+											</span>
+											<div class="form-line">
+												<input type="text" class="form-control text-center txtFechaEntrega"  name="txtFechaEntrega" 
+												placeholder="Selecciona una fecha..." :value="editData.fechaEntregaMovil"/>
+											</div>
+										</div>	
+									</div>
+	
+									<div class="col-md-4">
+										<div class="form-group">
+											<p><b>Imei</b></p>
+											<div class="form-line">
+												<input type="number" name="txtImei" class="form-control" placeholder="Num. Imei" v-model="editData.imei"/>
+											</div>
+										</div>
+									</div>
+	
+									<div class="col-md-4">
+										<div class="form-group">
+											<p><b>Almacenamiento Externa</b></p>
+											<div class="form-line">
+												<input type="number" name="txtAlmacenamientoExterna" class="form-control" 
+												placeholder="Almacenamiento Externo" v-model="editData.almacenamientoExterno"/>
+											</div>
+										</div>
+									</div>
+								</div>
+	
+								<!-- Campos de ECP -->
+								<div class="row-clearfix" v-show="editData.id_tipo_activo==4">
+									<div class="col-md-4">
+										<div class="form-group">
+											<p><b>Tipo Equipo</b></p>
+											<div class="form-line">
+												<input type="text" name="txtTipoEquipo" class="form-control" v-model="editData.tipoequipo"/>
+											</div>
+										</div>
+									</div>
+	
+									<div class="col-md-4">
+										<div class="form-group">
+											<p><b>Tipo de Mem. Ram</b></p>
+											<div class="form-line">
+												<input type="text" name="txtTipoRam" class="form-control" v-model="editData.tipoMemoriaRam"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<p><b>Capacidad Mem. Ram</b></p>
+											<div class="form-line">
+												<input type="number" name="txtCapMemRam" class="form-control" v-model="editData.capacidadMemoriaRam"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<p><b>Tipo Procesador</b></p>
+											<div class="form-line">
+												<input type="text" name="txtTipoProcesador" class="form-control" v-model="editData.tipoProcesador"/>
+											</div>
+										</div>
+									</div>
+	
+									<div class="col-md-4">
+										<div class="form-group">
+											<p><b>Marca Procesador</b></p>
+											<div class="form-line">
+												<input type="text" name="txtMarcaProcesador" class="form-control" v-model="editData.marcaProcesador"/> 
+											</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<p><b>Capacidad Procesador</b></p>
+											<div class="form-line">
+												<input type="number" name="txtCapProcesador" class="form-control" v-model="editData.capProcesador"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<p><b>Tipo HDD</b></p>
+											<div class="form-line">
+												<input type="text" name="txtTipoHDD" class="form-control" v-model="editData.tipoHDD"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<p><b>Capacidad Int. HDD</b></p>
+											<div class="form-line">
+												<input type="number" name="txtCapIntHDD" class="form-control" v-model="editData.capIntHDD"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<p><b></b></p>
+										<input type="checkbox" id="chkMonitor2" class="filled-in chk-col-deep-purple" name="2"
+										v-model="editData.chkMonitor"/>
+										<label for="chkMonitor2">&iquest;Tiene monitor?</label>
+									</div>
+								</div>
+								<div class="row-clearfix" v-show="editData.id_tipo_activo==4">
+									<div class="col-md-12">
+									</div>
+								</div>
+								<div class="row-clearfix" v-show="editData.chkMonitor==true">
+									<div class="col-md-3">
+										<div class="form-group">
+											<p><b>Tamaño</b></p>
+											<div class="form-line">
+												<input type="number" name="txtTamanioMonitor" class="form-control"
+												v-model="editData.tamanioMonitor"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group">
+											<p><b>Color monitor</b></p>
+											<div class="form-line">
+												<input type="text" name="txtColorMonitor" class="form-control" v-model="editData.colorMonitor"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group">
+											<p><b>Modelo Monitor</b></p>
+											<div class="form-line">
+												<input type="text" name="txtModeloMonitor" class="form-control"
+												v-model="editData.modeloMonitor"/>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3">
+										<div class="form-group">
+											<p><b>Num. parte</b></p>
+											<div class="form-line">
+												<input type="text" name="txtNumParte" class="form-control" v-model="editData.numParte"/>
+											</div>
+										</div>
+									</div>
+	
+								</div>
+								<!-- End campos de ECP -->
+	
+								<div class="row-clearfix">
+									<div class="col-md-12">
+										<hr class="btn-secondary"/>
+									</div>
+								</div>
+	
+								<div class="row-clearfix">	
+									<div class="col-md-4">
+										<div class="form-group">
+											<p><b>Periodo Mant. Estimado</b></p>
+											<div class="form-line">
+												<input type="number" name="txtPeridoMantenimiento" class="form-control" 
+												placeholder="Periodo de mant. estimado en dias" v-model="editData.periodomantenimiento"/>
+											</div>
+										</div>
+									</div>
+									
+									<div class="col-md-8">
+										<div class="form-group" >	
+											<p><b>Im&aacute;gen</b></p>							
+											<div class="form-line">
+												<input type="file" name="fichero" id="idFileActivo" class="form-control-file" multiple="multiple" disabled="true" />
+													<!-- <input type="file" name="fichero" @change="onFileChange" class="form-control" multiple="multiple"/> -->
+											</div>
+										</div>
+											<!-- <div v-else>
+												<img :src="editData.fichero"/>
+												<button class="btn-danger" @click="removeImage">Quitar Imagen</button>
+											</div> -->
+									</div>
+								</div>
+	
+	
+								<div class="row-clearfix">
+									<div class="col-md-12 text-center">
+										<hr class="btn-primary"/>
+										<h4  class="text-primary">Asignacion de activo</h4>
+									</div>
+								</div>
+								<div class="row-clearfix">
+									<div class="col-md-4">
+										<b>Empresa *</b>
+										<div class="input-group">
+											<select name="cmbEmpresa" id="cmbEmpresa" class="form-control show-tick cmbEmpresa" v-model="editData.id_empresa">
+												<option value="default" selected="selected">Selecciona la empresa...</option>
+												<option v-for="item in empresas" :value="item.id_empresa" >{{item.razon_social}}</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<b>Area *</b>
+										<div class="input-group">	                            
+											<select class="form-control show-tick cmbDepartamento" name="cmbDepartamento" id="cmbDepartamento" v-model="editData.id_departamento" data-live-search="true">
+												<option value="default" selected="selected">Selecciona un Departamento...</option>
+												<option v-for="item in departamento" :value="item.id_departamento">{{ item.nombre_departamento }}</option>
+											</select>
+										</div>
+									</div>
+	
+									<div class="col-md-4">
+										<b>Usuario </b>
+										<div class="input-group">	                            
+											<select class="form-control show-tick cmbUsuario" name="cmbUsuario" id="cmbUsuario" 
+											v-model="editData.id_usuario" data-live-search="true">
+												<option value="default" selected="selected">Selecciona un usuario...</option>
+												<option v-for="item in usuario" :value="item.id_usuario">{{ item.nombre_completo }}</option>
+											</select>
+										</div>
+									</div>
+								</div>
+	
+								<div class="row clearfix">
+									<div class="col-md-12">
+										<p><b>Observaciones</b></p>
+										<div class="form-line">
+											<textarea rows="4"  name="txtObservaciones" class="form-control no-resize col-md-6" 
+											placeholder="Escriba en que condiciones se encuentra" v-model="editData.observaciones"></textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+
 								<div class="modal-footer">
 									<button onclick="cancel();" type="button" class="btn btn-danger waves-effect" data-dismiss="modal">CANCELAR</button>
 									<button type="submit" class="btn btn-primary waves-effect">CREAR</button>
@@ -417,22 +955,23 @@
 		function edit(param){			
 			NuevoActivo.editActivo(param);
 		}
+
 		function deleteAct(param){
 			NuevoActivo.deleteActivo(param);
 		}
 
 		function accionesFormatter(value, row, index) {
 			//urlDelete = [[@{/controlPanel/activos/}]] + row.id_activo_mobiliario + '/delete';
+			urlEdit = [[@{/controlPanel/BienActivo/}]] + row.id_recurso_activo + '/edit';
+
 		    return [
-				'<a href="#" title="Editar" class="EditActivo" data-Edit="'+row.id_activo_mobiliario+'" data-toggle="modal" data-target="#modalEditActivo" onclick="edit('+row.id_activo_mobiliario+');" role="button">',
+				'<a href="#" title="Editar" class="EditActivo" data-Edit="'+row.id_recurso_activo+'" data-toggle="modal" data-target="#modalEditActivo" onclick="edit('+row.id_recurso_activo+');" role="button">',
 					'<i class="material-icons edit">edit</i>',
 				'</a>',
-				'<a href="#" title="Eliminar" class="deleteActivo" onclick="deleteAct('+row.id_activo_mobiliario+')">',
+				'<a href="#" title="Eliminar" class="deleteActivo" onclick="deleteAct('+row.id_recurso_activo+')">',
 		        	'<i class="material-icons remove">delete</i>',
 				'</a>',
-				'<a href="#" title="Imprimir" class="ImprimirActivo">',
-					'<i class="material-icons print">print</i>',
-					'</a>',
+				' ',
 				'<a href="#" title="Historial" class="Historial" data-toggle="modal" data-target="#modalTable" role="button">',
 					'<i class="material-icons format_list_numbered">format_list_numbered</i>',
 				'</a>',
@@ -441,7 +980,6 @@
 				'</a>'
 			].join(''); 
 		}
-
 
 		function estatusFormatter(value, row, index){
 			var lblEstatus='';
@@ -461,25 +999,12 @@
 		// VALIDADOR DE FORMULARIO
 			$('#formActivo').validate({
 		        rules: {
-		            'txtNombre': {
-		                required: true
-		            },
-		            'txtMarca': {
-		                required: true
-					},
-					'txtModelo':{
-						required: false
-					},
-					'txtColor':{
-						required: false
-					},
-					'txtSerie':{
-						required: true
-					},
-					'txtObservaciones':{
-						required: true
-					},
-
+		            'txtNombre': {	required: true	},
+		            'txtMarca': {	required: true	},
+					'txtModelo':{	required: true	},
+					'txtColor':{	required: true	},
+					'txtSerie':{	required: true	},
+					'txtObservaciones':{	required: true	},
 		        },
 		        highlight: function (input) {
 		            $(input).parents('.form-line').addClass('error');
@@ -494,24 +1019,36 @@
 			 
 		});
 		
-		function cancel(){
-			$('#formEditActivo')[0].reset();
+		$(function () {
+			//Datetimepicker plugin
+		    $('.datetimepicker').bootstrapMaterialDatePicker({
+				format: 'DD/MM/YYYY',
+				lang:'es',
+		        clearButton: true,
+		        weekStart: 1,
+		        time:false
+		    });
+		 });
+
+	$('#txtFechaCompra').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false, todayBtn : true, todayHighlight: true});
+	$('#txtObsolecencia').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+	$('#txtFechaEntrega').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+	// $('#txtFechaEntrega').bootstrapMaterialDatePicker('setDate', moment());
+	$('.txtCosto').change(function(){
+		$('.txtCosto').toFixed(2);
+	});
+	function cancel(){
+		$('#formEditActivo')[0].reset();
 			this.NuevoActivo.editData={};
 			this.NuevoActivo.elegido="";
 			// this.NuevoActivo.editData.nombre="";
-			// this.NuevoActivo.editData.marca="";
-			// this.NuevoActivo.editData.modelo="";
-			// this.NuevoActivo.editData.color="";
-			// this.NuevoActivo.editData.serie="";
 			// this.NuevoActivo.editData.observaciones="";
 			// this.NuevoActivo.editData.id_empresa='default';
-			// this.NuevoActivo.editData.id_activo='default';
-			// this.NuevoActivo.editData.id_activo_mobiliario='default';
-		}
-		$('#modalEditActivo').on('hidden.bs.modal',function(){
-				// $('#formEditActivo')[0].reset();
-				cancel();
-			});
+	}
+	$('#modalEditActivo').on('hidden.bs.modal',function(){
+		cancel();
+	});
+
 	</script>
 
 </th:block>

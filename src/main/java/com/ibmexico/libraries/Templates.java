@@ -182,6 +182,7 @@ public class Templates {
 
 	//New Activos
 	public static final String ACTIVO_INDEX=PATH_CONTROL_PANEL+"adminRecursos/activos/Index";
+	public static final String ACTIVO_EDIT=PATH_CONTROL_PANEL+"adminRecursos/activos/edit";
 
 	
 	//New Activos

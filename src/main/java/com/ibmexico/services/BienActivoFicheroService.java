@@ -35,7 +35,7 @@ public class BienActivoFicheroService{
     private IBienActivoFicheroRepository bienActFicheRepo;
 
     public List<BienActivoFicheroEntity> listaActivoFichero(int idBienActivo){
-        return bienActFicheRepo.findByBienActivo_IdActivoMobiliario(idBienActivo);  
+        return bienActFicheRepo.findByBienActivoIdRecursoActivo(idBienActivo);  
     }
 
 
@@ -63,19 +63,17 @@ public class BienActivoFicheroService{
     }
 
     public JsonObject jsonRecursoFichero(){
-
         JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
+    
         JsonArrayBuilder jsonRows=Json.createArrayBuilder();
-
         List<BienActivoFicheroEntity> lstFichero= bienActFicheRepo.lstBienActivoFichero();
         lstFichero.forEach((item)->{
             jsonRows.add(Json.createObjectBuilder()
             .add("id_fichero", item.getIdBienActivoFichero())
-            .add("id_bien_activo_fijo", item.getBienActivo().getIdActivoMobiliario())
+            .add("id_bien_activo_fijo", item.getBienActivo().getIdRecursoActivo())
             .add("url_img_activo", item.getUrl())
             );
         });
-
         jsonReturn.add("rows", jsonRows);
         return jsonReturn.build();
     }
@@ -83,11 +81,11 @@ public class BienActivoFicheroService{
     public JsonObject JsonRecursoFichaIdActivo(int idBienActivo){
         JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
         JsonArrayBuilder jsonRows=Json.createArrayBuilder();
-        List<BienActivoFicheroEntity> lstficheroidAct=bienActFicheRepo.findByBienActivo_IdActivoMobiliario(idBienActivo);
+        List<BienActivoFicheroEntity> lstficheroidAct=bienActFicheRepo.findByBienActivoIdRecursoActivo(idBienActivo);
         lstficheroidAct.forEach((item)->{
             jsonRows.add(Json.createObjectBuilder().
             add("id_fichero", item.getIdBienActivoFichero())
-            .add("id_bien_activo_fijo", item.getBienActivo().getIdActivoMobiliario())
+            .add("id_bien_activo_fijo", item.getBienActivo().getIdRecursoActivo())
             .add("url_img_activo", item.getUrl())
             );
         });
