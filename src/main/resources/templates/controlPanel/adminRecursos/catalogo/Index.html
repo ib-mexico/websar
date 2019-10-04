@@ -1,10 +1,6 @@
 <th:block th:fragment="body">
 	<div id="appCatalogoActivos">
 
-	<div class="block-header">
-		<h2>Catalogo Activo de IBMexico</h2>
-	</div>
-
 	<ol class="breadcrumb breadcrumb-bg-red">
 		<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
 		<li class="active"><i class="material-icons">public</i> Catalogos Activos</li>
@@ -14,7 +10,7 @@
 		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 			<div class="card">
 				<div class="header">
-					<h2>LISTA DE CATALOGOS</h2>
+					<h2>CATALOGO DE TIPO ACTIVOS</h2>
 				</div>
 		
     			<div class="body">
@@ -24,7 +20,7 @@
 							<!--th:href="${ {_PATH_} + 'controlPanel/catalogoActivo/create'}" -->
 							<a href="#" role="button" class="btn bg-purple waves-effect" 
 								data-toggle="modal" data-target="#modalNuevaCategoria">
-								<i class="material-icons">add_circle</i> Nuevo Catalogo</a>
+								<i class="material-icons">add_circle</i> Nuevo Tipo Activo</a>
     					</div>
     				</div>
 
@@ -56,7 +52,7 @@
 				<div class="modal-content">
 					<form id="formCatalogoActivo" v-on:submit.prevent="createCatalogo" method="POST" role="form">
 						<div class="modal-header">
-							<h4 class="modal-title">Nueva Catalogo</h4>
+							<h4 class="modal-title">Registro Tipo Activo</h4>
 						</div>
 						<!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
 						<div class="modal-body">
@@ -73,7 +69,7 @@
 								
 								<div class="col-md-12">
 									<div class="form-group">
-										<p><b>Clave</b></p>
+										<p><b>Clave *</b></p>
 										<div class="form-line">
 											<input type="text" name="txtClave" class="form-control" required="required" v-model="clave"/>
 										</div>

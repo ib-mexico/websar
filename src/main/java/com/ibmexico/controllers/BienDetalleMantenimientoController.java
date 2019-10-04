@@ -10,6 +10,7 @@ import com.ibmexico.entities.BienDetalleMantenimientoEntity;
 import com.ibmexico.libraries.DataTable;
 import com.ibmexico.libraries.Templates;
 import com.ibmexico.libraries.notifications.ApplicationException;
+import com.ibmexico.services.ActivoServicioService;
 import com.ibmexico.services.BienActivoFicheroService;
 import com.ibmexico.services.BienActivoService;
 import com.ibmexico.services.BienDetalleMantenimientoService;
@@ -51,6 +52,9 @@ public class BienDetalleMantenimientoController{
     private BienDetalleMantenimientoService bienDetService;
 
     @Autowired
+    @Qualifier("activo_servicio")
+    private ActivoServicioService activoServicioService;
+    @Autowired
     @Qualifier("modelAndViewComponent")
     private ModelAndViewComponent modelAndViewComponent;
 
@@ -69,6 +73,7 @@ public class BienDetalleMantenimientoController{
         JsonObject jsonCatalogoActivo=null;
         JsonObject jsonRecursoActivo=null;
         JsonObject jsonRecursoFichero=null;
+        
         try {
             jsonCatalogoActivo= catActivoService.jsonCatalogoActivo();
             jsonRecursoActivo = bienActivoService.jsonRecursoActivo();
@@ -102,6 +107,27 @@ public class BienDetalleMantenimientoController{
         return jsonReturn.build().toString();
     }
 
+    
+
+
+   //esta obtiene el servicio necesario
+   @RequestMapping(value="get-servicio/{idTipoActivo}", method = RequestMethod.GET)
+   public @ResponseBody String getServicioIdTipo(@PathVariable("idTipoActivo") int idTipoActivo){
+       
+       Boolean respuesta=false;
+       JsonObject jsonServicioTipoActivo=null;
+       try {
+           jsonServicioTipoActivo=activoServicioService.jsonServicioTipoActivo(idTipoActivo);
+           respuesta=true;
+       } catch (ApplicationException exception) {
+          
+       }
+       JsonObjectBuilder jsonReturn= Json.createObjectBuilder();
+       jsonReturn.add("respuesta",respuesta).
+       add("jsonServicio", jsonServicioTipoActivo);
+       return jsonReturn.build().toString();
+   }
+
     // Datatable
     @RequestMapping(value = "/table", method = RequestMethod.POST)
     private @ResponseBody String table( @RequestParam("offset") int offset,
@@ -120,13 +146,12 @@ public class BienDetalleMantenimientoController{
             dtDetalleMant.getRows().forEach((itemDetalle)->{
                 jsRows.add(Json.createObjectBuilder()
                 .add("idDetalleMant", itemDetalle.getIdDetalleMantenimiento())
-                .add("cantidad", itemDetalle.getCantidad())
+              
                 .add("creacion_fecha", itemDetalle.getCreacionFechaNatural())
                 .add("diagnostico", itemDetalle.getDiagnostico())
-                .add("falla", itemDetalle.getFalla())
+               
                 .add("fecha_mantenimiento", itemDetalle.getFechaMantenimientoFechaNatural())
-                .add("titulo", itemDetalle.getTitulo())
-                .add("idActivo", itemDetalle.getIdBienActivo().getNombre())
+         
                 .add("estatus_recordatorio", itemDetalle.isEstatus_recordatorio())
                 .add("finalizado",itemDetalle.isFinalizado())
                 );

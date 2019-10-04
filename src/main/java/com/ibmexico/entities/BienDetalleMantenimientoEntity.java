@@ -22,35 +22,28 @@ public class BienDetalleMantenimientoEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int idDetalleMantenimiento;
-
-    @Column(nullable = false, length = 5)
-    private int cantidad;
-
-    @Column(length = 150,nullable = false)
-    private String titulo;
     
     @Lob
     @Column(nullable = false)
     private String diagnostico;
 
-    @Lob
-    @Column(nullable = false)
-    private String falla;
-
     @Column(nullable = false)
     private LocalDateTime fechaMantenimiento;
 
-    @Column(nullable = true)
-    private LocalDateTime creacionFecha;
-    
-    @Column(nullable = true)
-    private LocalDateTime modificacionFecha;
 
     @Column(nullable = false)
     private boolean finalizado;
 
     @Column
     private boolean estatus_recordatorio;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="estatus_mant", nullable = false)
+    private ActivoEstatusEntity estatusMantenimiento;
+     
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="id_bien_activo",nullable = false)
+    private BienActivoEntity idBienActivo;
 
     //Relations
     @ManyToOne(fetch = FetchType.LAZY)
@@ -61,9 +54,12 @@ public class BienDetalleMantenimientoEntity{
 	@JoinColumn(name = "modificacion_id_usuario", nullable = false)
     private UsuarioEntity modificacionUsuario;
     
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="id_bien_activo",nullable = false)
-    private BienActivoEntity idBienActivo;
+    @Column(nullable = true)
+    private LocalDateTime creacionFecha;
+    
+    @Column(nullable = true)
+    private LocalDateTime modificacionFecha;
+
 
     public int getIdDetalleMantenimiento() {
         return idDetalleMantenimiento;
@@ -71,22 +67,6 @@ public class BienDetalleMantenimientoEntity{
 
     public void setIdDetalleMantenimiento(int idDetalleMantenimiento) {
         this.idDetalleMantenimiento = idDetalleMantenimiento;
-    }
-
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
     }
 
     public String getDiagnostico() {
@@ -97,13 +77,7 @@ public class BienDetalleMantenimientoEntity{
         this.diagnostico = diagnostico;
     }
 
-    public String getFalla() {
-        return falla;
-    }
 
-    public void setFalla(String falla) {
-        this.falla = falla;
-    }
 
     public LocalDateTime getFechaMantenimiento() {
         return fechaMantenimiento;
@@ -180,6 +154,14 @@ public class BienDetalleMantenimientoEntity{
 
     public void setIdBienActivo(BienActivoEntity idBienActivo) {
         this.idBienActivo = idBienActivo;
+    }
+
+    public ActivoEstatusEntity getEstatusMantenimiento() {
+        return estatusMantenimiento;
+    }
+
+    public void setEstatusMantenimiento(ActivoEstatusEntity estatusMantenimiento) {
+        this.estatusMantenimiento = estatusMantenimiento;
     }
 
 
