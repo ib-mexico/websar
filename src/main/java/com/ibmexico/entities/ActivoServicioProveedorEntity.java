@@ -17,15 +17,15 @@ public class ActivoServicioProveedorEntity{
 
     @ManyToOne
     @JoinColumn(name="id_servicio")
-    private ActivoServicioEntity idServicio;
+    private ActivoServicioEntity activoServicio;
 
     @ManyToOne
     @JoinColumn(name="id_proveedor")
-    private ActivoProveedorEntity idProveedor;
+    private ActivoProveedorEntity activoProveedor;
 
-    @ManyToOne
-    @JoinColumn(name = "id_detallemant")
-    private BienDetalleMantenimientoEntity detalleMant;
+    // @ManyToOne
+    // @JoinColumn(name = "id_detallemant")
+    // private BienDetalleMantenimientoEntity detalleMant;
 
     public int getIdServicioProveedor() {
         return idServicioProveedor;
@@ -35,31 +35,21 @@ public class ActivoServicioProveedorEntity{
         this.idServicioProveedor = idServicioProveedor;
     }
 
-    public ActivoServicioEntity getIdServicio() {
-        return idServicio;
+    public ActivoServicioEntity getActivoServicio() {
+        return activoServicio;
     }
 
-    public void setIdServicio(ActivoServicioEntity idServicio) {
-        this.idServicio = idServicio;
+    public void setActivoServicio(ActivoServicioEntity activoServicio) {
+        this.activoServicio = activoServicio;
     }
 
-    public ActivoProveedorEntity getIdProveedor() {
-        return idProveedor;
+    public ActivoProveedorEntity getActivoProveedor() {
+        return activoProveedor;
     }
 
-    public void setIdProveedor(ActivoProveedorEntity idProveedor) {
-        this.idProveedor = idProveedor;
+    public void setActivoProveedor(ActivoProveedorEntity activoProveedor) {
+        this.activoProveedor = activoProveedor;
     }
-
-    public BienDetalleMantenimientoEntity getDetalleMant() {
-        return detalleMant;
-    }
-
-    public void setDetalleMant(BienDetalleMantenimientoEntity detalleMant) {
-        this.detalleMant = detalleMant;
-    }
-
-
-    
+ 
 
 }

@@ -1,3 +1,16 @@
+<!-- <th:block th:fragment="css">
+		<style th:inline="css">
+			input[type="file"] {
+    			display: none;
+				}
+		.custom-file-upload {
+    		border: 1px solid #ccc;
+    		display: inline-block;
+    		padding: 6px 12px;
+    		cursor: pointer;
+			}
+		</style>
+</th:block> -->
 <th:block th:fragment="body">
 	<div id="appDetalle">
 
@@ -96,7 +109,6 @@
 													</div>
 												</div>
 											</div>
-
 											<div class="row-clearfix">
 												<div class="col-md-12">
 													<p><b>Descripcion *</b></p>
@@ -106,10 +118,6 @@
 													</div>
 												</div>
 											</div>
-
-
-						
-
 											<div class="row-clearfix">
 												<table class="table table-bordered table-responsive table-sm">
 													<thead>
@@ -130,6 +138,13 @@
 														</td>
 														<td>{{service.descripcion}}</td>
 														<td>$ {{service.precio_estimado}}</td>
+													  </tr>
+													  <tr class="table-info">
+														  <th colspan="2" class="text-center">Gasto Aproximado</th>
+														  <td >
+															<i class="material-icons">attach_money</i>
+															<p v-text="totalgasto" style="display: inline-block"></p>
+														  </td>
 													  </tr>
 													</tbody>
 												  </table>
@@ -177,43 +192,13 @@
 
 												</div>
 											</div> -->
-
-											<proveedor
-												:idServicio="datafiltrado"
-											>
+										<div v-if="datafiltrado.length!=null">
+											<proveedor v-for="(item, index) in datafiltrado"
+												:key="index"
+												:idservicio="item"
+												> 
 										</proveedor>
-										
-											<template id="templateproveedor" v-if="data-filtrado !=0">
-											<div class="row-clearfix">
-												<div class="col-md-2">
-													<!-- <p><b>{{service.descripcion}}</b></p> -->
-												</div>
-												<div class="col-md-10">
-														<table class="table table-bordered table-responsive">
-																<thead>
-																  <tr class="info">
-																	<th scope="col">Proveedor</th>
-																	<th scope="col">Precio</th>
-																	<th scope="col">Acciones</th>
-																  </tr>
-																</thead>
-																<tbody>
-																  <tr>
-																	<td>Proveedor 1</td>
-																	<td>2.846</td>
-																	<td>
-																		<!-- <a href="#" role="button" class="btn bg-blue waves-effect">
-																			<i class="material-icons">cloud_upload</i>Subir</a> -->
-																		<a href="#" title="Subir Cotización" class="UploadActivo"><i class="material-icons cloud_upload">cloud_upload</i></a>
-																		<a href="#" title="Eliminar Proveedor" class="EliminarActivo"><i class="material-icons delete">delete</i></a>
-																	</td>
-																  </tr>
-																</tbody>
-															</table>
-												</div>
-
-												</div>
-												</template>
+										</div>
 
 										<div class="row-clearfix">
 											<h4 class="text-primary text-center">Indicar detalles de activo</h4>
@@ -242,10 +227,8 @@
 														<img :src="newActivo.fichero"/>
 														<button class="btn-danger" @click="removeImage">Quitar Imagen</button>
 													</div> -->
-												</div>
-					
+												</div>	
 											</div>
-
 										</div>
 										<div class="modal-footer">
 											<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
@@ -256,15 +239,45 @@
 								</div>
 							</div>
 						</div>
-
-
     			</div>
-
 			</div>
 		</div>
     </div>
     
 	</div>
+	<template id="templateproveedor" >
+		<div class="row-clearfix">
+			<div class="col-md-12">
+				<p><b>{{idservicio.nombre_proveedor}}</b></p>
+				<table class="table table-bordered table-responsive">
+					<thead>
+						<tr class="info">
+							<th scope="col">Proveedor</th>
+							<th scope="col">Precio</th>
+							<th scope="col">Observaciones</th>
+							<th scope="col">Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="proveedor in idservicio[0]">
+							<td v-text="proveedor.nombre_proveedor"></td>
+							<td><input type="number" class="form-control" placeholder="Costo Servicio"/></td>
+							<td><textarea name="txtObserProv" id="txtObserProv" cols="30" rows="2" class="form-control"></textarea></td>
+							<td>
+							<!-- <a href="#" role="button" class="btn bg-blue waves-effect">
+							<i class="material-icons">cloud_upload</i>Subir</a> -->
+							<span class="btn btn-primary btn-file">
+								Subir <input type="file"/>
+							</span>
+							<a href="#" title="Subir Cotización" class="UploadActivo"><i class="material-icons cloud_upload">cloud_upload</i></a>
+							<a href="#" title="Eliminar Proveedor" class="EliminarActivo"><i class="material-icons delete">delete</i></a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</template>
 
 
 </th:block>
