@@ -21,22 +21,18 @@ public class ActivoServicioService{
      @Qualifier("activo_servicio_repository")
      private IActivoServicioRepository activoServiciorep;
 
-    public ActivoServicioEntity findByIdActivoServicio(int idActivoServicio){
-        return activoServiciorep.findByIdActivoServicio(idActivoServicio);
-    }
-
     public List<ActivoServicioEntity> findByIdTipoActivo(int idTipoActivo){
-        return activoServiciorep.findByIdTipoActivo(idTipoActivo);
+        return activoServiciorep.findByTipoActivo(idTipoActivo);
     }
 
     public JsonObject jsonServicioTipoActivo(int idTipoActivo){
 
         JsonObjectBuilder jsonReturn= Json.createObjectBuilder();
         JsonArrayBuilder jsonRows = Json.createArrayBuilder();
-        List<ActivoServicioEntity> lstServicioTipo=activoServiciorep.findByIdTipoActivo(idTipoActivo);
+        List<ActivoServicioEntity> lstServicioTipo=activoServiciorep.findByTipoActivo(idTipoActivo);
         lstServicioTipo.forEach((item)->{
             jsonRows.add(Json.createObjectBuilder()
-            .add("id_servicio",item.getIdActivoServicio())
+            .add("id_servicio",item.getIdServicioActivo())
             .add("descripcion", item.getDescripcion())
             .add("precio_estimado", item.getPrecioEstimado()));
         });

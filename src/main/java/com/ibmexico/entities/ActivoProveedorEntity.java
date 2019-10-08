@@ -1,7 +1,8 @@
 package com.ibmexico.entities;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,9 +24,9 @@ public class ActivoProveedorEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int idActivoProveedor;
+    private int idProveedorServicio;
     
-    @Column
+    @Column(nullable = false)
     private String proveedor;
 
     @Column
@@ -34,19 +35,18 @@ public class ActivoProveedorEntity {
     @Column
     private String rfc;
 
-    @Column
+    @Column(nullable = true)
     private String ciudad;
 
-    @Column
+    @Column(nullable = true)
     private String direccion;
 
-    @Column
-    private int numeroTelefonico;
+    @Column(nullable = true, length = 10)
+    private Integer numeroTelefonico;
 
+   @OneToMany(fetch = FetchType.EAGER, mappedBy = "activoProveedor", cascade = CascadeType.ALL)
+   private List<ActivoServicioProveedorEntity> ActivoServicioProveedor_Proveedor=new ArrayList<ActivoServicioProveedorEntity>();
  
-   @OneToMany(mappedBy = "idProveedor", cascade = CascadeType.ALL)
-   Set<ActivoServicioProveedorEntity> idProveedor;
-
     //usuario y fecha cuando crean y modifican
     @Column(nullable = true)
     private LocalDateTime creacionFecha;
@@ -62,14 +62,7 @@ public class ActivoProveedorEntity {
     @JoinColumn(name = "modificacion_id_usuario", nullable = false)
     private UsuarioEntity modificacionUsuario;
 
-    public int getIdActivoProveedor() {
-        return idActivoProveedor;
-    }
-
-    public void setIdActivoProveedor(int idActivoProveedor) {
-        this.idActivoProveedor = idActivoProveedor;
-    }
-
+  
     public String getProveedor() {
         return proveedor;
     }
@@ -158,16 +151,22 @@ public class ActivoProveedorEntity {
         this.modificacionUsuario = modificacionUsuario;
     }
 
-    public Set<ActivoServicioProveedorEntity> getIdProveedor() {
-        return idProveedor;
+    public List<ActivoServicioProveedorEntity> getActivoServicioProveedor_Proveedor() {
+        return ActivoServicioProveedor_Proveedor;
     }
 
-    public void setIdProveedor(Set<ActivoServicioProveedorEntity> idProveedor) {
-        this.idProveedor = idProveedor;
+    public void setActivoServicioProveedor_Proveedor(
+            List<ActivoServicioProveedorEntity> activoServicioProveedor_Proveedor) {
+        ActivoServicioProveedor_Proveedor = activoServicioProveedor_Proveedor;
     }
 
+    public int getIdProveedorServicio() {
+        return idProveedorServicio;
+    }
 
-
+    public void setIdProveedorServicio(int idProveedorServicio) {
+        this.idProveedorServicio = idProveedorServicio;
+    }
 
     
 }

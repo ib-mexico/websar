@@ -10,6 +10,7 @@ import com.ibmexico.entities.BienDetalleMantenimientoEntity;
 import com.ibmexico.libraries.DataTable;
 import com.ibmexico.libraries.Templates;
 import com.ibmexico.libraries.notifications.ApplicationException;
+import com.ibmexico.services.ActivoServicioProveedorService;
 import com.ibmexico.services.ActivoServicioService;
 import com.ibmexico.services.BienActivoFicheroService;
 import com.ibmexico.services.BienActivoService;
@@ -54,9 +55,15 @@ public class BienDetalleMantenimientoController{
     @Autowired
     @Qualifier("activo_servicio")
     private ActivoServicioService activoServicioService;
+    
     @Autowired
     @Qualifier("modelAndViewComponent")
     private ModelAndViewComponent modelAndViewComponent;
+
+    //Para servicio proveedor
+    @Autowired
+    @Qualifier("activo_servicio_proveedor")
+    private ActivoServicioProveedorService servicioPservice;
 
 
     @RequestMapping({ "", "/" })
@@ -107,7 +114,21 @@ public class BienDetalleMantenimientoController{
         return jsonReturn.build().toString();
     }
 
-    
+    //Consultar proveedor por Servicio
+    @RequestMapping(value="get-proveedor/{idTipoActivo}/{idServicio}", method = RequestMethod.GET)
+    public @ResponseBody String getProveedorServicio(@PathVariable("idTipoActivo")int idTipoActivo,
+                                                    @PathVariable("idServicio") int idServicio){
+        JsonObject jsonServicioProveedor=null;
+        try {        
+            jsonServicioProveedor=servicioPservice.jsonlstServicioProveedor(idTipoActivo, idServicio);
+        } catch (ApplicationException exception) {
+           
+        }
+        JsonObjectBuilder jsonReturn= Json.createObjectBuilder();
+        jsonReturn.add("jsonServicioProveedor", jsonServicioProveedor);
+        return jsonReturn.build().toString();
+
+    }
 
 
    //esta obtiene el servicio necesario

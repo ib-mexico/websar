@@ -2,7 +2,8 @@ package com.ibmexico.entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -24,7 +25,7 @@ public class ActivoServicioEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int idActivoServicio;
+    private int idServicioActivo;
 
     @Column
     private String descripcion;
@@ -33,13 +34,13 @@ public class ActivoServicioEntity {
     private BigDecimal precioEstimado;
     
 
-    @OneToMany(mappedBy = "idServicio", cascade = CascadeType.ALL)
-    Set<ActivoServicioProveedorEntity> idServicio;
- 
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "activoServicio", cascade = CascadeType.ALL)
+    private List<ActivoServicioProveedorEntity> ActivoServicioProveedor_Servicio=new ArrayList<ActivoServicioProveedorEntity>();
+  
 
     @ManyToOne
     @JoinColumn(name = "id_tipo_activo", nullable = true)
-    private CatalogoActivoEntity idTipoActivo;
+    private CatalogoActivoEntity tipoActivo;
 
     //usuario y fecha cuando crean y modifican
     @Column(nullable = true)
@@ -56,13 +57,6 @@ public class ActivoServicioEntity {
     @JoinColumn(name = "modificacion_id_usuario", nullable = false)
     private UsuarioEntity modificacionUsuario;
 
-    public int getIdActivoServicio() {
-        return idActivoServicio;
-    }
-
-    public void setIdActivoServicio(int idActivoServicio) {
-        this.idActivoServicio = idActivoServicio;
-    }
 
     public String getDescripcion() {
         return descripcion;
@@ -118,26 +112,29 @@ public class ActivoServicioEntity {
         this.modificacionUsuario = modificacionUsuario;
     }
 
-    public Set<ActivoServicioProveedorEntity> getIdServicio() {
-        return idServicio;
+    public List<ActivoServicioProveedorEntity> getActivoServicioProveedor_Servicio() {
+        return ActivoServicioProveedor_Servicio;
     }
 
-    public void setIdServicio(Set<ActivoServicioProveedorEntity> idServicio) {
-        this.idServicio = idServicio;
+    public void setActivoServicioProveedor_Servicio(
+            List<ActivoServicioProveedorEntity> activoServicioProveedor_Servicio) {
+        ActivoServicioProveedor_Servicio = activoServicioProveedor_Servicio;
     }
 
-	public CatalogoActivoEntity getIdTipoActivo() {
-		return idTipoActivo;
-	}
+    public CatalogoActivoEntity getTipoActivo() {
+        return tipoActivo;
+    }
 
-	public void setIdTipoActivo(CatalogoActivoEntity idTipoActivo) {
-		this.idTipoActivo = idTipoActivo;
-	}
+    public void setTipoActivo(CatalogoActivoEntity tipoActivo) {
+        this.tipoActivo = tipoActivo;
+    }
 
+    public int getIdServicioActivo() {
+        return idServicioActivo;
+    }
 
-
-
-
-    
+    public void setIdServicioActivo(int idServicioActivo) {
+        this.idServicioActivo = idServicioActivo;
+    }
 
 }

@@ -9,10 +9,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-@Repository("activoServiciorRepository")
+@Repository("activoServicioProveedorRepository")
 public interface IActivoServicioProveedorRepository extends JpaRepository<ActivoServicioProveedorEntity, Serializable>{
+    
+    //@Query("SELECT DISTINCT objServicio.idServicioActivo, objProveedor.proveedor, objServicioProveedor.idServicioProveedor, objProveedor.idProveedorServicio, objServicio.idServicioActivo  FROM ActivoServicioProveedorEntity objServicioProveedor, ActivoProveedorEntity objProveedor, ActivoServicioEntity objServicio WHERE objServicio.tipoActivo.idCatalogoActivo=?1 AND objServicioProveedor.activoServicio.idServicioActivo=?2 AND objServicio.idServicioActivo=?2  AND objServicioProveedor.activoProveedor.idProveedorServicio=objProveedor.idProveedorServicio GROUP BY objProveedor.proveedor")
+    //public abstract List<ActivoServicioProveedorEntity> findByActivoServicio(int idTipoActivo, int idServicioActivo);
 
-
-    @Query("SELECT DISTINCT objServicio.idActivoServicio, objProveedor.proveedor FROM ActivoServicioProveedorEntity objActivoServ, ActivoProveedorEntity objProveedor, ActivoServicioEntity objServicio WHERE objServicio.idTipoActivo =?1 AND objActivoServ.idServicio=?2 and objServicio.idActivoServicio=?2 AND objActivoServ.idProveedor=objProveedor.idActivoProveedor GROUP BY objProveedor.proveedor")
-    public List<ActivoServicioProveedorEntity> findByIdTipo(int idTipoActivo, int IdServicio);
+    @Query("SELECT DISTINCT objServicioProveedor  FROM ActivoServicioProveedorEntity objServicioProveedor WHERE objServicioProveedor.activoServicio.tipoActivo.idCatalogoActivo=?1 AND objServicioProveedor.activoServicio.idServicioActivo=?2 AND objServicioProveedor.activoServicio.idServicioActivo=?2  GROUP BY objServicioProveedor.activoProveedor.proveedor")
+    public abstract List<ActivoServicioProveedorEntity> findByActivoServicio(int idTipoActivo, int idServicioActivo);
 }
