@@ -98,62 +98,80 @@ if(document.getElementById('appDetalle')){
                })
             },
 
-            getProveedorServicio(paramIdActivo, paramIdSevicio){
+            async getProveedorServicio(paramIdActivo, paramIdSevicio) {
                 var url=host+"DetalleMant/get-proveedor/"+paramIdActivo+"/"+paramIdSevicio;
-                axios.get(url).then(resp=>{
+                await axios.get(url).then(resp=>{
                     if(resp.status==200){
-                        this.proveedorServicio=resp.data.jsonServicioProveedor.rows;
-                        console.log(this.proveedorServicio);
-
+                        this.proveedorServicio = [...resp.data.jsonServicioProveedor.rows];
                     }
                 });
+                 return this.proveedorServicio;
             },
 
-            ObtenerIdServicio(index){
+            async ObtenerIdServicio(index){
                 if($('#'+index+'').is(':checked')==true){
                      valor = $('#'+index+'').val();  
-                    alert("seleccionado"+index);
-                // idTipoActivo=$('select').find('option:selected').val();
-                idTipoActivo=$( "select#cmbCatalogo option:checked" ).val();
-
-                
-                this.getProveedorServicio(idTipoActivo,index);
-
-                console.log(this.proveedorServicio)
-                if(this.proveedorServicio.length<=0){
-                    alert(this.proveedorServicio.length);
-                }else{
-                this.datafiltrado.push([this.proveedorServicio]);
-                }
-
-                // this.datafiltrado.push({indice:index, valor:valor});
-                }else
-                if($('#'+index+'').is(':checked')==false){
-                
-                    for (var i = 0; i < this.datafiltrado.length; i++) {
-                        for (var j = 0; j < this.datafiltrado[i].length; j++) {
-                            for (var k = 0; k < this.datafiltrado[i][j].length; k++) {
-                                if (this.datafiltrado[i][j][k].id_servicio===index) {
-                                    this.datafiltrado.splice(i,1);
-                                    i--;
-                                }
-                            }
-                        }
+                    // idTipoActivo=$('select').find('option:selected').val();
+                    idTipoActivo=$( "select#cmbCatalogo option:checked" ).val();
+                    this.proveedorServicio = await this.getProveedorServicio(idTipoActivo,index);
+                    if(this.proveedorServicio.length<=0){
+                        // alert(this.proveedorServicio.length);
+                    }else{
+                        this.datafiltrado.push(this.proveedorServicio);
                     }
+                }else
+                    if($('#'+index+'').is(':checked')==false){
+                        for ( i = 0; i < this.datafiltrado.length; i++) {
+                            for ( j = 0; j < this.datafiltrado[i].length; j++) {
+                                alert(this.datafiltrado[i][j].id_servicio+ "  ->idservicio");
+                                if(this.datafiltrado[i][j].id_servicio===index){
+                                    this.datafiltrado.splice(i,1);
+                                }
+                                j=this.datafiltrado[i].length;
+                                alert(j+"valor de j");
+                            }  
+                        }
 
+                        // for ( i = 0; i < this.datafiltrado.length; i++) {
+                        //     alert(this.datafiltrado.length +"1er for");
+                        //     for (j = 0; j < this.datafiltrado[i].length; j++) {
+                        //         alert(this.datafiltrado[i].length +"2do for");
+                        //         if (this.datafiltrado[i][j].id_servicio===index) {
+                        //             this.datafiltrado.splice(i,1);                                   
+                        //         }
+                        //         j=this.datafiltrado[i].length;
+                        //     }
+                        //     this.datafiltrado.splice(i,1);                                   
+                        //     i--;
+                        // }
+                    }
+            },
 
-                    // for (var k = 0; k < this.datafiltrado.length; k++) {
-                    //     if (this.datafiltrado[k].id_servicio===index) {
-                    //         this.datafiltrado.splice(i,1);
-                    //         i--;
-                    //     }
-                    // }
-                    alert(index);
-                }
+            createActivo(){
+                var formActivo=document.getElementById('formActivo');
+				var formActivoData=new FormData(formActivo);
+                var url=host+'DetalleMant/storeAjaxServicioProveeedor';
+                axios.post(url,formActivoData).then(response=>{
+                    if(response.status==200 && response.data.respuesta){
+                        $("#formActivo")[0].reset();
+                        $("#modalNuevoActivo").modal("hide");
+                        
+                        swal(response.data.titulo, response.data.mensaje, "success");
+                        $("#dtDetalle").bootstrapTable('refresh');
+                    }else{
+                        console.log(response);
+						swal(response.data.titulo, response.data.mensaje, "error");
+                    }
+                }).catch(error=>{
+                    swal("Algo malo pasó!", error.response.data, "error");
+                    console.log(error);
+                });
+              
+            }
 
             },
 
-        },
+            
         watch:{
             'newDetalle.id_catalogo':function(val){
                 if(!isNaN(val)) {
