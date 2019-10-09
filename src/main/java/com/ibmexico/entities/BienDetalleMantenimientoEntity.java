@@ -1,5 +1,7 @@
 package com.ibmexico.entities;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -23,27 +25,29 @@ public class BienDetalleMantenimientoEntity{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int idDetalleMantenimiento;
     
-    @Lob
     @Column(nullable = false)
-    private String diagnostico;
-
-    @Column(nullable = false)
-    private LocalDateTime fechaMantenimiento;
-
+    private LocalDate fechaMantenimientoProgramada;
 
     @Column(nullable = false)
     private boolean finalizado;
 
+    @Lob
+    @Column(nullable = true)
+    private String observaciones;
+    
     @Column
     private boolean estatus_recordatorio;
+    
+    @Column(nullable = true, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
+    private BigDecimal gastoAproximado;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="estatus_mant", nullable = false)
-    private ActivoEstatusEntity estatusMantenimiento;
+    @JoinColumn(name="id_activo_estatus", nullable = false)
+    private ActivoEstatusEntity activoEstatus;
      
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="id_bien_activo",nullable = false)
-    private BienActivoEntity idBienActivo;
+    private BienActivoEntity bienActivo;
 
     //Relations
     @ManyToOne(fetch = FetchType.LAZY)
@@ -67,28 +71,6 @@ public class BienDetalleMantenimientoEntity{
 
     public void setIdDetalleMantenimiento(int idDetalleMantenimiento) {
         this.idDetalleMantenimiento = idDetalleMantenimiento;
-    }
-
-    public String getDiagnostico() {
-        return diagnostico;
-    }
-
-    public void setDiagnostico(String diagnostico) {
-        this.diagnostico = diagnostico;
-    }
-
-
-
-    public LocalDateTime getFechaMantenimiento() {
-        return fechaMantenimiento;
-    }
-    // formateo de la fecha 
-    public String getFechaMantenimientoFechaNatural() {
-        return fechaMantenimiento.format(GeneralConfiguration.getInstance().getDateFormatterNatural());
-    }
-    
-    public void setFechaMantenimiento(LocalDateTime fechaMantenimiento) {
-        this.fechaMantenimiento = fechaMantenimiento;
     }
 
     public LocalDateTime getCreacionFecha() {
@@ -148,23 +130,50 @@ public class BienDetalleMantenimientoEntity{
         this.modificacionUsuario = modificacionUsuario;
     }
 
-    public BienActivoEntity getIdBienActivo() {
-        return idBienActivo;
+
+    public LocalDate getFechaMantenimientoProgramada() {
+        return fechaMantenimientoProgramada;
     }
 
-    public void setIdBienActivo(BienActivoEntity idBienActivo) {
-        this.idBienActivo = idBienActivo;
+    // formateo de la fecha 
+    public String getFechaMantenimientoProgramadaFechaNatural() {
+        return fechaMantenimientoProgramada.format(GeneralConfiguration.getInstance().getDateFormatterNatural());
     }
-
-    public ActivoEstatusEntity getEstatusMantenimiento() {
-        return estatusMantenimiento;
-    }
-
-    public void setEstatusMantenimiento(ActivoEstatusEntity estatusMantenimiento) {
-        this.estatusMantenimiento = estatusMantenimiento;
-    }
-
-
-
     
+    public void setFechaMantenimientoProgramada(LocalDate fechaMantenimientoProgramada) {
+        this.fechaMantenimientoProgramada = fechaMantenimientoProgramada;
+    }
+
+    public ActivoEstatusEntity getActivoEstatus() {
+        return activoEstatus;
+    }
+
+    public void setActivoEstatus(ActivoEstatusEntity activoEstatus) {
+        this.activoEstatus = activoEstatus;
+    }
+
+    public BienActivoEntity getBienActivo() {
+        return bienActivo;
+    }
+
+    public void setBienActivo(BienActivoEntity bienActivo) {
+        this.bienActivo = bienActivo;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+    public BigDecimal getGastoAproximado() {
+        return gastoAproximado;
+    }
+
+    public void setGastoAproximado(BigDecimal gastoAproximado) {
+        this.gastoAproximado = gastoAproximado;
+    }
+
 }

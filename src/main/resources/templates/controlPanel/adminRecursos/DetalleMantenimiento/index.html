@@ -65,14 +65,14 @@
 						<table id="dtDetalle" class="table table-bordered table-striped table-hover">
 							<thead>
 								<tr>
-									<th class="col-md-1" data-field="idDetalleMant" data-sortable="true" data-halign="left" data-align="center">Id</th>
+									<th class="col-md-1" data-field="bienActivo" data-sortable="true" data-halign="left" data-align="center">Clave Unico</th>
 									<th class="col-md-2" data-formatter="accionesFormatter" data-align="center" style="display: inline">Acciones</th>
-									<th class="col-md-2" data-field="cantidad" data-halign="left">Cantidad</th>
-									<th class="col-md-3" data-field="diagnostico" data-halign="left">Diagnostico</th>
+									<th class="col-md-2" data-field="gasto_aproximado" data-halign="left">Gasto Aproximado</th>
+									<th class="col-md-3" data-field="diagnostico" data-halign="left">Observaciones</th>
 									<th class="col-md-2" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estado</th>
 
                                     <th class="col-md-1" data-field="creacion_fecha" data-halign="left" data-align="center" data-visible="false">Fecha registro</th>
-                                    <th class="col-md-1" data-field="fecha_mantenimiento" data-halign="left" data-align="center" data-visible="false">Registrado :</th>
+                                    <th class="col-md-1" data-field="fecha_mantenimiento" data-halign="left" data-align="center" data-visible="true">Fecha Mantenimiento Programada:</th>
 								</tr>
 							</thead>
 						</table>
@@ -140,11 +140,18 @@
 														<td>$ {{service.precio_estimado}}</td>
 													  </tr>
 													  <tr class="table-info">
-														  <th colspan="2" class="text-center">Gasto Aproximado</th>
+														  <th colspan="2" class="text-center">Gasto total aproximado</th>
 														  <td >
-															<i class="material-icons">attach_money</i>
-															<p v-text="totalgasto" style="display: inline-block"></p>
-														  </td>
+																<div class="input-group" style="display: flex">
+																	<div class="input-group-prepend mb-2" style="display: inline-flexbox">
+																		<span class="input-group-text">$</span>
+																	</div>
+																	<input readonly="readonly" style="display: inline-flex" type="number" 
+																	:value="totalgasto" class="form-control" aria-label="Amount (to the nearest dollar)"
+																	name="txtTotalgasto"/>
+																	<span class="input-group-text">.00</span>
+																</div>
+															 </td>
 													  </tr>
 													</tbody>
 												  </table>
@@ -153,7 +160,7 @@
 
 											<div class="row clearfix">
 
-												<div class="col-xs-4 col-sm-4 col-md-4">
+												<!-- <div class="col-xs-4 col-sm-4 col-md-4">
 													<p> <b>Gasto aproximado</b> </p>
 													<div class="input-group">
 														<span class="input-group-addon">
@@ -164,18 +171,7 @@
 														</div>
 															<span class="input-group-text">.00</span>
 													</div>
-												</div>
-												<div class="col-xs-6 col-sm-6 col-md-6">
-													<p><b>Fecha programada</b></p>
-													<div class="input-group">
-														<span class="input-group-addon">
-															<i class="material-icons">date_range</i>
-														</span>
-														<div class="form-line" id='groupDesde'>
-															<input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Selecciona una fecha..." />
-														</div>
-													</div>
-												</div>
+												</div> -->
 
 											</div>
 											<!-- <div class="row-clearfix">
@@ -205,7 +201,7 @@
 												<div class="col-md- text-center">
 														<canvas style="background:#fff; border:1px solid #ccc; width:250px; height:250px;"></canvas>
 														<div style="display:none;" class="container-fluid">
-															<img id="source" :src="newDetalle.urlfichero" style="width: 100%" height="100%" />
+															<img id="source" :src="newDetalle.urlfichero" class="rounded mx-auto d-block img-fluid" />
 														</div>
 												</div>
 												<div class="col-md-6 col-md-offset-3 text-center">
@@ -215,7 +211,19 @@
 										</div>
 
 										<div class="row clearfix m-t-5">
-												<div class="col-md-12">
+											<div class="col-md-12">
+												<div class="col-xs-6 col-sm-6 col-md-6">
+													<p><b>Fecha programada</b></p>
+													<div class="input-group">
+														<span class="input-group-addon">
+															<i class="material-icons">date_range</i>
+														</span>
+														<div class="form-line">
+															<input type="text" class="form-control text-center datetimepicker" id="txtFechaProgramada" name="txtFechaProgramada" placeholder="Selecciona una fecha..." />
+														</div>
+													</div>
+												</div>
+												<div class="col-md-6">
 													<div class="form-group" >	
 														<p><b>Subir Im&aacute;gen de evidencia generada</b></p>							
 														<div class="form-line">
@@ -227,6 +235,7 @@
 														<img :src="newActivo.fichero"/>
 														<button class="btn-danger" @click="removeImage">Quitar Imagen</button>
 													</div> -->
+												</div>
 												</div>	
 											</div>
 										</div>
@@ -234,7 +243,6 @@
 											<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
 											<button type="submit" class="btn btn-primary waves-effect">Registrar	</button>
 										</div>
-										
 									</form>
 								</div>
 							</div>
@@ -248,7 +256,6 @@
 	<template id="templateproveedor" >
 		<div class="row-clearfix">
 			<div class="col-md-12">
-				<p><b>{{idservicio.nombre_proveedor}}</b></p>
 				<table class="table table-bordered table-responsive">
 					<thead>
 						<tr class="info">
@@ -259,17 +266,19 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="proveedor in idservicio[0]">
+						<tr v-for="proveedor in idservicio" name="txtProveedor ">
+
+							<input type="hidden" name="txtIdServicioProveedor" :value="proveedor.id_servicio_proveedor"/>
+							<input type="hidden" name="txtIdServicio" :value="proveedor.id_servicio"/>
+
 							<td v-text="proveedor.nombre_proveedor"></td>
-							<td><input type="number" class="form-control" placeholder="Costo Servicio"/></td>
+							<td><input type="number" class="form-control" placeholder="Costo Servicio" name="txtPrecio"/></td>
 							<td><textarea name="txtObserProv" id="txtObserProv" cols="30" rows="2" class="form-control"></textarea></td>
 							<td>
 							<!-- <a href="#" role="button" class="btn bg-blue waves-effect">
 							<i class="material-icons">cloud_upload</i>Subir</a> -->
-							<span class="btn btn-primary btn-file">
-								Subir <input type="file"/>
-							</span>
-							<a href="#" title="Subir Cotización" class="UploadActivo"><i class="material-icons cloud_upload">cloud_upload</i></a>
+							<input type="file" id="fileProveedor" name="ficheroCotizacion" class="custom-file-input" multiple="multiple"/>
+							<a href="#" title="Subir Cotización" class="UploadActivo" id="buttonFileId"><i class="material-icons cloud_upload">cloud_upload</i></a>
 							<a href="#" title="Eliminar Proveedor" class="EliminarActivo"><i class="material-icons delete">delete</i></a>
 							</td>
 						</tr>
@@ -317,7 +326,6 @@
 		    }
 		});
 
-
 		function accionesFormatter(value, row, index) {
 			//urlDelete = [[@{/controlPanel/activos/}]] + row.id_activo_mobiliario + '/delete';
 		    return [
@@ -362,9 +370,9 @@
                 c = canvas.getContext( '2d' ),
 				mouseX = 0,
                 mouseY = 0,
-                width = 500,
-                height = 400,
-                colour = 'red',
+                width = 250,
+                height = 250,
+                colour = 'green',
                 mousedown = false;
 
             // resize the canvas
@@ -416,6 +424,8 @@
 				urlfijo="http://localhost:8080/WebSar/ficheros/activoFijos";
                 dataURL = dataURL.replace("image/jpeg", "image/octet-stream");
 				var image = urlfijo +"/"+dataURL;
+				console.log(dataURL +  "-----");
+				console.log(image + "  --image");
 				document.location.href = dataURL;
 				
 				alert(dataURL);

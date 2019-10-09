@@ -7,7 +7,9 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+
 import com.ibmexico.entities.ActivoServicioProveedorEntity;
+
 import com.ibmexico.repositories.IActivoServicioProveedorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,26 +21,31 @@ public class ActivoServicioProveedorService {
     @Qualifier("activoServicioProveedorRepository")
     private IActivoServicioProveedorRepository aSProveedorRep;
 
+    @Autowired
+	@Qualifier("sessionService")
+    private SessionService sessionService;
+    
+    public ActivoServicioProveedorEntity findByIdServicioProveedor(int idServicioProveedor){
+        return  aSProveedorRep.findByIdServicioProveedor(idServicioProveedor);
+    }
 
+
+    //Listar Proveedores dependiendo del id TipoActivo y del id Servicio Seleccionado en ese momento.
     public JsonObject jsonlstServicioProveedor(int idTipoActivo, int idServicioActivo){
         JsonObjectBuilder jsonReturn= Json.createObjectBuilder();
         JsonArrayBuilder jsonRows = Json.createArrayBuilder();
         List<ActivoServicioProveedorEntity> lstServicioProv=aSProveedorRep.findByActivoServicio(idTipoActivo, idServicioActivo);
 
         lstServicioProv.forEach((item)->{ 
-
             jsonRows.add(Json.createObjectBuilder()
             .add("id_servicio_proveedor", item.getIdServicioProveedor())
             .add("id_servicio", item.getActivoServicio()!=null ? item.getActivoServicio().getIdServicioActivo() : 0)
             .add("id_proveedor", item.getActivoProveedor()!=null ? item.getActivoProveedor().getIdProveedorServicio() : 0)
             .add("nombre_proveedor",item.getActivoProveedor().getProveedor()!=null ? item.getActivoProveedor().getProveedor() :"")
             .add("nombre_servicio", item.getActivoServicio()!=null ? item.getActivoServicio().getDescripcion() : ""));
-
          });
         jsonReturn.add("rows", jsonRows);
         return  jsonReturn.build();
     }
-
-    
 
 }

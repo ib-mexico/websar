@@ -1,5 +1,6 @@
 package com.ibmexico.services;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +15,8 @@ import com.ibmexico.repositories.IBienDetalleMantenimientoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service("bienDetalleMantService")
 public class BienDetalleMantenimientoService{
@@ -26,7 +29,19 @@ public class BienDetalleMantenimientoService{
     @Qualifier("sessionService")
     private SessionService sesionService;
 
-    public void create(BienDetalleMantenimientoEntity objDetalle){
+    @Autowired
+    @Qualifier("activo_servicio_proveedor_mant_service")
+    private ActivoServicioProveedorMantService activoServProvMantService;
+    
+    //Encontrar un elemento detalle mantenimiento,en consideracion con el param ID .
+    public BienDetalleMantenimientoEntity findByIdBienDetalleMantenimiento(int idDetalleMantenimiento){
+        return bienMantRep.findByIdDetalleMantenimiento(idDetalleMantenimiento);
+    }
+
+    //Registro de un Activo a Mantenimiento, con los sig, parametros, para crear es necesario, registrar los servicios que requieren dicho mant.
+    // servicios, que integran de varios proveedores.
+    public void create(BienDetalleMantenimientoEntity objDetalle, String [] txtObservaciones, BigDecimal [] precioServProv,
+        int [] idActivoServicioProveedor, MultipartFile [] cotizacion){
         if(objDetalle!=null){
             UsuarioEntity objUser=sesionService.getCurrentUser();
             LocalDateTime ldtNow = LocalDateTime.now();
@@ -34,11 +49,17 @@ public class BienDetalleMantenimientoService{
             objDetalle.setModificacionUsuario(objUser);
             objDetalle.setCreacionFecha(ldtNow);
             objDetalle.setModificacionFecha(ldtNow);
-            bienMantRep.save(objDetalle);     
+            bienMantRep.save(objDetalle);
+            //Si este no esta vacio, se invoca el  sig. method, donde registra los multiples proveedores disponibles para el Mantenimiento.
+            if (idActivoServicioProveedor!=null) {
+                activoServProvMantService.addServicioProveedor(objDetalle, txtObservaciones, precioServProv, idActivoServicioProveedor, cotizacion);
+            }
         }else{
             throw new ApplicationException(EnumException.ACTIVO_CREATE_001);
         }
     }
+
+    //Tabla detalle de los activos en mantenimiento.
     public DataTable<BienDetalleMantenimientoEntity> dataTable(String search, int offset, int limit, String txtBootstrapTableDesde, String txtBootstrapTableHasta){
         List<BienDetalleMantenimientoEntity> lstDetalleMantenEntity=null;
         LocalDate fechaInicio=null;
@@ -74,4 +95,5 @@ public class BienDetalleMantenimientoService{
         DataTable<BienDetalleMantenimientoEntity> returnDataTable=new DataTable<BienDetalleMantenimientoEntity>(lstDetalleMantenEntity, totalDetalle);
         return returnDataTable;
     }
+
 }
