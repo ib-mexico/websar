@@ -17,6 +17,7 @@ import com.ibmexico.libraries.Templates;
 import com.ibmexico.libraries.notifications.ApplicationException;
 import com.ibmexico.libraries.notifications.EnumException;
 import com.ibmexico.services.ActivoEstatusService;
+import com.ibmexico.services.ActivoServicioProveedorMantService;
 import com.ibmexico.services.ActivoServicioProveedorService;
 import com.ibmexico.services.ActivoServicioService;
 import com.ibmexico.services.BienActivoFicheroService;
@@ -35,8 +36,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-
-
 
 @Controller
 @RequestMapping("controlPanel/DetalleMant")
@@ -74,6 +73,11 @@ public class BienDetalleMantenimientoController{
     @Autowired
     @Qualifier("activo_servicio_proveedor")
     private ActivoServicioProveedorService servicioPservice;
+
+    //Para sevicio_proveedor_manto
+    @Autowired
+    @Qualifier("activo_servicio_proveedor_mant_service")
+    private ActivoServicioProveedorMantService servProMantoservice;
 
     @Autowired
     @Qualifier("activo_estatus_service")
@@ -154,6 +158,26 @@ public class BienDetalleMantenimientoController{
        return jsonReturn.build().toString();
    }
 
+   @RequestMapping(value="get-servicio-proveedor/{idBienDetalleManto}", method = RequestMethod.GET)
+   public @ResponseBody String getServicioProveedorManto(@PathVariable("idBienDetalleManto")int idBienDetalleManto){
+       Boolean respuesta=false;
+       JsonObject jsonBienDetalleManto=null;
+       JsonObject jsonServicioProveedorManto=null;
+       try {
+           jsonBienDetalleManto=bienDetMantService.jsonBienDetalleMantId(idBienDetalleManto);
+           jsonServicioProveedorManto=servProMantoservice.jsonActivoServicioProveedorMant(idBienDetalleManto);
+           respuesta=true;
+       } catch (Exception e) {
+           throw e;
+       }
+       JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
+       jsonReturn.add("respuesta", respuesta).
+       add("jsonBienDetalleManto", jsonBienDetalleManto).
+       add("jsonServicioProveedorManto", jsonServicioProveedorManto)
+       ;
+       return jsonReturn.build().toString();
+   }
+
     // Datatable
     @RequestMapping(value = "/table", method = RequestMethod.POST)
     private @ResponseBody String table( @RequestParam("offset") int offset,
@@ -168,7 +192,7 @@ public class BienDetalleMantenimientoController{
             JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
             jsonReturn.add("total", dtDetalleMant.getTotal());
             JsonArrayBuilder jsRows=Json.createArrayBuilder();
-
+            BigDecimal d = BigDecimal.ZERO ;
             dtDetalleMant.getRows().forEach((itemDetalle)->{
                 jsRows.add(Json.createObjectBuilder()
                 .add("idDetalleMant", itemDetalle.getIdDetalleMantenimiento())
@@ -177,7 +201,7 @@ public class BienDetalleMantenimientoController{
                 .add("fecha_mantenimiento", itemDetalle.getFechaMantenimientoProgramadaFechaNatural())
                 .add("estatus_recordatorio", itemDetalle.isEstatus_recordatorio())
                 .add("bienActivo", itemDetalle.getBienActivo().getNumeroEconomico())
-                .add("gasto_aproximado", itemDetalle.getGastoAproximado())
+                .add("gasto_aproximado", itemDetalle.getGastoAproximado()!=null ? itemDetalle.getGastoAproximado() : d)
                 .add("finalizado",itemDetalle.isFinalizado())
                 );
             });
@@ -192,30 +216,32 @@ public class BienDetalleMantenimientoController{
         @RequestParam(value="txtObservaciones", required = false) String txtObservaciones,
         @RequestParam(value="txtFechaProgramada",required = false)String txtFechaProgramada,
         @RequestParam(value="txtTotalgasto", required = true) BigDecimal txtTotalgasto,
-        @RequestParam(value="txtIdServicioProveedor") int[] txtIdServicioProveedor,
-        @RequestParam(value="txtIdServicio") String[] txtIdServicio,
-        @RequestParam(value = "txtPrecio") BigDecimal[] txtPrecio,
-        @RequestParam(value="txtObserProv") String[] txtObserProv,
-        @RequestParam("ficheroCotizacion") MultipartFile [] ficheroCotizacion
-        
+        @RequestParam(value="txtIdServicioProveedor", required = false) int[] txtIdServicioProveedor,
+        @RequestParam(value = "txtPrecio",required = false) BigDecimal[] txtPrecio,
+        @RequestParam(value="txtObserProv",required = false) String[] txtObserProv,
+        @RequestParam(value = "ficheroCotizacion",required = false) MultipartFile [] ficheroCotizacion,
+        @RequestParam(value="imgDetalleActivo") String imgDetalleActivo    
         ) {
+            System.err.println(imgDetalleActivo +"img detalle activo");
+            System.err.println(txtTotalgasto +"totalgasto");
             Boolean respuesta = false;
             String titulo = "Oops!";
             String mensaje = "Ocurrió un error al intentar mandar a mantenimiento el Activo.";
-            BienDetalleMantenimientoEntity objDetalleMant= new BienDetalleMantenimientoEntity();
-            
+            BienDetalleMantenimientoEntity objDetalleMant= new BienDetalleMantenimientoEntity();            
             try {
-                for (int i = 0; i < txtIdServicioProveedor.length; i++) {
-                    System.err.println(txtIdServicioProveedor[i]+" -" +txtIdServicio[i]+ "-" + txtPrecio[i] +" - "+txtObserProv[i] + " fichero ->" + ficheroCotizacion[i] );
-                }
+                // for (int i = 0; i < txtIdServicioProveedor.length; i++) {
+                //     System.err.println(txtIdServicioProveedor[i]+" -"+ txtPrecio[i] +" - "+txtObserProv[i] + " fichero ->" + ficheroCotizacion[i] );
+                // }
                 objDetalleMant.setObservaciones(txtObservaciones);
-                objDetalleMant.setGastoAproximado(txtTotalgasto);
+                if (txtTotalgasto!=null) {
+                    objDetalleMant.setGastoAproximado(txtTotalgasto);                    
+                }
                 objDetalleMant.setBienActivo(bienActivoService.findByIdRecursoActive(cmbRecurso));
                 objDetalleMant.setFechaMantenimientoProgramada(LocalDate.parse(txtFechaProgramada, GeneralConfiguration.getInstance().getDateFormatterNatural()));
                 objDetalleMant.setActivoEstatus(activoestatus.findByIdActivoEstatus(1));
                 objDetalleMant.setFinalizado(false);
                 objDetalleMant.setEstatus_recordatorio(false);
-                bienDetMantService.create(objDetalleMant, txtObserProv, txtPrecio, txtIdServicioProveedor, ficheroCotizacion);
+                bienDetMantService.create(objDetalleMant, txtObserProv, txtPrecio, txtIdServicioProveedor, ficheroCotizacion, imgDetalleActivo);
                 respuesta = true;
                 titulo = "Excelente!";
                 mensaje = "Nuevo activo exitosamente creado.";
