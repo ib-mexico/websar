@@ -41,6 +41,10 @@ public class BienDetalleMantenimientoEntity{
     @Column(nullable = true, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
     private BigDecimal gastoAproximado;
 
+	@Lob
+	@Column(nullable = true)
+	private String urlDetalleMantenimiento;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_activo_estatus", nullable = false)
     private ActivoEstatusEntity activoEstatus;
@@ -174,6 +178,14 @@ public class BienDetalleMantenimientoEntity{
 
     public void setGastoAproximado(BigDecimal gastoAproximado) {
         this.gastoAproximado = gastoAproximado;
+    }
+
+    public String getUrlDetalleMantenimiento() {
+        return urlDetalleMantenimiento;
+    }
+
+    public void setUrlDetalleMantenimiento(String urlDetalleMantenimiento) {
+        this.urlDetalleMantenimiento = urlDetalleMantenimiento;
     }
 
 }

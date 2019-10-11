@@ -1,9 +1,22 @@
 package com.ibmexico.services;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
+
+import javax.imageio.ImageIO;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 import com.ibmexico.entities.BienDetalleMantenimientoEntity;
 import com.ibmexico.entities.UsuarioEntity;
@@ -40,8 +53,9 @@ public class BienDetalleMantenimientoService{
 
     //Registro de un Activo a Mantenimiento, con los sig, parametros, para crear es necesario, registrar los servicios que requieren dicho mant.
     // servicios, que integran de varios proveedores.
-    public void create(BienDetalleMantenimientoEntity objDetalle, String [] txtObservaciones, BigDecimal [] precioServProv,
-        int [] idActivoServicioProveedor, MultipartFile [] cotizacion){
+
+    synchronized public void create(BienDetalleMantenimientoEntity objDetalle, String [] txtObservaciones, BigDecimal [] precioServProv,
+        int [] idActivoServicioProveedor, MultipartFile [] cotizacion, String imgDetalleActivo) throws IOException {
         if(objDetalle!=null){
             UsuarioEntity objUser=sesionService.getCurrentUser();
             LocalDateTime ldtNow = LocalDateTime.now();
@@ -49,13 +63,38 @@ public class BienDetalleMantenimientoService{
             objDetalle.setModificacionUsuario(objUser);
             objDetalle.setCreacionFecha(ldtNow);
             objDetalle.setModificacionFecha(ldtNow);
-            bienMantRep.save(objDetalle);
+
+            if (imgDetalleActivo!=null && !imgDetalleActivo.equals("") && imgDetalleActivo.length()>0) {
+                String urlDetalleActivo= UUID.randomUUID().toString()+".png";
+                objDetalle.setUrlDetalleMantenimiento(urlDetalleActivo);
+                addFileDetalleActivo(objDetalle, imgDetalleActivo);         
+            }else{
+                bienMantRep.save(objDetalle);
+            }
             //Si este no esta vacio, se invoca el  sig. method, donde registra los multiples proveedores disponibles para el Mantenimiento.
             if (idActivoServicioProveedor!=null) {
                 activoServProvMantService.addServicioProveedor(objDetalle, txtObservaciones, precioServProv, idActivoServicioProveedor, cotizacion);
             }
         }else{
             throw new ApplicationException(EnumException.ACTIVO_CREATE_001);
+        }
+    }
+    //Method for save file png, indicador detalles del activo en mantenimiento
+    @Transactional
+    public void addFileDetalleActivo(BienDetalleMantenimientoEntity objDetalle, String imgDetalleActivo) throws IOException{
+        URL urlPath=this.getClass().getResource("/");
+        System.err.println("adentro del method addFileDetalleActivo 2");
+        if (objDetalle!=null) {
+            try {
+                byte[] byteFichero=Base64.getDecoder().decode(imgDetalleActivo);
+                System.err.println("adentro del method addFileDetalleActivo 3");
+                BufferedImage img= ImageIO.read(new ByteArrayInputStream(byteFichero));
+                File imgFile=new File(urlPath.getPath()+"static/ficheros/detalleMantenimiento/"+objDetalle.getUrlDetalleMantenimiento());
+                ImageIO.write(img,"png",imgFile);
+                bienMantRep.save(objDetalle);
+            } catch (Exception excepcion) {
+                throw new ApplicationException(EnumException.ENTREGAS_FICHEROS_ADD_FILE_002);
+            }
         }
     }
 
@@ -94,6 +133,26 @@ public class BienDetalleMantenimientoService{
         
         DataTable<BienDetalleMantenimientoEntity> returnDataTable=new DataTable<BienDetalleMantenimientoEntity>(lstDetalleMantenEntity, totalDetalle);
         return returnDataTable;
+    }
+
+    public JsonObject jsonBienDetalleMantId(int idDetalleMantenimiento){
+        JsonObjectBuilder jsonReturn =Json.createObjectBuilder();
+        JsonArrayBuilder jsonRows=Json.createArrayBuilder();
+        BienDetalleMantenimientoEntity lstBienDetalleMant=bienMantRep.findByIdDetalleMantenimiento(idDetalleMantenimiento);
+        BigDecimal gastonull= BigDecimal.ZERO;
+        jsonRows.add(Json.createObjectBuilder()
+            .add("id_detalle_manto", lstBienDetalleMant.getIdDetalleMantenimiento())
+            .add("fecha_manto_programada", lstBienDetalleMant.getFechaMantenimientoProgramadaFechaNatural())
+            .add("finalizado", lstBienDetalleMant.isFinalizado())
+            .add("observaciones", lstBienDetalleMant.getObservaciones())
+            .add("id_bien_activo", lstBienDetalleMant.getBienActivo().getIdRecursoActivo())
+            .add("gasto_aproximado", lstBienDetalleMant.getGastoAproximado()!=null ? lstBienDetalleMant.getGastoAproximado() : gastonull)
+            .add("url_detalle_manto", lstBienDetalleMant.getUrlDetalleMantenimiento()!=null ? lstBienDetalleMant.getUrlDetalleMantenimiento() : "")
+            .add("id_tipo_activo", lstBienDetalleMant.getBienActivo().getIdActivo().getIdCatalogoActivo())
+            .add("clave_unica", lstBienDetalleMant.getBienActivo().getNumeroEconomico())
+        );
+        jsonReturn.add("bienDetalleManto", jsonRows);
+        return  jsonReturn.build();
     }
 
 }

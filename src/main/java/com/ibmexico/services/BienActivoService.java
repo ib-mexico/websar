@@ -205,7 +205,7 @@ public class BienActivoService {
 		return jsonReturn.build();
     }
 
-    //Obtener la lista de todos los recursos activos
+    /*LISTA DE TODOS LOS RECURSOS ACTIVOS */
     public JsonObject jsonRecursoActivo(){
         JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
         JsonArrayBuilder jsonRows=Json.createArrayBuilder();
@@ -219,8 +219,7 @@ public class BienActivoService {
         jsonReturn.add("rows", jsonRows);
         return jsonReturn.build();
     }
-
-    //obtener la lista de activos por el id del catalogo
+    /*OBTENER LA LISTA DE ACTIVOS MEDIANTE EL ID DEL TIPO DE ACTIVO */
     public JsonObject jsonRecursoActivoIdCatalogo(int idCatalogoActivo){
         JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
         JsonArrayBuilder jsonRows=Json.createArrayBuilder();

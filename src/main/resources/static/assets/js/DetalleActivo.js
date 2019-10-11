@@ -19,7 +19,7 @@ if(document.getElementById('appDetalle')){
  
         mounted(){
             this.getFormData();
-            // this.getProveedorServicio(1,2);
+            // this.editActivo(6);
         },
         data:{
             catalogo:[],
@@ -37,7 +37,9 @@ if(document.getElementById('appDetalle')){
                 urlfichero:'',
             }
             ,datafiltrado:[],
-            proveedorServicio:[]
+            proveedorServicio:[],
+            //Edicion ActivoManto.
+            editDetalleManto:{},
         },
         methods:{
             getFormData(){
@@ -53,7 +55,7 @@ if(document.getElementById('appDetalle')){
                 });
             },
             loadModal(){
-                $('#cmbCatalogo').selectpicker('refresh');
+                $('.cmbCatalogo').selectpicker('refresh');
                 $('.cmbRecurso').selectpicker('refresh');
             },
             validateForm(){
@@ -61,7 +63,7 @@ if(document.getElementById('appDetalle')){
             },
             getRecursoCat(paramCatalogo){
                 var url=host+"BienActivo/get-activos/"+paramCatalogo;
-                var $select=$('#cmbRecurso');
+                var $select=$('.cmbRecurso');
                 axios.get(url).then(resp=>{
                     if(resp.status==200 && resp.data.respuesta){
                         this.recursoActivo=resp.data.jsonActivoCatalogo.rows;
@@ -122,40 +124,42 @@ if(document.getElementById('appDetalle')){
                 }else
                     if($('#'+index+'').is(':checked')==false){
                         for ( i = 0; i < this.datafiltrado.length; i++) {
-                            for ( j = 0; j < this.datafiltrado[i].length; j++) {
-                                alert(this.datafiltrado[i][j].id_servicio+ "  ->idservicio");
-                                if(this.datafiltrado[i][j].id_servicio===index){
-                                    this.datafiltrado.splice(i,1);
+                            capacidad=this.datafiltrado[i].length;
+                            if(this.datafiltrado[i].length!=null && this.datafiltrado[i]){
+                                for ( j = 0; j < capacidad; j++) {
+                                    tamanio=this.datafiltrado[i].length;
+                                    if(this.datafiltrado[i][j].id_servicio===index){
+                                        this.datafiltrado.splice(i,1);
+                                    }
+                                    j=tamanio;
                                 }
-                                j=this.datafiltrado[i].length;
-                                alert(j+"valor de j");
-                            }  
+                            }
                         }
-
-                        // for ( i = 0; i < this.datafiltrado.length; i++) {
-                        //     alert(this.datafiltrado.length +"1er for");
-                        //     for (j = 0; j < this.datafiltrado[i].length; j++) {
-                        //         alert(this.datafiltrado[i].length +"2do for");
-                        //         if (this.datafiltrado[i][j].id_servicio===index) {
-                        //             this.datafiltrado.splice(i,1);                                   
-                        //         }
-                        //         j=this.datafiltrado[i].length;
-                        //     }
-                        //     this.datafiltrado.splice(i,1);                                   
-                        //     i--;
-                        // }
                     }
             },
 
-            createActivo(){
-                var formActivo=document.getElementById('formActivo');
+            createActivoManto(){
+                var formActivo=document.getElementById('formActivoManto');
 				var formActivoData=new FormData(formActivo);
                 var url=host+'DetalleMant/storeAjaxServicioProveeedor';
                 axios.post(url,formActivoData).then(response=>{
                     if(response.status==200 && response.data.respuesta){
-                        $("#formActivo")[0].reset();
-                        $("#modalNuevoActivo").modal("hide");
+                        $("#formActivoManto")[0].reset();
+                        $("#modalNuevoActivoManto").modal("hide");
                         
+                        this.newDetalle.id_activo_mobiliario='',
+                        this.newDetalle.id_catalogo='',
+                        this.newDetalle.observaciones='',
+                        this.newDetalle.titulo='',
+                        this.newDetalle.urlfichero='',
+
+                        //Edicion ActivoManto.
+                        this.recursoActivo=[],                        
+                        this.servicio=[],
+                        this.fichero=[],
+                        this.gastoAproximado=[],
+                        this.proveedorServicio=[],
+                        this.datafiltrado=[],
                         swal(response.data.titulo, response.data.mensaje, "success");
                         $("#dtDetalle").bootstrapTable('refresh');
                     }else{
@@ -167,8 +171,34 @@ if(document.getElementById('appDetalle')){
                     console.log(error);
                 });
               
-            }
+            },
+            editActivoManto(idDetalleManto){
 
+                var formEditActivoManto=document.getElementById('formEditActivoManto');
+                var formEditActivoMantoData=new FormData(formEditActivoManto);
+                var url=host+"DetalleMant/get-servicio-proveedor/"+idDetalleManto;
+
+                axios.get(url, formEditActivoMantoData).then(resp=>{
+                    if (resp.status==200 && resp.data.respuesta) {
+                        this.editDetalleManto=resp.data.jsonBienDetalleManto.bienDetalleManto[0];
+                        this.proveedorServicio=resp.data.jsonServicioProveedorManto.rows;
+                        data=this.proveedorServicio;
+
+
+
+
+                        
+                        $('.cmbCatalogo').selectpicker('val', detalleActivo.editDetalleManto.id_tipo_activo);
+                        $('.cmbCatalogo').selectpicker('render');
+
+                        $('.cmbRecurso').selectpicker('val', detalleActivo.editDetalleManto.id_bien_activo);
+                        $('.cmbRecurso').selectpicker('render');
+                        
+                        console.log(this.proveedorServicio);
+                        this.loadModal();
+                    }
+                })
+            }
             },
 
             
@@ -194,7 +224,21 @@ if(document.getElementById('appDetalle')){
                     })
                     this.totalgasto=suma;
                 }
-            }
+            },
+
+            //Watch for editDetalleManto
+            'editDetalleManto.id_tipo_activo':function(val){
+                if(!isNaN(val)) {
+                    $('.cmbRecurso').selectpicker('refresh');
+                    this.getRecursoCat(val);
+                    this.getServicioIdTipoActivo(val);
+				}
+            },
+            'editDetalleManto.id_bien_activo': function(val){
+                if(!isNaN(val)){
+                    this.getFicheroLstActivo(val);
+                }
+            },
 
         }
     });

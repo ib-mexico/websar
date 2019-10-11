@@ -114,11 +114,9 @@ public class BienActivoController {
         Boolean respuesta = false;
         JsonObject jsonActivo = null;
         try {
-            System.out.println("entro al try");
             jsonActivo = bienActivoService.jsonFindByIdRecursoActive(idActivo);
             respuesta = true;
         } catch (Exception e) {
-            System.out.println("entro al catch");
         }
         System.out.println("salir");
         JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
