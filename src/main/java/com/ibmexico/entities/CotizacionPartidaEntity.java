@@ -180,6 +180,22 @@ public class CotizacionPartidaEntity {
 	public void setDescuentoPorcentaje(BigDecimal descuentoPorcentaje) {
 		this.descuentoPorcentaje = descuentoPorcentaje;
 	}
+
+	public BigDecimal getPrecioUnitarioDescuento() {
+		BigDecimal valor = new BigDecimal(0);
+
+		if(this.descuentoPorcentaje.compareTo(new BigDecimal(0)) == 1) {
+			valor = this.precioUnitarioLista.subtract(this.precioUnitarioLista.multiply(this.descuentoPorcentaje).divide(new BigDecimal(100)));
+		} else {
+			valor = this.precioUnitarioLista;
+		}
+
+		return valor.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+	}
+	
+	public String getPrecioUnitarioDescuentoNatural() {
+		return "$" + GeneralConfiguration.getInstance().getNumberFormat().format(this.getPrecioUnitarioDescuento());
+	}
 	
 	public BigDecimal getTotal() {
 		return total;

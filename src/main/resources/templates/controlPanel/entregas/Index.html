@@ -2,21 +2,21 @@
 	<div class="block-header">
         <h2>ENTREGAS DE PRODUCTOS</h2>
     </div>
-    
+
     <div class="row clearfix">
     	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     		<div class="card">
     			<div class="header">
     				<h2>LISTA DE ENTREGAS</h2>
     			</div>
-    			
+
     			<div class="body">
     				<div class="row clearfix" th:if="${rolNuevaEntrega}">
     					<div class="col-md-4 col-md-offset-8 text-right">
     						<a th:href="${ {_PATH_} + 'controlPanel/entregas/create'}" role="button" class="btn bg-purple waves-effect"><i class="material-icons">add_circle</i> Nueva Entrega</a>
     					</div>
     				</div>
-    				
+
     				<div class="row clearfix" id="dtEntregasToolBar" data-toolbar-align="left">
 						<div class="col-xs-3 col-sm-3 col-md-3">
     						<div class="input-group">
@@ -28,7 +28,7 @@
 	                           	</div>
 							</div>
     					</div>
-    					
+
     					<div class="col-xs-3 col-sm-3 col-md-3">
     						<div class="input-group">
     							<span class="input-group-addon">
@@ -38,33 +38,31 @@
                                		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
 	                           	</div>
 							</div>
-    					</div>							
+    					</div>
 					</div>
-					
+
 					<div class="table-responsive">
-						<div class="container">						
-							<table id="dtEntregas" class="table table-bordered table-striped table-hover">
-								<thead>
-									<tr>
-										<th data-width="10%" data-field="idEntrega" data-halign="left" data-align="center">ID</th>
-										<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
-										<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
-										<th data-width="30%" data-field="cliente" data-halign="center" data-align="left">Cliente</th>
-										<th data-width="30%" data-field="contacto" data-halign="center" data-align="left" data-visible="false">Contacto</th>
-										<th data-width="20%" data-field="cotizacion" data-halign="center" data-align="center">Cotizaci&oacute;n</th>
-										<th data-width="20%" data-field="ordenCompra" data-halign="center" data-align="left" data-visible="false">Orden Compra</th>
-																			
-										<th data-width="30%" data-field="nombreEntrega" data-halign="center" data-align="left">Entreg&oacute;</th>
-										<th data-width="30%" data-field="nombreRecibe" data-halign="center" data-align="left">Recibi&oacute;</th>
-										
-										<th data-width="20%" data-field="horaEntrega" data-halign="center" data-align="center">Hora/Entrega</th>
-										<th data-width="20%" data-field="creacionFecha" data-halign="center" data-align="center">Creaci&oacute;n/Fecha</th>																			
-									</tr>
-								</thead>
-							</table>		
-						</div>
+						<table id="dtEntregas" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th data-width="10%" data-field="idEntrega" data-halign="left" data-align="center">ID</th>
+									<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+									<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
+									<th data-width="30%" data-field="cliente" data-halign="center" data-align="left">Cliente</th>
+									<th data-width="30%" data-field="contacto" data-halign="center" data-align="left" data-visible="false">Contacto</th>
+									<th data-width="20%" data-field="cotizacion" data-halign="center" data-align="center">Cotizaci&oacute;n</th>
+									<th data-width="20%" data-field="ordenCompra" data-halign="center" data-align="left" data-visible="false">Orden Compra</th>
+																		
+									<th data-width="30%" data-field="nombreEntrega" data-halign="center" data-align="left">Entreg&oacute;</th>
+									<th data-width="30%" data-field="nombreRecibe" data-halign="center" data-align="left">Recibi&oacute;</th>
+									
+									<th data-width="20%" data-field="horaEntrega" data-halign="center" data-align="center">Hora/Entrega</th>
+									<th data-width="20%" data-field="creacionFecha" data-halign="center" data-align="center">Creaci&oacute;n/Fecha</th>																			
+								</tr>
+							</thead>
+						</table>
 					</div>
-					
+
     			</div>
     		</div>
     	</div>

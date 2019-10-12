@@ -2,12 +2,12 @@
 	<div class="block-header">
         <h2>GARANT&Iacute;AS</h2>
     </div>
-    
+
     <ol class="breadcrumb breadcrumb-bg-red">
       	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
     	<li class="active"><i class="material-icons">build</i> Garant&iacute;as</li>
   	</ol>
-    
+
     <div class="row clearfix">
     	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     		<div class="card">
@@ -43,32 +43,30 @@
                                		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
 	                           	</div>
 							</div>
-    					</div>							
+    					</div>
 					</div>
-					
-					<div class="table-responsive">
-						<div class="container">						
-							<table id="dtGarantias" class="table table-bordered table-striped table-hover">
-								<thead>
-									<tr>
-										<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
-										<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
-										<th data-width="30%" data-formatter="progresoFormatter" data-align="center">Progreso</th>
-										<th data-width="20%" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>										
-										<th data-width="30%" data-field="proveedor" data-halign="center" data-align="left">Proveedor</th>
-										<th data-width="30%" data-field="cliente" data-halign="center" data-align="left">Cliente</th>
-										<th data-width="30%" data-field="contacto" data-halign="center" data-align="left">Contacto</th>								
-										<th data-width="40%" data-field="producto" data-halign="center" data-align="left">Producto</th>
 
-										
-										<th data-width="20%" data-field="creacionUsuario" data-halign="center" data-align="center">Creaci&oacute;n/Usuario</th>
-										<th data-width="20%" data-field="creacionFecha" data-halign="center" data-align="center">Creaci&oacute;n/Fecha</th>																			
-									</tr>
-								</thead>
-							</table>		
-						</div>
+					<div class="table-responsive">
+						<table id="dtGarantias" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
+									<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+									<th data-width="30%" data-formatter="progresoFormatter" data-align="center">Progreso</th>
+									<th data-width="20%" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>										
+									<th data-width="30%" data-field="proveedor" data-halign="center" data-align="left">Proveedor</th>
+									<th data-width="30%" data-field="cliente" data-halign="center" data-align="left">Cliente</th>
+									<th data-width="30%" data-field="contacto" data-halign="center" data-align="left">Contacto</th>								
+									<th data-width="40%" data-field="producto" data-halign="center" data-align="left">Producto</th>
+
+									
+									<th data-width="20%" data-field="creacionUsuario" data-halign="center" data-align="center">Creaci&oacute;n/Usuario</th>
+									<th data-width="20%" data-field="creacionFecha" data-halign="center" data-align="center">Creaci&oacute;n/Fecha</th>																			
+								</tr>
+							</thead>
+						</table>
 					</div>
-					
+
     			</div>
     		</div>
     	</div>

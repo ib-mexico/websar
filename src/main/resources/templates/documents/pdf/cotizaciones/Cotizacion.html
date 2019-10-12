@@ -77,7 +77,7 @@
 			<td width="10%" class="celdaH6" th:text="${itemPartida.entregaDiasHabiles}"></td>
 			<td width="10%" class="celdaH6" style="text-align:right" th:text="${itemPartida.precioUnitarioListaNatural}"></td>
 			<td width="5%" class="celdaH6" th:text="${itemPartida.descuentoPorcentajeNatural}"></td>
-			<td width="10%" class="celdaH6" style="text-align:right" th:text="${'$' + #numbers.formatDecimal(itemPartida.total, 0, 'COMMA', 2, 'POINT') }"></td>
+			<td width="10%" class="celdaH6" style="text-align:right" th:text="${itemPartida.precioUnitarioDescuentoNatural}"></td>
 			<td width="10%" class="celdaH6" style="text-align:right" th:text="${itemPartida.totalNatural}"></td>
 		</tr>
 	</table>
