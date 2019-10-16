@@ -111,7 +111,8 @@
 														<td>
 														  <div class="custom-control custom-checkbox">
 															  <input type="checkbox" name ="txtServicio" class="custom-control-input checkServicio" :id="service.id_servicio"
-															   v-model="gastoAproximado" :value="service.precio_estimado" v-on:click="ObtenerIdServicio(service.id_servicio)"/>
+															   v-model="gastoAproximado" :precio_estimado="service.precio_estimado" :value="service.id_servicio" 
+															   v-on:click="ObtenerIdServicio(service.id_servicio)"/>
 															  <label class="custom-control-label" :for="service.id_servicio"></label>
 														  </div>
 														</td>
@@ -167,22 +168,21 @@
 
 												</div>
 											</div> -->
-										<div v-if="datafiltrado.length!=null">
+										<div v-if="datafiltrado.length!==null">
 											<proveedor v-for="(item, index) in datafiltrado"
 												:key="index"
-												:idservicio="item"
-												> 
+												:idservicio="item"> 
 										</proveedor>
 										</div>
 
 										<div class="row-clearfix">
 											<div class="col-md-8 col-xs-12 col-sm-12">
-												<h4 class="text-primary text-center">Indicar detalles de activo</h4>
-													<div class="col-md- text-center">
-															<canvas style="background:#fff; border:1px solid #ccc; width:350px; height:350px;" class="rounded mx-auto d-block img-fluid"></canvas>
+												<h4 class="text-primary text-center">Indicar detalles de mantenimiento</h4>
+													<div class=" text-center">
+															<canvas id="canvasnew" style="background:#fff; border:1px solid #ccc; width:350px; height:350px;" class="rounded mx-auto d-block img-fluid"></canvas>
 															<input type="hidden" id="imgDetalleActivo" name="imgDetalleActivo" value=""/>
 															<div style="display:none;" class="container-fluid">
-																<img id="source" :src="newDetalle.urlfichero" class="rounded mx-auto d-block img-fluid" />
+																<img id="sourcenuevo" :src="urlcompletofichero" class="rounded mx-auto d-block img-fluid" />
 															</div>
 													</div>
 													<div class="col-md-6 col-md-offset-3 text-center">
@@ -207,7 +207,7 @@
 
 										<div class="row clearfix m-t-5">
 											<div class="col-md-12">
-												<div class="col-xs-6 col-sm-6 col-md-6">
+												<div class="col-xs-12 col-sm-12 col-md-12">
 													<p><b>Fecha programada</b></p>
 													<div class="input-group">
 														<span class="input-group-addon">
@@ -217,19 +217,6 @@
 															<input type="text" class="form-control text-center datetimepicker" id="txtFechaProgramada" name="txtFechaProgramada" placeholder="Selecciona una fecha..." />
 														</div>
 													</div>
-												</div>
-												<div class="col-md-6">
-													<div class="form-group" >	
-														<p><b>Subir Im&aacute;gen de evidencia generada</b></p>							
-														<div class="form-line">
-															<input type="file" name="fichero" id="idFileActivo" class="form-control-file" multiple="multiple" />
-															<!-- <input type="file" name="fichero" @change="onFileChange" class="form-control" multiple="multiple"/> -->
-														</div>
-													</div>
-													<!-- <div v-else>
-														<img :src="newActivo.fichero"/>
-														<button class="btn-danger" @click="removeImage">Quitar Imagen</button>
-													</div> -->
 												</div>
 												</div>	
 											</div>
@@ -247,7 +234,7 @@
 					<div class="modal fade" id="modalEditActivoManto" tabindex="-1" role="dialog">
 						<div class="modal-dialog modal-lg" role="document">
 							<div class="modal-content">
-								<form id="formEditActivoManto" v-on:submit.prevent="editActivoManto" method="POST" role="form" enctype="multipart/form-data">
+								<form id="formEditActivoManto" v-on:submit.prevent="updateManto" method="POST" role="form" enctype="multipart/form-data">
 									<div class="modal-header">
 										<h4 class="modal-title text-primary bold text-center">Edicion de Mantenimiento {{editDetalleManto.clave_unica}}</h4>
 									</div>
@@ -257,7 +244,7 @@
 										<div class="row clearfix">
 											<div class="col-md-6">
 												<b>Tipo de Activo *</b>
-												<div class="input-group">	                            
+												<div class="input-group">
 													<select class="form-control show-tick cmbCatalogo" name="cmbCatalogo" id="cmbCatalogo" v-model="editDetalleManto.id_tipo_activo" disabled="true">
 														<option value="default" selected="selected">Selecciona un tipo...</option>
 														<option v-for="item in catalogo" :value="item.id_catalogo_activo" :data-subtext="item.nombre">{{ item.nombre }}</option>
@@ -266,8 +253,9 @@
 											</div>
 											<div class="col-md-6">
 												<b>Activos *</b>
-												<div class="input-group">	                            
-													<select class="form-control show-tick cmbRecurso" name="cmbRecurso" id="cmbRecurso" v-model="editDetalleManto.id_bien_activo">
+												<div class="input-group">	
+														<input type="hidden" :value="editDetalleManto.id_bien_activo" name="cmbRecurso"/>	                            
+													<select class="form-control show-tick cmbRecurso2" name="cmbRecurso2" v-model="editDetalleManto.id_bien_activo">
 														<option value="default" selected="selected">Selecciona un activo...</option>
 														<option v-for="item in recursoActivo" :value="item.id_recurso_activo">{{ item.descripcion_completa }}</option>
 													</select>
@@ -293,12 +281,12 @@
 												  </tr>
 												</thead>
 												<tbody>
-												  <tr v-for="service in  servicio">
+												  <tr v-for="service in servicio">
 													<td>
 													  <div class="custom-control custom-checkbox">
-														  <input type="checkbox" name ="txtServicio" class="custom-control-input checkServicio" :id="service.id_servicio"
-														   v-model="gastoAproximado" :value="service.precio_estimado" v-on:click="ObtenerIdServicio(service.id_servicio)"/>
-														  <label class="custom-control-label" :for="service.id_servicio"></label>
+														  <input type="checkbox" name ="txtServicio" class="custom-control-input checkServicio" :id="'serv'+service.id_servicio"
+														   v-model="gastoAproximado" :value="service.id_servicio" v-on:click="ObtenerIdServicioedit(service.id_servicio)"/>
+														  <label class="custom-control-label" :for="'serv'+service.id_servicio"></label>
 													  </div>
 													</td>
 													<td>{{service.descripcion}}</td>
@@ -322,26 +310,26 @@
 											  </table>
 										</div>
 									
-									<div v-if="datafiltrado.length!=null">
-										<proveedor v-for="(item, index) in datafiltrado"
+									<div v-if="editdatafiltrado.length!=null">
+										<proveedor2 v-for="(item, index) in editdatafiltrado"
 											:key="index"
 											:idservicio="item"
 											> 
-									</proveedor>
+									</proveedor2>
 									</div>
 
 									<div class="row-clearfix">
-										<h4 class="text-primary text-center">Indicar detalles de activo</h4>
-											<div class="col-md-6 text-center">
-													<canvas style="background:#fff; border:1px solid #ccc; width:350px; height:350px;"></canvas>
+										<h4 class="text-primary text-center">Indicar detalles de mantenimiento</h4>
+											<div class="text-center">
+													<canvas id="canvasedit" style="background:#fff; border:1px solid #ccc; width:350px; height:350px;" class="rounded mx-auto d-block img-fluid"></canvas>
 													<input type="hidden" id="imgDetalleActivo" name="imgDetalleActivo" value=""/>
 													<div style="display:none;" class="container-fluid">
-														<img id="source" :src="newDetalle.urlfichero" class="rounded mx-auto d-block img-fluid" />
+														<img id="sourceEdit" :src="urlcompletofichero" class="rounded mx-auto d-block img-fluid" />
 													</div>
 											</div>
 											<div class="col-md-6 col-md-offset-3 text-center">
-												<a id="btnLimpiar" href="javascript:void(0)" class="btn btn-warning">Limpiar</a>
-												<a id="btnGenerar" href="javascript:void(0)" class="btn btn-success">Generar Imagen</a>
+												<a id="btnLimpiarEdit" href="javascript:void(0)" class="btn btn-warning">Limpiar</a>
+												<a id="btnGenerarEdit" href="javascript:void(0)" class="btn btn-success">Generar Imagen</a>
 											</div>
 									</div>
 
@@ -401,11 +389,59 @@
 							<td><input type="number" class="form-control" placeholder="Costo Servicio" name="txtPrecio"/></td>
 							<td><textarea name="txtObserProv" id="txtObserProv" cols="30" rows="2" class="form-control"></textarea></td>
 							<td>
-							<!-- <a href="#" role="button" class="btn bg-blue waves-effect">
-							<i class="material-icons">cloud_upload</i>Subir</a> -->
-							<input type="file" id="fileProveedor" name="ficheroCotizacion" class="custom-file-input" multiple="multiple"/>
-							<a href="#" title="Subir Cotización" class="UploadActivo" id="buttonFileId"><i class="material-icons attach_file" for="fileProveedor">attach_file</i></a>
-							<a href="#" title="Eliminar Proveedor" class="EliminarActivo"><i class="material-icons delete">delete</i></a>
+								<label class="text-primary">
+									<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Cotizacion" >cloud_upload</i>
+									<input type="file" id="fileProveedor"
+									name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .docx, .png, .jpg"/>
+								</label>
+								<!-- <input type="file" id="fileProveedor" name="ficheroCotizacion" class="custom-file-input" multiple="multiple"/> -->
+								<a href="#" title="Eliminar Proveedor" class="EliminarActivo"><i class="material-icons delete">delete</i></a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</template>
+
+	<template id="templateproveedor2" >
+		<div class="row-clearfix">
+			<div class="col-md-12">						
+				<h3 v-for="nombreservicio in idservicio.slice(0,1)" class="text-center text-success">{{nombreservicio.nombre_servicio}}</h3>
+				<hr class="btn-primary"/>
+				<table class="table table-borderless table-responsive table-sm">
+					<thead class="bg-primary">
+						<tr>
+							<th scope="col">Proveedor</th>
+							<th scope="col">Precio</th>
+							<th scope="col">Observaciones</th>
+							<th scope="col">Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="proveedor in idservicio" name="txtProveedor">
+							<input type="hidden" name="txtIdServicioProveedor" :value="proveedor.id_servicio_proveedor"/>
+							<input type="hidden" name="txtIdServicio" :value="proveedor.id_servicio"/>
+
+							<td v-text="proveedor.nombre_proveedor"></td>
+							<td><input type="number" class="form-control" placeholder="Costo Servicio" name="txtPrecio" :value="proveedor.precio_servicio_proveedor"/></td>
+							<td><textarea name="txtObserProv" id="txtObserProv" cols="30" rows="3" class="form-control" :value="proveedor.observaciones" style="overflow: auto;resize: none;"></textarea></td>
+							<td>
+
+								<label class="text-primary">
+									<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Cotizacion" >cloud_upload</i><input type="file" id="fileProveedor"
+									name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .docx, .png, .jpg"/>
+								</label>
+								
+								<a :href="'http://localhost:8080/WebSar/ficheros/ProveedorCotizacion/'+proveedor.url_cotizacion" target="blank" v-if="(proveedor.url_cotizacion!=null)" title="Ver cotización">
+								<i class="material-icons remove_red_eye">remove_red_eye</i></a>	
+								<!-- <span class="btn btn-success btn-file mt-10">
+									Subir <input type="file"/>
+								</span> -->
+								<!-- <input type="file" id="fileProveedor" name="ficheroCotizacion" class="custom-file-input" multiple="multiple"/> -->
+
+
+								<a href="#" title="Eliminar Proveedor" class="EliminarActivo"><i class="material-icons delete">delete</i></a>
 							</td>
 						</tr>
 					</tbody>
@@ -426,6 +462,7 @@
 	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
 	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
 	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
 	<script type="application/javascript" th:inline="javascript">
 
 			$("#dtDetalle").bootstrapTable({
@@ -500,10 +537,8 @@
 		    });
 		 });
 		 
-
-		 /*Metodo para generar la imagen canvas*/
-			var canvas = document.querySelector( 'canvas' ),
-                c = canvas.getContext( '2d' ),
+			var canvasnuevo = document.getElementById( 'canvasnew' ),
+            n = canvasnuevo.getContext( '2d' ),
 				mouseX = 0,
                 mouseY = 0,
                 width = 350,
@@ -511,11 +546,75 @@
                 colour = 'red',
                 mousedown = false;
             // resize the canvas
+            canvasnuevo.width = width;
+			canvasnuevo.height = height;
+			
+			var img = document.getElementById("sourcenuevo");
+		
+			img.addEventListener('load', e => {
+			  n.drawImage(img,0,0, canvasnuevo.width, canvasnuevo.height);
+			});
+			  function draw() {
+                if (mousedown) {
+                    // set the colour
+                    n.fillStyle = colour;
+                    n.globalAlpha = 0.5
+                    // start a path and paint a circle of 20 pixels at the mouse position
+                    n.beginPath();
+                    n.arc( mouseX, mouseY, 5 , 0, Math.PI*2, true );
+                    n.closePath();
+                    n.fill();
+                }
+            }
+
+            // get the mouse position on the canvas (some browser trickery involved)
+            canvasnuevo.addEventListener( 'mousemove', function( event ) {
+                if( event.offsetX ){
+                    mouseX = event.offsetX;
+                    mouseY = event.offsetY;
+                } else {
+                    mouseX = event.pageX - event.target.offsetLeft;
+                    mouseY = event.pageY - event.target.offsetTop;
+                }
+                // call the draw function
+                draw();
+            }, false );
+
+            canvasnuevo.addEventListener( 'mousedown', function( event ) {
+                mousedown = true;
+            }, false );
+
+            canvasnuevo.addEventListener( 'mouseup', function( event ) {
+                mousedown = false;
+            }, false );
+
+            $('#btnGenerar').click(function() {
+				var dataURL = canvasnuevo.toDataURL('image/jpeg', 1);
+				urlfijo="http://localhost:8080/WebSar/ficheros/activoFijos";
+                // dataURL = dataURL.replace("image/jpeg", "image/octet-stream");
+				dataURL = dataURL.split(',')[1];
+				$('#imgDetalleActivo').val(dataURL);
+				// document.location.href = dataURL;	
+			});
+
+            $('#btnLimpiar').click(function() {
+                n.clearRect(img,0, 0, canvasnuevo.width, canvasnuevo.height);
+                n.drawImage(img,0,0,canvasnuevo.width, canvasnuevo.height);
+            });
+			// c.drawImage(img,0,0);
+/*------------------------------------------------------------------------------------------------------------------------------------*/
+			/*Canvas para pintar la imagen del activo , pero en el modo edición*/
+			var canvas = document.getElementById( 'canvasedit' ),
+            c = canvas.getContext( '2d' ),
+				mouseX = 0, mouseY = 0,
+                width = 350, height = 350,
+                colour = 'red', mousedown = false;
+            // redimensionar canvas
             canvas.width = width;
 			canvas.height = height;
 			
-			var img = document.getElementById("source");
-
+			var img = document.getElementById("sourceEdit");
+		
 			img.addEventListener('load', e => {
 			  c.drawImage(img,0,0, canvas.width, canvas.height);
 			});
@@ -541,7 +640,6 @@
                     mouseX = event.pageX - event.target.offsetLeft;
                     mouseY = event.pageY - event.target.offsetTop;
                 }
-
                 // call the draw function
                 draw();
             }, false );
@@ -554,7 +652,7 @@
                 mousedown = false;
             }, false );
 
-            $('#btnGenerar').click(function() {
+            $('#btnGenerarEdit').click(function() {
 				var dataURL = canvas.toDataURL('image/jpeg', 1);
 				urlfijo="http://localhost:8080/WebSar/ficheros/activoFijos";
                 // dataURL = dataURL.replace("image/jpeg", "image/octet-stream");
@@ -563,22 +661,47 @@
 				// document.location.href = dataURL;	
 			});
 
-            $('#btnLimpiar').click(function() {
+            $('#btnLimpiarEdit').click(function() {
                 c.clearRect(img,0, 0, canvas.width, canvas.height);
                 c.drawImage(img,0,0,canvas.width, canvas.height);
             });
-			// c.drawImage(img,0,0);
+
+
+
+
 			
 	function cancel(){
-	$('#formEditActivoManto')[0].reset();
-
-	
+		$('#formEditActivoManto')[0].reset();
+		this.detalleActivo.editproveedorServicio=[];
+		this.detalleActivo.editdatafiltrado=[];
 		this.detalleActivo.editDetalleManto={};
-		
+		this.detalleActivo.urlcompletofichero="";
 	}
+
+	function cancelNew(){
+		$('#formActivoManto')[0].reset();
+		this.detalleActivo.proveedorServicio=[];
+		this.detalleActivo.recursoActivo=[];
+		this.detalleActivo.datafiltrado=[];
+		this.detalleActivo.newDetalle.id_activo_mobiliario="";
+		this.detalleActivo.newDetalle.id_catalogo="";
+		this.detalleActivo.newDetalle.observaciones="";
+		this.detalleActivo.newDetalle.titulo="";
+		this.detalleActivo.urlfichero="";
+	}
+	
 	$('#modalEditActivoManto').on('hidden.bs.modal',function(){
 		cancel();
 	});
+	
+	$('#modalNuevoActivoManto').on('hidden.bs.modal',function(){
+		cancelNew();
+	});
+
+	/* $('#modalEditActivoManto').on('shown.bs.modal', function () {
+	 		alert("ejecutando");	
+	 		this.detalleActivo.servicio()
+		})*/
 
     </script>
 

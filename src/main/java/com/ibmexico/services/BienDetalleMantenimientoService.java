@@ -53,7 +53,6 @@ public class BienDetalleMantenimientoService{
 
     //Registro de un Activo a Mantenimiento, con los sig, parametros, para crear es necesario, registrar los servicios que requieren dicho mant.
     // servicios, que integran de varios proveedores.
-
     synchronized public void create(BienDetalleMantenimientoEntity objDetalle, String [] txtObservaciones, BigDecimal [] precioServProv,
         int [] idActivoServicioProveedor, MultipartFile [] cotizacion, String imgDetalleActivo) throws IOException {
         if(objDetalle!=null){
@@ -98,6 +97,18 @@ public class BienDetalleMantenimientoService{
         }
     }
 
+    public void  update(BienDetalleMantenimientoEntity bienDetalleManto){
+        if (bienDetalleManto!=null) {
+            LocalDateTime ldtnow=LocalDateTime.now();
+            UsuarioEntity objUsuarioCreacion=sesionService.getCurrentUser();
+            bienDetalleManto.setModificacionFecha(ldtnow);
+            bienDetalleManto.setModificacionUsuario(objUsuarioCreacion);
+            bienMantRep.save(bienDetalleManto);
+        }else{
+            throw new ApplicationException(EnumException.ACTIVIDADES_CREATE_001);
+        }
+    }
+
     //Tabla detalle de los activos en mantenimiento.
     public DataTable<BienDetalleMantenimientoEntity> dataTable(String search, int offset, int limit, String txtBootstrapTableDesde, String txtBootstrapTableHasta){
         List<BienDetalleMantenimientoEntity> lstDetalleMantenEntity=null;
@@ -135,6 +146,8 @@ public class BienDetalleMantenimientoService{
         return returnDataTable;
     }
 
+
+    /**los metodos de tipo json */
     public JsonObject jsonBienDetalleMantId(int idDetalleMantenimiento){
         JsonObjectBuilder jsonReturn =Json.createObjectBuilder();
         JsonArrayBuilder jsonRows=Json.createArrayBuilder();

@@ -157,15 +157,20 @@ public class BienDetalleMantenimientoController{
        add("jsonServicio", jsonServicioTipoActivo);
        return jsonReturn.build().toString();
    }
-
+   /**Obtener todos los datos relacionados para la edicion de manto. para ejecutar dicho methodo update. */
    @RequestMapping(value="get-servicio-proveedor/{idBienDetalleManto}", method = RequestMethod.GET)
    public @ResponseBody String getServicioProveedorManto(@PathVariable("idBienDetalleManto")int idBienDetalleManto){
        Boolean respuesta=false;
        JsonObject jsonBienDetalleManto=null;
        JsonObject jsonServicioProveedorManto=null;
+       JsonObject jsonActivoCatalogo = null;
+
+       BienDetalleMantenimientoEntity objdetallemanto=bienDetMantService.findByIdBienDetalleMantenimiento(idBienDetalleManto);
        try {
            jsonBienDetalleManto=bienDetMantService.jsonBienDetalleMantId(idBienDetalleManto);
            jsonServicioProveedorManto=servProMantoservice.jsonActivoServicioProveedorMant(idBienDetalleManto);
+           jsonActivoCatalogo = bienActivoService.jsonRecursoActivoIdCatalogo(objdetallemanto.getBienActivo().
+           getIdActivo().getIdCatalogoActivo());
            respuesta=true;
        } catch (Exception e) {
            throw e;
@@ -174,6 +179,7 @@ public class BienDetalleMantenimientoController{
        jsonReturn.add("respuesta", respuesta).
        add("jsonBienDetalleManto", jsonBienDetalleManto).
        add("jsonServicioProveedorManto", jsonServicioProveedorManto)
+       .add("jsonActivoCatalogo", jsonActivoCatalogo)
        ;
        return jsonReturn.build().toString();
    }
@@ -256,4 +262,56 @@ public class BienDetalleMantenimientoController{
             return jsonReturn.build().toString();
     }
 
+    /**Update data manto */
+    @RequestMapping(value={"{idDetalleManto}/update","{idDetalleManto}/update/"}, method = RequestMethod.POST)
+    public @ResponseBody String UpdateDataManto(
+        @RequestParam(value="cmbRecurso",required = false)Integer cmbRecurso,
+        @RequestParam(value="txtObservaciones", required = false) String txtObservaciones,
+        @RequestParam(value="txtFechaProgramada",required = false)String txtFechaProgramada,
+        @RequestParam(value="txtTotalgasto", required = false) BigDecimal txtTotalgasto,
+        @RequestParam(value="txtIdServicioProveedor", required = false) int[] txtIdServicioProveedor,
+        @RequestParam(value = "txtPrecio",required = false) BigDecimal[] txtPrecio,
+        @RequestParam(value="txtObserProv",required = false) String[] txtObserProv,
+        @RequestParam(value = "ficheroCotizacion",required = false) MultipartFile [] ficheroCotizacion,
+        @RequestParam(value="imgDetalleActivo", required = false) String imgDetalleActivo,
+        @PathVariable(name="idDetalleManto")int idDetalleManto
+    ){
+        BienDetalleMantenimientoEntity objDetalleManto=bienDetMantService.findByIdBienDetalleMantenimiento(idDetalleManto);
+        Boolean respuesta = false;
+        String titulo = "Oops!";
+        String mensaje = "Ocurrió un error en la edición.";
+        System.err.println(txtObservaciones);
+        System.err.println(txtFechaProgramada);
+        System.err.println(cmbRecurso);
+        System.err.println(objDetalleManto);
+        // for (int i = 0; i < txtIdServicioProveedor.length; i++) {
+        //     System.err.println("entrando al ciclo de for");
+        //     System.err.println(txtIdServicioProveedor[i]+" -"+ txtPrecio[i] +" - "+txtObserProv[i] + " fichero ->" + ficheroCotizacion[i] );
+        // }
+        System.err.println("saliendo al ciclo for");
+        try {
+            if (objDetalleManto!=null) {
+                objDetalleManto.setObservaciones(txtObservaciones);
+                objDetalleManto.setBienActivo(bienActivoService.findByIdRecursoActive(cmbRecurso));
+                objDetalleManto.setFechaMantenimientoProgramada(LocalDate.parse(txtFechaProgramada, GeneralConfiguration.getInstance().getDateFormatterNatural()));
+                if(txtTotalgasto!=null){
+                    objDetalleManto.setGastoAproximado(txtTotalgasto);
+                }
+
+                // int idmanto=objDetalleManto.getIdDetalleMantenimiento();
+                bienDetMantService.create(objDetalleManto, txtObserProv, txtPrecio, txtIdServicioProveedor, ficheroCotizacion, imgDetalleActivo);
+                respuesta = true;
+                titulo = "Genial!";
+                mensaje = "Edición exitosa.";
+            }
+ 
+        } catch (Exception e) {
+            throw new ApplicationException(EnumException.ACTIVO_CREATE_001);
+        }
+        JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("titulo", titulo)
+					.add("mensaje", mensaje);							
+		return jsonReturn.build().toString();
+    }
 }
