@@ -88,11 +88,10 @@ public class BienActivoController {
         jsonReturn.add("respuesta", respuesta).add("jsonCatalogoActivo", jsonCatalogoActivo)
                 .add("jsonEmpresas", jsonEmpresas).add("jsonDepartamento", jsonDepartamento)
                 .add("jsonUsuarios", jsonUsuarios);
-
         return jsonReturn.build().toString();
     }
 
-    // OBTENER ACTIVOS DEL CATALOGO MEDIANTE AXIOS
+    /* OBTENER ACTIVOS  MEDIANTE EL ID DEL CATALOGO JSON CON AXIOS*/
     @RequestMapping(value = "get-activos/{idCatalogo}", method = RequestMethod.GET)
     public @ResponseBody String getActivoCatalogo(@PathVariable("idCatalogo") int idCatalogo) {
         Boolean respuesta = false;
@@ -106,7 +105,7 @@ public class BienActivoController {
         jsonReturn.add("respuesta", respuesta).add("jsonActivoCatalogo", jsonActivoCatalogo);
         return jsonReturn.build().toString();
     }
-
+    /*Obtener la data activo, para poder editarlas  */
     @RequestMapping(value = { "{idActivo}/edit", "{idActivo}/edit/" }, method = RequestMethod.GET)
     public @ResponseBody String getDataEdit(@PathVariable(name = "idActivo") int idActivo) {
         // List<CatalogoActivoEntity> lstCatalogo= catActiveService.listCatalogo();
@@ -291,9 +290,7 @@ public class BienActivoController {
 										@RequestParam(value="search", required=false, defaultValue="") String search,
 										@RequestParam(value="txtBootstrapTableDesde", required=false) String txtBootstrapTableDesde,
 										@RequestParam(value="txtBootstrapTableHasta", required=false) String txtBootstrapTableHasta) {
-		
 		DataTable<BienActivoEntity> dtActivo = bienActivoService.dataTable(search, offset, limit, txtBootstrapTableDesde, txtBootstrapTableHasta);
-		
 		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
 		jsonReturn.add("total", dtActivo.getTotal());
 		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
@@ -314,15 +311,12 @@ public class BienActivoController {
                 .add("creacion_id_usuario", itemCatActivo.getCreacionUsuario().getNombre()));
 		});
 		jsonReturn.add("rows", jsonRows);	
-
 		return jsonReturn.build().toString();
     }
     
     //delete active change your status=false
-
     @RequestMapping(value = {"{idActivo}/delete","{idActivo}/delete/"} ,method = RequestMethod.POST)
 	public @ResponseBody String deleteAjax(@PathVariable(name="idActivo")int idActivo){
-
 		Boolean respuesta = false;
 		String titulo = "Oops!";
 		String mensaje = "Ocurrió un error al intentar eliminar un Activo.";

@@ -156,10 +156,17 @@ public class ActivoServicioProveedorMantService {
             .add("observaciones", item.getObservaciones()!=null ? item.getObservaciones() : "")
             .add("precio_servicio_proveedor", item.getPrecioServicioProveedor()!=null ? item.getPrecioServicioProveedor() : pricenull)
             .add("url_cotizacion", item.getUrlCotizacion()!=null ? item.getUrlCotizacion() : "")
-            .add("id_activo_servicio_proveedor", item.getActivoServicioProveedor().getIdServicioProveedor())
+
+            .add("id_servicio_proveedor", item.getActivoServicioProveedor().getIdServicioProveedor())
+            .add("id_proveedor",item.getActivoServicioProveedor().getActivoProveedor().getIdProveedorServicio())
+            .add("nombre_proveedor",item.getActivoServicioProveedor().getActivoProveedor().getProveedor())
+
             .add("id_bien_detalle_manto", item.getBienDetalleMant().getIdDetalleMantenimiento())
             .add("id_servicio",item.getActivoServicioProveedor().getActivoServicio().getIdServicioActivo())
             .add("nombre_servicio",item.getActivoServicioProveedor().getActivoServicio().getDescripcion())
+            .add("tipo_activo", item.getBienDetalleMant().getBienActivo().getIdActivo().getIdCatalogoActivo())
+            .add("nombre_tipo_activo", item.getBienDetalleMant().getBienActivo().getIdActivo().getNombre())
+
             );
         });
         jsonReturn.add("rows", jsonRows);
