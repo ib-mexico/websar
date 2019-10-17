@@ -2,7 +2,6 @@ package com.ibmexico.controllers;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -226,18 +225,13 @@ public class BienDetalleMantenimientoController{
         @RequestParam(value = "txtPrecio",required = false) BigDecimal[] txtPrecio,
         @RequestParam(value="txtObserProv",required = false) String[] txtObserProv,
         @RequestParam(value = "ficheroCotizacion",required = false) MultipartFile [] ficheroCotizacion,
-        @RequestParam(value="imgDetalleActivo") String imgDetalleActivo    
+        @RequestParam(value="imgnuevoDetalleActivo") String imgDetalleActivo    
         ) {
-            System.err.println(imgDetalleActivo +"img detalle activo");
-            System.err.println(txtTotalgasto +"totalgasto");
             Boolean respuesta = false;
             String titulo = "Oops!";
             String mensaje = "Ocurrió un error al intentar mandar a mantenimiento el Activo.";
             BienDetalleMantenimientoEntity objDetalleMant= new BienDetalleMantenimientoEntity();            
             try {
-                // for (int i = 0; i < txtIdServicioProveedor.length; i++) {
-                //     System.err.println(txtIdServicioProveedor[i]+" -"+ txtPrecio[i] +" - "+txtObserProv[i] + " fichero ->" + ficheroCotizacion[i] );
-                // }
                 objDetalleMant.setObservaciones(txtObservaciones);
                 if (txtTotalgasto!=null) {
                     objDetalleMant.setGastoAproximado(txtTotalgasto);                    
@@ -270,6 +264,8 @@ public class BienDetalleMantenimientoController{
         @RequestParam(value="txtFechaProgramada",required = false)String txtFechaProgramada,
         @RequestParam(value="txtTotalgasto", required = false) BigDecimal txtTotalgasto,
         @RequestParam(value="txtIdServicioProveedor", required = false) int[] txtIdServicioProveedor,
+        @RequestParam(value = "txtIdServicioProveedorManto", required = false)int[] txtIdServicioProveedorManto,
+        @RequestParam(value="txtServicioProveedorNuevo", required = false)String[] txtServicioProveedorNuevo,
         @RequestParam(value = "txtPrecio",required = false) BigDecimal[] txtPrecio,
         @RequestParam(value="txtObserProv",required = false) String[] txtObserProv,
         @RequestParam(value = "ficheroCotizacion",required = false) MultipartFile [] ficheroCotizacion,
@@ -280,15 +276,6 @@ public class BienDetalleMantenimientoController{
         Boolean respuesta = false;
         String titulo = "Oops!";
         String mensaje = "Ocurrió un error en la edición.";
-        System.err.println(txtObservaciones);
-        System.err.println(txtFechaProgramada);
-        System.err.println(cmbRecurso);
-        System.err.println(objDetalleManto);
-        // for (int i = 0; i < txtIdServicioProveedor.length; i++) {
-        //     System.err.println("entrando al ciclo de for");
-        //     System.err.println(txtIdServicioProveedor[i]+" -"+ txtPrecio[i] +" - "+txtObserProv[i] + " fichero ->" + ficheroCotizacion[i] );
-        // }
-        System.err.println("saliendo al ciclo for");
         try {
             if (objDetalleManto!=null) {
                 objDetalleManto.setObservaciones(txtObservaciones);
@@ -297,14 +284,25 @@ public class BienDetalleMantenimientoController{
                 if(txtTotalgasto!=null){
                     objDetalleManto.setGastoAproximado(txtTotalgasto);
                 }
-
-                // int idmanto=objDetalleManto.getIdDetalleMantenimiento();
+                if(txtIdServicioProveedorManto!=null){
+                    //method for update
+                    System.err.println("method for update");
+                    bienDetMantService.createUpdate(objDetalleManto, txtObserProv, txtPrecio, txtIdServicioProveedor, ficheroCotizacion, imgDetalleActivo, txtIdServicioProveedorManto);
+                    if (txtServicioProveedorNuevo!=null) {
+                        System.err.println("method for edit");
+                        int j = txtIdServicioProveedorManto.length;
+                        int cantidad = txtServicioProveedorNuevo.length;
+                        System.err.println(cantidad + "tamanio del 2do arreglo");
+                        bienDetMantService.createEdit(objDetalleManto, txtObserProv, txtPrecio, txtIdServicioProveedor, ficheroCotizacion, imgDetalleActivo, j,cantidad);
+                        //method add new proveedor and pass parameter length array manto
+                    }
+                }else{
                 bienDetMantService.create(objDetalleManto, txtObserProv, txtPrecio, txtIdServicioProveedor, ficheroCotizacion, imgDetalleActivo);
+                }
                 respuesta = true;
                 titulo = "Genial!";
                 mensaje = "Edición exitosa.";
             }
- 
         } catch (Exception e) {
             throw new ApplicationException(EnumException.ACTIVO_CREATE_001);
         }

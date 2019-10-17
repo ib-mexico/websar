@@ -50,16 +50,18 @@ public class ActivoServicioProveedorMantService {
     @Qualifier("bienDetalleMantenimientoRepository")
     private IBienDetalleMantenimientoRepository bienDetalleMant;
 
-    // rEGISTRAR UN CONJUNTO DE SERVICIO_PROVEEDORES_MANT SELECCCIONADO
+    /*return un registro de servicio-proveedor*/
+    public ActivoServicioProveedorMantEntity findByIdServicioProveedorMant(int idServicioProvMant){
+        return serviProveeMant.findByIdServicioProveedorMant(idServicioProvMant);
+    }
+
+    /*Registrar un conjunto de servicio_proveedor_mant seleccionado*/
     @Transactional
     public void addServicioProveedor(BienDetalleMantenimientoEntity objDetalle, String[] arrObservaciones,
             BigDecimal[] arrprecioServProv, int[] arridActivoServicioProveedor, MultipartFile[] arrcotizacion) {
         if (objDetalle != null) {
             if (arridActivoServicioProveedor != null && arrprecioServProv != null && arrObservaciones != null
                     && arrcotizacion != null) {
-                System.err.println(arrcotizacion.length);
-                System.err.println(arrObservaciones);
-                System.err.println(arrcotizacion);
                 for (int i = 0; i < arridActivoServicioProveedor.length; i++) {
                     ActivoServicioProveedorMantEntity objActivoSerProvMant = new ActivoServicioProveedorMantEntity();
                     LocalDateTime ldtnow = LocalDateTime.now();
@@ -81,6 +83,72 @@ public class ActivoServicioProveedorMantService {
             }
         }
     }
+
+    /*REGISTRAR UN CONJUNTO DE SERVICIO_PROVEEDORES_MANT CUANDO EXISTA SERVICIOS REGISTRAD*/
+    @Transactional
+    public void addServicioProveedorEdit(BienDetalleMantenimientoEntity objDetalle, String[] arrObservaciones,
+            BigDecimal[] arrprecioServProv, int[] arridActivoServicioProveedor, MultipartFile[] arrcotizacion, int lengthManto, int lengthNuevo) {
+        if (objDetalle != null) {
+            if (arridActivoServicioProveedor != null && arrObservaciones != null) {
+                /**recorrer el arreglo desde la posicion length manto hasta la cantidad del nuevoservicio agregado */
+                for (int i =lengthManto; i < lengthManto+lengthNuevo; i++) {
+                    System.err.println(lengthManto +" ->>>> tamnio manto >>>>>>>" +lengthNuevo);
+                    ActivoServicioProveedorMantEntity objActivoSerProvMant = new ActivoServicioProveedorMantEntity();
+                    LocalDateTime ldtnow = LocalDateTime.now();
+                    UsuarioEntity objUsuario = sesionService.getCurrentUser();
+                    objActivoSerProvMant.setCreacionFecha(ldtnow);
+                    objActivoSerProvMant.setModificacionFecha(ldtnow);
+                    objActivoSerProvMant.setCreacionUsuario(objUsuario);
+                    objActivoSerProvMant.setModificacionUsuario(objUsuario);
+                    objActivoSerProvMant.setBienDetalleMant(
+                            bienDetalleMant.findByIdDetalleMantenimiento(objDetalle.getIdDetalleMantenimiento()));
+                    objActivoSerProvMant.setActivoServicioProveedor(
+                            activoServProv.findByIdServicioProveedor(arridActivoServicioProveedor[i]));
+                    objActivoSerProvMant.setPrecioServicioProveedor(arrprecioServProv[i]);
+                    objActivoSerProvMant.setObservaciones(arrObservaciones[i]);
+                    /* POR AGREGAR FICHERO COTIZACION DE POSIBLES PROVEEDORES */
+                    addCotizacion(objActivoSerProvMant, arrcotizacion[i]);
+                    // serviProveeMant.save(objActivoSerProvMant);
+                }
+            }
+        }
+    }
+
+    /*UPDATE SERVICIO_PROVEEDORES_MANT */
+    @Transactional
+    public void addServicioProveedorUpdate(BienDetalleMantenimientoEntity objDetalle, String[] arrObservaciones,
+            BigDecimal[] arrprecioServProv, int[] arridActivoServicioProveedor, MultipartFile[] arrcotizacion, int [] ServicioProveedorManto) {
+        if (objDetalle != null) {
+            if (arridActivoServicioProveedor != null && arrprecioServProv != null && arrObservaciones != null
+                  && ServicioProveedorManto!=null){
+                /**recorrer el arreglo desde la posicion length manto hasta la cantidad del nuevoservicio agregado */
+                for (int i =0; i < ServicioProveedorManto.length; i++) {
+                    ActivoServicioProveedorMantEntity objActivoSerProvMant=this.findByIdServicioProveedorMant(ServicioProveedorManto[i]);
+
+                    System.err.println(objActivoSerProvMant.getObservaciones());
+                    // ActivoServicioProveedorMantEntity objActivoSerProvMant = new ActivoServicioProveedorMantEntity();
+                    LocalDateTime ldtnow = LocalDateTime.now();
+                    UsuarioEntity objUsuario = sesionService.getCurrentUser();
+                    objActivoSerProvMant.setCreacionFecha(ldtnow);
+                    objActivoSerProvMant.setModificacionFecha(ldtnow);
+                    objActivoSerProvMant.setCreacionUsuario(objUsuario);
+                    objActivoSerProvMant.setModificacionUsuario(objUsuario);
+                    objActivoSerProvMant.setBienDetalleMant(
+                            bienDetalleMant.findByIdDetalleMantenimiento(objDetalle.getIdDetalleMantenimiento()));
+                    objActivoSerProvMant.setActivoServicioProveedor(
+                            activoServProv.findByIdServicioProveedor(arridActivoServicioProveedor[i]));
+                    objActivoSerProvMant.setPrecioServicioProveedor(arrprecioServProv[i]);
+                    objActivoSerProvMant.setObservaciones(arrObservaciones[i]);
+                    /* POR AGREGAR FICHERO COTIZACION DE POSIBLES PROVEEDORES */
+                    if (arrcotizacion[i]!=null) {
+                        addCotizacion(objActivoSerProvMant, arrcotizacion[i]);
+                    }
+                    // serviProveeMant.save(objActivoSerProvMant);
+                }
+            }
+        }
+    }
+
 
     @Transactional
     public void addCotizacion(ActivoServicioProveedorMantEntity objServProvMant, MultipartFile file) {
