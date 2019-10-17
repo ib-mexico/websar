@@ -72,7 +72,7 @@
 												<div class="col-md-6">
 													<b>Tipo de Activo *</b>
 													<div class="input-group">	                            
-														<select class="form-control show-tick cmbCatalogo" name="cmbCatalogo" id="cmbCatalogo" v-model="newDetalle.id_catalogo">
+														<select class="form-control show-tick cmbCatalogo required" name="cmbCatalogo" id="cmbCatalogo" v-model="newDetalle.id_catalogo">
 															<option value="default" selected="selected">Selecciona un tipo...</option>
 															<option v-for="item in catalogo" :value="item.id_catalogo_activo" :data-subtext="item.nombre">{{ item.nombre }}</option>
 														</select>
@@ -81,7 +81,7 @@
 												<div class="col-md-6">
 													<b>Activos *</b>
 													<div class="input-group">	                            
-														<select class="form-control show-tick cmbRecurso" name="cmbRecurso" id="cmbRecurso" v-model="newDetalle.id_activo_mobiliario">
+														<select class="form-control show-tick cmbRecurso required" name="cmbRecurso" id="cmbRecurso" v-model="newDetalle.id_activo_mobiliario">
 															<option value="default" selected="selected">Selecciona un activo...</option>
 															<option v-for="item in recursoActivo" :value="item.id_recurso_activo">{{ item.descripcion_completa }}</option>
 														</select>
@@ -111,7 +111,7 @@
 														<td>
 														  <div class="custom-control custom-checkbox">
 															  <input type="checkbox" name ="txtServicio" class="custom-control-input checkServicio" :id="service.id_servicio"
-															   v-model="gastoAproximado" :precio_estimado="service.precio_estimado" :value="service.id_servicio" 
+															    :precio_estimado="service.precio_estimado" :value="service.id_servicio" 
 															   v-on:click="ObtenerIdServicio(service.id_servicio)"/>
 															  <label class="custom-control-label" :for="service.id_servicio"></label>
 														  </div>
@@ -121,15 +121,14 @@
 													  </tr>
 													  <tr class="table-success">
 														  <th colspan="2" class="text-center">Gasto total aproximado</th>
-														  <td >
+														  <td scope="row">
 																<div class="input-group" style="display: flex">
-																<div class="input-group-prepend mb-2" style="display: inline-flexbox">
-																	<span class="input-group-text">$</span>
-																</div>
-																<input readonly="readonly" style="display: inline-flex" type="number" 
-																	:value="totalgasto" class="form-control" aria-label="Amount (to the nearest dollar)"
-																	name="txtTotalgasto"/>
-																<span class="input-group-text">.00</span>
+																	<div class="input-group-prepend mb-2" style="display: inline-flexbox">
+																		<span class="input-group-text text-primary">$ </span>
+																	</div>
+																	<input readonly="readonly" style="display: inline-flex" type="text" 
+																		:value="totalgasto" class="form-control text-primary" aria-label="Amount (to the nearest dollar)"
+																		name="txtTotalgasto"/>
 																</div>
 															 </td>
 													  </tr>
@@ -180,7 +179,7 @@
 												<h4 class="text-primary text-center">Indicar detalles de mantenimiento</h4>
 													<div class=" text-center">
 															<canvas id="canvasnew" style="background:#fff; border:1px solid #ccc; width:350px; height:350px;" class="rounded mx-auto d-block img-fluid"></canvas>
-															<input type="hidden" id="imgDetalleActivo" name="imgDetalleActivo" value=""/>
+															<input type="hidden" id="imgnuevoDetalleActivo" name="imgnuevoDetalleActivo" value=""/>
 															<div style="display:none;" class="container-fluid">
 																<img id="sourcenuevo" :src="urlcompletofichero" class="rounded mx-auto d-block img-fluid" />
 															</div>
@@ -285,7 +284,7 @@
 													<td>
 													  <div class="custom-control custom-checkbox">
 														  <input type="checkbox" name ="txtServicio" class="custom-control-input checkServicio" :id="'serv'+service.id_servicio"
-														   v-model="gastoAproximado" :value="service.id_servicio" v-on:click="ObtenerIdServicioedit(service.id_servicio)"/>
+															:value="service.id_servicio" v-on:click="ObtenerIdServicioedit(service.id_servicio)"/>
 														  <label class="custom-control-label" :for="'serv'+service.id_servicio"></label>
 													  </div>
 													</td>
@@ -403,49 +402,54 @@
 			</div>
 		</div>
 	</template>
+<!-- 
+						<div class="table-responsive-md table-responsive-lg table-responsive-xl">
+						<table id="dtDetalle" class="table table-bordered table-striped table-hover"> -->
 
 	<template id="templateproveedor2" >
-		<div class="row-clearfix">
+		<div class="row-clearfix ">
 			<div class="col-md-12">						
 				<h3 v-for="nombreservicio in idservicio.slice(0,1)" class="text-center text-success">{{nombreservicio.nombre_servicio}}</h3>
 				<hr class="btn-primary"/>
-				<table class="table table-borderless table-responsive table-sm">
-					<thead class="bg-primary">
-						<tr>
-							<th scope="col">Proveedor</th>
-							<th scope="col">Precio</th>
-							<th scope="col">Observaciones</th>
-							<th scope="col">Acciones</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr v-for="proveedor in idservicio" name="txtProveedor">
-							<input type="hidden" name="txtIdServicioProveedor" :value="proveedor.id_servicio_proveedor"/>
-							<input type="hidden" name="txtIdServicio" :value="proveedor.id_servicio"/>
-
-							<td v-text="proveedor.nombre_proveedor"></td>
-							<td><input type="number" class="form-control" placeholder="Costo Servicio" name="txtPrecio" :value="proveedor.precio_servicio_proveedor"/></td>
-							<td><textarea name="txtObserProv" id="txtObserProv" cols="30" rows="3" class="form-control" :value="proveedor.observaciones" style="overflow: auto;resize: none;"></textarea></td>
-							<td>
-
-								<label class="text-primary">
-									<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Cotizacion" >cloud_upload</i><input type="file" id="fileProveedor"
-									name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .docx, .png, .jpg"/>
-								</label>
-								
-								<a :href="'http://localhost:8080/WebSar/ficheros/ProveedorCotizacion/'+proveedor.url_cotizacion" target="blank" v-if="(proveedor.url_cotizacion!=null)" title="Ver cotización">
-								<i class="material-icons remove_red_eye">remove_red_eye</i></a>	
-								<!-- <span class="btn btn-success btn-file mt-10">
-									Subir <input type="file"/>
-								</span> -->
-								<!-- <input type="file" id="fileProveedor" name="ficheroCotizacion" class="custom-file-input" multiple="multiple"/> -->
-
-
-								<a href="#" title="Eliminar Proveedor" class="EliminarActivo"><i class="material-icons delete">delete</i></a>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<!-- <table class="table table-borderless table-responsive table-sm"> -->
+				<div class="table-responsive-md table-responsive-lg table-responsive-xl">
+					<table class="table table-bordered table-striped table-hover">
+						<thead class="bg-primary">
+							<tr>
+								<th scope="col">Proveedor</th>
+								<th scope="col">Precio</th>
+								<th scope="col">Observaciones</th>
+								<th scope="col">Acciones</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="proveedor in idservicio" name="txtProveedor">
+								<input type="hidden" name="txtIdServicioProveedor" :value="proveedor.id_servicio_proveedor"/>
+								<input type="hidden" name="txtIdServicioProveedorManto" :value="proveedor.id_servicio_proveedor_manto" v-if="proveedor.id_servicio_proveedor_manto"/>
+								<input type="hidden" name="txtServicioProveedorNuevo" value="" v-else="!proveedor.id_servicio_proveedor_manto"/>
+	
+								<td v-text="proveedor.nombre_proveedor"></td>
+								<td>$ <input type="number" class="form-control txtPrecio" placeholder="Costo Servicio" name="txtPrecio" :value="proveedor.precio_servicio_proveedor"/></td>
+								<td><textarea name="txtObserProv" id="txtObserProv" cols="30" rows="3" class="form-control" :value="proveedor.observaciones" style="overflow: auto;resize: none;"></textarea></td>
+								<td>
+	
+									<label class="text-primary">
+										<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Cotizacion" >cloud_upload</i><input type="file" id="fileProveedor"
+										name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .docx, .png, .jpg"/>
+									</label>
+									
+									<a :href="'http://localhost:8080/WebSar/ficheros/ProveedorCotizacion/'+proveedor.url_cotizacion" target="blank" v-if="(proveedor.url_cotizacion!='')" title="Ver cotización">
+									<i class="material-icons remove_red_eye">remove_red_eye</i></a>	
+									<!-- <span class="btn btn-success btn-file mt-10">
+										Subir <input type="file"/>
+									</span> -->
+									<!-- <input type="file" id="fileProveedor" name="ficheroCotizacion" class="custom-file-input" multiple="multiple"/> -->
+									<a href="#" title="Eliminar Proveedor" class="EliminarActivo"><i class="material-icons delete">delete</i></a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	</template>
@@ -488,6 +492,14 @@
 							        	return params;
 		    }
 		});
+		const formatter = new Intl.NumberFormat('en-US', {
+			style: 'currency',
+			currency: 'USD',
+			minimumFractionDigits: 2
+		})
+
+			formatter.format(document.getElementsByClassName('txtPrecio'));
+			console.log(document.getElementsByClassName('txtPrecio'))
 
 		function edit(param){			
 			detalleActivo.editActivoManto(param);
@@ -537,7 +549,7 @@
 		    });
 		 });
 		 
-			var canvasnuevo = document.getElementById( 'canvasnew' ),
+		var canvasnuevo = document.getElementById( 'canvasnew' ),
             n = canvasnuevo.getContext( '2d' ),
 				mouseX = 0,
                 mouseY = 0,
@@ -549,12 +561,13 @@
             canvasnuevo.width = width;
 			canvasnuevo.height = height;
 			
-			var img = document.getElementById("sourcenuevo");
+		var imgnuevo = document.getElementById("sourcenuevo");
 		
-			img.addEventListener('load', e => {
-			  n.drawImage(img,0,0, canvasnuevo.width, canvasnuevo.height);
+			imgnuevo.addEventListener('load', e => {
+			  n.drawImage(imgnuevo,0,0, canvasnuevo.width, canvasnuevo.height);
 			});
-			  function draw() {
+			
+			function drawnuevo() {
                 if (mousedown) {
                     // set the colour
                     n.fillStyle = colour;
@@ -576,8 +589,8 @@
                     mouseX = event.pageX - event.target.offsetLeft;
                     mouseY = event.pageY - event.target.offsetTop;
                 }
-                // call the draw function
-                draw();
+                // call the drawnuevo function
+                drawnuevo();
             }, false );
 
             canvasnuevo.addEventListener( 'mousedown', function( event ) {
@@ -593,13 +606,13 @@
 				urlfijo="http://localhost:8080/WebSar/ficheros/activoFijos";
                 // dataURL = dataURL.replace("image/jpeg", "image/octet-stream");
 				dataURL = dataURL.split(',')[1];
-				$('#imgDetalleActivo').val(dataURL);
+				$('#imgnuevoDetalleActivo').val(dataURL);
 				// document.location.href = dataURL;	
 			});
 
             $('#btnLimpiar').click(function() {
-                n.clearRect(img,0, 0, canvasnuevo.width, canvasnuevo.height);
-                n.drawImage(img,0,0,canvasnuevo.width, canvasnuevo.height);
+                n.clearRect(imgnuevo,0, 0, canvasnuevo.width, canvasnuevo.height);
+                n.drawImage(imgnuevo,0,0,canvasnuevo.width, canvasnuevo.height);
             });
 			// c.drawImage(img,0,0);
 /*------------------------------------------------------------------------------------------------------------------------------------*/
@@ -620,10 +633,8 @@
 			});
 			  function draw() {
                 if (mousedown) {
-                    // set the colour
                     c.fillStyle = colour;
                     c.globalAlpha = 0.5
-                    // start a path and paint a circle of 20 pixels at the mouse position
                     c.beginPath();
                     c.arc( mouseX, mouseY, 5 , 0, Math.PI*2, true );
                     c.closePath();
@@ -631,7 +642,6 @@
                 }
             }
 
-            // get the mouse position on the canvas (some browser trickery involved)
             canvas.addEventListener( 'mousemove', function( event ) {
                 if( event.offsetX ){
                     mouseX = event.offsetX;
@@ -639,8 +649,8 @@
                 } else {
                     mouseX = event.pageX - event.target.offsetLeft;
                     mouseY = event.pageY - event.target.offsetTop;
-                }
-                // call the draw function
+				}
+				
                 draw();
             }, false );
 
@@ -655,10 +665,8 @@
             $('#btnGenerarEdit').click(function() {
 				var dataURL = canvas.toDataURL('image/jpeg', 1);
 				urlfijo="http://localhost:8080/WebSar/ficheros/activoFijos";
-                // dataURL = dataURL.replace("image/jpeg", "image/octet-stream");
 				dataURL = dataURL.split(',')[1];
 				$('#imgDetalleActivo').val(dataURL);
-				// document.location.href = dataURL;	
 			});
 
             $('#btnLimpiarEdit').click(function() {
@@ -695,6 +703,7 @@
 	});
 	
 	$('#modalNuevoActivoManto').on('hidden.bs.modal',function(){
+		
 		cancelNew();
 	});
 

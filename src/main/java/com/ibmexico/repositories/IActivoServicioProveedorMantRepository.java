@@ -15,5 +15,7 @@ public interface IActivoServicioProveedorMantRepository extends JpaRepository<Ac
     /* CONSULTA TODOS LOS POSIBLES PROVEEDORES MEDIANTE EL ID DETALLE MANTENIMIENTO */
     @Query("SELECT objActServProvMant FROM ActivoServicioProveedorMantEntity objActServProvMant WHERE objActServProvMant.bienDetalleMant.idDetalleMantenimiento=?1")
     public abstract List<ActivoServicioProveedorMantEntity> lstActivoServProveedorMant(int idDetalleMantenimiento);
-    
+
+    /*Encontrar un servicio-proveedor registrado en una solicitud de mant con su ID*/
+    public abstract ActivoServicioProveedorMantEntity findByIdServicioProveedorMant(int IdServicioProvManto);
 }

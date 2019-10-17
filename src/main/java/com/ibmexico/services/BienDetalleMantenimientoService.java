@@ -78,15 +78,75 @@ public class BienDetalleMantenimientoService{
             throw new ApplicationException(EnumException.ACTIVO_CREATE_001);
         }
     }
+   
+    
+    
+    /*Metodo de crear cuando existan servicios, pero se desea agregar un nuevo servicio */
+    synchronized public void createEdit(BienDetalleMantenimientoEntity objDetalle, String [] txtObservaciones, BigDecimal [] precioServProv,
+        int [] idActivoServicioProveedor, MultipartFile [] cotizacion, String imgDetalleActivo,int lengthManto, int lengthNuevo) throws IOException {
+
+        if(objDetalle!=null){
+            UsuarioEntity objUser=sesionService.getCurrentUser();
+            LocalDateTime ldtNow = LocalDateTime.now();
+            objDetalle.setCreacionUsuario(objUser);
+            objDetalle.setModificacionUsuario(objUser);
+            objDetalle.setCreacionFecha(ldtNow);
+            objDetalle.setModificacionFecha(ldtNow);
+
+            if (imgDetalleActivo!=null && !imgDetalleActivo.equals("") && imgDetalleActivo.length()>0) {
+                String urlDetalleActivo= UUID.randomUUID().toString()+".png";
+                objDetalle.setUrlDetalleMantenimiento(urlDetalleActivo);
+                addFileDetalleActivo(objDetalle, imgDetalleActivo);         
+            }else{
+                bienMantRep.save(objDetalle);
+            }
+            //Si este no esta vacio, se invoca el  sig. method, donde registra los multiples proveedores disponibles para el Mantenimiento.
+            if (idActivoServicioProveedor!=null && lengthManto!=0 && lengthNuevo!=0) {
+                activoServProvMantService.addServicioProveedorEdit(objDetalle, txtObservaciones, precioServProv, idActivoServicioProveedor, cotizacion, lengthManto, lengthNuevo);
+            }
+        }else{
+            throw new ApplicationException(EnumException.ACTIVO_CREATE_001);
+        }
+    }
+
+
+        
+    /*Metodo de crear cuando existan servicios, pero se desea agregar un nuevo servicio */
+    synchronized public void createUpdate(BienDetalleMantenimientoEntity objDetalle, String [] txtObservaciones, BigDecimal [] precioServProv,
+        int [] idActivoServicioProveedor, MultipartFile [] cotizacion, String imgDetalleActivo,int [] ServicioProveedorManto) throws IOException {
+        if(objDetalle!=null){
+            UsuarioEntity objUser=sesionService.getCurrentUser();
+            LocalDateTime ldtNow = LocalDateTime.now();
+            objDetalle.setCreacionUsuario(objUser);
+            objDetalle.setModificacionUsuario(objUser);
+            objDetalle.setCreacionFecha(ldtNow);
+            objDetalle.setModificacionFecha(ldtNow);
+
+            if (imgDetalleActivo!=null && !imgDetalleActivo.equals("") && imgDetalleActivo.length()>0) {
+                String urlDetalleActivo= UUID.randomUUID().toString()+".png";
+                objDetalle.setUrlDetalleMantenimiento(urlDetalleActivo);
+                addFileDetalleActivo(objDetalle, imgDetalleActivo);         
+            }else{
+                bienMantRep.save(objDetalle);
+            }
+            //Si este no esta vacio, se invoca el  sig. method, donde registra los multiples proveedores disponibles para el Mantenimiento.
+            if (idActivoServicioProveedor!=null && ServicioProveedorManto!=null) {
+                activoServProvMantService.addServicioProveedorUpdate(objDetalle, txtObservaciones, precioServProv, idActivoServicioProveedor, cotizacion,ServicioProveedorManto);
+            }
+        }else{
+            throw new ApplicationException(EnumException.ACTIVO_CREATE_001);
+        }
+    }
+
+
+
     //Method for save file png, indicador detalles del activo en mantenimiento
     @Transactional
     public void addFileDetalleActivo(BienDetalleMantenimientoEntity objDetalle, String imgDetalleActivo) throws IOException{
         URL urlPath=this.getClass().getResource("/");
-        System.err.println("adentro del method addFileDetalleActivo 2");
         if (objDetalle!=null) {
             try {
                 byte[] byteFichero=Base64.getDecoder().decode(imgDetalleActivo);
-                System.err.println("adentro del method addFileDetalleActivo 3");
                 BufferedImage img= ImageIO.read(new ByteArrayInputStream(byteFichero));
                 File imgFile=new File(urlPath.getPath()+"static/ficheros/detalleMantenimiento/"+objDetalle.getUrlDetalleMantenimiento());
                 ImageIO.write(img,"png",imgFile);
