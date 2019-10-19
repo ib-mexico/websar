@@ -35,6 +35,11 @@ public class BienDetalleMantenimientoEntity{
     @Column(nullable = true)
     private String observaciones;
     
+    /**Comentarios por parte del validador*/
+    @Lob
+    @Column(nullable = true)
+    private String comentario;
+
     @Column
     private boolean estatus_recordatorio;
     
@@ -186,6 +191,14 @@ public class BienDetalleMantenimientoEntity{
 
     public void setUrlDetalleMantenimiento(String urlDetalleMantenimiento) {
         this.urlDetalleMantenimiento = urlDetalleMantenimiento;
+    }
+
+    public String getComentario() {
+        return comentario;
+    }
+
+    public void setComentario(String comentario) {
+        this.comentario = comentario;
     }
 
 }

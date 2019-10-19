@@ -31,16 +31,15 @@
 									<th class="col-md-1" data-field="id_recurso_activo" data-sortable="true" data-halign="left" data-align="center" data-visible="false">ID</th>
 									<th class="col-md-2" data-field="numero_unico" data-sortable="true" data-halign="left" data-align="center">ID</th>
 									<th class="col-md-2" data-formatter="accionesFormatter" data-align="center" style="display: inline">Acciones</th>
+									<th class="col-md-3" data-field="catalogo" data-sortable="true" data-halign="left">Catálogo</th>
 									<th class="col-md-2" data-field="descripcion" data-halign="left">Activo</th>
                                     <th class="col-md-2" data-field="marca" data-halign="left">Marca</th>
-                                    <th class="col-md-1" data-field="modelo" data-sortable="true" data-halign="left">Modelo</th>
+                                    <th class="col-md-1" data-field="modelo" data-sortable="true" data-halign="left" data-visible="false">Modelo</th>
 									<th class="col-md-2" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>
-                                    <th class="col-md-3" data-field="catalogo" data-sortable="true" data-halign="left">Catálogos</th>
-
 									<th class="col-md-1" data-field="placa" data-halign="left" data-align="center" data-visible="false">Num. de placa</th>
 									<th class="col-md-1" data-field="departamento" data-halign="left" data-align="center" data-visible="false">Departamento asig.</th>
 									<th class="col-md-1" data-field="usuario_asignado" data-halign="left" data-align="center" data-visible="false">Usuario asig.</th>
-                                    <th class="col-md-1" data-field="creacion_fecha" data-halign="left" data-align="center" data-visible="false">Fecha registro</th>
+                                    <th class="col-md-1" data-field="creacion_fecha" data-halign="left" data-align="center" data-visible="true">Fecha registro</th>
                                     <th class="col-md-1" data-field="creacion_id_usuario" data-halign="left" data-align="center" data-visible="false">Registrado :</th>
 		
 								</tr>
@@ -222,7 +221,7 @@
 								</div>
 							</div>
 
-								<!-- Campos de HTC -->
+								<!-- Campos de ETC -->
 							<div class="row-clearfix" v-show="newActivo.id_catalogo==3">
 								<div class="col-md-4">
 									<p><b>Fecha de Entrega</b></p>
@@ -398,13 +397,8 @@
 										<div class="form-line">
 											<input type="file" name="fichero" id="idFileActivo" class="form-control-file" multiple="multiple"  
 											accept="image/x-png,image/gif,image/jpeg" />
-												<!-- <input type="file" name="fichero" @change="onFileChange" class="form-control" multiple="multiple"/> -->
 										</div>
 									</div>
-										<!-- <div v-else>
-											<img :src="newActivo.fichero"/>
-											<button class="btn-danger" @click="removeImage">Quitar Imagen</button>
-										</div> -->
 								</div>
 							</div>
 
@@ -792,7 +786,7 @@
 										<hr class="btn-secondary"/>
 									</div>
 								</div>
-	
+
 								<div class="row-clearfix">	
 									<div class="col-md-4">
 										<div class="form-group">
@@ -812,13 +806,8 @@
 													<!-- <input type="file" name="fichero" @change="onFileChange" class="form-control" multiple="multiple"/> -->
 											</div>
 										</div>
-											<!-- <div v-else>
-												<img :src="editData.fichero"/>
-												<button class="btn-danger" @click="removeImage">Quitar Imagen</button>
-											</div> -->
 									</div>
 								</div>
-	
 	
 								<div class="row-clearfix">
 									<div class="col-md-12 text-center">
@@ -868,12 +857,10 @@
 									</div>
 								</div>
 							</div>
-
-								<div class="modal-footer">
-									<button onclick="cancel();" type="button" class="btn btn-danger waves-effect" data-dismiss="modal">CANCELAR</button>
-									<button type="submit" class="btn btn-primary waves-effect">CREAR</button>
-								</div>
-								
+							<div class="modal-footer">
+								<button onclick="cancel();" type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
+								<button type="submit" class="btn btn-primary waves-effect">Crear</button>
+							</div>
 							</form>
 						</div>
 					</div>
@@ -972,9 +959,6 @@
 				' ',
 				'<a href="#" title="Historial" class="Historial" data-toggle="modal" data-target="#modalTable" role="button">',
 					'<i class="material-icons format_list_numbered">format_list_numbered</i>',
-				'</a>',
-				'<a href="#" title="EnviarMantenimiento" class="Mantenimiento">',
-				'<i class="material-icons build">build</i>',
 				'</a>'
 			].join(''); 
 		}
@@ -983,7 +967,7 @@
 			var lblEstatus='';
 			switch(row.estatus){
 				case true:
-					lblEstatus ='<a type="button" class="btn bg-green waves-effect" > Activo </a>';
+					lblEstatus ='<a type="button" class="btn bg-green waves-effect" >Activo</a>';
 					break;
 				default:
 					lblEstatus='<a type="button" class="btn bg-green waves-effect" > Desconocido </a>';
@@ -1032,16 +1016,13 @@
 	$('#txtObsolecencia').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
 	$('#txtFechaEntrega').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
 	// $('#txtFechaEntrega').bootstrapMaterialDatePicker('setDate', moment());
-	$('.txtCosto').change(function(){
-		$('.txtCosto').toFixed(2);
-	});
+	// $('.txtCosto').change(function(){
+	// 	$('.txtCosto').toFixed(2);
+	// });
 	function cancel(){
 		$('#formEditActivo')[0].reset();
 			this.NuevoActivo.editData={};
 			this.NuevoActivo.elegido="";
-			// this.NuevoActivo.editData.nombre="";
-			// this.NuevoActivo.editData.observaciones="";
-			// this.NuevoActivo.editData.id_empresa='default';
 	}
 	$('#modalEditActivo').on('hidden.bs.modal',function(){
 		cancel();

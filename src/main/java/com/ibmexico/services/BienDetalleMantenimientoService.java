@@ -223,6 +223,7 @@ public class BienDetalleMantenimientoService{
             .add("url_detalle_manto", lstBienDetalleMant.getUrlDetalleMantenimiento()!=null ? lstBienDetalleMant.getUrlDetalleMantenimiento() : "")
             .add("id_tipo_activo", lstBienDetalleMant.getBienActivo().getIdActivo().getIdCatalogoActivo())
             .add("clave_unica", lstBienDetalleMant.getBienActivo().getNumeroEconomico())
+            .add("estatusManto", lstBienDetalleMant.getActivoEstatus().getIdActivoEstatus())
         );
         jsonReturn.add("bienDetalleManto", jsonRows);
         return  jsonReturn.build();

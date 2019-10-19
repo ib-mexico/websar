@@ -183,6 +183,34 @@ public class BienDetalleMantenimientoController{
        return jsonReturn.build().toString();
    }
 
+   /**Obtener todos los servicios aceptados y posible proceso a pago de dicho servicio */
+   @RequestMapping(value="get-servicioAceptado/{idBienDetalleManto}", method = RequestMethod.GET)
+   public @ResponseBody String getServicioAceptado(@PathVariable("idBienDetalleManto")int idBienDetalleManto){
+       Boolean respuesta=false;
+       JsonObject jsonBienDetalleManto=null;
+       JsonObject jsonServicioAceptado=null;
+       JsonObject jsonActivoCatalogo = null;
+
+       BienDetalleMantenimientoEntity objdetallemanto=bienDetMantService.findByIdBienDetalleMantenimiento(idBienDetalleManto);
+       try {
+           jsonBienDetalleManto=bienDetMantService.jsonBienDetalleMantId(idBienDetalleManto);
+           jsonServicioAceptado=servProMantoservice.jsonServicioProvAceptado(idBienDetalleManto);
+           jsonActivoCatalogo = bienActivoService.jsonRecursoActivoIdCatalogo(objdetallemanto.getBienActivo().
+           getIdActivo().getIdCatalogoActivo());
+           respuesta=true;
+       } catch (Exception e) {
+           throw e;
+       }
+       JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
+       jsonReturn.add("respuesta", respuesta).
+       add("jsonBienDetalleManto", jsonBienDetalleManto).
+       add("jsonServicioAceptado", jsonServicioAceptado)
+       .add("jsonActivoCatalogo", jsonActivoCatalogo)
+       ;
+       return jsonReturn.build().toString();
+   }
+
+
     // Datatable
     @RequestMapping(value = "/table", method = RequestMethod.POST)
     private @ResponseBody String table( @RequestParam("offset") int offset,
@@ -208,6 +236,7 @@ public class BienDetalleMantenimientoController{
                 .add("bienActivo", itemDetalle.getBienActivo().getNumeroEconomico())
                 .add("gasto_aproximado", itemDetalle.getGastoAproximado()!=null ? itemDetalle.getGastoAproximado() : d)
                 .add("finalizado",itemDetalle.isFinalizado())
+                .add("estatusmanto",itemDetalle.getActivoEstatus().getIdActivoEstatus())
                 );
             });
             jsonReturn.add("rows", jsRows);

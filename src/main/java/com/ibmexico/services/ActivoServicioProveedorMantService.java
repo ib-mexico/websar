@@ -70,6 +70,7 @@ public class ActivoServicioProveedorMantService {
                     objActivoSerProvMant.setModificacionFecha(ldtnow);
                     objActivoSerProvMant.setCreacionUsuario(objUsuario);
                     objActivoSerProvMant.setModificacionUsuario(objUsuario);
+                    objActivoSerProvMant.isAceptado();
                     objActivoSerProvMant.setBienDetalleMant(
                             bienDetalleMant.findByIdDetalleMantenimiento(objDetalle.getIdDetalleMantenimiento()));
                     objActivoSerProvMant.setActivoServicioProveedor(
@@ -100,6 +101,7 @@ public class ActivoServicioProveedorMantService {
                     objActivoSerProvMant.setModificacionFecha(ldtnow);
                     objActivoSerProvMant.setCreacionUsuario(objUsuario);
                     objActivoSerProvMant.setModificacionUsuario(objUsuario);
+                    objActivoSerProvMant.isAceptado();
                     objActivoSerProvMant.setBienDetalleMant(
                             bienDetalleMant.findByIdDetalleMantenimiento(objDetalle.getIdDetalleMantenimiento()));
                     objActivoSerProvMant.setActivoServicioProveedor(
@@ -133,6 +135,7 @@ public class ActivoServicioProveedorMantService {
                     objActivoSerProvMant.setModificacionFecha(ldtnow);
                     objActivoSerProvMant.setCreacionUsuario(objUsuario);
                     objActivoSerProvMant.setModificacionUsuario(objUsuario);
+                    objActivoSerProvMant.isAceptado();
                     objActivoSerProvMant.setBienDetalleMant(
                             bienDetalleMant.findByIdDetalleMantenimiento(objDetalle.getIdDetalleMantenimiento()));
                     objActivoSerProvMant.setActivoServicioProveedor(
@@ -234,10 +237,43 @@ public class ActivoServicioProveedorMantService {
             .add("nombre_servicio",item.getActivoServicioProveedor().getActivoServicio().getDescripcion())
             .add("tipo_activo", item.getBienDetalleMant().getBienActivo().getIdActivo().getIdCatalogoActivo())
             .add("nombre_tipo_activo", item.getBienDetalleMant().getBienActivo().getIdActivo().getNombre())
+            .add("aceptado",item.isAceptado())
 
             );
         });
         jsonReturn.add("rows", jsonRows);
+        return jsonReturn.build();
+    }
+
+
+    
+    /*CREAR UN JSON DE LOS SERVICIOS PROVEEDORES MANTO REGISTRADOS. */
+    public JsonObject jsonServicioProvAceptado(int idDetalleMantenimiento) {
+        JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+        JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+        List<ActivoServicioProveedorMantEntity> lstActServicioProveedorMant = serviProveeMant.lstServProvAceptado(idDetalleMantenimiento);
+        BigDecimal pricenull= BigDecimal.ZERO;
+        lstActServicioProveedorMant.forEach((item) -> {
+            jsonRows.add(Json.createObjectBuilder()
+            .add("id_servicio_proveedor_manto", item.getIdServicioProveedorMant())
+            .add("observaciones", item.getObservaciones()!=null ? item.getObservaciones() : "")
+            .add("precio_servicio_proveedor", item.getPrecioServicioProveedor()!=null ? item.getPrecioServicioProveedor() : pricenull)
+            .add("url_cotizacion", item.getUrlCotizacion()!=null ? item.getUrlCotizacion() : "")
+
+            .add("id_servicio_proveedor", item.getActivoServicioProveedor().getIdServicioProveedor())
+            .add("id_proveedor",item.getActivoServicioProveedor().getActivoProveedor().getIdProveedorServicio())
+            .add("nombre_proveedor",item.getActivoServicioProveedor().getActivoProveedor().getProveedor())
+
+            .add("id_bien_detalle_manto", item.getBienDetalleMant().getIdDetalleMantenimiento())
+            .add("id_servicio",item.getActivoServicioProveedor().getActivoServicio().getIdServicioActivo())
+            .add("nombre_servicio",item.getActivoServicioProveedor().getActivoServicio().getDescripcion())
+            .add("tipo_activo", item.getBienDetalleMant().getBienActivo().getIdActivo().getIdCatalogoActivo())
+            .add("nombre_tipo_activo", item.getBienDetalleMant().getBienActivo().getIdActivo().getNombre())
+            .add("aceptado",item.isAceptado())
+
+            );
+        });
+        jsonReturn.add("aceptado", jsonRows);
         return jsonReturn.build();
     }
 

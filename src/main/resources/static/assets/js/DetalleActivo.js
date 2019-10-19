@@ -46,6 +46,8 @@ if (document.getElementById('appDetalle')) {
             //Edicion ActivoManto.
             editDetalleManto: {},
             editproveedorServicio: [],
+
+            pagos:[],
         },
         methods: {
             getFormData() {
@@ -67,8 +69,9 @@ if (document.getElementById('appDetalle')) {
             },
             validateForm() {
                 var response=false;
+
                 if(!(this.newDetalle.id_catalogo)) {
-					swal("Revisión!", "Debes seleccionar un Tipo de activo para continuar con el registro.", "warning");
+                    swal("Revisión!", "Debes seleccionar un Tipo de activo para continuar con el registro.", "warning");
                     return response;
 				} 
                 if(!(this.newDetalle.id_activo_mobiliario)){
@@ -79,8 +82,21 @@ if (document.getElementById('appDetalle')) {
                     swal("Revisión!", "Rellena el campo observaciónes", "warning");
 					return response;
                 }
-                console.log(response);
-                return response;
+
+                var checkboxes = document.getElementsByName('txtServicio');
+                var vals = [];
+                for (var i=0, n=checkboxes.length;i<n;i++) 
+                {
+                    if (checkboxes[i].checked) 
+                    {
+                        vals += checkboxes[i].value;
+                    }
+                }
+                if(vals.length<=0){
+                    swal("Revisión!","Seleccione por lo menos un servicio","warning");
+                    return response;
+                }
+                return response = true;
             },
             getRecursoCat(paramCatalogo) {
                 var url = host + "BienActivo/get-activos/" + paramCatalogo;
@@ -186,6 +202,15 @@ if (document.getElementById('appDetalle')) {
                     if (this.editproveedorServicio.length > 0) {
                         this.editdatafiltrado.push(this.editproveedorServicio);
                     }
+                    
+                    /*Add gasto aproximado if checked service */
+                    this.servicio.forEach(item => {
+                        if(index==item.id_servicio){
+                            this.gastoAproximado.push({"precio":item.precio_estimado,"id_servicio":item.id_servicio});
+                        }
+                    });
+
+
                 } else
                 if ($('#serv' + index + '').is(':checked') == false) {
                     for (i = 0; i < this.editdatafiltrado.length; i++) {
@@ -204,7 +229,7 @@ if (document.getElementById('appDetalle')) {
             },
 
             createActivoManto() {
-                console.log(this.validateForm());
+                console.log(this.validateForm() +" validateform final");
                 if(this.validateForm()) {
                     var formActivo = document.getElementById('formActivoManto');
                     var formActivoData = new FormData(formActivo);
@@ -213,18 +238,19 @@ if (document.getElementById('appDetalle')) {
                         if (response.status == 200 && response.data.respuesta) {
                             $("#formActivoManto")[0].reset();
                             $("#modalNuevoActivoManto").modal("hide");
-                            this.newDetalle.id_activo_mobiliario = '',
-                                this.newDetalle.id_catalogo = '',
-                                this.newDetalle.observaciones = '',
-                                this.newDetalle.titulo = '',
-                                this.newDetalle.urlfichero = '',
+                            this.newDetalle.id_activo_mobiliario = '';
+                                this.newDetalle.id_catalogo = '';
+                                this.newDetalle.observaciones = '';
+                                this.newDetalle.titulo = '';
+                                this.newDetalle.urlfichero = '';
                                 //Edicion ActivoManto.
-                                this.recursoActivo = [],
-                                this.servicio = [],
-                                this.fichero = [],
-                                this.gastoAproximado = [],
-                                this.proveedorServicio = [],
-                                this.datafiltrado = [],
+                                this.recursoActivo = [];
+                                this.servicio = [];
+                                this.fichero = [];
+                                this.gastoAproximado = [];
+                                this.proveedorServicio = [];
+                                this.datafiltrado = [];
+                                this.urlcompletofichero='';
                                 swal(response.data.titulo, response.data.mensaje, "success");
                             $("#dtDetalle").bootstrapTable('refresh');
                         } else {
@@ -253,6 +279,13 @@ if (document.getElementById('appDetalle')) {
                 if ($('#serv' + idServicio).val() == idServicio) {
                     document.getElementById('serv' + idServicio).checked = true;
                     // $('#serv'+idServicio).prop("checked",true);
+                    
+                    /**En este apartado se necesita hacer el calculo del gasto aproximado en modo edición */
+                    this.servicio.forEach(item => {
+                        if(idServicio==item.id_servicio){
+                            this.gastoAproximado.push({"precio":item.precio_estimado,"id_servicio":item.id_servicio});
+                        }
+                    });
                 }
             },
             async editActivoManto(idDetalleManto) {
@@ -278,29 +311,82 @@ if (document.getElementById('appDetalle')) {
                 this.loadModal();
             },
 
+            async getdataPagar(idDetalleManto){
+                var formModalPago = document.getElementById('formModalPago');
+                var formModalPagoData = new FormData(formModalPago);
+                var url = host + "DetalleMant/get-servicioAceptado/" + idDetalleManto;
+                await axios.get(url, formModalPagoData).then(resp => {
+                    if (resp.status == 200 && resp.data.respuesta) {
+                        this.editDetalleManto = resp.data.jsonBienDetalleManto.bienDetalleManto[0];
+                        this.pagos = resp.data.jsonServicioAceptado.aceptado;
+                        this.recursoActivo = resp.data.jsonActivoCatalogo.rows;
+                        //Obtencion del tipo Activo
+                        this.getServicioIdTipoActivo(this.editDetalleManto.id_tipo_activo);
+                        suma=0;
+                        this.pagos.forEach(item => {
+                            suma+=item.precio_servicio_proveedor;
+                        });
+                        this.totalgasto=suma;
+                        $('.cmbCatalogo').selectpicker('val', this.editDetalleManto.id_tipo_activo);
+                        $('.cmbCatalogo').selectpicker('render');
+                    }
+                })
+                $('.cmbRecurso2').selectpicker('val', this.editDetalleManto.id_bien_activo);
+                $('.cmbRecurso2').selectpicker('render');
+                this.loadModal();
+            },
+
+
             updateManto() {
                 var formEditManto = document.getElementById('formEditActivoManto');
                 var formEditMantoData = new FormData(formEditManto);
                 var url = host + 'DetalleMant/' + this.editDetalleManto.id_detalle_manto + '/update';
                 axios.post(url, formEditMantoData).then(resp => {
                     if (resp.status == 200 && resp.data.respuesta) {
+                            $("#formEditActivoManto")[0].reset();
+                            $("#modalEditActivoManto").modal("hide");
+                            this.editDetalleManto={};
+                                //Edicion ActivoManto.
+                                this.recursoActivo = [],
+                                this.servicio = [],
+                                this.fichero = [],
+                                this.proveedorServicio = [],
+                                this.datafiltrado = [],
+                                this.gastoAproximado=[];
+                        
+                        swal(response.data.titulo, response.data.mensaje, "success");
+                        $("#dtDetalle").bootstrapTable('refresh');
 
+                    }else{
+                        console.log(response);
+                        swal(response.data.titulo, response.data.mensaje, "error");
                     }
-                })
+                }).catch(error => {
+                        swal("Algo malo pasó!", error.response.data, "error");
+                        console.log(error);
+                    });
+            },
+            pagar(){
+                alert("que onda");
             }
 
         },
         watch: {
             'newDetalle.id_catalogo': function (val) {
-                if (!isNaN(val)) {
-                    $('.cmbRecurso').selectpicker('refresh');
-                    this.getRecursoCat(val);
-                    this.getServicioIdTipoActivo(val);
+                if(val>0){
+                    if (!isNaN(val)) {
+                        $('.cmbRecurso').selectpicker('refresh');
+                        
+                            this.getRecursoCat(val);
+                            this.getServicioIdTipoActivo(val);
+                        } 
                 }
             },
             'newDetalle.id_activo_mobiliario': function (val) {
-                if (!isNaN(val)) {
-                    this.getFicheroLstActivo(val);
+                if(val>0){
+                    if (!isNaN(val)) {
+                        this.getFicheroLstActivo(val);
+                    }
                 }
             },
             "gastoAproximado": function () {
