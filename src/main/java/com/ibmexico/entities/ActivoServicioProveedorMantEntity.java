@@ -31,6 +31,9 @@ public class ActivoServicioProveedorMantEntity {
     @Column(nullable = true)
     private String observaciones;
 
+	@Column(nullable = true)
+	private boolean aceptado = false;
+
     @ManyToOne
     @JoinColumn(name = "id_activo_servicio_proveedor")
     private ActivoServicioProveedorEntity  activoServicioProveedor;
@@ -214,6 +217,14 @@ public class ActivoServicioProveedorMantEntity {
 		
 		return objRetorno;
 	}
+
+    public boolean isAceptado() {
+        return aceptado;
+    }
+
+    public void setAceptado(boolean aceptado) {
+        this.aceptado = aceptado;
+    }
 
     
 }

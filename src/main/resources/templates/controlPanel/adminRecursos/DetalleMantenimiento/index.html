@@ -1,4 +1,4 @@
-<th:block th:fragment="body">
+k<th:block th:fragment="body">
 	<div id="appDetalle">
 		<ol class="breadcrumb breadcrumb-bg-red">
 		<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
@@ -93,7 +93,7 @@
 													<p><b>Descripcion *</b></p>
 													<div class="form-line">
 														<textarea rows="2"  name="txtObservaciones" class="form-control no-resize col-md-6" 
-														placeholder="Defina los diagnosticos el motivo de mandar a mantenimiento" v-model="newDetalle.observaciones"></textarea>
+														placeholder="Defina los diagnosticos el motivo de mandar a mantenimiento" v-model="newDetalle.observaciones" required="required"></textarea>
 													</div>
 												</div>
 											</div>
@@ -213,7 +213,7 @@
 															<i class="material-icons">date_range</i>
 														</span>
 														<div class="form-line">
-															<input type="text" class="form-control text-center datetimepicker" id="txtFechaProgramada" name="txtFechaProgramada" placeholder="Selecciona una fecha..." />
+															<input type="text" class="form-control text-center datetimepicker" id="txtFechaProgramada" name="txtFechaProgramada" placeholder="Selecciona una fecha..." required="required"/>
 														</div>
 													</div>
 												</div>
@@ -296,12 +296,12 @@
 													  <td >
 															<div class="input-group" style="display: flex">
 																<div class="input-group-prepend mb-2" style="display: inline-flexbox">
-																	<span class="input-group-text">$</span>
+																	<span class="input-group-text text-primary">$</span>
 																</div>
 																<input readonly="readonly" style="display: inline-flex" type="number" 
 																:value="totalgasto" class="form-control" aria-label="Amount (to the nearest dollar)"
 																name="txtTotalgasto"/>
-																<span class="input-group-text">.00</span>
+															
 															</div>
 														 </td>
 												  </tr>
@@ -355,14 +355,99 @@
 								</form>
 							</div>
 						</div>
-				</div>
+					</div>
+					<!--Fin de edicion de mantenimiento-->
 
+					<!--Inicio modal pago-->
+					<div class="modal fade" id="modalpago" tabindex="-1" role="dialog">
+						<div class="modal-dialog modal-lg" role="document">
+							<div class="modal-content">
+								<form id="formModalPago" v-on:submit.prevent="PagarServicios" method="POST" role="form" enctype="multipart/form-data">
+									<div class="modal-header">
+										<h4 class="modal-title text-primary bold text-center">Registro de pagos : {{editDetalleManto.clave_unica}}</h4>
+									</div>
+									<div class="modal-body">
+										<div class="row clearfix">
+											<div class="col-md-6">
+												<b>Tipo de Activo *</b>
+												<div class="input-group">
+													<select class="form-control show-tick cmbCatalogo" name="cmbCatalogo" v-model="editDetalleManto.id_tipo_activo" disabled="true">
+														<option value="default" selected="selected">Selecciona un tipo...</option>
+														<option v-for="item in catalogo" :value="item.id_catalogo_activo" :data-subtext="item.nombre">{{ item.nombre }}</option>
+													</select>
+												</div>
+											</div>
+											<div class="col-md-6">
+												<b>Activos *</b>
+												<div class="input-group">	
+														<input type="hidden" :value="editDetalleManto.id_bien_activo" name="cmbRecurso"/>	                            
+													<select class="form-control show-tick cmbRecurso2" name="cmbRecurso2" v-model="editDetalleManto.id_bien_activo">
+														<option value="default" selected="selected">Selecciona un activo...</option>
+														<option v-for="item in recursoActivo" :value="item.id_recurso_activo">{{ item.descripcion_completa }}</option>
+													</select>
+												</div>
+											</div>
+										</div>
+										<div class="row-clearfix">
+											<table class="table table-borderless table-responsive table-sm">
+												<thead class="bg-primary">
+												  <tr>
+													<th scope="col" class="col-md-2">Servicio</th>
+													<th scope="col" class="col-md-3">Proveedor</th>
+													<th scope="col" class="col-md-2">Monto a pagar</th>
+													<th scope="col" class="col-md-2">Acciones</th>
+												  </tr>
+												</thead>
+												<tbody>
+												  <tr v-for="(pago, index) in pagos">
+													<td>{{pagos[index].nombre_servicio}}</td>
+													<td>{{pagos[index].nombre_proveedor}}</td>
+													<td>$ {{pagos[index].precio_servicio_proveedor}}</td>
+													<td>
+	
+														<label class="text-primary">
+															<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Cotizacion" >cloud_upload</i><input type="file" id="fileProveedor"
+															name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .png, .jpg"/>
+														</label>
+														
+														<a :href="'http://localhost:8080/WebSar/ficheros/ProveedorCotizacion/'+pagos[index].url_cotizacion" target="blank" v-if="(pagos.url_cotizacion!='')" title="Ver voucher">
+														<i class="material-icons remove_red_eye">remove_red_eye</i></a>
+													</td>
+
+												  </tr>
+												  <tr class="table-success">
+													  <th colspan="2" class="text-center">Monto total a pagar</th>
+													  <td >
+															<div class="input-group" style="display: flex">
+																<div class="input-group-prepend mb-2" style="display: inline-flexbox">
+																	<span class="input-group-text text-primary">$</span>
+																</div>
+																<input readonly="readonly" style="display: inline-flex" type="number" 
+																:value="totalgasto" class="form-control" aria-label="Amount (to the nearest dollar)"
+																name="txtTotalgasto"/>
+															</div>
+														 </td>
+												  </tr>
+												</tbody>
+											  </table>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
+										<button type="submit" class="btn btn-primary waves-effect">Guardar	</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<!--Fin modal pago-->
     			</div>
 			</div>
 		</div>
     </div>
     
 	</div>
+	<!--Template para registro de proveedor-servicio-->
 	<template id="templateproveedor" >
 		<div class="row-clearfix">
 			<div class="col-md-12">						
@@ -380,10 +465,8 @@
 					</thead>
 					<tbody>
 						<tr v-for="proveedor in idservicio" name="txtProveedor ">
-
 							<input type="hidden" name="txtIdServicioProveedor" :value="proveedor.id_servicio_proveedor"/>
 							<input type="hidden" name="txtIdServicio" :value="proveedor.id_servicio"/>
-
 							<td v-text="proveedor.nombre_proveedor"></td>
 							<td><input type="number" class="form-control" placeholder="Costo Servicio" name="txtPrecio"/></td>
 							<td><textarea name="txtObserProv" id="txtObserProv" cols="30" rows="2" class="form-control"></textarea></td>
@@ -391,7 +474,7 @@
 								<label class="text-primary">
 									<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Cotizacion" >cloud_upload</i>
 									<input type="file" id="fileProveedor"
-									name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .docx, .png, .jpg"/>
+									name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .png, .jpg"/>
 								</label>
 								<!-- <input type="file" id="fileProveedor" name="ficheroCotizacion" class="custom-file-input" multiple="multiple"/> -->
 								<a href="#" title="Eliminar Proveedor" class="EliminarActivo"><i class="material-icons delete">delete</i></a>
@@ -402,10 +485,8 @@
 			</div>
 		</div>
 	</template>
-<!-- 
-						<div class="table-responsive-md table-responsive-lg table-responsive-xl">
-						<table id="dtDetalle" class="table table-bordered table-striped table-hover"> -->
 
+	<!--Component for edit proveedor-servicio-->
 	<template id="templateproveedor2" >
 		<div class="row-clearfix ">
 			<div class="col-md-12">						
@@ -435,7 +516,7 @@
 	
 									<label class="text-primary">
 										<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Cotizacion" >cloud_upload</i><input type="file" id="fileProveedor"
-										name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .docx, .png, .jpg"/>
+										name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .png, .jpg"/>
 									</label>
 									
 									<a :href="'http://localhost:8080/WebSar/ficheros/ProveedorCotizacion/'+proveedor.url_cotizacion" target="blank" v-if="(proveedor.url_cotizacion!='')" title="Ver cotización">
@@ -504,6 +585,13 @@
 		function edit(param){			
 			detalleActivo.editActivoManto(param);
 		}
+		$(".pagar").ready(function(){
+			detalleActivo.pagar();
+		});
+		function pagar(param){
+			detalleActivo.getdataPagar(param);
+		}
+
 
 		function accionesFormatter(value, row, index) {
 			//urlDelete = [[@{/controlPanel/activos/}]] + row.id_activo_mobiliario + '/delete';
@@ -517,7 +605,7 @@
 				'<a href="#" title="Historial" class="DetalleManto">',
 					'<i class="material-icons format_list_numbered">format_list_numbered</i>',
 				'</a>',
-				'<a href="#" title="Pagar" class="Pagar">',
+				'<a href="#" title="Pagar" class="Pagar" onclick="pagar('+row.idDetalleMant+');" data-toggle="modal" data-target="#modalpago" role="button">',
 					'<i class="material-icons attach_money">attach_money</i>',
 					'</a>'
 			].join(''); 
@@ -525,12 +613,27 @@
 
 		function estatusFormatter(value, row, index){
 			var lblEstatus='';
-			switch(row.finalizado){
-				case false:
-					lblEstatus ='<a type="button" class="btn bg-orange waves-effect" > En Mantenimiento </a>';
+			switch(row.estatusmanto){
+				case 1:
+					lblEstatus ='<a type="button" class="btn bg-blue waves-effect" >Solicitado</a>';
+					break;
+				case 2:
+					lblEstatus ='<a type="button" class="btn bg-green waves-effect" >Autorizado</a>';
+					break;
+				case 3:
+					lblEstatus ='<a type="button" class="btn bg-purple waves-effect" >Pagado</a>';
+					break;
+				case 4:
+					lblEstatus ='<a type="button" class="btn bg-red waves-effect" >Cancelado</a>';
+					break;
+				case 5:
+					lblEstatus ='<a type="button" class="btn bg-red waves-effect" >Rechazado</a>';
+					break;
+				case 6:
+					lblEstatus ='<a type="button" class="btn bg-orange waves-effect" >Corrección</a>';
 					break;
 				default:
-					lblEstatus='<a type="button" class="btn bg-green waves-effect" > Finalizado </a>';
+					lblEstatus='<a type="button" class="btn bg-green waves-effect" >procesando</a>';
 					break;
 			}
 			return lblEstatus;
@@ -631,7 +734,7 @@
 			img.addEventListener('load', e => {
 			  c.drawImage(img,0,0, canvas.width, canvas.height);
 			});
-			  function draw() {
+			function draw() {
                 if (mousedown) {
                     c.fillStyle = colour;
                     c.globalAlpha = 0.5
@@ -641,7 +744,6 @@
                     c.fill();
                 }
             }
-
             canvas.addEventListener( 'mousemove', function( event ) {
                 if( event.offsetX ){
                     mouseX = event.offsetX;
@@ -650,8 +752,7 @@
                     mouseX = event.pageX - event.target.offsetLeft;
                     mouseY = event.pageY - event.target.offsetTop;
 				}
-				
-                draw();
+				draw();
             }, false );
 
             canvas.addEventListener( 'mousedown', function( event ) {
@@ -673,19 +774,15 @@
                 c.clearRect(img,0, 0, canvas.width, canvas.height);
                 c.drawImage(img,0,0,canvas.width, canvas.height);
             });
-
-
-
-
-			
-	function cancel(){
+/*------------------------------------------------------------------------------------------------------------*/		
+	function cancelEdit(){
 		$('#formEditActivoManto')[0].reset();
 		this.detalleActivo.editproveedorServicio=[];
 		this.detalleActivo.editdatafiltrado=[];
 		this.detalleActivo.editDetalleManto={};
 		this.detalleActivo.urlcompletofichero="";
+		this.detalleActivo.gastoAproximado=[];
 	}
-
 	function cancelNew(){
 		$('#formActivoManto')[0].reset();
 		this.detalleActivo.proveedorServicio=[];
@@ -696,14 +793,28 @@
 		this.detalleActivo.newDetalle.observaciones="";
 		this.detalleActivo.newDetalle.titulo="";
 		this.detalleActivo.urlfichero="";
+		this.detalleActivo.gastoAproximado=[];
+
+		// var canvasnuevo = document.getElementById( 'canvasnew' ),
+        //     n = canvasnuevo.getContext( '2d' ),
+		// 		mouseX = 0,
+        //         mouseY = 0,
+        //         width = 350,
+        //         height = 350,
+        //         colour = 'red',
+        //         mousedown = false;
+        //     // resize the canvas
+        //     canvasnuevo.width = width;
+		// 	canvasnuevo.height = height;
+			
+        // n.clearRect(0, 0, canvasnuevo.width, canvasnuevo.height);
 	}
 	
 	$('#modalEditActivoManto').on('hidden.bs.modal',function(){
-		cancel();
+		cancelEdit();
 	});
 	
 	$('#modalNuevoActivoManto').on('hidden.bs.modal',function(){
-		
 		cancelNew();
 	});
 

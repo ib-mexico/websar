@@ -36,10 +36,10 @@ public interface IBienActivoRepository extends JpaRepository<BienActivoEntity, S
 	@Query("SELECT objActivo FROM BienActivoEntity objActivo  WHERE objActivo.estatus=true")
     public abstract List<BienActivoEntity> findForDataTable(Pageable page);
 
-    @Query("SELECT COUNT(objActivo) FROM BienActivoEntity objActivo WHERE objActivo.estatus=true AND (objActivo.idActivo.nombre LIKE %?1%  OR objActivo.modelo LIKE %?1%) order by objActivo.idRecursoActivo ASC")
+    @Query("SELECT COUNT(objActivo) FROM BienActivoEntity objActivo WHERE objActivo.estatus=true AND (objActivo.idActivo.nombre LIKE %?1%  OR objActivo.modelo LIKE %?1%) order by objActivo.creacionFecha DESC")
     public abstract long countForDataTable(String search);
 
-    @Query("SELECT objActivo FROM BienActivoEntity objActivo WHERE objActivo.estatus=true AND (objActivo.idActivo.nombre LIKE %?1%  OR objActivo.modelo LIKE %?1%) order by objActivo.idRecursoActivo ASC")
+    @Query("SELECT objActivo FROM BienActivoEntity objActivo WHERE objActivo.estatus=true AND (objActivo.idActivo.nombre LIKE %?1%  OR objActivo.modelo LIKE %?1%) order by objActivo.creacionFecha DESC")
     public abstract List<BienActivoEntity> findForDataTable(String search, Pageable page);
     
 }
