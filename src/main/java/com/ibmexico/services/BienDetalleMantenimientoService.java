@@ -84,7 +84,6 @@ public class BienDetalleMantenimientoService{
     /*Metodo de crear cuando existan servicios, pero se desea agregar un nuevo servicio */
     synchronized public void createEdit(BienDetalleMantenimientoEntity objDetalle, String [] txtObservaciones, BigDecimal [] precioServProv,
         int [] idActivoServicioProveedor, MultipartFile [] cotizacion, String imgDetalleActivo,int lengthManto, int lengthNuevo) throws IOException {
-
         if(objDetalle!=null){
             UsuarioEntity objUser=sesionService.getCurrentUser();
             LocalDateTime ldtNow = LocalDateTime.now();
@@ -200,6 +199,44 @@ public class BienDetalleMantenimientoService{
         }else{
             lstDetalleMantenEntity=bienMantRep.findForDataTable(DataTable.getPageRequest(offset, limit));
             totalDetalle=bienMantRep.countForDataTable();
+        }
+        
+        DataTable<BienDetalleMantenimientoEntity> returnDataTable=new DataTable<BienDetalleMantenimientoEntity>(lstDetalleMantenEntity, totalDetalle);
+        return returnDataTable;
+    }
+
+
+    /**Datatable for validation */
+        public DataTable<BienDetalleMantenimientoEntity> dataTableValidation(String search, int offset, int limit, String txtBootstrapTableDesde, String txtBootstrapTableHasta){
+        List<BienDetalleMantenimientoEntity> lstDetalleMantenEntity=null;
+        LocalDate fechaInicio=null;
+        LocalDate fechaFin=null;
+        long totalDetalle=100;
+        if(search!=null){
+            if(!txtBootstrapTableDesde.equals("") && !txtBootstrapTableHasta.equals("")){
+                String arrFechaInicio[]= txtBootstrapTableDesde.split("/");
+                int yearInicio=Integer.parseInt(arrFechaInicio[2]);
+                int monthInicio=Integer.parseInt(arrFechaInicio[1]);
+                int dayInicio=Integer.parseInt(arrFechaInicio[0]);
+
+                String arrFechaFin[]=txtBootstrapTableHasta.split("/");
+                int yearFin=Integer.parseInt(arrFechaFin[2]);
+                int monthFin= Integer.parseInt(arrFechaFin[1]);
+                int dayFin= Integer.parseInt(arrFechaFin[0]);
+
+                fechaInicio=LocalDate.of(yearInicio, monthInicio, dayInicio);
+                fechaFin=LocalDate.of(yearFin, monthFin, dayFin);
+
+                lstDetalleMantenEntity=bienMantRep.findForDataTableValidation(search, fechaInicio, fechaFin, DataTable.getPageRequest(offset, limit));
+                totalDetalle=bienMantRep.countForDataTableValidation(search, fechaInicio, fechaFin);
+            }
+            else{
+                lstDetalleMantenEntity=bienMantRep.findForDataTableValidation(search, DataTable.getPageRequest(offset, limit));
+                totalDetalle=bienMantRep.countForDataTableValidation(search);
+            }
+        }else{
+            lstDetalleMantenEntity=bienMantRep.findForDataTableValidation(DataTable.getPageRequest(offset, limit));
+            totalDetalle=bienMantRep.countForDataTableValidation();
         }
         
         DataTable<BienDetalleMantenimientoEntity> returnDataTable=new DataTable<BienDetalleMantenimientoEntity>(lstDetalleMantenEntity, totalDetalle);

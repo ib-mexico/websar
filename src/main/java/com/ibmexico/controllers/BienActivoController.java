@@ -100,6 +100,7 @@ public class BienActivoController {
             jsonActivoCatalogo = bienActivoService.jsonRecursoActivoIdCatalogo(idCatalogo);
             respuesta = true;
         } catch (ApplicationException exception) {
+            throw new ApplicationException(EnumException.ACTIVO_CREATE_001);
         }
         JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
         jsonReturn.add("respuesta", respuesta).add("jsonActivoCatalogo", jsonActivoCatalogo);
@@ -108,8 +109,6 @@ public class BienActivoController {
     /*Obtener la data activo, para poder editarlas  */
     @RequestMapping(value = { "{idActivo}/edit", "{idActivo}/edit/" }, method = RequestMethod.GET)
     public @ResponseBody String getDataEdit(@PathVariable(name = "idActivo") int idActivo) {
-        // List<CatalogoActivoEntity> lstCatalogo= catActiveService.listCatalogo();
-        // List<EmpresaEntity> lstEmpresas = empresaService.listEmpresas();
         Boolean respuesta = false;
         JsonObject jsonActivo = null;
         try {

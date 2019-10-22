@@ -41,7 +41,7 @@ public class BienActivoFicheroService{
 
     public void create(BienActivoFicheroEntity objActivoFichero, MultipartFile objFile)throws IOException{
         URL urlPath=this.getClass().getResource("/");
-        System.out.println(urlPath);
+        
         if(objActivoFichero!=null){
             if(objActivoFichero.getUrl()!=""){
                 byte[] byteFichero=objFile.getBytes();

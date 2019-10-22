@@ -125,7 +125,6 @@ if(document.getElementById('appActivos')){
 			},
 			editData:{},
 			elegido:''
-		
 		}
 		,methods:{
 			getFormData() {
@@ -149,15 +148,11 @@ if(document.getElementById('appActivos')){
 				// 	if($(this).val() ==1){
 				// 		$('.cmbDepartamento').show();
 				// 		$('.cmbUsuario').show();
-
 				// 	}
 				// });
-
-			}
-			,
+			},
 			validateForm(){
 				var response = false;
-				
 				if(!this.newActivo.descripcion || !this.newActivo.marca || !this.newActivo.modelo ||  !this.newActivo.serie ||
 					 !this.newActivo.color || !this.newActivo.costo_recurso){
 					swal("Revisión!", "Debes  de terminar de rellenar todos los campos.", "warning");
@@ -260,8 +255,8 @@ if(document.getElementById('appActivos')){
 			},
 			editActivo(param){
 
-				 var formEditActivo=document.getElementById('formEditActivo');
-				 var formEditActivoData=new FormData(formEditActivo);
+				var formEditActivo=document.getElementById('formEditActivo');
+			 	var formEditActivoData=new FormData(formEditActivo);
 				var url=host+'BienActivo/'+param+'/edit';
 				axios.get(url, formEditActivoData).then(resp=>{
 					console.log(resp);
@@ -304,7 +299,6 @@ if(document.getElementById('appActivos')){
 						var arrDateFechaEntrega = date.split("-");				
 						$('.txtFechaEntrega').bootstrapMaterialDatePicker('setDate', arrDateFechaEntrega[2]+"/"+arrDateFechaEntrega[1]+"/"+arrDateFechaEntrega[0]);
 					}
-
 					this.loadModal();
 				// 	this.editData.nombre=data[0].nombre;
 				// 	this.editData.marca=data[0].marca;
@@ -378,7 +372,6 @@ if(document.getElementById('appActivos')){
 			}
 			,deleteActivo(param){
 				var url=host+'BienActivo/'+param+'/delete';
-				
 				swal({
 					title	: "Eliminar Activo",
 					text	: "Estas seguro de eliminar un activo en el sistema.",
@@ -390,7 +383,6 @@ if(document.getElementById('appActivos')){
 					if(result){
 						axios.post(url).then(resp=>{
 							if(resp.status==200 && resp.data.respuesta){
-
 								swal(resp.data.titulo, resp.data.mensaje, "success");
 								$("#dtActivo").bootstrapTable('refresh');
 							}else{

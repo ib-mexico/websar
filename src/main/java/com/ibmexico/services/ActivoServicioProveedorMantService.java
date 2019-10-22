@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -17,13 +18,17 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.transaction.Transactional;
 
+import com.ibmexico.configurations.GeneralConfiguration;
 import com.ibmexico.entities.ActivoServicioProveedorMantEntity;
+import com.ibmexico.entities.ActivoVoucherEntity;
 import com.ibmexico.entities.BienDetalleMantenimientoEntity;
 import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.libraries.notifications.ApplicationException;
 import com.ibmexico.libraries.notifications.EnumException;
+import com.ibmexico.repositories.IActivoEstatusRepository;
 import com.ibmexico.repositories.IActivoServicioProveedorMantRepository;
 import com.ibmexico.repositories.IActivoServicioProveedorRepository;
+import com.ibmexico.repositories.IActivoVoucherRepository;
 import com.ibmexico.repositories.IBienDetalleMantenimientoRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +55,14 @@ public class ActivoServicioProveedorMantService {
     @Qualifier("bienDetalleMantenimientoRepository")
     private IBienDetalleMantenimientoRepository bienDetalleMant;
 
+    @Autowired
+    @Qualifier("comprobantes_pagos_servicios")
+    private IActivoVoucherRepository voucheRepo;
+
+    @Autowired
+    @Qualifier("activo_estatus_repository")
+    private IActivoEstatusRepository activoEstatusRepo;
+
     /*return un registro de servicio-proveedor*/
     public ActivoServicioProveedorMantEntity findByIdServicioProveedorMant(int idServicioProvMant){
         return serviProveeMant.findByIdServicioProveedorMant(idServicioProvMant);
@@ -71,6 +84,7 @@ public class ActivoServicioProveedorMantService {
                     objActivoSerProvMant.setCreacionUsuario(objUsuario);
                     objActivoSerProvMant.setModificacionUsuario(objUsuario);
                     objActivoSerProvMant.isAceptado();
+                    objActivoSerProvMant.isPagado();
                     objActivoSerProvMant.setBienDetalleMant(
                             bienDetalleMant.findByIdDetalleMantenimiento(objDetalle.getIdDetalleMantenimiento()));
                     objActivoSerProvMant.setActivoServicioProveedor(
@@ -102,6 +116,7 @@ public class ActivoServicioProveedorMantService {
                     objActivoSerProvMant.setCreacionUsuario(objUsuario);
                     objActivoSerProvMant.setModificacionUsuario(objUsuario);
                     objActivoSerProvMant.isAceptado();
+                    objActivoSerProvMant.isPagado();
                     objActivoSerProvMant.setBienDetalleMant(
                             bienDetalleMant.findByIdDetalleMantenimiento(objDetalle.getIdDetalleMantenimiento()));
                     objActivoSerProvMant.setActivoServicioProveedor(
@@ -136,6 +151,7 @@ public class ActivoServicioProveedorMantService {
                     objActivoSerProvMant.setCreacionUsuario(objUsuario);
                     objActivoSerProvMant.setModificacionUsuario(objUsuario);
                     objActivoSerProvMant.isAceptado();
+                    objActivoSerProvMant.isPagado();
                     objActivoSerProvMant.setBienDetalleMant(
                             bienDetalleMant.findByIdDetalleMantenimiento(objDetalle.getIdDetalleMantenimiento()));
                     objActivoSerProvMant.setActivoServicioProveedor(
@@ -215,6 +231,96 @@ public class ActivoServicioProveedorMantService {
         }
     }
 
+    @Transactional
+    public void PagoServicioProveedor(String txtFechaPago, int idProveedorServicio, MultipartFile file, int DetalleManto){
+        if (txtFechaPago!=null) {
+            ActivoVoucherEntity objVoucher=new ActivoVoucherEntity();
+                ActivoServicioProveedorMantEntity objProveedorServicio=serviProveeMant.findByIdServicioProveedorMant(idProveedorServicio);
+                BienDetalleMantenimientoEntity objDetalleManto=bienDetalleMant.findByIdDetalleMantenimiento(DetalleManto);
+                objVoucher.setFechaPago(LocalDate.parse(txtFechaPago, GeneralConfiguration.getInstance().getDateFormatterNatural()));
+                objVoucher.setActivoServicioProveedor(objProveedorServicio);
+                LocalDateTime ldtnow =LocalDateTime.now();
+                objVoucher.setCreacionFecha(ldtnow);
+                objVoucher.setModificacionFecha(ldtnow);
+                if(file!=null){
+                    System.err.println(objVoucher.toString());
+                    this.addComprobante(file,objVoucher);
+                    System.err.println(objVoucher);
+                }
+                voucheRepo.save(objVoucher);
+                objProveedorServicio.setPagado(true);
+                /*Pasar el estatus a pagado*/
+                serviProveeMant.save(objProveedorServicio);
+                objDetalleManto.setActivoEstatus(activoEstatusRepo.findByIdActivoEstatus(3));
+                bienDetalleMant.save(objDetalleManto);
+                
+            }
+        }
+    
+
+    @Transactional
+    public void addComprobante(MultipartFile voucher, ActivoVoucherEntity objVoucher){
+        System.err.println("method aaddComprobante");
+        if(voucher!=null && !voucher.isEmpty()){
+            System.err.println(voucher);
+            System.err.println(objVoucher.getFechaPago());
+            System.err.println("addCOmprobante if");
+            try {
+                System.err.println("methos try addcomprobante");
+                if(!voucher.getOriginalFilename().trim().equals("")){
+                        String ficheroNombre = UUID.randomUUID().toString();
+                        String[] arrNombreFichero = voucher.getOriginalFilename().split("\\.");
+                        if (arrNombreFichero.length >= 2) {
+                            ficheroNombre = ficheroNombre + "." + arrNombreFichero[arrNombreFichero.length - 1];
+                        }
+                        objVoucher.setUrl_voucher(ficheroNombre);
+                        // voucheRepo.save(objVoucher);
+                        this.createComprobante(objVoucher,voucher);
+                }
+            } catch (Exception e) {
+                throw new ApplicationException(EnumException.ACTIVO_FICHEROS_ADD_FILE_003);
+            }
+        }
+    }
+    @Transactional
+    public void createComprobante(ActivoVoucherEntity objVoucher, MultipartFile objfile) throws IOException{
+        URL urlPath= this.getClass().getResource("/");
+        if (objVoucher!=null) {
+            if (objVoucher.getUrl_voucher()!="") {
+                byte[] bytesFichero=objfile.getBytes();
+                File fileruta=new File(urlPath.getPath()+"static/ficheros/Comprobantes");
+                if(!fileruta.exists()){
+                    fileruta.mkdirs();
+                }
+                try (BufferedOutputStream buffStream=new BufferedOutputStream(new FileOutputStream(new File(urlPath.getPath()+"static/ficheros/Comprobantes/")
+                +objVoucher.getUrl_voucher()))) {
+                    buffStream.write(bytesFichero);
+                } catch (Exception e) {
+                    throw new ApplicationException(EnumException.ACTIVO_FICHEROS_ADD_FILE_003);
+                }   
+            } else {
+                throw new ApplicationException(EnumException.ACTIVO_FICHEROS_ADD_FILE_004);
+            }
+        } else {
+            throw new ApplicationException(EnumException.ACTIVO_CREATE_001);
+        }
+    }
+
+
+
+    @Transactional
+    public void ValidarProveedor(int idServicioProveedorManto, Boolean aceptado){
+        if (idServicioProveedorManto>0) {
+            ActivoServicioProveedorMantEntity objProveedorServicio=serviProveeMant.findByIdServicioProveedorMant(idServicioProveedorManto);
+            LocalDateTime ldtnow =LocalDateTime.now();
+            objProveedorServicio.setCreacionFecha(ldtnow);
+            objProveedorServicio.setModificacionFecha(ldtnow);
+            objProveedorServicio.setAceptado(aceptado);
+            serviProveeMant.save(objProveedorServicio);
+        }
+    }
+
+
     /*CREAR UN JSON DE LOS SERVICIOS PROVEEDORES MANTO REGISTRADOS. */
     public JsonObject jsonActivoServicioProveedorMant(int idDetalleMantenimiento) {
         JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
@@ -238,6 +344,7 @@ public class ActivoServicioProveedorMantService {
             .add("tipo_activo", item.getBienDetalleMant().getBienActivo().getIdActivo().getIdCatalogoActivo())
             .add("nombre_tipo_activo", item.getBienDetalleMant().getBienActivo().getIdActivo().getNombre())
             .add("aceptado",item.isAceptado())
+            .add("pagado", item.isPagado())
 
             );
         });
@@ -247,7 +354,7 @@ public class ActivoServicioProveedorMantService {
 
 
     
-    /*CREAR UN JSON DE LOS SERVICIOS PROVEEDORES MANTO REGISTRADOS. */
+    /*UN OBJETO DE LOS PROVEEDORES ACEPTADOS. */
     public JsonObject jsonServicioProvAceptado(int idDetalleMantenimiento) {
         JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
         JsonArrayBuilder jsonRows = Json.createArrayBuilder();
@@ -270,6 +377,7 @@ public class ActivoServicioProveedorMantService {
             .add("tipo_activo", item.getBienDetalleMant().getBienActivo().getIdActivo().getIdCatalogoActivo())
             .add("nombre_tipo_activo", item.getBienDetalleMant().getBienActivo().getIdActivo().getNombre())
             .add("aceptado",item.isAceptado())
+            .add("pagado", item.isPagado())
 
             );
         });

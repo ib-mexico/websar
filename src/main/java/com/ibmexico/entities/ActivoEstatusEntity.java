@@ -25,6 +25,9 @@ public class ActivoEstatusEntity{
     @Column(length = 50)
     private String activoEstatus;
     
+    @Column(nullable=false)
+    private boolean opcion_Direccion;
+
     @Column
     private boolean eliminado = false;
     
@@ -106,6 +109,14 @@ public class ActivoEstatusEntity{
 
     public void setActivoEstatus(String activoEstatus) {
         this.activoEstatus = activoEstatus;
+    }
+
+    public boolean isOpcion_Direccion() {
+        return opcion_Direccion;
+    }
+
+    public void setOpcion_Direccion(boolean opcion_Direccion) {
+        this.opcion_Direccion = opcion_Direccion;
     }
 
 }

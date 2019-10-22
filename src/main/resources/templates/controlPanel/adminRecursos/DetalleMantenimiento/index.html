@@ -17,7 +17,7 @@ k<th:block th:fragment="body">
     					<div class="col-md-4 col-md-offset-8 text-right">
 							<a href="#" role="button" class="btn bg-purple waves-effect" 
 								data-toggle="modal" data-target="#modalNuevoActivoManto" v-on:click="loadModal">
-								<i class="material-icons">add_circle</i> Nuevo Mantenimiento</a>
+								<i class="material-icons">add_circle</i> Nuevo Orden de Mantenimiento</a>
     					</div>
 					</div>
 				<!-- Busqueda en rangos de fecha -->
@@ -121,52 +121,22 @@ k<th:block th:fragment="body">
 													  </tr>
 													  <tr class="table-success">
 														  <th colspan="2" class="text-center">Gasto total aproximado</th>
-														  <td scope="row">
-																<div class="input-group" style="display: flex">
-																	<div class="input-group-prepend mb-2" style="display: inline-flexbox">
-																		<span class="input-group-text text-primary">$ </span>
-																	</div>
-																	<input readonly="readonly" style="display: inline-flex" type="text" 
-																		:value="totalgasto" class="form-control text-primary" aria-label="Amount (to the nearest dollar)"
-																		name="txtTotalgasto"/>
+														<td>
+															<div class="input-group">
+																<span class="input-group-addon">
+																	<i class="material-icons">attach_money</i>
+																</span>
+																<div class="form-line">
+																	<input type="text" class="form-control text-primary font-weight-bold" 
+																		name="txtTotalgasto" readonly="true"
+																		:value="totalgasto"/>
 																</div>
-															 </td>
+															</div>		
+														</td>
 													  </tr>
 													</tbody>
 												  </table>
 											</div>
-										
-
-											<div class="row clearfix">
-
-												<!-- <div class="col-xs-4 col-sm-4 col-md-4">
-													<p> <b>Gasto aproximado</b> </p>
-													<div class="input-group">
-														<span class="input-group-addon">
-															<i class="material-icons">attach_money</i>
-														</span>
-														<div class="form-line" id="price">
-															<input type="text" class="form-control" v-model="totalgasto" disabled="true"/>
-														</div>
-															<span class="input-group-text">.00</span>
-													</div>
-												</div> -->
-
-											</div>
-											<!-- <div class="row-clearfix">
-												<div class="col-md-6">
-													<b>Proveedores *</b>
-													<div class="input-group">	                            
-														<select class="form-control show-tick cmbProveedor" name="cmbProveedor" id="cmbProveedor" v-model="newDetalle.id_catalogo">
-															<option value="default" selected="selected">Selecciona los proveedores...</option>
-															<option v-for="item in catalogo" :value="item.id_catalogo_activo" :data-subtext="item.nombre">{{ item.nombre }}</option>
-														</select>
-													</div>
-												</div>
-												<div class="col-md-6">
-
-												</div>
-											</div> -->
 										<div v-if="datafiltrado.length!==null">
 											<proveedor v-for="(item, index) in datafiltrado"
 												:key="index"
@@ -175,38 +145,22 @@ k<th:block th:fragment="body">
 										</div>
 
 										<div class="row-clearfix">
-											<div class="col-md-8 col-xs-12 col-sm-12">
-												<h4 class="text-primary text-center">Indicar detalles de mantenimiento</h4>
-													<div class=" text-center">
-															<canvas id="canvasnew" style="background:#fff; border:1px solid #ccc; width:350px; height:350px;" class="rounded mx-auto d-block img-fluid"></canvas>
-															<input type="hidden" id="imgnuevoDetalleActivo" name="imgnuevoDetalleActivo" value=""/>
-															<div style="display:none;" class="container-fluid">
-																<img id="sourcenuevo" :src="urlcompletofichero" class="rounded mx-auto d-block img-fluid" />
-															</div>
-													</div>
-													<div class="col-md-6 col-md-offset-3 text-center">
-														<a id="btnLimpiar" href="javascript:void(0)" class="btn btn-warning">Limpiar</a>
-														<a id="btnGenerar" href="javascript:void(0)" class="btn btn-success">Generar Imagen</a>
-													</div>
-											</div>
-											<!-- <div class="col-md-4 mr-25">
-												<div class="col-xs-12 col-sm-12 col-md-12">
-													<p><b>Fecha programada</b></p>
-													<div class="input-group">
-														<span class="input-group-addon">
-															<i class="material-icons">date_range</i>
-														</span>
-														<div class="form-line">
-															<input type="text" class="form-control text-center datetimepicker" id="txtFechaProgramada" name="txtFechaProgramada" placeholder="Selecciona una fecha..." />
+											<div class="col-md-12 col-xs-12 col-sm-12">
+												<div class="col-md-8 col-xs-12 col-sm-12">
+													<h4 class="text-primary text-center">Indicar detalles de mantenimiento</h4>
+														<div class=" text-center">
+																<canvas id="canvasnew" style="background:#fff; border:1px solid #ccc; width:350px; height:350px;" class="rounded mx-auto d-block img-fluid"></canvas>
+																<input type="hidden" id="imgnuevoDetalleActivo" name="imgnuevoDetalleActivo" value=""/>
+																<div style="display:none;" class="container-fluid">
+																	<img id="sourcenuevo" :src="urlcompletofichero" class="rounded mx-auto d-block img-fluid" />
+																</div>
 														</div>
-													</div>
+														<div class="col-md-6 col-md-offset-3 text-center">
+															<a id="btnLimpiar" href="javascript:void(0)" class="btn btn-warning">Limpiar</a>
+															<a id="btnGenerar" href="javascript:void(0)" class="btn btn-success">Generar Imagen</a>
+														</div>
 												</div>
-											</div> -->
-										</div>
-
-										<div class="row clearfix m-t-5">
-											<div class="col-md-12">
-												<div class="col-xs-12 col-sm-12 col-md-12">
+												<div class="col-md-4 col-xs-12 col-sm-12">
 													<p><b>Fecha programada</b></p>
 													<div class="input-group">
 														<span class="input-group-addon">
@@ -217,8 +171,13 @@ k<th:block th:fragment="body">
 														</div>
 													</div>
 												</div>
-												</div>	
 											</div>
+
+										</div>
+										<div class="row-clearfix">
+											<div class="col-md-12">
+											</div>
+										</div>
 										</div>
 										<div class="modal-footer">
 											<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
@@ -254,7 +213,7 @@ k<th:block th:fragment="body">
 												<b>Activos *</b>
 												<div class="input-group">	
 														<input type="hidden" :value="editDetalleManto.id_bien_activo" name="cmbRecurso"/>	                            
-													<select class="form-control show-tick cmbRecurso2" name="cmbRecurso2" v-model="editDetalleManto.id_bien_activo">
+													<select class="form-control show-tick cmbRecurso2" name="cmbRecurso2" v-model="editDetalleManto.id_bien_activo" disabled="true">
 														<option value="default" selected="selected">Selecciona un activo...</option>
 														<option v-for="item in recursoActivo" :value="item.id_recurso_activo">{{ item.descripcion_completa }}</option>
 													</select>
@@ -291,20 +250,22 @@ k<th:block th:fragment="body">
 													<td>{{service.descripcion}}</td>
 													<td>$ {{service.precio_estimado}}</td>
 												  </tr>
-												  <tr class="table-success">
-													  <th colspan="2" class="text-center">Gasto total aproximado</th>
-													  <td >
-															<div class="input-group" style="display: flex">
-																<div class="input-group-prepend mb-2" style="display: inline-flexbox">
-																	<span class="input-group-text text-primary">$</span>
-																</div>
-																<input readonly="readonly" style="display: inline-flex" type="number" 
-																:value="totalgasto" class="form-control" aria-label="Amount (to the nearest dollar)"
-																name="txtTotalgasto"/>
-															
+												  
+												<tr class="table-success">
+													<th colspan="2" class="text-center">Gasto total aproximado</th>
+													<td>
+														<div class="input-group">
+															<span class="input-group-addon">
+																<i class="material-icons">attach_money</i>
+															</span>
+															<div class="form-line">
+																<input type="text" class="form-control text-primary font-weight-bold" 
+																	name="txtTotalgasto" readonly="true"
+																	:value="totalgasto"/>
 															</div>
-														 </td>
-												  </tr>
+														</div>		
+													</td>
+												</tr>
 												</tbody>
 											  </table>
 										</div>
@@ -358,6 +319,159 @@ k<th:block th:fragment="body">
 					</div>
 					<!--Fin de edicion de mantenimiento-->
 
+
+
+
+
+
+
+					<!-- Validacion de un mantenimiento -->
+					<div class="modal fade" id="modalValidacion" tabindex="-1" role="dialog">
+						<div class="modal-dialog modal-lg" role="document">
+							<div class="modal-content">
+								<form id="formModalValidacion" v-on:submit.prevent="UpdateValidacion" method="POST" role="form" enctype="multipart/form-data">
+									<div class="modal-header">
+										<h4 class="modal-title text-primary bold text-center">Validacion de proveedores</h4>
+									</div>
+									<div class="modal-body">
+
+										<div class="row clearfix">
+											<div class="col-md-6">
+												<b>Tipo de Activo *</b>
+												<div class="input-group">
+													<select class="form-control show-tick cmbCatalogo" name="cmbCatalogo" id="cmbCatalogo" v-model="editDetalleManto.id_tipo_activo" disabled="true">
+														<option value="default" selected="selected">Selecciona un tipo...</option>
+														<option v-for="item in catalogo" :value="item.id_catalogo_activo" :data-subtext="item.nombre">{{ item.nombre }}</option>
+													</select>
+												</div>
+											</div>
+											<div class="col-md-6">
+												<b>Activos *</b>
+												<div class="input-group">	
+														<input type="hidden" :value="editDetalleManto.id_bien_activo" name="cmbRecurso"/>	                            
+													<select class="form-control show-tick cmbRecurso2" name="cmbRecurso2" v-model="editDetalleManto.id_bien_activo"  disabled="true">
+														<option value="default" selected="selected">Selecciona un activo...</option>
+														<option v-for="item in recursoActivo" :value="item.id_recurso_activo">{{ item.descripcion_completa }}</option>
+													</select>
+												</div>
+											</div>
+										</div>
+										<div class="row-clearfix">
+											<div class="col-md-12">
+												<p><b>Descripcion *</b></p>
+												<div class="form-line">
+													<textarea rows="2"  name="txtObservaciones" class="form-control no-resize col-md-6" 
+													placeholder="Defina los diagnosticos el motivo de mandar a mantenimiento" v-model="editDetalleManto.observaciones" readonly="true"></textarea>
+												</div>
+											</div>
+										</div>
+										<div class="row-clearfix">
+											<table class="table table-borderless table-responsive table-sm">
+												<thead class="bg-primary">
+												  <tr>
+													<th scope="col" class="col-md-2">Seleccionados</th>
+													<th scope="col" class="col-md-3">Servicio</th>
+													<th scope="col" class="col-md-2">Precio Estimado</th>
+												  </tr>
+												</thead>
+												<tbody>
+												  <tr v-for="service in servicio">
+													<td>
+													  <div class="custom-control custom-checkbox">
+														  <input type="checkbox" name ="txtServicio" class="custom-control-input checkServicio" :id="'validator'+service.id_servicio"
+															:value="service.id_servicio" v-on:click="ObtenerIdServicioedit(service.id_servicio)"/>
+														  <label class="custom-control-label" :for="'validator'+service.id_servicio" readonly="readonly"></label>
+													  </div>
+													</td>
+													<td>{{service.descripcion}}</td>
+													<td>$ {{service.precio_estimado}}</td>
+												  </tr>
+												  <tr class="table-success">
+													  <th colspan="2" class="text-center">Gasto total aproximado</th>
+													  <td >
+															<div class="input-group" style="display: flex">
+																<div class="input-group-prepend mb-2" style="display: inline-flexbox">
+																	<span class="input-group-text text-primary">$</span>
+																</div>
+																<input readonly="readonly" style="display: inline-flex" type="number" 
+																:value="totalgasto" class="form-control" aria-label="Amount (to the nearest dollar)"
+																name="txtTotalgasto"/>
+															
+															</div>
+														 </td>
+												  </tr>
+												</tbody>
+											  </table>
+										</div>
+									
+									<div v-if="checkdatafiltrado.length!=null">
+										<proveedor3 v-for="(item, index) in checkdatafiltrado"
+											:key="index"
+											:idservicio="item"
+											>
+										</proveedor3>
+									</div>
+
+									<div class="row-clearfix">
+										<div class="col-md-6">
+											<h4 class="text-primary text-center">Detalles de mantenimiento</h4>
+											<div class="text-center">
+												<canvas id="canvasedit" style="background:#fff; border:1px solid #ccc; width:350px; height:350px;" class="rounded mx-auto d-block img-fluid"></canvas>
+												<input type="hidden" id="imgDetalleActivo" name="imgDetalleActivo" value=""/>
+												<div style="display:none;" class="container-fluid">
+													<img id="sourceEdit" :src="urlcompletofichero" class="rounded mx-auto d-block img-fluid" />
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="col-md-12">
+												<p><b>Fecha programada</b></p>
+												<div class="input-group">
+													<span class="input-group-addon">
+														<i class="material-icons">date_range</i>
+													</span>
+													<div class="form-line">
+														<input type="text" class="form-control text-center datetimepicker"  name="txtFechaProgramada" 
+														placeholder="Selecciona una fecha..." :value="editDetalleManto.fecha_manto_programada" disabled="true"/>
+													</div>
+												</div>
+											</div>
+											<input type="hidden" :value="changeestatus" name="idEstatus"/>
+											<div class="col-md-12" v-for="(item,index) in estatus">
+												<input type="radio" :id="'check'+estatus[index].id_activo_estatus" :value="estatus[index].id_activo_estatus" 
+												v-model="changeestatus" name="txtEstatus"/>
+												<label :for="'check'+estatus[index].id_activo_estatus" v-text="estatus[index].activo_estatus"></label>
+												<br/>
+											</div>
+											<div class="col-md-12">
+												<p><b>Comentarios</b></p>
+												<div class="input-group">
+													<div class="form-line">
+														<textarea name="txtComentarios" id="" cols="30" rows="4" class="form-control" 
+														style="overflow: auto; resize: none;"></textarea>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="row clearfix">
+										<div class="col-md-12">
+										</div>	
+									</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Descartar Cambios</button>
+										<button type="submit" class="btn btn-primary waves-effect">Guardar Cambios	</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<!--Fin de validacion de mantenimiento-->
+
+
+
 					<!--Inicio modal pago-->
 					<div class="modal fade" id="modalpago" tabindex="-1" role="dialog">
 						<div class="modal-dialog modal-lg" role="document">
@@ -380,8 +494,8 @@ k<th:block th:fragment="body">
 											<div class="col-md-6">
 												<b>Activos *</b>
 												<div class="input-group">	
-														<input type="hidden" :value="editDetalleManto.id_bien_activo" name="cmbRecurso"/>	                            
-													<select class="form-control show-tick cmbRecurso2" name="cmbRecurso2" v-model="editDetalleManto.id_bien_activo">
+														<input type="hidden" :value="editDetalleManto.id_bien_activo" name="cmbRecurso" />	                            
+													<select class="form-control show-tick cmbRecurso2" name="cmbRecurso2" v-model="editDetalleManto.id_bien_activo" disabled="true">
 														<option value="default" selected="selected">Selecciona un activo...</option>
 														<option v-for="item in recursoActivo" :value="item.id_recurso_activo">{{ item.descripcion_completa }}</option>
 													</select>
@@ -395,21 +509,33 @@ k<th:block th:fragment="body">
 													<th scope="col" class="col-md-2">Servicio</th>
 													<th scope="col" class="col-md-3">Proveedor</th>
 													<th scope="col" class="col-md-2">Monto a pagar</th>
+													<th scope="col" class="col-md-3"> Fecha de pago</th>
 													<th scope="col" class="col-md-2">Acciones</th>
 												  </tr>
 												</thead>
 												<tbody>
 												  <tr v-for="(pago, index) in pagos">
+													<input type="hidden" :value="pagos[index].id_servicio_proveedor_manto" name="idProvManto"/>
+													<input type="hidden" :value="pagos[index].id_bien_detalle_manto" name="idBienDetalleManto"/>
 													<td>{{pagos[index].nombre_servicio}}</td>
 													<td>{{pagos[index].nombre_proveedor}}</td>
 													<td>$ {{pagos[index].precio_servicio_proveedor}}</td>
 													<td>
-	
+														<div class="input-group">
+															<span class="input-group-addon">
+																<i class="material-icons">date_range</i>
+															</span>
+															<div class="form-line">
+																<input type="text" class="form-control text-center datetimepicker" 
+																	name="txtFechaPago"/>
+															</div>
+														</div>		
+													</td>
+													<td>
 														<label class="text-primary">
-															<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Cotizacion" >cloud_upload</i><input type="file" id="fileProveedor"
-															name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .png, .jpg"/>
+															<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Comprobante de pago" >cloud_upload</i><input type="file" id="fileProveedor"
+															name="ComprobantePago" multiple="multiple" style="display: none;" accept="application/pdf, .png, .jpg"/>
 														</label>
-														
 														<a :href="'http://localhost:8080/WebSar/ficheros/ProveedorCotizacion/'+pagos[index].url_cotizacion" target="blank" v-if="(pagos.url_cotizacion!='')" title="Ver voucher">
 														<i class="material-icons remove_red_eye">remove_red_eye</i></a>
 													</td>
@@ -418,14 +544,16 @@ k<th:block th:fragment="body">
 												  <tr class="table-success">
 													  <th colspan="2" class="text-center">Monto total a pagar</th>
 													  <td >
-															<div class="input-group" style="display: flex">
-																<div class="input-group-prepend mb-2" style="display: inline-flexbox">
-																	<span class="input-group-text text-primary">$</span>
+															<div class="input-group">
+																<span class="input-group-addon">
+																	<i class="material-icons">attach_money</i>
+																</span>
+																<div class="form-line">
+																	<input type="number" readonly="readonly" class="form-control text-center" 
+																		name="txtTotalgasto"
+																		:value="totalgasto"/>
 																</div>
-																<input readonly="readonly" style="display: inline-flex" type="number" 
-																:value="totalgasto" class="form-control" aria-label="Amount (to the nearest dollar)"
-																name="txtTotalgasto"/>
-															</div>
+															</div>		
 														 </td>
 												  </tr>
 												</tbody>
@@ -433,8 +561,8 @@ k<th:block th:fragment="body">
 										</div>
 									</div>
 									<div class="modal-footer">
-										<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
-										<button type="submit" class="btn btn-primary waves-effect">Guardar	</button>
+										<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Descartar Cambios</button>
+										<button type="submit" class="btn btn-primary waves-effect">Guardar Pagos</button>
 									</div>
 								</form>
 							</div>
@@ -468,8 +596,19 @@ k<th:block th:fragment="body">
 							<input type="hidden" name="txtIdServicioProveedor" :value="proveedor.id_servicio_proveedor"/>
 							<input type="hidden" name="txtIdServicio" :value="proveedor.id_servicio"/>
 							<td v-text="proveedor.nombre_proveedor"></td>
-							<td><input type="number" class="form-control" placeholder="Costo Servicio" name="txtPrecio"/></td>
-							<td><textarea name="txtObserProv" id="txtObserProv" cols="30" rows="2" class="form-control"></textarea></td>
+							<!-- <td><input type="number" class="form-control txtPrecio" placeholder="Costo Servicio" name="txtPrecio"/></td> -->
+							<td>
+								<div class="input-group">
+									<span class="input-group-addon">
+										<i class="material-icons">attach_money</i>
+									</span>
+									<div class="form-line">
+										<input type="number" class="form-control txtPrecio" 
+											name="txtPrecio"/>
+									</div>
+								</div>		
+							</td>
+							<td><textarea name="txtObserProv" id="txtObserProv" cols="40" rows="2" class="form-control" style="overflow: auto;resize: none;"></textarea></td>
 							<td>
 								<label class="text-primary">
 									<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Cotizacion" >cloud_upload</i>
@@ -477,7 +616,7 @@ k<th:block th:fragment="body">
 									name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .png, .jpg"/>
 								</label>
 								<!-- <input type="file" id="fileProveedor" name="ficheroCotizacion" class="custom-file-input" multiple="multiple"/> -->
-								<a href="#" title="Eliminar Proveedor" class="EliminarActivo"><i class="material-icons delete">delete</i></a>
+								<a href="#" title="Eliminar Proveedor" class="EliminarActivo" onclick="deleteRow(this)"><i class="material-icons delete">delete</i></a>
 							</td>
 						</tr>
 					</tbody>
@@ -508,12 +647,20 @@ k<th:block th:fragment="body">
 								<input type="hidden" name="txtIdServicioProveedor" :value="proveedor.id_servicio_proveedor"/>
 								<input type="hidden" name="txtIdServicioProveedorManto" :value="proveedor.id_servicio_proveedor_manto" v-if="proveedor.id_servicio_proveedor_manto"/>
 								<input type="hidden" name="txtServicioProveedorNuevo" value="" v-else="!proveedor.id_servicio_proveedor_manto"/>
-	
 								<td v-text="proveedor.nombre_proveedor"></td>
-								<td>$ <input type="number" class="form-control txtPrecio" placeholder="Costo Servicio" name="txtPrecio" :value="proveedor.precio_servicio_proveedor"/></td>
-								<td><textarea name="txtObserProv" id="txtObserProv" cols="30" rows="3" class="form-control" :value="proveedor.observaciones" style="overflow: auto;resize: none;"></textarea></td>
 								<td>
-	
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="material-icons">attach_money</i>
+										</span>
+										<div class="form-line">
+											<input type="number" class="form-control txtPrecio" 
+												name="txtPrecio" :value="proveedor.precio_servicio_proveedor"/>
+										</div>
+									</div>		
+								</td>
+								<td><textarea name="txtObserProv" id="txtObserProv" cols="30" rows="2" class="form-control" :value="proveedor.observaciones" style="overflow: auto;resize: none;"></textarea></td>
+								<td>
 									<label class="text-primary">
 										<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Cotizacion" >cloud_upload</i><input type="file" id="fileProveedor"
 										name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .png, .jpg"/>
@@ -534,6 +681,78 @@ k<th:block th:fragment="body">
 			</div>
 		</div>
 	</template>
+
+
+	<!--Component for validator proveedor-servicio-->
+	<template id="templateproveedor3" >
+		<div class="row-clearfix ">
+			<div class="col-md-12">						
+				<h3 v-for="nombreservicio in idservicio.slice(0,1)" class="text-center text-success">{{nombreservicio.nombre_servicio}}</h3>
+				<hr class="btn-primary"/>
+				<!-- <table class="table table-borderless table-responsive table-sm"> -->
+				<div class="table-responsive-md table-responsive-lg table-responsive-xl">
+					<table class="table table-bordered table-striped table-hover">
+						<thead class="bg-primary">
+							<tr>
+								<th scope="col">Proveedor</th>
+								<th scope="col">Precio</th>
+								<th scope="col">Observaciones</th>
+								<th scope="col">Ver Cotización</th>
+								<th scope="col"> Validar Proveedor</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="proveedor in idservicio" name="txtProveedor">
+								<input type="hidden" name="txtIdServicioProveedor" :value="proveedor.id_servicio_proveedor"/>
+								<input type="hidden" name="txtNombre_proveedor" :value="proveedor.nombre_proveedor"/>
+								<input type="hidden" name="txtIdServicioProveedorManto" :value="proveedor.id_servicio_proveedor_manto" v-if="proveedor.id_servicio_proveedor_manto"/>
+								<td v-text="proveedor.nombre_proveedor"></td>
+								<td>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="material-icons">attach_money</i>
+										</span>
+										<div class="form-line">
+											<input type="number" class="form-control txtPrecio" 
+												name="txtPrecio" :value="proveedor.precio_servicio_proveedor" disabled="true"/>
+										</div>
+									</div>		
+								</td>
+								<td><textarea name="txtObserProv" id="txtObserProv" cols="30" rows="2" class="form-control" :value="proveedor.observaciones" 
+									style="overflow: auto;resize: none;" disabled="true"></textarea></td>
+								<td>
+									<a :href="'http://localhost:8080/WebSar/ficheros/ProveedorCotizacion/'+proveedor.url_cotizacion" target="blank" v-if="(proveedor.url_cotizacion!='')" title="Ver cotización">
+									<i class="material-icons remove_red_eye">remove_red_eye</i></a>
+								</td>
+
+								<!-- <td>
+									<div class="custom-control custom-checkbox">
+										<input type="checkbox" name ="txtServicio" class="custom-control-input checkServicio" :id="service.id_servicio"
+											:precio_estimado="service.precio_estimado" :value="service.id_servicio" 
+											v-on:click="ObtenerIdServicio(service.id_servicio)"/>
+										<label class="custom-control-label" :for="service.id_servicio"></label>
+									</div>
+								</td> -->
+
+
+
+								<td>
+
+									<div class="custom-control custom-checkbox">
+										<input type="hidden" :value="proveedor.aceptado" name="txtAceptado"/>
+										<input type="checkbox" class="custom-control-input checkAceptado" :id="'acept'+proveedor.id_servicio_proveedor"
+											v-model="proveedor.aceptado"/>
+										<label class="custom-control-label" :for="'acept'+proveedor.id_servicio_proveedor" readonly="readonly"></label>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</template>
+
 
 
 </th:block>
@@ -573,71 +792,127 @@ k<th:block th:fragment="body">
 							        	return params;
 		    }
 		});
-		const formatter = new Intl.NumberFormat('en-US', {
-			style: 'currency',
-			currency: 'USD',
-			minimumFractionDigits: 2
-		})
-
-			formatter.format(document.getElementsByClassName('txtPrecio'));
-			console.log(document.getElementsByClassName('txtPrecio'))
 
 		function edit(param){			
 			detalleActivo.editActivoManto(param);
 		}
 		$(".pagar").ready(function(){
-			detalleActivo.pagar();
+			// detalleActivo.pagar();
 		});
 		function pagar(param){
 			detalleActivo.getdataPagar(param);
 		}
 
+		function validacionMantenimiento(param){
+			detalleActivo.validacion(param);
+		}
+		function sendValidate(param){
+			detalleActivo.sendvalidation(param);
+		}
 
 		function accionesFormatter(value, row, index) {
 			//urlDelete = [[@{/controlPanel/activos/}]] + row.id_activo_mobiliario + '/delete';
-		    return [
+			if(row.estatusmanto==2){
+				return[
 				'<a href="#" title="Editar Mantenimiento" class="EditarManto" data-toggle="modal" data-target="#modalEditActivoManto" onclick="edit('+row.idDetalleMant+');" role="button">',
 					'<i class="material-icons edit">edit</i>',
-					'</a>',
-				'<a href="#" title="Imprimir" class="ImprimirManto">',
-					'<i class="material-icons print">print</i>',
-				'</a>',
-				'<a href="#" title="Historial" class="DetalleManto">',
-					'<i class="material-icons format_list_numbered">format_list_numbered</i>',
 				'</a>',
 				'<a href="#" title="Pagar" class="Pagar" onclick="pagar('+row.idDetalleMant+');" data-toggle="modal" data-target="#modalpago" role="button">',
 					'<i class="material-icons attach_money">attach_money</i>',
+				'</a>',
+				].join(' ');
+			}else if(row.estatusmanto==3){
+				return[
+				'<a href="#" title="Deshabilitado">',
+					'<i class="material-icons edit" style="color:grey">edit</i>',
+				'</a>',
+				'<a href="#" title="Deshabilitado">',
+					'<i class="material-icons attach_money" style="color:grey">attach_money</i>',
+				'</a>',
+				'<a href="#" title="Enviar a validación">',
+					'<i class="material-icons send" style="color:grey">send</i>',
+				'</a>'
+				].join(' ');
+			}else if(row.estatusmanto==1){
+				return [
+					'<a href="#" title="Editar Mantenimiento" class="EditarManto" data-toggle="modal" data-target="#modalEditActivoManto" onclick="edit('+row.idDetalleMant+');" role="button">',
+						'<i class="material-icons edit">edit</i>',
+					'</a>',
+					'<a href="#" title="Pagar">',
+						'<i class="material-icons attach_money" style="color:grey">attach_money</i>',
+					'</a>',
+					'<a href="#" title="Enviar a validación" onclick="sendValidate('+row.idDetalleMant+')" >',
+						'<i class="material-icons send">send</i>',
 					'</a>'
-			].join(''); 
+				].join('');
+			} else{
+				return [
+					'<a href="#" title="Editar Mantenimiento" class="EditarManto" data-toggle="modal" data-target="#modalEditActivoManto" onclick="edit('+row.idDetalleMant+');" role="button">',
+						'<i class="material-icons edit">edit</i>',
+						'</a>',
+					'<a href="#" title="Pagar" class="Pagar" onclick="pagar('+row.idDetalleMant+');" data-toggle="modal" data-target="#modalpago" role="button">',
+						'<i class="material-icons attach_money">attach_money</i>',
+					'</a>',
+					'<a href="#" title="Enviar a validación" onclick="sendValidate('+row.idDetalleMant+')" >',
+						'<i class="material-icons send">send</i>',
+					'</a>'
+				].join(''); 
+			}
+
+		}
+		/*
+			'<a href="#" title="Historial" class="DetalleManto">',
+				'<i class="material-icons format_list_numbered">format_list_numbered</i>',
+			'</a>',
+		*/
+
+		function deleteRow(btn) {
+			swal({
+					title	: "Eliminar",
+					text	: "Estas seguro de eliminar proveedor.",
+					type	: "warning",
+					showCancelButton: true,
+					cancelButtonText: 'Cancelar',
+					confirmButtonText: 'Eliminar',
+				}).then((result)=>{
+					if(result){
+						var row = btn.parentNode.parentNode;
+						 row.parentNode.removeChild(row);
+					}
+				}).catch(swal.noop);
 		}
 
 		function estatusFormatter(value, row, index){
 			var lblEstatus='';
 			switch(row.estatusmanto){
 				case 1:
-					lblEstatus ='<a type="button" class="btn bg-blue waves-effect" >Solicitado</a>';
+					lblEstatus ='<a type="button" class="btn bg-blue waves-effect">Solicitud</a>';
 					break;
 				case 2:
-					lblEstatus ='<a type="button" class="btn bg-green waves-effect" >Autorizado</a>';
+					lblEstatus ='<a type="button" class="btn bg-green waves-effect">Autorizado</a>';
 					break;
 				case 3:
-					lblEstatus ='<a type="button" class="btn bg-purple waves-effect" >Pagado</a>';
+					lblEstatus ='<a type="button" class="btn bg-purple waves-effect">Pagado</a>';
 					break;
 				case 4:
-					lblEstatus ='<a type="button" class="btn bg-red waves-effect" >Cancelado</a>';
+					lblEstatus ='<a type="button" class="btn bg-red waves-effect">Cancelado</a>';
 					break;
 				case 5:
-					lblEstatus ='<a type="button" class="btn bg-red waves-effect" >Rechazado</a>';
+					lblEstatus ='<a type="button" class="btn bg-red waves-effect">Rechazado</a>';
 					break;
 				case 6:
-					lblEstatus ='<a type="button" class="btn bg-orange waves-effect" >Corrección</a>';
+					lblEstatus ='<a type="button" class="btn bg-orange waves-effect">Corrección</a>';
+					break;
+				case 7:
+					lblEstatus ='<a type="button" class="btn bg-green waves-effect" style="color:blue;">En validación</a>';
 					break;
 				default:
-					lblEstatus='<a type="button" class="btn bg-green waves-effect" >procesando</a>';
+					lblEstatus='<a type="button" class="btn bg-green waves-effect">procesando</a>';
 					break;
 			}
 			return lblEstatus;
 		}
+		
 		function gastoDetailFormatter(index, row) {
 			return  '$ '+row.gasto_aproximado
 		}
@@ -783,6 +1058,15 @@ k<th:block th:fragment="body">
 		this.detalleActivo.urlcompletofichero="";
 		this.detalleActivo.gastoAproximado=[];
 	}
+	function cancelValidator(){
+		$('#formModalValidacion')[0].reset();
+		this.detalleActivo.editproveedorServicio=[];
+		this.detalleActivo.editdatafiltrado=[];
+		this.detalleActivo.editDetalleManto={};
+		this.detalleActivo.urlcompletofichero="";
+		this.detalleActivo.gastoAproximado=[];
+		this.detalleActivo.checkdatafiltrado=[];
+	}
 	function cancelNew(){
 		$('#formActivoManto')[0].reset();
 		this.detalleActivo.proveedorServicio=[];
@@ -794,6 +1078,7 @@ k<th:block th:fragment="body">
 		this.detalleActivo.newDetalle.titulo="";
 		this.detalleActivo.urlfichero="";
 		this.detalleActivo.gastoAproximado=[];
+		this.detalleActivo.servicio=[];
 
 		// var canvasnuevo = document.getElementById( 'canvasnew' ),
         //     n = canvasnuevo.getContext( '2d' ),
@@ -818,10 +1103,28 @@ k<th:block th:fragment="body">
 		cancelNew();
 	});
 
+	$('#modalValidacion').on('hidden.bs.modal',function(){
+		cancelValidator();
+	});
+
 	/* $('#modalEditActivoManto').on('shown.bs.modal', function () {
 	 		alert("ejecutando");	
 	 		this.detalleActivo.servicio()
 		})*/
+
+$(".txtPrecio").on({
+  "focus": function(event) {
+    $(event.target).select();
+  },
+  "keyup": function(event) {
+    $(event.target).val(function(index, value) {
+      return value.replace(/\D/g, "")
+        .replace(/([0-9])([0-9]{2})$/, '$1.$2')
+        .replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ",");
+    });
+  }
+});
+
 
     </script>
 

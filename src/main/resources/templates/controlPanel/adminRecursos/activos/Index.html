@@ -163,7 +163,7 @@
 										</span>
 										<div class="form-line" >
 											<input type="text" name="txtObsolecencia" id="txtObsolecencia" class="form-control txtObsolecencia" 
-											placeholder="Fecha de obsolencia"/>
+											placeholder="Campo opcional"/>
 										</div>
 									</div>
 								</div>
@@ -247,7 +247,7 @@
 
 								<div class="col-md-4">
 									<div class="form-group">
-										<p><b>Almacenamiento Externa</b></p>
+										<p><b>Almacenamiento Externa (GB)</b></p>
 										<div class="form-line">
 											<input type="number" name="txtAlmacenamientoExterna" class="form-control" 
 											placeholder="Almacenamiento Externo" v-model="newActivo.almacenamientoExterno"/>
@@ -386,7 +386,7 @@
 										<p><b>Periodo Mant. Estimado</b></p>
 										<div class="form-line">
 											<input type="number" name="txtPeridoMantenimiento" class="form-control" 
-											placeholder="Periodo de mant. estimado en dias" v-model="newActivo.periodo_mant_estimado"/>
+											placeholder="Estimación en dias" v-model="newActivo.periodo_mant_estimado"/>
 										</div>
 									</div>
 								</div>
@@ -570,7 +570,7 @@
 											</span>
 											<div class="form-line" >
 												<input type="text" name="txtObsolecencia" class="form-control txtObsolecencia" 
-												placeholder="Fecha de obsolencia" :value="editData.fecha_obsolescencia"/>
+												placeholder="Campo opcional" :value="editData.fecha_obsolescencia"/>
 											</div>
 										</div>
 									</div>
@@ -654,7 +654,7 @@
 	
 									<div class="col-md-4">
 										<div class="form-group">
-											<p><b>Almacenamiento Externa</b></p>
+											<p><b>Almacenamiento Externa (GB)</b></p>
 											<div class="form-line">
 												<input type="number" name="txtAlmacenamientoExterna" class="form-control" 
 												placeholder="Almacenamiento Externo" v-model="editData.almacenamientoExterno"/>
@@ -793,7 +793,7 @@
 											<p><b>Periodo Mant. Estimado</b></p>
 											<div class="form-line">
 												<input type="number" name="txtPeridoMantenimiento" class="form-control" 
-												placeholder="Periodo de mant. estimado en dias" v-model="editData.periodomantenimiento"/>
+												placeholder="Estimación en dias" v-model="editData.periodomantenimiento"/>
 											</div>
 										</div>
 									</div>
