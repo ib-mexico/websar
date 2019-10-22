@@ -1,13 +1,5 @@
 package com.ibmexico.services;
 
-import com.ibmexico.entities.BienActivoEntity;
-import com.ibmexico.entities.BienActivoFicheroEntity;
-import com.ibmexico.entities.UsuarioEntity;
-import com.ibmexico.libraries.DataTable;
-import com.ibmexico.libraries.notifications.ApplicationException;
-import com.ibmexico.libraries.notifications.EnumException;
-import com.ibmexico.repositories.IBienActivoRepository;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,6 +11,14 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.transaction.Transactional;
+
+import com.ibmexico.entities.BienActivoEntity;
+import com.ibmexico.entities.BienActivoFicheroEntity;
+import com.ibmexico.entities.UsuarioEntity;
+import com.ibmexico.libraries.DataTable;
+import com.ibmexico.libraries.notifications.ApplicationException;
+import com.ibmexico.libraries.notifications.EnumException;
+import com.ibmexico.repositories.IBienActivoRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -59,6 +59,7 @@ public class BienActivoService {
                 bienActivo.setModificacionUsuario(objUsuarioCreacion);
                 bienActivo.setEstatus(true);
                 bienActivo.setFechaUltimoMantenimiento(null);
+                bienActivo.setEnMantenimiento(false);
                 //
                  Activorep.save(bienActivo);
                 if(arrFiles!=null){
@@ -117,6 +118,7 @@ public class BienActivoService {
             UsuarioEntity objUsuarioCreacion=sessionService.getCurrentUser();
             bienActivo.setModificacionFecha(ldtNow);
             bienActivo.setModificacionUsuario(objUsuarioCreacion);
+            bienActivo.setEnMantenimiento(false);
             // bienActivo.setEstatus(false);
             Activorep.save(bienActivo);
         }else{
@@ -198,10 +200,8 @@ public class BienActivoService {
             .add("id_usuario", lstActivo.getUsuario()!=null ? lstActivo.getUsuario().getIdUsuario() : 0 )
 
             .add("observaciones", lstActivo.getObservaciones()!=null ? lstActivo.getObservaciones() : "")      
-            );
-            
+            );     
 		jsonReturn.add("Activos", jsonRows);
-		
 		return jsonReturn.build();
     }
 
@@ -219,11 +219,26 @@ public class BienActivoService {
         jsonReturn.add("rows", jsonRows);
         return jsonReturn.build();
     }
-    /*OBTENER LA LISTA DE ACTIVOS MEDIANTE EL ID DEL TIPO DE ACTIVO */
+    /*OBTENER LA LISTA DE ACTIVOS MEDIANTE EL ID DEL TIPO DE ACTIVO Y QUE NO ESTEN EN MANTO */
     public JsonObject jsonRecursoActivoIdCatalogo(int idCatalogoActivo){
         JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
         JsonArrayBuilder jsonRows=Json.createArrayBuilder();
         List<BienActivoEntity> lstRecursoIdCatalogo=Activorep.findByIdCatalogoActivo(idCatalogoActivo);
+        lstRecursoIdCatalogo.forEach((item)->{
+            jsonRows.add(Json.createObjectBuilder()
+            .add("id_recurso_activo", item.getIdRecursoActivo())
+            .add("descripcion_completa", item.getNumeroEconomico()+'-'+item.getMarca())
+            );
+        });
+        jsonReturn.add("rows", jsonRows);
+        return jsonReturn.build();
+    }
+    
+    /*Todos los recursos sin condicionarla */
+       public JsonObject jsonRecursoActivoAll(int idCatalogoActivo){
+        JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
+        JsonArrayBuilder jsonRows=Json.createArrayBuilder();
+        List<BienActivoEntity> lstRecursoIdCatalogo=Activorep.findByIdCatalogoActivoAll(idCatalogoActivo);
         lstRecursoIdCatalogo.forEach((item)->{
             jsonRows.add(Json.createObjectBuilder()
             .add("id_recurso_activo", item.getIdRecursoActivo())

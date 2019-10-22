@@ -56,7 +56,6 @@ public class BienActivoEntity{
     @Column(nullable = true, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
     private BigDecimal costo;
 
-
     @Lob
     @Column(nullable = true)
     private String observaciones;
@@ -182,7 +181,10 @@ public class BienActivoEntity{
 	@JoinColumn(name = "modificacion_id_usuario", nullable = false)
 	private UsuarioEntity modificacionUsuario;
 
-    
+    /**Campo validar si este activo esta en mantenimiento */
+
+    @Column(nullable = true)
+    private Boolean enMantenimiento;
 
 
     public String getMarca() {
@@ -621,6 +623,14 @@ public class BienActivoEntity{
 
     public void setFechaDeMantenimiento(LocalDate fechaDeMantenimiento) {
         this.fechaDeMantenimiento = fechaDeMantenimiento;
+    }
+
+    public Boolean getEnMantenimiento() {
+        return enMantenimiento;
+    }
+
+    public void setEnMantenimiento(Boolean enMantenimiento) {
+        this.enMantenimiento = enMantenimiento;
     }
 
 }

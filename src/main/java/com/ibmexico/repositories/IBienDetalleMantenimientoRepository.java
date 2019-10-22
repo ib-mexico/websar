@@ -43,4 +43,31 @@ public interface IBienDetalleMantenimientoRepository extends JpaRepository<BienD
     // Listado de busqueda mediante la accion search
     @Query("SELECT objDetalleMant FROM BienDetalleMantenimientoEntity objDetalleMant WHERE ( objDetalleMant.observaciones like %?1%) order by objDetalleMant.estatus_recordatorio ASC")
     public abstract List<BienDetalleMantenimientoEntity> findForDataTable(String search, Pageable page);
+
+
+
+
+    /**Querys para consultar los mantenimientos en validacion */
+        //TABLE
+	@Query("SELECT COUNT(objDetalleMant) FROM BienDetalleMantenimientoEntity objDetalleMant WHERE objDetalleMant.activoEstatus.idActivoEstatus=7")	
+	public abstract long countForDataTableValidation();
+				
+    @Query("SELECT objDetalleMant FROM BienDetalleMantenimientoEntity objDetalleMant  WHERE objDetalleMant.finalizado=true AND objDetalleMant.activoEstatus.idActivoEstatus=7")
+    public abstract List<BienDetalleMantenimientoEntity> findForDataTableValidation(Pageable page);
+
+ // Conteo de la busqueda
+    @Query("SELECT COUNT(objDetalleMant) FROM BienDetalleMantenimientoEntity  objDetalleMant WHERE ( objDetalleMant.observaciones like %?1%) AND objDetalleMant.activoEstatus.idActivoEstatus=7")
+    public abstract long countForDataTableValidation(String search);
+
+    // Conteo de la busqueda
+    @Query("SELECT COUNT(objDetalleMant) FROM BienDetalleMantenimientoEntity objDetalleMant WHERE objDetalleMant.activoEstatus.idActivoEstatus=7 AND ( objDetalleMant.observaciones like %?1%) AND CONVERT(objDetalleMant.creacionFecha, DATE) BETWEEN ?2 AND ?3")
+    public abstract long countForDataTableValidation(String search, LocalDate ldFechaInicio, LocalDate ldFechaFin);
+
+    // Lista de busqueda con la funcion LIKE y fechas
+    @Query("SELECT objDetalleMant FROM BienDetalleMantenimientoEntity objDetalleMant WHERE objDetalleMant.activoEstatus.idActivoEstatus=7 AND ( objDetalleMant.observaciones like %?1%) AND CONVERT(objDetalleMant.creacionFecha, DATE) BETWEEN ?2 AND ?3 order by objDetalleMant.estatus_recordatorio ASC")
+    public abstract List<BienDetalleMantenimientoEntity> findForDataTableValidation(String search, LocalDate ldFechaInicio, LocalDate ldFechaFin, Pageable page);
+
+    // Listado de busqueda mediante la accion search
+    @Query("SELECT objDetalleMant FROM BienDetalleMantenimientoEntity objDetalleMant WHERE objDetalleMant.activoEstatus.idActivoEstatus=7 AND ( objDetalleMant.observaciones like %?1%) order by objDetalleMant.estatus_recordatorio ASC")
+    public abstract List<BienDetalleMantenimientoEntity> findForDataTableValidation(String search, Pageable page);
 }

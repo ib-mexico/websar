@@ -1,52 +1,47 @@
 <th:block th:fragment="body">
 	<div id="appCatalogoActivos">
+		<ol class="breadcrumb breadcrumb-bg-red">
+			<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+			<li class="active"><i class="material-icons">public</i> Catalogos Activos</li>
+		</ol>
 
-	<ol class="breadcrumb breadcrumb-bg-red">
-		<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
-		<li class="active"><i class="material-icons">public</i> Catalogos Activos</li>
-	</ol>
-
-	<div class="row clearfix">
-		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-			<div class="card">
-				<div class="header">
-					<h2>CATALOGO DE TIPO ACTIVOS</h2>
-				</div>
-		
-    			<div class="body">
-    				<div class="row clearfix">
-					<!--<div class="row clearfix" th:if="${rolNuevoCliente}">-->
-    					<div class="col-md-4 col-md-offset-8 text-right">
-							<!--th:href="${ {_PATH_} + 'controlPanel/catalogoActivo/create'}" -->
-							<a href="#" role="button" class="btn bg-purple waves-effect" 
-								data-toggle="modal" data-target="#modalNuevaCategoria">
-								<i class="material-icons">add_circle</i> Nuevo Tipo Activo</a>
-    					</div>
-    				</div>
-
-					<div class="table-responsive">
-						<table id="dtActivos" class="table table-bordered table-striped table-hover">
-							<thead>
-								<tr>
-									<th class="col-md-1" data-field="idCatalogoActivo" data-halign="left" data-align="center">ID</th>
-									<th class="col-md-1" data-formatter="accionesFormatter" data-align="center">Acciones</th>
-									<th class="col-md-2" data-formatter="imgFormatter" data-halign="center" data-align="center" data-visible="false">Imagen</th>
-									<th class="col-md-1" data-field="clave" data-halign="left" data-align="center">Clave</th>
-									<th class="col-md-3" data-field="nombre" data-halign="left">Nombre</th>
-									<th class="col-md-4" data-field="descripcion" data-halign="left">Descripci&oacute;n</th>
-									<th class="col-md-1" data-field="fecharegistro" data-halign="left" data-align="center" data-visible="false">Fecha registro</th>
-								</tr>
-							</thead>
-						</table>
+		<div class="row clearfix">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="card">
+					<div class="header">
+						<h2>CATALOGO DE TIPO ACTIVOS</h2>
 					</div>
-					
-    			</div>
-
+					<div class="body">
+						<div class="row clearfix">
+						<!--<div class="row clearfix" th:if="${rolNuevoCliente}">-->
+							<div class="col-md-4 col-md-offset-8 text-right">
+								<!--th:href="${ {_PATH_} + 'controlPanel/catalogoActivo/create'}" -->
+								<a href="#" role="button" class="btn bg-purple waves-effect" 
+									data-toggle="modal" data-target="#modalNuevaCategoria">
+									<i class="material-icons">add_circle</i> Nuevo Tipo Activo</a>
+							</div>
+						</div>
+						<div class="table-responsive-md table-responsive-lg table-responsive-xl">
+							<table id="dtActivos" class="table table-bordered table-striped table-hover">
+								<thead>
+									<tr>
+										<th class="col-md-1" data-field="idCatalogoActivo" data-halign="left" data-align="center">ID</th>
+										<th class="col-md-1" data-formatter="accionesFormatter" data-align="center">Opciones</th>
+										<!-- <th class="col-md-2" data-formatter="imgFormatter" data-halign="center" data-align="center" data-visible="false">Imagen</th> -->
+										<th class="col-md-1" data-field="clave" data-halign="left" data-align="center">Clave Unica</th>
+										<th class="col-md-3" data-field="nombre" data-halign="left">Nombre</th>
+										<th class="col-md-4" data-field="descripcion" data-halign="left">Descripci&oacute;n</th>
+										<th class="col-md-1" data-field="fecharegistro" data-halign="left" data-align="center" data-visible="false">Fecha registro</th>
+									</tr>
+								</thead>
+							</table>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
-	</div>
 
-			<!-- NUEVA COTIZACION -->
+		<!-- NUEVA COTIZACION -->
 		<div class="modal fade" id="modalNuevaCategoria" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
@@ -54,10 +49,8 @@
 						<div class="modal-header">
 							<h4 class="modal-title">Registro Tipo Activo</h4>
 						</div>
-						<!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
 						<div class="modal-body">
 							<div class="row clearfix">
-
 								<div class="col-md-12">
 									<div class="form-group">
 										<p><b>Nombre *</b></p>
@@ -66,7 +59,7 @@
 										</div>
 									</div>
 								</div>
-								
+									
 								<div class="col-md-12">
 									<div class="form-group">
 										<p><b>Clave *</b></p>
@@ -75,15 +68,14 @@
 										</div>
 									</div>
 								</div>
-								
-								<div class="col-md-12">
-									<div class="form-group files color">
+									
+							<!-- <div class="col-md-12">
+								<div class="form-group files color">
 										<p><b>Fichero</b></p>
 										<input id="fichero" type="file" name="fichero" class="form-control-drop"/>
 									</div>
-								</div>
-									
-
+								</div> -->
+										
 								<div class="col-md-12">
 									<div class="form-group">
 										<p><b>Descripci&oacute;n *</b></p>
@@ -92,24 +84,20 @@
 										</div>
 									</div>
 								</div>
-
 							</div>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">CANCELAR</button>
-							<button type="submit" class="btn btn-primary waves-effect">CREAR</button>
-						</div>
-						
+							<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
+							<button type="submit" class="btn btn-primary waves-effect">Crear</button>
+						</div>		
 					</form>
 				</div>
 			</div>
 		</div>
 	</div>
-
-
 </th:block>
-<th:block th:fragment="script">
 
+<th:block th:fragment="script">
 	<script th:src="@{/plugins/vue/vue.js}"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script th:src="@{/assets/js/activos.js}"></script>
@@ -143,7 +131,6 @@
 		    }, onLoadSuccess :function(data){
 				$(".deleteCatalogo").click(function(){
 					var idCatalogoActivo=$(this).attr('data-catalogo');
-
 					swal({
 							title	: "Eliminar Activo",
 							text	: "Se eliminara un activo en el sistema.",
@@ -153,12 +140,11 @@
 							confirmButtonText: 'Eliminar',
 						}).then((result) => {
 							if(result) {
-								
 								$.ajax({
-									url			: [[@{/controlPanel/catalogoActivo/}]] + idCatalogoActivo + '/delete',
-									data		: {
-													idCatalogoActivo : idCatalogoActivo, 
-													[[${_csrf.parameterName}]] : [[${_csrf.token}]]
+									url		: [[@{/controlPanel/catalogoActivo/}]] + idCatalogoActivo + '/delete',
+									data	: {
+												idCatalogoActivo : idCatalogoActivo, 
+												[[${_csrf.parameterName}]] : [[${_csrf.token}]]
 									},							        
 									dataType	: 'json',
 									type		: "POST",
@@ -168,7 +154,7 @@
 											swal(data.titulo, data.mensaje,'success');
 										}
 									},
-									error		: function(e) {
+									error	: function(e) {
 										console.log(e);										
 									}
 								});																													
@@ -181,12 +167,10 @@
 		});
 		
 		function accionesFormatter(value, row, index) {
-			//urlDelete = [[@{/controlPanel/catalogoActivo/}]] + row.idCatalogoActivo + '/delete';
 		    return [
 		        '<a href="#" title="Eliminar" class="deleteCatalogo" data-catalogo="'+row.idCatalogoActivo+'">',
 		        	'<i class="material-icons remove">delete</i>',
 				'</a>'
-				
 			].join(''); 
 		}
 		function imgFormatter(value, row, index){

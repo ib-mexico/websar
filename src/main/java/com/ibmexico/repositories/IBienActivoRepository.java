@@ -17,11 +17,17 @@ public interface IBienActivoRepository extends JpaRepository<BienActivoEntity, S
     public abstract BienActivoEntity findByIdRecursoActivo(int idRecursoActivo);
 
     //listar Activos con la condicion del id del catalogo
-    @Query("SELECT objActivo FROM BienActivoEntity objActivo WHERE objActivo.idActivo.idCatalogoActivo=?1 AND objActivo.estatus=true")
+    @Query("SELECT objActivo FROM BienActivoEntity objActivo WHERE objActivo.idActivo.idCatalogoActivo=?1 AND objActivo.enMantenimiento!=true AND objActivo.estatus=true ")
     public abstract List<BienActivoEntity> findByIdCatalogoActivo(int idCatalogoActivo);
 
+    //listar Activos con la condicion de idCatalogo, y no definir que esten en manto
+    @Query("SELECT objActivo FROM BienActivoEntity objActivo WHERE objActivo.idActivo.idCatalogoActivo=?1 AND objActivo.estatus=true ")
+    public abstract List<BienActivoEntity> findByIdCatalogoActivoAll(int idCatalogoActivo);
+
+
+
     // Listar activos con estatus habilitado
-    @Query("SELECT objActivo FROM BienActivoEntity objActivo WHERE objActivo.estatus=true")
+    @Query("SELECT objActivo FROM BienActivoEntity objActivo WHERE objActivo.estatus=true AND objActivo.enMantenimiento!=true")
     public abstract List<BienActivoEntity> lstCatalogoActivo();
 
 
