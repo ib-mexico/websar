@@ -40,7 +40,7 @@ public class ActivoServicioProveedorService {
             jsonRows.add(Json.createObjectBuilder()
             .add("id_servicio_proveedor", item.getIdServicioProveedor())
             .add("id_servicio", item.getActivoServicio()!=null ? item.getActivoServicio().getIdServicioActivo() : 0)
-            .add("id_proveedor", item.getActivoProveedor()!=null ? item.getActivoProveedor().getIdProveedorServicio() : 0)
+            .add("id_proveedor", item.getActivoProveedor()!=null ? item.getActivoProveedor().getIdProveedor() : 0)
             .add("nombre_proveedor",item.getActivoProveedor().getProveedor()!=null ? item.getActivoProveedor().getProveedor() :"")
             .add("nombre_servicio", item.getActivoServicio()!=null ? item.getActivoServicio().getDescripcion() : "")
             .add("url_cotizacion",url_cotizacion_vacio)

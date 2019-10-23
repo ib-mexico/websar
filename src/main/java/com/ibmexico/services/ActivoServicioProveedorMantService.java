@@ -27,7 +27,6 @@ import com.ibmexico.libraries.notifications.EnumException;
 import com.ibmexico.repositories.IActivoEstatusRepository;
 import com.ibmexico.repositories.IActivoServicioProveedorMantRepository;
 import com.ibmexico.repositories.IActivoServicioProveedorRepository;
-import com.ibmexico.repositories.IActivoVoucherRepository;
 import com.ibmexico.repositories.IBienDetalleMantenimientoRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,10 +52,6 @@ public class ActivoServicioProveedorMantService {
     @Autowired
     @Qualifier("bienDetalleMantenimientoRepository")
     private IBienDetalleMantenimientoRepository bienDetalleMant;
-
-    @Autowired
-    @Qualifier("comprobantes_pagos_servicios")
-    private IActivoVoucherRepository voucheRepo;
 
     @Autowired
     @Qualifier("activo_estatus_repository")
@@ -331,7 +326,7 @@ public class ActivoServicioProveedorMantService {
             .add("url_cotizacion", item.getUrlCotizacion()!=null ? item.getUrlCotizacion() : "")
 
             .add("id_servicio_proveedor", item.getActivoServicioProveedor().getIdServicioProveedor())
-            .add("id_proveedor",item.getActivoServicioProveedor().getActivoProveedor().getIdProveedorServicio())
+            .add("id_proveedor",item.getActivoServicioProveedor().getActivoProveedor().getIdProveedor())
             .add("nombre_proveedor",item.getActivoServicioProveedor().getActivoProveedor().getProveedor())
 
             .add("id_bien_detalle_manto", item.getBienDetalleMant().getIdDetalleMantenimiento())
@@ -364,7 +359,7 @@ public class ActivoServicioProveedorMantService {
             .add("url_cotizacion", item.getUrlCotizacion()!=null ? item.getUrlCotizacion() : "")
 
             .add("id_servicio_proveedor", item.getActivoServicioProveedor().getIdServicioProveedor())
-            .add("id_proveedor",item.getActivoServicioProveedor().getActivoProveedor().getIdProveedorServicio())
+            .add("id_proveedor",item.getActivoServicioProveedor().getActivoProveedor().getIdProveedor())
             .add("nombre_proveedor",item.getActivoServicioProveedor().getActivoProveedor().getProveedor())
 
             .add("id_bien_detalle_manto", item.getBienDetalleMant().getIdDetalleMantenimiento())
