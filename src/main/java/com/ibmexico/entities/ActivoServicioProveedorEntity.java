@@ -21,7 +21,7 @@ public class ActivoServicioProveedorEntity{
 
     @ManyToOne
     @JoinColumn(name="id_proveedor")
-    private ActivoProveedorEntity activoProveedor;
+    private ProveedorEntity activoProveedor;
 
     // @ManyToOne
     // @JoinColumn(name = "id_detallemant")
@@ -43,11 +43,11 @@ public class ActivoServicioProveedorEntity{
         this.activoServicio = activoServicio;
     }
 
-    public ActivoProveedorEntity getActivoProveedor() {
+    public ProveedorEntity getActivoProveedor() {
         return activoProveedor;
     }
 
-    public void setActivoProveedor(ActivoProveedorEntity activoProveedor) {
+    public void setActivoProveedor(ProveedorEntity activoProveedor) {
         this.activoProveedor = activoProveedor;
     }
  

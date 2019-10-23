@@ -1,7 +1,10 @@
 package com.ibmexico.entities;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.ibmexico.configurations.GeneralConfiguration;
@@ -38,6 +42,9 @@ public class ProveedorEntity {
 	@Column(length = 200)
 	private String direccion;
 	
+	@Column(nullable = true, length = 12)
+    private Integer numeroTelefonico;
+
 	@Column(nullable = true, length = 5)
 	private String codigoPostal;	
 	
@@ -61,7 +68,12 @@ public class ProveedorEntity {
 	@Column
 	private boolean eliminado = false;
 	
-	
+
+
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "activoProveedor", cascade = CascadeType.ALL)
+	private List<ActivoServicioProveedorEntity> ActivoServicioProveedor_Proveedor=new ArrayList<ActivoServicioProveedorEntity>();
+  
+
 	
 	//ACCESORS METHODS
 	public int getIdProveedor() {
@@ -183,6 +195,23 @@ public class ProveedorEntity {
 				+ codigoPostal + ", observaciones=" + observaciones
 				+ ", creacionUsuario=" + creacionUsuario.getIdUsuario() + ", creacionFecha=" + creacionFecha + ", modificacionUsuario="
 				+ modificacionUsuario.getIdUsuario() + ", modificacionFecha=" + modificacionFecha + ", eliminado=" + eliminado + "]";
+	}
+
+	public List<ActivoServicioProveedorEntity> getActivoServicioProveedor_Proveedor() {
+		return ActivoServicioProveedor_Proveedor;
+	}
+
+	public void setActivoServicioProveedor_Proveedor(
+			List<ActivoServicioProveedorEntity> activoServicioProveedor_Proveedor) {
+		ActivoServicioProveedor_Proveedor = activoServicioProveedor_Proveedor;
+	}
+
+	public Integer getNumeroTelefonico() {
+		return numeroTelefonico;
+	}
+
+	public void setNumeroTelefonico(Integer numeroTelefonico) {
+		this.numeroTelefonico = numeroTelefonico;
 	}
 	
 	
