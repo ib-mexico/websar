@@ -167,18 +167,18 @@ if(document.getElementById('appActivos')){
 				 }*/
 
 				//VALIDATION DE CATALOGO
-					if(isNaN(this.newActivo.id_catalogo)) {
-						swal("Revisión!", "Debes seleccionar un catalogo para continuar con el registro.", "warning");
-						return response;
-					}
-					if(isNaN(this.newActivo.id_empresa)){
-						swal("Revisión!","Debes seleccionar una empresa para continuar con el registro.","warning");
-						return response;
-					}
-					if(isNaN(this.newActivo.id_departamento)){
-						swal("Revisión!","Eliga un departamento para continuar","warning");
-						return response;
-					}
+				if(isNaN(this.newActivo.id_catalogo)) {
+					swal("Revisión!", "Debes seleccionar un catalogo para continuar con el registro.", "warning");
+					return response;
+				}
+				if(isNaN(this.newActivo.id_empresa)){
+					swal("Revisión!","Debes seleccionar una empresa para continuar con el registro.","warning");
+					return response;
+				}
+				if(isNaN(this.newActivo.id_departamento)){
+					swal("Revisión!","Eliga un departamento para continuar","warning");
+					return response;
+				}
 
 				var fileInput= document.getElementById('idFileActivo').files.length;
 				if(!fileInput){

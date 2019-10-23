@@ -55,6 +55,7 @@ if (document.getElementById('appDetalle')) {
             estatus:[],
             changeestatus:'',
             pagos:[],
+            pagados:''
         },
         methods: {
             getFormData() {
@@ -74,6 +75,34 @@ if (document.getElementById('appDetalle')) {
                 $('.cmbRecurso').selectpicker('refresh');
                 $('.cmbRecurso2').selectpicker('refresh');
             },
+            validatevalidation(){
+                var response=false
+                var checkboxes = document.getElementsByName('txtAcept');
+                    var vals = [];
+                    for (var i=0, n=checkboxes.length;i<n;i++) 
+                    {
+                        if (checkboxes[i].checked) 
+                        {
+                            vals += checkboxes[i].value;
+                        }
+                    }
+                    if(vals.length<=0){
+                        swal("Revisión!","Deberia de validar al menos un proveedor","warning");
+                        return response;
+                    }
+
+                    if(!this.changeestatus){
+                        swal("Revisión!","Selecciona en que condiciones valida, este servicio", "warning");
+                        return response;
+                    }
+
+                    var comentarios=document.getElementById("txtComentarios");
+                    if(!comentarios.value){
+                        swal("Revisión!","Describe el motivo de su decision","warning");
+                        return response;
+                    }
+                return response=true;
+            },
             validateForm() {
                 var response=false;
 
@@ -90,7 +119,7 @@ if (document.getElementById('appDetalle')) {
 					return response;
                 }
 
-                var checkboxes = document.getElementsByName('txtServicio');
+                var checkboxes = document.getElementsByClassName('checkServicio');
                 var vals = [];
                 for (var i=0, n=checkboxes.length;i<n;i++) 
                 {
@@ -232,6 +261,13 @@ if (document.getElementById('appDetalle')) {
                             }
                         }
                     }
+                    //end for
+                    /*Delete gasto if unchecked */
+                    for (var i = 0; i < this.gastoAproximado.length; i++) {
+                        if (this.gastoAproximado[i].id_servicio===index) {
+                            this.gastoAproximado.splice(i,1);
+                        }
+                    }
                 }
             },
             createActivoManto() {
@@ -333,21 +369,7 @@ if (document.getElementById('appDetalle')) {
                 $('.cmbRecurso2').selectpicker('val', this.editDetalleManto.id_bien_activo);
                 $('.cmbRecurso2').selectpicker('render');
                 this.loadModal();
-                /**Formateando precio */
-                $(".txtPrecio").on({
-                    "focus": function(event) {
-                        $(event.target).select();
-                    },
-                    "keyup": function(event) {
-                        $(event.target).val(function(index, value) {
-                        return value.replace(/\D/g, "")
-                            .replace(/([0-9])([0-9]{2})$/, '$1.$2')
-                            .replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ",");
-                        });
-                    }
-                });
             },
-
 
             async validacion(idDetalleManto) {
                 var formModalValidacion = document.getElementById('formModalValidacion');
@@ -412,34 +434,36 @@ if (document.getElementById('appDetalle')) {
            ,
 /*----------------------------------------------------------------------------------------------------------------------*/
             UpdateValidacion() {
-                var formModalValidacion = document.getElementById('formModalValidacion');
-                var formModalValidacionData = new FormData(formModalValidacion);
-                var url = host + 'DetalleMant/'+this.editDetalleManto.id_detalle_manto+'/validate'  ;
-                axios.post(url, formModalValidacionData).then(resp => {
-                    if (resp.status == 200 && resp.data.respuesta) {
-                            $("#formModalValidacion")[0].reset();
-                            $("#modalValidacion").modal("hide");
-                            this.editDetalleManto={};
-                            this.editdatafiltrado=[];
-                            this.checkdatafiltrado=[];
-                                //Edicion ActivoManto.
-                                this.recursoActivo = [],
-                                this.servicio = [],
-                                this.fichero = [],
-                                this.proveedorServicio = [],
-                                this.datafiltrado = [],
-                                this.gastoAproximado=[];
-                        
-                        swal(resp.data.titulo, resp.data.mensaje, "success");
-                        $("#dtDetalle").bootstrapTable('refresh');
-                    }else{
-                        console.log(response);
-                        swal(resp.data.titulo, resp.data.mensaje, "error");
-                    }
-                }).catch(error => {
-                        swal("Algo malo pasó!", error.resp.data, "error");
-                        console.log(error);
-                    });
+                if(this.validatevalidation()){
+                    var formModalValidacion = document.getElementById('formModalValidacion');
+                    var formModalValidacionData = new FormData(formModalValidacion);
+                    var url = host + 'DetalleMant/'+this.editDetalleManto.id_detalle_manto+'/validate'  ;
+                    axios.post(url, formModalValidacionData).then(resp => {
+                        if (resp.status == 200 && resp.data.respuesta) {
+                                $("#formModalValidacion")[0].reset();
+                                $("#modalValidacion").modal("hide");
+                                this.editDetalleManto={};
+                                this.editdatafiltrado=[];
+                                this.checkdatafiltrado=[];
+                                    //Edicion ActivoManto.
+                                    this.recursoActivo = [],
+                                    this.servicio = [],
+                                    this.fichero = [],
+                                    this.proveedorServicio = [],
+                                    this.datafiltrado = [],
+                                    this.gastoAproximado=[];
+                            
+                            swal(resp.data.titulo, resp.data.mensaje, "success");
+                            $("#dtDetalle").bootstrapTable('refresh');
+                        }else{
+                            console.log(response);
+                            swal(resp.data.titulo, resp.data.mensaje, "error");
+                        }
+                    }).catch(error => {
+                            swal("Algo malo pasó!", error.resp.data, "error");
+                            console.log(error);
+                        });
+                }
             },
 /*----------------------------------------------------------------------------------------------------------------*/
             async getdataPagar(idDetalleManto){
@@ -474,6 +498,14 @@ if (document.getElementById('appDetalle')) {
                         time:false
                     });
                 });
+                /**Definir las opciones dinamicas de pago */
+                    let totalpagado=false;
+                    this.pagos.forEach(element => {
+                        let status=(element.pagado);
+                        totalpagado=status;
+
+                    });
+                    this.pagados=totalpagado;
             },
 
             PagarServicios(){
@@ -484,6 +516,7 @@ if (document.getElementById('appDetalle')) {
                         if (response.status == 200 && response.data.respuesta) {
                             $("#formModalPago")[0].reset();
                             $("#modalpago").modal("hide");
+                            this.pagados='';
                             // this.newDetalle.id_activo_mobiliario = '';
                             //     this.newDetalle.id_catalogo = '';
                             //     this.newDetalle.observaciones = '';
@@ -497,7 +530,8 @@ if (document.getElementById('appDetalle')) {
                             //     this.proveedorServicio = [];
                             //     this.datafiltrado = [];
                             //     this.urlcompletofichero='';
-                                swal(response.data.titulo, response.data.mensaje, "success");
+                            this.pagados='';
+                            swal(response.data.titulo, response.data.mensaje, "success");
                             $("#dtDetalle").bootstrapTable('refresh');
                         } else {
                             console.log(response);

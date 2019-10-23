@@ -20,7 +20,6 @@ import javax.transaction.Transactional;
 
 import com.ibmexico.configurations.GeneralConfiguration;
 import com.ibmexico.entities.ActivoServicioProveedorMantEntity;
-import com.ibmexico.entities.ActivoVoucherEntity;
 import com.ibmexico.entities.BienDetalleMantenimientoEntity;
 import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.libraries.notifications.ApplicationException;
@@ -234,32 +233,30 @@ public class ActivoServicioProveedorMantService {
     @Transactional
     public void PagoServicioProveedor(String txtFechaPago, int idProveedorServicio, MultipartFile file, int DetalleManto){
         if (txtFechaPago!=null) {
-            ActivoVoucherEntity objVoucher=new ActivoVoucherEntity();
+            // ActivoVoucherEntity objVoucher=new ActivoVoucherEntity();
                 ActivoServicioProveedorMantEntity objProveedorServicio=serviProveeMant.findByIdServicioProveedorMant(idProveedorServicio);
                 BienDetalleMantenimientoEntity objDetalleManto=bienDetalleMant.findByIdDetalleMantenimiento(DetalleManto);
-                objVoucher.setFechaPago(LocalDate.parse(txtFechaPago, GeneralConfiguration.getInstance().getDateFormatterNatural()));
-                objVoucher.setActivoServicioProveedor(objProveedorServicio);
+                objProveedorServicio.setFechaPago(LocalDate.parse(txtFechaPago, GeneralConfiguration.getInstance().getDateFormatterNatural()));
+                // objVoucher.setActivoServicioProveedor(objProveedorServicio);
                 LocalDateTime ldtnow =LocalDateTime.now();
-                objVoucher.setCreacionFecha(ldtnow);
-                objVoucher.setModificacionFecha(ldtnow);
+                objProveedorServicio.setCreacionFechaPago(ldtnow);
+                objProveedorServicio.setModificacionFechaPago(ldtnow);
                 if(file!=null){
-                    System.err.println(objVoucher.toString());
-                    this.addComprobante(file,objVoucher);
-                    System.err.println(objVoucher);
+                    this.addComprobante(file,objProveedorServicio);
+                    System.err.println(objProveedorServicio);
                 }
-                voucheRepo.save(objVoucher);
                 objProveedorServicio.setPagado(true);
-                /*Pasar el estatus a pagado*/
                 serviProveeMant.save(objProveedorServicio);
+                /*Pasar el estatus a pagado*/
+                // serviProveeMant.save(objProveedorServicio);
                 objDetalleManto.setActivoEstatus(activoEstatusRepo.findByIdActivoEstatus(3));
                 bienDetalleMant.save(objDetalleManto);
-                
             }
         }
     
 
     @Transactional
-    public void addComprobante(MultipartFile voucher, ActivoVoucherEntity objVoucher){
+    public void addComprobante(MultipartFile voucher, ActivoServicioProveedorMantEntity objVoucher){
         System.err.println("method aaddComprobante");
         if(voucher!=null && !voucher.isEmpty()){
             System.err.println(voucher);
@@ -273,7 +270,7 @@ public class ActivoServicioProveedorMantService {
                         if (arrNombreFichero.length >= 2) {
                             ficheroNombre = ficheroNombre + "." + arrNombreFichero[arrNombreFichero.length - 1];
                         }
-                        objVoucher.setUrl_voucher(ficheroNombre);
+                        objVoucher.setUrl_comprobante(ficheroNombre);
                         // voucheRepo.save(objVoucher);
                         this.createComprobante(objVoucher,voucher);
                 }
@@ -283,17 +280,16 @@ public class ActivoServicioProveedorMantService {
         }
     }
     @Transactional
-    public void createComprobante(ActivoVoucherEntity objVoucher, MultipartFile objfile) throws IOException{
+    public void createComprobante(ActivoServicioProveedorMantEntity objVoucher, MultipartFile objfile) throws IOException{
         URL urlPath= this.getClass().getResource("/");
         if (objVoucher!=null) {
-            if (objVoucher.getUrl_voucher()!="") {
+            if (objVoucher.getUrl_comprobante()!="") {
                 byte[] bytesFichero=objfile.getBytes();
-                File fileruta=new File(urlPath.getPath()+"static/ficheros/Comprobantes");
+                File fileruta=new File(urlPath.getPath()+"static/ficheros/Comprobantes/");
                 if(!fileruta.exists()){
                     fileruta.mkdirs();
                 }
-                try (BufferedOutputStream buffStream=new BufferedOutputStream(new FileOutputStream(new File(urlPath.getPath()+"static/ficheros/Comprobantes/")
-                +objVoucher.getUrl_voucher()))) {
+                try (BufferedOutputStream buffStream=new BufferedOutputStream(new FileOutputStream(new File(urlPath.getPath()+"static/ficheros/Comprobantes/"+objVoucher.getUrl_comprobante())))) {
                     buffStream.write(bytesFichero);
                 } catch (Exception e) {
                     throw new ApplicationException(EnumException.ACTIVO_FICHEROS_ADD_FILE_003);
@@ -378,7 +374,8 @@ public class ActivoServicioProveedorMantService {
             .add("nombre_tipo_activo", item.getBienDetalleMant().getBienActivo().getIdActivo().getNombre())
             .add("aceptado",item.isAceptado())
             .add("pagado", item.isPagado())
-
+            .add("url_comprobante", item.getUrl_comprobante()!=null ? item.getUrl_comprobante() : "")
+            .add("fechapago", item.getFechaPagoNatural().equals(null) ? "" : item.getFechaPagoNatural())
             );
         });
         jsonReturn.add("aceptado", jsonRows);

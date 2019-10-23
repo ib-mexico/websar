@@ -261,6 +261,8 @@ public class BienDetalleMantenimientoService{
             .add("id_tipo_activo", lstBienDetalleMant.getBienActivo().getIdActivo().getIdCatalogoActivo())
             .add("clave_unica", lstBienDetalleMant.getBienActivo().getNumeroEconomico())
             .add("estatusManto", lstBienDetalleMant.getActivoEstatus().getIdActivoEstatus())
+            .add("nombrestatus", lstBienDetalleMant.getActivoEstatus().getNombreEstatus())
+            .add("comentarios",lstBienDetalleMant.getComentario()!=null ? lstBienDetalleMant.getComentario() : "")
         );
         jsonReturn.add("bienDetalleManto", jsonRows);
         return  jsonReturn.build();

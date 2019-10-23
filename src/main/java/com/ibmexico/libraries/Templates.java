@@ -185,6 +185,8 @@ public class Templates {
 	public static final String ACTIVO_EDIT=PATH_CONTROL_PANEL+"adminRecursos/activos/edit";
 
 	
-	//New Activos
+	//New Mantenimiento
 	public static final String DETALLE_INDEX=PATH_CONTROL_PANEL+"adminRecursos/DetalleMantenimiento/Index";
+	public static final String VALIDATION_MANTO=PATH_CONTROL_PANEL+"adminRecursos/DetalleMantenimiento/validacion";
+
 }

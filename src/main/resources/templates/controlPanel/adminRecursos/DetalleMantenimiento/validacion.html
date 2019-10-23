@@ -1,0 +1,450 @@
+k<th:block th:fragment="body">
+	<div id="appDetalle">
+		<ol class="breadcrumb breadcrumb-bg-red">
+		<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+		<li class="active"><i class="material-icons">public</i> Activos en Mantenimiento</li>
+	</ol>
+
+	<div class="row clearfix">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+			<div class="card">
+				<div class="header">
+					<h2>Lista de Activos para Validacion de Mantenimiento</h2>
+				</div>
+		
+    			<div class="body">
+    				<div class="row clearfix">
+    					<!-- <div class="col-md-4 col-md-offset-8 text-right">
+							<a href="#" role="button" class="btn bg-purple waves-effect" 
+								data-toggle="modal" data-target="#modalNuevoActivoManto" v-on:click="loadModal">
+								<i class="material-icons">add_circle</i> Nuevo Mantenimiento</a>
+    					</div> -->
+					</div>
+				<!-- Busqueda en rangos de fecha -->
+    				<div class="row clearfix" id="dtDetalleToolBar">
+    					<div class="col-xs-3 col-sm-3 col-md-3">
+    						<div class="input-group">
+   								<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupDesde'>
+                               		<input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
+	                           	</div>
+							</div>
+    					</div>
+    					<div class="col-xs-3 col-sm-3 col-md-3">
+    						<div class="input-group">
+    							<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupHasta'>
+                               		<input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
+	                           	</div>
+							</div>
+    					</div>					
+					</div>
+
+					<div class="table-responsive-md table-responsive-lg table-responsive-xl">
+						<table id="dtDetalle" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th data-width="10%" data-field="bienActivo" data-sortable="true" data-halign="left" data-align="center">Clave Única</th>
+									<th data-width="10%" data-formatter="accionesFormatter" data-align="center" style="display: inline">Acciones</th>
+									<th data-width="20%" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estado</th>
+									<th data-width="20%" data-field="nombreActivo" data-halign="left" data-align="center" data-visible="true">Nombre recurso</th>
+									<th data-width="20%" data-field="marcaActivo" data-halign="left" data-align="center" data-visible="true">Marca recurso</th>
+									<th data-width="20%" data-field="tipoActivo" data-halign="left" data-align="center" data-visible="true">Clasificación</th>
+
+									<th data-width="10%" data-field="gasto_aproximado" data-detail-formatter="gasto_aproximadoDetailFormatter" data-halign="left">Gasto Aproxímado</th>
+									<th data-width="30%" data-field="diagnostico" data-halign="left">Observaciones</th>
+                                    <th data-width="10%" data-field="creacion_fecha" data-halign="left" data-align="center" data-visible="true">Fecha registro</th>
+                                    <th data-width="10%" data-field="fecha_mantenimiento" data-halign="left" data-align="center" data-visible="true">Fecha Programada</th>
+								</tr>
+							</thead>
+						</table>
+                    </div>
+                    
+					<!-- Validacion de un mantenimiento -->
+					<div class="modal fade" id="modalValidacion" tabindex="-1" role="dialog">
+						<div class="modal-dialog modal-lg" role="document">
+							<div class="modal-content">
+								<form id="formModalValidacion" v-on:submit.prevent="UpdateValidacion" method="POST" role="form" enctype="multipart/form-data">
+									<div class="modal-header">
+										<h4 class="modal-title text-primary bold text-center">Validacion de proveedores</h4>
+									</div>
+									<div class="modal-body">
+
+										<div class="row clearfix">
+											<div class="col-md-6">
+												<b>Tipo de Activo *</b>
+												<div class="input-group">
+													<select class="form-control show-tick cmbCatalogo" name="cmbCatalogo" id="cmbCatalogo" v-model="editDetalleManto.id_tipo_activo" disabled="true">
+														<option value="default" selected="selected">Selecciona un tipo...</option>
+														<option v-for="item in catalogo" :value="item.id_catalogo_activo" :data-subtext="item.nombre">{{ item.nombre }}</option>
+													</select>
+												</div>
+											</div>
+											<div class="col-md-6">
+												<b>Activos *</b>
+												<div class="input-group">	
+														<input type="hidden" :value="editDetalleManto.id_bien_activo" name="cmbRecurso"/>	                            
+													<select class="form-control show-tick cmbRecurso2" name="cmbRecurso2" v-model="editDetalleManto.id_bien_activo"  disabled="true">
+														<option value="default" selected="selected">Selecciona un activo...</option>
+														<option v-for="item in recursoActivo" :value="item.id_recurso_activo">{{ item.descripcion_completa }}</option>
+													</select>
+												</div>
+											</div>
+										</div>
+										<div class="row-clearfix">
+											<div class="col-md-12">
+												<p><b>Descripcion *</b></p>
+												<div class="form-line">
+													<textarea rows="2"  name="txtObservaciones" class="form-control no-resize col-md-6" 
+													placeholder="Defina los diagnosticos el motivo de mandar a mantenimiento" v-model="editDetalleManto.observaciones" readonly="true"></textarea>
+												</div>
+											</div>
+										</div>
+										<div class="row-clearfix">
+											<table class="table table-borderless table-responsive table-sm">
+												<thead class="bg-primary">
+												  <tr>
+													<th scope="col" class="col-md-2">Seleccionados</th>
+													<th scope="col" class="col-md-3">Servicio</th>
+													<th scope="col" class="col-md-2">Precio Estimado</th>
+												  </tr>
+												</thead>
+												<tbody>
+												  <tr v-for="service in servicio">
+													<td>
+													  <div class="custom-control custom-checkbox">
+														  <input type="checkbox" name ="txtServicio" class="custom-control-input checkServicio" :id="'validator'+service.id_servicio"
+															:value="service.id_servicio" v-on:click="ObtenerIdServicioedit(service.id_servicio)" disabled="true"/>
+														  <label class="custom-control-label" :for="'validator'+service.id_servicio"></label>
+													  </div>
+													</td>
+													<td>{{service.descripcion}}</td>
+													<td>$ {{service.precio_estimado}}</td>
+												  </tr>
+												  <tr class="table-success">
+													  	<th colspan="2" class="text-center">Monto total a pagar</th>
+														<td >
+															<div class="input-group">
+																<span class="input-group-addon">
+																	<i class="material-icons">attach_money</i>
+																</span>
+																<div class="form-line">
+																	<input type="number" readonly="readonly" class="form-control text-center" 
+																		name="txtTotalgasto"
+																		:value="totalgasto"/>
+																</div>
+															</div>		
+														</td>
+												  </tr>
+
+												</tbody>
+											  </table>
+										</div>
+									
+									<div v-if="checkdatafiltrado.length!=null">
+										<proveedor3 v-for="(item, index) in checkdatafiltrado"
+											:key="index"
+											:idservicio="item"
+											>
+										</proveedor3>
+									</div>
+
+									<div class="row-clearfix">
+										<div class="col-md-6">
+											<h4 class="text-primary text-center">Detalles de mantenimiento</h4>
+											<div class="text-center">
+												<canvas id="canvasedit" style="background:#fff; border:1px solid #ccc; width:350px; height:350px;" class="rounded mx-auto d-block img-fluid"></canvas>
+												<input type="hidden" id="imgDetalleActivo" name="imgDetalleActivo" value=""/>
+												<div style="display:none;" class="container-fluid">
+													<img id="sourceEdit" :src="'http://localhost:8080/WebSar/ficheros/detalleMantenimiento/'+editDetalleManto.url_detalle_manto" class="rounded mx-auto d-block img-fluid" />
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="col-md-12">
+												<p><b>Fecha programada</b></p>
+												<div class="input-group">
+													<span class="input-group-addon">
+														<i class="material-icons">date_range</i>
+													</span>
+													<div class="form-line">
+														<input type="text" class="form-control text-center datetimepicker"  name="txtFechaProgramada" 
+														placeholder="Selecciona una fecha..." :value="editDetalleManto.fecha_manto_programada" disabled="true"/>
+													</div>
+												</div>
+											</div>
+											<input type="hidden" :value="changeestatus" name="idEstatus"/>
+											<div class="col-md-12" v-for="(item,index) in estatus">
+												<input type="radio" :id="'check'+estatus[index].id_activo_estatus" :value="estatus[index].id_activo_estatus" 
+												v-model="changeestatus" name="txtEstatus"/>
+												<label :for="'check'+estatus[index].id_activo_estatus" v-text="estatus[index].activo_estatus"></label>
+												<br/>
+											</div>
+											<div class="col-md-12">
+												<p><b>Comentarios</b></p>
+												<div class="input-group">
+													<div class="form-line">
+														<textarea name="txtComentarios" id="txtComentarios" cols="30" rows="4" class="form-control" 
+														style="overflow: auto; resize: none;"></textarea>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="row clearfix">
+										<div class="col-md-12">
+										</div>	
+									</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Descartar Cambios</button>
+										<button type="submit" class="btn btn-primary waves-effect">Guardar Cambios	</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<!--Fin de validacion de mantenimiento-->
+
+    			</div>
+			</div>
+		</div>
+    </div>
+    
+	</div>
+
+	<!--Component for validator proveedor-servicio-->
+	<template id="templateproveedor3" >
+		<div class="row-clearfix ">
+			<div class="col-md-12">						
+				<h3 v-for="nombreservicio in idservicio.slice(0,1)" class="text-center text-success">{{nombreservicio.nombre_servicio}}</h3>
+				<hr class="btn-primary"/>
+				<!-- <table class="table table-borderless table-responsive table-sm"> -->
+				<div class="table-responsive-md table-responsive-lg table-responsive-xl">
+					<table class="table table-bordered table-striped table-hover">
+						<thead class="bg-primary">
+							<tr>
+								<th scope="col">Proveedor</th>
+								<th scope="col">Precio</th>
+								<th scope="col">Observaciones</th>
+								<th scope="col">Ver Cotización</th>
+								<th scope="col"> Validar Proveedor</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="proveedor in idservicio" name="txtProveedor">
+								<input type="hidden" name="txtIdServicioProveedor" :value="proveedor.id_servicio_proveedor"/>
+								<input type="hidden" name="txtNombre_proveedor" :value="proveedor.nombre_proveedor"/>
+								<input type="hidden" name="txtIdServicioProveedorManto" :value="proveedor.id_servicio_proveedor_manto" v-if="proveedor.id_servicio_proveedor_manto"/>
+								<td v-text="proveedor.nombre_proveedor"></td>
+								<td>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="material-icons">attach_money</i>
+										</span>
+										<div class="form-line">
+											<input type="number" class="form-control txtPrecio" 
+												name="txtPrecio" :value="proveedor.precio_servicio_proveedor" disabled="true"/>
+										</div>
+									</div>		
+								</td>
+								<td><textarea name="txtObserProv" id="txtObserProv" cols="30" rows="2" class="form-control" :value="proveedor.observaciones" 
+									style="overflow: auto;resize: none;" disabled="true"></textarea></td>
+								<td>
+									<a :href="'http://localhost:8080/WebSar/ficheros/ProveedorCotizacion/'+proveedor.ProveedorCotizacion" target="blank" v-if="(proveedor.ProveedorCotizacion!='')" title="Ver cotización">
+									<i class="material-icons remove_red_eye">remove_red_eye</i></a>
+								</td>
+
+								<td>
+
+									<div class="custom-control custom-checkbox">
+										<input type="hidden" :value="proveedor.aceptado" name="txtAceptado"/>
+										<input type="checkbox" class="custom-control-input checkAceptado" :id="'acept'+proveedor.id_servicio_proveedor"
+											v-model="proveedor.aceptado" name="txtAcept"/>
+										<label class="custom-control-label" :for="'acept'+proveedor.id_servicio_proveedor" readonly="readonly"></label>
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</template>
+
+
+
+</th:block>
+<th:block th:fragment="script">
+
+    <script th:src="@{/plugins/vue/vue.js}"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script th:src="@{/assets/js/DetalleActivo.js}"></script>
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+	<script type="application/javascript" th:inline="javascript">
+
+			$("#dtDetalle").bootstrapTable({
+			url					: [[@{/controlPanel/DetalleMant/tablevalidation}]],
+			method				: 'post',
+			contentType 		: 'application/x-www-form-urlencoded',
+			sidePagination		: "server",
+			pagination			: true,
+			showColumns			: true,
+			showToggle 			: true,
+			showRefresh 		: true,
+			search				: true,
+			showExport			: true,
+			striped				: true,
+			pageSize 			: 10,
+			sortable			: true,
+			exportTypes			: ["excel"],
+			toolbar				: "#dtDetalleToolBar",
+			queryParams 		: function(params) {
+										params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
+										params['txtBootstrapTableDesde'] = $('#txtBootstrapTableDesde').val();
+										params['txtBootstrapTableHasta'] = $('#txtBootstrapTableHasta').val();
+							        	return params;
+		    }
+		});
+
+
+		function validacionMantenimiento(param){
+			detalleActivo.validacion(param);
+		}
+
+		function accionesFormatter(value, row, index) {
+			//urlDelete = [[@{/controlPanel/activos/}]] + row.id_activo_mobiliario + '/delete';
+			if(row.estatusmanto==7){
+				return [
+					'<a href="#" title="Validar Servicios" onclick="validacionMantenimiento('+row.idDetalleMant+')" class="validator" data-toggle="modal" data-target="#modalValidacion" role="button" >',
+						'<i class="material-icons remove_red_eye">remove_red_eye</i>',
+					'</a>'
+				].join(''); 
+			}
+		}
+
+		function estatusFormatter(value, row, index){
+			var lblEstatus='';
+			switch(row.estatusmanto){
+				case 7:
+					lblEstatus ='<a type="button" class="btn bg-green waves-effect">Validar</a>';
+					break;
+				default:
+					lblEstatus='<a type="button" class="btn bg-green waves-effect">procesando</a>';
+					break;
+			}
+			return lblEstatus;
+		}
+
+		$(function () {
+			//Datetimepicker plugin
+		    $('.datetimepicker').bootstrapMaterialDatePicker({
+		        format: 'DD/MM/YYYY',
+		        clearButton: true,
+		        weekStart: 1,
+		        time:false
+		    });
+		 });
+		 
+/*------------------------------------------------------------------------------------------------------------------------------------*/
+			/*Canvas para pintar la imagen del activo , pero en el modo edición*/
+			var canvas = document.getElementById( 'canvasedit' ),
+            c = canvas.getContext( '2d' ),
+				mouseX = 0, mouseY = 0,
+                width = 350, height = 350,
+                colour = 'red', mousedown = false;
+            // redimensionar canvas
+            canvas.width = width;
+			canvas.height = height;
+			
+			var img = document.getElementById("sourceEdit");
+		
+			img.addEventListener('load', e => {
+			  c.drawImage(img,0,0, canvas.width, canvas.height);
+			});
+			function draw() {
+                if (mousedown) {
+                    c.fillStyle = colour;
+                    c.globalAlpha = 0.5
+                    c.beginPath();
+                    c.arc( mouseX, mouseY, 5 , 0, Math.PI*2, true );
+                    c.closePath();
+                    c.fill();
+                }
+            }
+            canvas.addEventListener( 'mousemove', function( event ) {
+                if( event.offsetX ){
+                    mouseX = event.offsetX;
+                    mouseY = event.offsetY;
+                } else {
+                    mouseX = event.pageX - event.target.offsetLeft;
+                    mouseY = event.pageY - event.target.offsetTop;
+				}
+				draw();
+            }, false );
+
+            canvas.addEventListener( 'mousedown', function( event ) {
+                mousedown = true;
+            }, false );
+
+            canvas.addEventListener( 'mouseup', function( event ) {
+                mousedown = false;
+            }, false );
+
+            $('#btnGenerarEdit').click(function() {
+				var dataURL = canvas.toDataURL('image/jpeg', 1);
+				urlfijo="http://localhost:8080/WebSar/ficheros/activoFijos";
+				dataURL = dataURL.split(',')[1];
+				$('#imgDetalleActivo').val(dataURL);
+			});
+
+            $('#btnLimpiarEdit').click(function() {
+                c.clearRect(img,0, 0, canvas.width, canvas.height);
+                c.drawImage(img,0,0,canvas.width, canvas.height);
+            });
+/*------------------------------------------------------------------------------------------------------------*/		
+
+	function cancelValidator(){
+		$('#formModalValidacion')[0].reset();
+		this.detalleActivo.editproveedorServicio=[];
+		this.detalleActivo.editdatafiltrado=[];
+		this.detalleActivo.editDetalleManto={};
+		this.detalleActivo.urlcompletofichero="";
+		this.detalleActivo.gastoAproximado=[];
+		this.detalleActivo.checkdatafiltrado=[];
+    }
+    
+	$('#modalValidacion').on('hidden.bs.modal',function(){
+		cancelValidator();
+	});
+
+	/* $('#modalEditActivoManto').on('shown.bs.modal', function () {
+	 		alert("ejecutando");	
+	 		this.detalleActivo.servicio()
+		})*/
+
+    $(".txtPrecio").on({
+    "focus": function(event) {
+        $(event.target).select();
+    },
+    "keyup": function(event) {
+        $(event.target).val(function(index, value) {
+        return value.replace(/\D/g, "")
+            .replace(/([0-9])([0-9]{2})$/, '$1.$2')
+            .replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ",");
+        });
+    }
+    });
+</script>
+
+</th:block>

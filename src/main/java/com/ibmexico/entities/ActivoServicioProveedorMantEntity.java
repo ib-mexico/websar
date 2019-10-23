@@ -1,6 +1,7 @@
 package com.ibmexico.entities;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -36,6 +37,20 @@ public class ActivoServicioProveedorMantEntity {
     
     @Column(nullable = true)
     private boolean pagado = false;
+
+    /**Para el apartado de pagos */
+    @Column(nullable=true)
+    private LocalDate fechaPago;
+
+    @Column(nullable = true)
+    private String url_comprobante;
+
+    @Column(nullable = true)
+    private LocalDateTime creacionFechaPago;
+
+    @Column(nullable = true)
+    private LocalDateTime modificacionFechaPago;
+    /**End pagos */
     
     @ManyToOne
     @JoinColumn(name = "id_activo_servicio_proveedor")
@@ -236,6 +251,57 @@ public class ActivoServicioProveedorMantEntity {
 	public void setPagado(boolean pagado) {
 		this.pagado = pagado;
 	}
+
+
+    // formateo de la fecha 
+    public String getFechaPagoNatural() {
+        String fecha="";
+        if(fechaPago!=null){
+            fecha=fechaPago.format(GeneralConfiguration.getInstance().getDateFormatterNatural());
+        }
+        return fecha;
+    }
+
+    public LocalDate getFechaPago() {
+        return fechaPago;
+    }
+
+    public void setFechaPago(LocalDate fechaPago) {
+        this.fechaPago = fechaPago;
+    }
+
+    public String getUrl_comprobante() {
+        return url_comprobante;
+    }
+
+    public void setUrl_comprobante(String url_comprobante) {
+        this.url_comprobante = url_comprobante;
+    }
+
+
+    public String getCreacionFechaPagoNatural() {
+        return creacionFecha.format(GeneralConfiguration.getInstance().getDateFormatterNatural());
+    }
+    public LocalDateTime getCreacionFechaPago() {
+        return creacionFechaPago;
+    }
+
+    public void setCreacionFechaPago(LocalDateTime creacionFechaPago) {
+        this.creacionFechaPago = creacionFechaPago;
+    }
+
+    // formateo de la fecha 
+    public String getModificacionFechaPagoNatural() {
+         return modificacionFecha.format(GeneralConfiguration.getInstance().getDateFormatterNatural());
+    }
+        
+    public LocalDateTime getModificacionFechaPago() {
+        return modificacionFechaPago;
+    }
+
+    public void setModificacionFechaPago(LocalDateTime modificacionFechaPago) {
+        this.modificacionFechaPago = modificacionFechaPago;
+    }
 
     
 }
