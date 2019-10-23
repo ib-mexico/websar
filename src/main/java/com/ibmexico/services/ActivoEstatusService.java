@@ -32,7 +32,7 @@ public class ActivoEstatusService{
 		lstEstatus.forEach((item)-> {
             jsonRows.add(Json.createObjectBuilder()
                 .add("id_activo_estatus", item.getIdActivoEstatus())
-                .add("activo_estatus", item.getActivoEstatus())
+                .add("activo_estatus", item.getNombreEstatus())
 			);
 		});
 		jsonReturn.add("estatus", jsonRows);

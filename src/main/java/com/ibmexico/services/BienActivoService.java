@@ -110,8 +110,7 @@ public class BienActivoService {
             throw new ApplicationException(EnumException.ACTIVO_FICHEROS_ADD_FILE_001);
         }
     }
-
-    
+       
     public void update(BienActivoEntity bienActivo){
         if(bienActivo!=null){
             LocalDateTime ldtNow=LocalDateTime.now();
@@ -132,13 +131,12 @@ public class BienActivoService {
 		if(search!=null){
             lstBienActivoEntity =Activorep.findForDataTable(search, DataTable.getPageRequest(offset, limit));
             totalActivo=Activorep.countForDataTable(search);
-
         }else{
-		lstBienActivoEntity = Activorep.findForDataTable(DataTable.getPageRequest(offset, limit));
-        totalActivo = Activorep.countForDataTable();
-    }
-		DataTable<BienActivoEntity> returnDataTable = new DataTable<BienActivoEntity>(lstBienActivoEntity, totalActivo);
-		return returnDataTable;
+		    lstBienActivoEntity = Activorep.findForDataTable(DataTable.getPageRequest(offset, limit));
+            totalActivo = Activorep.countForDataTable();
+        }
+        DataTable<BienActivoEntity> returnDataTable = new DataTable<BienActivoEntity>(lstBienActivoEntity, totalActivo);
+        return returnDataTable;
     }
 
 	public BienActivoEntity findByIdRecursoActive(int idRecursoActivo) {
@@ -148,7 +146,6 @@ public class BienActivoService {
     // la funcion de arriba, ya no se usa porque se maneja con json los datos y 
     //esta sirve para obtener la data de lo que se va a editar mediante el ID.
     public JsonObject jsonFindByIdRecursoActive(int id) {
-		
 		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
 		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
         BienActivoEntity lstActivo = Activorep.findByIdRecursoActivo(id);
@@ -235,7 +232,7 @@ public class BienActivoService {
     }
     
     /*Todos los recursos sin condicionarla */
-       public JsonObject jsonRecursoActivoAll(int idCatalogoActivo){
+    public JsonObject jsonRecursoActivoAll(int idCatalogoActivo){
         JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
         JsonArrayBuilder jsonRows=Json.createArrayBuilder();
         List<BienActivoEntity> lstRecursoIdCatalogo=Activorep.findByIdCatalogoActivoAll(idCatalogoActivo);
@@ -248,7 +245,5 @@ public class BienActivoService {
         jsonReturn.add("rows", jsonRows);
         return jsonReturn.build();
     }
-    
-
 
 }

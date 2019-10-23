@@ -106,6 +106,7 @@ public class BienActivoController {
         jsonReturn.add("respuesta", respuesta).add("jsonActivoCatalogo", jsonActivoCatalogo);
         return jsonReturn.build().toString();
     }
+    
     /*Obtener la data activo, para poder editarlas  */
     @RequestMapping(value = { "{idActivo}/edit", "{idActivo}/edit/" }, method = RequestMethod.GET)
     public @ResponseBody String getDataEdit(@PathVariable(name = "idActivo") int idActivo) {
@@ -115,8 +116,8 @@ public class BienActivoController {
             jsonActivo = bienActivoService.jsonFindByIdRecursoActive(idActivo);
             respuesta = true;
         } catch (Exception e) {
+            throw new ApplicationException(EnumException.ACTIVO_CREATE_001);
         }
-        System.out.println("salir");
         JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
         jsonReturn.add("respuesta", respuesta).add("dataActivo", jsonActivo);
         return jsonReturn.build().toString();
@@ -171,8 +172,6 @@ public class BienActivoController {
             @RequestParam(value = "cmbDepartamento", required = false) Integer cmbDepartamento,
             @RequestParam(value = "cmbUsuario", required = false) Integer cmbUsuario,
             @RequestParam("fichero") MultipartFile[] fichero,
-            // @RequestParam(value = "chkRequireMant", required = false) String chkRequireMant,
-            // @RequestParam(value="txtFechaMant", required = false) String txtFechaMant,
             @RequestParam(value = "txtObservaciones", required = false) String txtObservaciones) throws IOException {
 
 		Boolean respuesta = false;
@@ -261,19 +260,15 @@ public class BienActivoController {
             objActivo.setObservaciones(txtObservaciones);
 
             objActivo.setNumeroEconomico(objCatalogo.getClave()+'-'+objActivo.getEmpresa().getClave()+"-00"+ ++tamanioActivoPorCatalogo);
-            
             bienActivoService.create(objActivo, fichero);
 
-            // bienActivoService.create(objActivo);
-			respuesta = true;
+            respuesta = true;
 			titulo = "Excelente!";
             mensaje = "Nuevo activo exitosamente creado.";
         }catch(Exception e){
             throw new ApplicationException(EnumException.ACTIVO_CREATE_001);
         }
-		
 
-		
 		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
 		jsonReturn	.add("respuesta", respuesta)
 					.add("titulo", titulo)
@@ -281,21 +276,21 @@ public class BienActivoController {
 		return jsonReturn.build().toString();
 	}
 
-    // for table
+    // Para la  tabla de Activos presentes.
 	@RequestMapping(value = "/table", method = RequestMethod.POST)	
 	public @ResponseBody String table(	@RequestParam("offset") int offset,
-										@RequestParam("limit") int limit,
-										@RequestParam("_csrf") String _csrf,
-										@RequestParam(value="search", required=false, defaultValue="") String search,
-										@RequestParam(value="txtBootstrapTableDesde", required=false) String txtBootstrapTableDesde,
-										@RequestParam(value="txtBootstrapTableHasta", required=false) String txtBootstrapTableHasta) {
+			@RequestParam("limit") int limit,
+			@RequestParam("_csrf") String _csrf,
+			@RequestParam(value="search", required=false, defaultValue="") String search,
+			@RequestParam(value="txtBootstrapTableDesde", required=false) String txtBootstrapTableDesde,
+			@RequestParam(value="txtBootstrapTableHasta", required=false) String txtBootstrapTableHasta) {
+
 		DataTable<BienActivoEntity> dtActivo = bienActivoService.dataTable(search, offset, limit, txtBootstrapTableDesde, txtBootstrapTableHasta);
 		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
 		jsonReturn.add("total", dtActivo.getTotal());
 		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
 		
 		dtActivo.getRows().forEach((itemCatActivo)-> {
-
             jsonRows.add(Json.createObjectBuilder()
                 .add("id_recurso_activo", itemCatActivo.getIdRecursoActivo())
                 .add("numero_unico",itemCatActivo.getNumeroEconomico())
@@ -306,7 +301,7 @@ public class BienActivoController {
                 .add("catalogo", itemCatActivo.getIdActivo().getNombre())
                 .add("departamento", itemCatActivo.getIdDepartamento() != null ? itemCatActivo.getIdDepartamento().getDepartamento() : "No definido" )
                 .add("usuario_asignado", itemCatActivo.getUsuario() != null ? itemCatActivo.getUsuario().getNombreCompleto() : "No definido")
-                .add("creacion_fecha", itemCatActivo.getCreacionFechaNatural())
+                .add("creacion_fecha", itemCatActivo.getCreacionFechaNatural())                
                 .add("creacion_id_usuario", itemCatActivo.getCreacionUsuario().getNombre()));
 		});
 		jsonReturn.add("rows", jsonRows);	
@@ -319,7 +314,6 @@ public class BienActivoController {
 		Boolean respuesta = false;
 		String titulo = "Oops!";
 		String mensaje = "Ocurrió un error al intentar eliminar un Activo.";
-
 		BienActivoEntity objActivo= bienActivoService.findByIdRecursoActive(idActivo);
 		try {
 			if(objActivo!=null){

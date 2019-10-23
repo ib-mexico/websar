@@ -23,7 +23,7 @@ public class ActivoEstatusEntity{
     private int idActivoEstatus;
 
     @Column(length = 50)
-    private String activoEstatus;
+    private String nombreEstatus;
     
     @Column(nullable=false)
     private boolean opcion_Direccion;
@@ -103,13 +103,6 @@ public class ActivoEstatusEntity{
         this.modificacionUsuario = modificacionUsuario;
     }
 
-    public String getActivoEstatus() {
-        return activoEstatus;
-    }
-
-    public void setActivoEstatus(String activoEstatus) {
-        this.activoEstatus = activoEstatus;
-    }
 
     public boolean isOpcion_Direccion() {
         return opcion_Direccion;
@@ -117,6 +110,14 @@ public class ActivoEstatusEntity{
 
     public void setOpcion_Direccion(boolean opcion_Direccion) {
         this.opcion_Direccion = opcion_Direccion;
+    }
+
+    public String getNombreEstatus() {
+        return nombreEstatus;
+    }
+
+    public void setNombreEstatus(String nombreEstatus) {
+        this.nombreEstatus = nombreEstatus;
     }
 
 }

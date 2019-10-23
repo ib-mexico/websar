@@ -147,7 +147,7 @@ public class BienDetalleMantenimientoController {
         try {
             jsonServicioProveedor = servicioPservice.jsonlstServicioProveedor(idTipoActivo, idServicio);
         } catch (ApplicationException exception) {
-
+            throw new ApplicationException(EnumException.ACTIVO_CREATE_001);
         }
         JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
         jsonReturn.add("jsonServicioProveedor", jsonServicioProveedor);
@@ -249,9 +249,13 @@ public class BienDetalleMantenimientoController {
                     .add("fecha_mantenimiento", itemDetalle.getFechaMantenimientoProgramadaFechaNatural())
                     .add("estatus_recordatorio", itemDetalle.isEstatus_recordatorio())
                     .add("bienActivo", itemDetalle.getBienActivo().getNumeroEconomico())
+                    .add("nombreActivo", itemDetalle.getBienActivo().getDescripcion())
+                    .add("marcaActivo", itemDetalle.getBienActivo().getMarca())
+                    .add("tipoActivo", itemDetalle.getBienActivo().getIdActivo().getNombre())
                     .add("gasto_aproximado",
                             itemDetalle.getGastoAproximado() != null ? itemDetalle.getGastoAproximado() : d)
                     .add("finalizado", itemDetalle.isFinalizado())
+                    .add("nombreEstatus", itemDetalle.getActivoEstatus().getNombreEstatus())
                     .add("estatusmanto", itemDetalle.getActivoEstatus().getIdActivoEstatus()));
         });
         jsonReturn.add("rows", jsRows);
@@ -282,16 +286,16 @@ public class BienDetalleMantenimientoController {
                     .add("fecha_mantenimiento", itemDetalle.getFechaMantenimientoProgramadaFechaNatural())
                     .add("estatus_recordatorio", itemDetalle.isEstatus_recordatorio())
                     .add("bienActivo", itemDetalle.getBienActivo().getNumeroEconomico())
-                    .add("gasto_aproximado",
-                            itemDetalle.getGastoAproximado() != null ? itemDetalle.getGastoAproximado() : d)
+                    .add("nombreActivo", itemDetalle.getBienActivo().getDescripcion())
+                    .add("marcaActivo", itemDetalle.getBienActivo().getMarca())
+                    .add("tipoActivo", itemDetalle.getBienActivo().getIdActivo().getNombre())
+                    .add("gasto_aproximado",itemDetalle.getGastoAproximado() != null ? itemDetalle.getGastoAproximado() : d)
                     .add("finalizado", itemDetalle.isFinalizado())
                     .add("estatusmanto", itemDetalle.getActivoEstatus().getIdActivoEstatus()));
         });
         jsonReturn.add("rows", jsRows);
         return jsonReturn.build().toString();
     }
-
-
 
     @RequestMapping(value = "storePagos", method = RequestMethod.POST)
     public @ResponseBody String storePagos(
@@ -404,7 +408,11 @@ public class BienDetalleMantenimientoController {
                             ficheroCotizacion, imgDetalleActivo, txtIdServicioProveedorManto);
                     if (txtServicioProveedorNuevo != null) {
                         int j = txtIdServicioProveedorManto.length;
+                    
                         int cantidad = txtServicioProveedorNuevo.length;
+                        if(cantidad==0){
+                            cantidad=cantidad+1;
+                        }
                         bienDetMantService.createEdit(objDetalleManto, txtObserProv, txtPrecio, txtIdServicioProveedor,
                                 ficheroCotizacion, imgDetalleActivo, j, cantidad);
                         // method add new proveedor and pass parameter length array manto
