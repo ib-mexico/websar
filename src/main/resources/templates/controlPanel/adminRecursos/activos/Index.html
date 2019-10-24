@@ -41,15 +41,12 @@
 									<th class="col-md-1" data-field="usuario_asignado" data-halign="left" data-align="center" data-visible="false">Usuario asig.</th>
                                     <th class="col-md-1" data-field="creacion_fecha" data-halign="left" data-align="center" data-visible="true">Fecha registro</th>
                                     <th class="col-md-1" data-field="creacion_id_usuario" data-halign="left" data-align="center" data-visible="false">Registrado :</th>
-		
 								</tr>
 							</thead>
 						</table>
-		
 					</div>
 					
     			</div>
-
 			</div>
 		</div>
 	</div>
@@ -955,13 +952,16 @@
 				'</a>',
 				'<a href="#" title="Eliminar" class="deleteActivo" onclick="deleteAct('+row.id_recurso_activo+')">',
 		        	'<i class="material-icons remove">delete</i>',
-				'</a>',
-				' ',
-				'<a href="#" title="Historial" class="Historial" data-toggle="modal" data-target="#modalTable" role="button">',
-					'<i class="material-icons format_list_numbered">format_list_numbered</i>',
 				'</a>'
 			].join(''); 
 		}
+		/*Opcion Historico*/
+		/*
+			,
+			'<a href="#" title="Historial" class="Historial" data-toggle="modal" data-target="#modalTable" role="button">',
+				'<i class="material-icons format_list_numbered">format_list_numbered</i>',
+			'</a>'
+		*/
 
 		function estatusFormatter(value, row, index){
 			var lblEstatus='';
