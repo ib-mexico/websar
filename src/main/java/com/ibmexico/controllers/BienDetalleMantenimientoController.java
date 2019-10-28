@@ -2,17 +2,23 @@ package com.ibmexico.controllers;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import com.ibmexico.components.MailerComponent;
 import com.ibmexico.components.ModelAndViewComponent;
 import com.ibmexico.configurations.GeneralConfiguration;
 import com.ibmexico.entities.ActivoEstatusEntity;
 import com.ibmexico.entities.BienActivoEntity;
 import com.ibmexico.entities.BienDetalleMantenimientoEntity;
+import com.ibmexico.entities.RolEntity;
+import com.ibmexico.entities.UsuarioRolEntity;
 import com.ibmexico.libraries.DataTable;
 import com.ibmexico.libraries.Templates;
 import com.ibmexico.libraries.notifications.ApplicationException;
@@ -29,6 +35,7 @@ import com.ibmexico.services.BienDetalleMantenimientoService;
 import com.ibmexico.services.CatalogoActivoService;
 import com.ibmexico.services.SessionService;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -78,7 +85,10 @@ public class BienDetalleMantenimientoController {
     @Autowired
     @Qualifier("modelAndViewComponent")
     private ModelAndViewComponent modelAndViewComponent;
-
+    
+    @Autowired
+	private MailerComponent mailerComponent;
+	
     // Para servicio proveedor
     @Autowired
     @Qualifier("activo_servicio_proveedor")
@@ -489,6 +499,24 @@ public class BienDetalleMantenimientoController {
 			if(objDetalle!=null){
                 objDetalle.setActivoEstatus(objEstatus);
                 bienDetMantRepository.save(objDetalle);
+
+                for (UsuarioRolEntity objUsuariRol : sesionService.findRolName("CORREO_VALIDACION")) {
+                    Map<String, Object> mapUserNotification=new HashMap<String, Object>();
+                    mapUserNotification.put("validadores", objUsuariRol.getUsuario());
+                    mapUserNotification.put("detalleManto",objDetalle);             
+                    try {
+                        if (EmailValidator.getInstance().isValid(objUsuariRol.getUsuario().getCorreo())) {
+                            mailerComponent.send(objUsuariRol.getUsuario().getCorreo(), "Validacion del mantenimiento con clave "+" - "+objDetalle.getBienActivo().getNumeroEconomico()
+                            ,Templates.EMAIL_VALIDADOR_MANTO, mapUserNotification);
+                            System.err.println("corrreo: "+objUsuariRol.getUsuario().getCorreo());
+                        }else{
+                            System.err.println("ocurrio un error y no se pudo enviar el correo: correo no validado");
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Ocurrio un error y no se pudo enviar el correo: "+e.getMessage());
+                    }
+                }
+              
 				 respuesta = true;
 				 titulo = "Enviado!";
 				 mensaje = "El mantenimiento se ha enviado exitosamente.";

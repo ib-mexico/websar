@@ -14,12 +14,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.ibmexico.configurations.GeneralConfiguration;
+import com.ibmexico.entities.BienDetalleMantenimientoEntity;
 import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.EmpresaEntity;
 import com.ibmexico.entities.EquipoProduccionEntity;
 import com.ibmexico.entities.OportunidadNegocioEntity;
 import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.libraries.Templates;
+import com.ibmexico.services.BienDetalleMantenimientoService;
 import com.ibmexico.services.CotizacionService;
 import com.ibmexico.services.EmpresaService;
 import com.ibmexico.services.EquipoProduccionService;
@@ -52,6 +54,11 @@ public class SchedulerComponent {
 	@Autowired
 	@Qualifier("usuarioService")
 	private UsuarioService usuarioService;
+
+	/**Mantenimientos ibmexico */
+	@Autowired
+	@Qualifier("bienDetalleMantService")
+	private BienDetalleMantenimientoService mantenimientoService;
 	
 	@Autowired
 	@Qualifier("sessionService")
@@ -88,7 +95,7 @@ public class SchedulerComponent {
 						
 						mapCotizacionesFiltradas.add(iterator, myMap1);
 						
-						iterator++;
+						iterator++; 
 						totalCotizaciones = totalCotizaciones.add(itemCotizacion.getTotal());
 					}
 				}
@@ -226,6 +233,55 @@ public class SchedulerComponent {
 			mapVariables.put("alias", "Soporte");
 			
 			mailerComponent.send("jorge.cortes@ib-mexico.com", "Hay equipos en producción próximos a renovación.", Templates.EMAIL_EQUIPOS_PRODUCCION_RENOVACION, mapVariables);
+			
+		} catch(Exception exception) { }
+	}
+
+	@Scheduled(cron = "0 0 9 ? * *")
+	public void cronJobNotificadorMantenimientoVencido(){
+		LocalDate ldNow= LocalDate.now();
+		List<BienDetalleMantenimientoEntity> lstMantenimientoVencido=mantenimientoService.listMantenimientoVencido();
+		List<Map<String, String>> mymapManto=new ArrayList<Map<String, String>>();
+		Integer iterator=0;
+		
+
+		for (BienDetalleMantenimientoEntity itemMantenimiento : lstMantenimientoVencido) {
+			Map<String, String> mymap1=new HashMap<String, String>();
+			if(itemMantenimiento.getFechaMantenimientoProgramada()!=null){
+				int diff=(int) ChronoUnit.DAYS.between(ldNow,itemMantenimiento.getFechaMantenimientoProgramada());
+				System.err.println(diff);
+				if (diff<0) {
+					System.err.println("hola if");
+					// mymap1.put("numeroEconomico", itemMantenimiento.getBienActivo().getNumeroEconomico());
+					mymap1.put("comentario_validador", itemMantenimiento.getComentario());
+					mymap1.put("fechaProgramada", itemMantenimiento.getFechaMantenimientoProgramadaFechaNatural());
+					mymap1.put("gastoAproximado", GeneralConfiguration.getInstance().getNumberFormat().format(itemMantenimiento.getGastoAproximado()));
+					mymap1.put("observaciones", itemMantenimiento.getObservaciones());
+					// mymap1.put("Estatus", itemMantenimiento.getActivoEstatus().getNombreEstatus());
+					// mymap1.put("TipoActivo", itemMantenimiento.getBienActivo().getIdActivo().getNombre());
+					System.err.println("que onda");
+					mymapManto.add(iterator, mymap1);
+					System.err.println("que onda2");
+					iterator++;
+				}
+			}
+		}
+		for (Map<String,String> map : mymapManto) {
+			System.err.println(map);
+		}
+		if(!mymapManto.isEmpty()){
+			Map<String, Object> mapVariables=new HashMap<String, Object>();
+			mapVariables.put("lstMantenimiento", mymapManto);
+			cronJobMantenimientoVencidoEnviarMails(mapVariables);
+		}
+	}
+
+	private void cronJobMantenimientoVencidoEnviarMails(Map<String, Object> mapVariables) {
+		try {
+			mapVariables.put("titulo", "Mantenimiento vencidos no finalizados");
+			mapVariables.put("alias", "Logistica y Mantenimiento");
+			
+			mailerComponent.send("neyser36@gmail.com", "Hay Mantenimientos en espera.", Templates.EMAIL_MANTENIMIENTO_VENCIDO, mapVariables);
 			
 		} catch(Exception exception) { }
 	}

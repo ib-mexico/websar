@@ -50,6 +50,9 @@ public class BienDetalleMantenimientoService{
     public BienDetalleMantenimientoEntity findByIdBienDetalleMantenimiento(int idDetalleMantenimiento){
         return bienMantRep.findByIdDetalleMantenimiento(idDetalleMantenimiento);
     }
+    public List<BienDetalleMantenimientoEntity> listMantenimientoVencido(){
+        return bienMantRep.lstMantoVencidoNoFinalizado();
+    }
 
     //Registro de un Activo a Mantenimiento, con los sig, parametros, para crear es necesario, registrar los servicios que requieren dicho mant.
     // servicios, que integran de varios proveedores.

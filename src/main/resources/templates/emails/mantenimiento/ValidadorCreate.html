@@ -1,0 +1,41 @@
+<th:block th:fragment="title">
+	<h2>Solicitud de un Mantenimiento</h2>
+</th:block>
+
+
+<th:block th:fragment="body">
+	<h1 style="color:#000000;">Estimado : <span th:text="${validadores.nombreCompleto}"></span></h1>
+	<p style="display:inline; text-align: justify;">Requiero de uso apoyo en el SAR, debido a que se solicito un mantenimiento, con posibles proveedores que nos brindan su servicio y requerimos de su autorizacion de los proveedores viables.</p>
+	<p style="display: inline; text-align: justify;">A continuacion se presenta los datos necesarios para identificar dicho mantenimiento :</p>
+	
+	<div class="table-responsive-md table-responsive-lg table-responsive-xl">
+		<table id="dtDetalle" class="table table-bordered table-striped table-hover">
+			<tr>
+				<td width="35%"><h4><strong>Clave Unica: </strong></h4></td>
+				<td th:text="${detalleManto.bienActivo.getNumeroEconomico()}"></td>
+			</tr>
+			<tr>
+				<td width="35%"><h4><strong>Clasificacion del activo</strong></h4></td>
+				<td th:text="${detalleManto.bienActivo.idActivo.getNombre()}"></td>
+			</tr>
+
+			<tr>
+				<td width="35%"><h4><strong>Descripci&oacute;n: </strong></h4></td>
+				<td th:text="${detalleManto.observaciones}"></td>
+			</tr>
+			<tr>
+				<td width="35%"><h4><strong>Gasto total aproximado</strong></h4></td>
+				<td th:text="'$ '+${detalleManto.gastoAproximado}"></td>
+			</tr>
+			<tr>
+				<td width="35%"><h4><strong>Fecha Programada: </strong></h4></td>
+				<td th:text="${ {detalleManto.fechaMantenimientoProgramadaFechaNatural}}"></td>
+			</tr>
+			<tr>
+				<td width="35%"><h4><strong>Creador: </strong></h4></td>
+				<td th:text="${detalleManto.creacionUsuario.getAlias()}"></td>
+			</tr>	
+		</table>
+	</div>
+</th:block>
+

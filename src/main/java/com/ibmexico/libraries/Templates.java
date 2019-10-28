@@ -143,6 +143,10 @@ public class Templates {
 	public static final String EMAIL_TAREAS_PARTICIPANTES_UPDATE = PATH_EMAIL + "tareas/ParticipantesUpdate";
 	
 	public static final String EMAIL_HOME_COTIZACIONES = PATH_EMAIL + "home/Cotizaciones";
+
+	//EMAIL VALIDADOR MANTENIMIENTO
+	public static final String EMAIL_VALIDADOR_MANTO=PATH_EMAIL+ "mantenimiento/ValidadorCreate";
+	public static final String EMAIL_MANTENIMIENTO_VENCIDO=PATH_EMAIL+"cronJobs/MantenimientoNoFinalizadosVencidos";
 	
 	public static final String EMAIL_COTIZACIONES_POR_COBRAR = PATH_EMAIL + "cronJobs/CotizacionesPorCobrar";
 	public static final String EMAIL_OPORTUNIDADES_NEGOCIOS_RENOVACION = PATH_EMAIL + "cronJobs/OportunidadesNegociosRenovacion";

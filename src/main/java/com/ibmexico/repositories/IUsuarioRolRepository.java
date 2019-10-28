@@ -21,6 +21,7 @@ public interface IUsuarioRolRepository extends JpaRepository<UsuarioRolEntity, S
 	
 	public abstract List<UsuarioRolEntity> findByUsuario_IdUsuario(int idUsuario);
 	
+	public abstract List<UsuarioRolEntity> findByRol_Rol(String rol);
 	
 	public abstract List<UsuarioRolEntity> removeByRol_IdRolAndUsuario_IdUsuario(int idRol, int idUsuario);
 	public abstract List<UsuarioRolEntity> removeByUsuario_IdUsuario(int idUsuario);

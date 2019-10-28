@@ -245,6 +245,7 @@ public class ActivoServicioProveedorMantService {
                 /*Pasar el estatus a pagado*/
                 // serviProveeMant.save(objProveedorServicio);
                 objDetalleManto.setActivoEstatus(activoEstatusRepo.findByIdActivoEstatus(3));
+                objDetalleManto.setFinalizado(true);
                 bienDetalleMant.save(objDetalleManto);
             }
         }
