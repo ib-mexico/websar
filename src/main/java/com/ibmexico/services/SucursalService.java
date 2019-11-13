@@ -2,6 +2,11 @@ package com.ibmexico.services;
 
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -39,5 +44,24 @@ public class SucursalService {
 	
 	public SucursalEntity findByIdSucursal(int idSucursal) {
 		return sucursalRepository.findByIdSucursal(idSucursal);
+	}
+
+	//Listado de sucursal 
+	public JsonObject jsonSucursal(){
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+
+		List<SucursalEntity> lstSucursal =  sucursalRepository.findAll();
+
+		lstSucursal.forEach((item)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_sucursal", item.getIdSucursal())
+				.add("nombre_sucursal", item.getSucursal())
+			);
+		});
+
+		jsonReturn.add("rows", jsonRows);
+		
+		return jsonReturn.build();
 	}
 }

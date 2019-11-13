@@ -321,8 +321,10 @@ public class SessionService implements UserDetailsService {
 		
 		return objReturn;
 	}
-	
-	
+	/* */
+	public List<UsuarioRolEntity> findRolName(String rol){
+		return usuarioRolRepository.findByRol_Rol(rol);
+	}
 	
 	public UsuarioRolEntity findRol(String rol) {
 		return usuarioRolRepository.findByRol_RolAndUsuario_IdUsuario(rol, getCurrentUser().getIdUsuario());

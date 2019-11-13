@@ -20,6 +20,9 @@ public interface IBienDetalleMantenimientoRepository extends JpaRepository<BienD
     @Query("SELECT objActivo FROM BienDetalleMantenimientoEntity objDetalleMant, BienActivoEntity objActivo  WHERE objDetalleMant.bienActivo=?1  AND objActivo.idRecursoActivo=?1")
     public abstract List<BienDetalleMantenimientoEntity> lstMantHistorico(int idActivo);
 
+    /**Consultar mantenimientos vencidos pero no finalizadas */
+    @Query("SELECT detalleManto FROM BienDetalleMantenimientoEntity detalleManto WHERE detalleManto.finalizado!=1")
+    public abstract List<BienDetalleMantenimientoEntity> lstMantoVencidoNoFinalizado();
 
     //TABLE
 	@Query("SELECT COUNT(objDetalleMant) FROM BienDetalleMantenimientoEntity objDetalleMant")	
