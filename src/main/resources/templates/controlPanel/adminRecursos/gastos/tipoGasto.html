@@ -1,0 +1,451 @@
+<th:block th:fragment="style">
+	<style>
+		@import url(https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js);
+		.pac-container{
+			z-index: 9999 !important;
+		}
+	</style>
+</th:block>
+<th:block th:fragment="body">
+	<div id="appGastos">
+		<ol class="breadcrumb breadcrumb-bg-red">
+		<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+		<li class="active"><i class="material-icons">public</i> Gastos generales</li>
+	</ol>
+
+	<div class="row clearfix">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+			<div class="card">
+				<div class="header">
+					<h2>Lista de gastos generales</h2>
+				</div>
+		
+    			<div class="body">
+    				<div class="row clearfix" th:if="${rolNuevoGasto}">
+    					<div class="col-md-4 col-md-offset-8 text-right">
+							<a href="#" role="button" class="btn bg-purple waves-effect" 
+								data-toggle="modal" data-target="#modalGasto" v-on:click="loadModal">
+								<i class="material-icons">add_circle</i> Nuevo Registro de gasto</a>
+    					</div>
+					</div>
+				<!-- Busqueda en rangos de fecha -->
+    				<div class="row clearfix" id="dtGastoToolBar">
+						<div class="col-md-3 col-xs-3 col-sm-3">
+							<div class="container">
+								<h4>Filtrado de fechas</h4>
+								<ul class="list-unstyled">
+									<li><a data-placement="right" data-toggle="popover" data-container="body" data-title="Seleccionar Fechas" type="button" data-html="true" href="#" id="login"><span class="glyphicon glyphicon-search" style="margin:3px 0 0 0"></span></a></li>
+									<div id="popover-content" class="hide">
+										<div class="form-group">
+											<button class="btn btn-success">Este mes</button>
+											<button class="btn btn-success">3 mes</button>
+										</div>
+										<div class="form-group">
+											<button class="btn btn-success">6 mes</button>
+											<button class="btn btn-success">1 año</button>
+										</div>
+										<div class="form-group">
+											<h6>Fecha personalizada</h6>
+
+											<div class="input-group input-daterange">
+												<input type="text" class="form-control" value="2012-04-05"/>
+												<div class="input-group-addon">to</div>
+												<input type="text" class="form-control" value="2012-04-19" />
+											</div>
+
+											<div class="input-group">
+												<span class="input-group-addon">
+														<i class="material-icons">date_range</i>
+												</span>
+												<div class="form-line" id='groupDesde'>
+													<input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableInicio" name="txtBootstrapTableInicio" placeholder="Desde..." />
+												</div>
+											</div>
+																						
+											<div class="input-group">
+												<span class="input-group-addon">
+												<i class="material-icons">date_range</i>
+												</span>
+												<div class="form-line" id='groupHasta'>
+													<input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableFin" name="txtBootstrapTableFin" placeholder="Hasta..." />
+												</div>
+											</div>
+											
+										</div>
+
+									</div>
+								</ul>
+							</div>
+						</div>					
+    					<div class="col-xs-3 col-sm-3 col-md-3">
+    						<div class="input-group">
+   								<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupDesde'>
+                               		<input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
+	                           	</div>
+							</div>
+    					</div>
+    					<div class="col-xs-3 col-sm-3 col-md-3">
+    						<div class="input-group">
+    							<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupHasta'>
+                               		<input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
+	                           	</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="table-responsive-md table-responsive-lg table-responsive-xl">
+						<table id="dtGasto" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th data-width="10%" data-field="numeroCotizacion" data-sortable="true" data-halign="left" data-align="center">Folio Cotizacion</th>
+									<th data-width="10%" data-formatter="accionesFormatter" data-align="center" style="display: inline">Acciones</th>
+									<th data-width="20%" data-field="tipoGasto" data-halign="left" data-align="center" data-visible="true">Clasificación</th>
+
+									<th data-width="10%" data-field="subtotal" data-detail-formatter="gasto_aproximadoDetailFormatter" data-halign="left">Subtotal</th>
+									<th data-width="30%" data-field="diagnostico" data-halign="left">Observaciones</th>
+                                    <th data-width="10%" data-field="creacion_fecha" data-halign="left" data-align="center" data-visible="true">Fecha registro</th>
+									<th data-width="10%" data-field="nombreEstatus" data-halign="left" data-align="center" data-visible="false">Estatus</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+										
+					<div class="modal fade" id="modalGasto" tabindex="-1" role="dialog">
+							<div class="modal-dialog modal-lg" role="document">
+								<div class="modal-content">
+									<form id="formGasto" v-on:submit.prevent="createGasto" method="POST" role="form" enctype="multipart/form-data">
+										<div class="modal-header">
+											<h4 class="modal-title">Registro de un gasto</h4>
+										</div>
+										<div class="modal-body">
+											<div class="row-clearfix">
+												<div class="col-md-6">
+													<b>Empresa *</b>
+													<div class="input-group">
+														<select name="cmbEmpresa" id="cmbEmpresa" class="form-control show-tick cmbEmpresa required" v-model="nuevoPago.id_empresa" data-live-search="true">
+															<option value="default" selected="selected">Selecciona una empresa</option>
+															<option v-for="item in empresa" :value="item.id_empresa" v-text="item.razon_social"></option>
+														</select>
+													</div>
+												</div>
+	
+												<div class="col-md-6">
+													<b>Proveedor *</b>
+													<div class="input-group">
+														<select name="cmbProveedor" id="cmbProveedor" class="form-control show-tick cmbProveedor required" v-model="nuevoPago.id_proveedor" data-live-search="true">
+															<option value="default" selected="selected">Elige un proveedor</option>
+															<option v-for="item in proveedor" :value="item.id_proveedor" v-text="item.razon_social"></option>
+														</select>
+													</div>
+												</div>
+											</div>
+											<!--Campos factura-->
+											<div class="row-clearfix">
+												<div class="col-md-6">
+													<p><b>Factura/Nota *</b></p>
+													<div class="input-group">
+														<div class="form-line">
+															<input type="text" class="form-control" name="txtFacturaNota" required="required" v-model="nuevoPago.facturaNota"/>
+														</div>
+													</div>
+												</div>
+												<div class="col-md-6">
+													<div class="form-group">	
+														<p><b>Subir factura o notas</b></p>	
+														<b></b>						
+														<div class="form-line">
+															<input type="file" name="ficheroFactura" id="idFicheroFactura" class="form-control-file" multiple="multiple"  
+															accept="image/x-png,image/jpeg" />
+														</div>
+													</div>
+												</div>
+											</div>
+											<!--End factura-->
+
+											<div class="row-clearfix">
+												<div class="col-md-12">
+													<div class="form-group">
+														<div class="form-line">
+															<p><b>Buscar Estado donde se efectuo dicho gasto</b></p>
+															<div v-if="lugares.length>0">
+																<input type="hidden" name="txtCiudad"  id="txtCiudad" :value="lugares[0].long_name" />
+																<input type="hidden" name="txtEstado"  id="txtEstado" :value="lugares[1].long_name"/>
+																<input type="hidden" name="txtPais" id="txtPais" :value="lugares[2].long_name"/>
+															</div>
+															<input type="text" id="pac-input" class="form-control controls" placeholder="Buscar el lugar.." 
+															name="formatted_address"/>	
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<!--START FECHAS-->
+											<div class="row-clearfix">
+												<div class="col-md-6">
+													<p><b>Fecha de gasto</b></p>
+													<div class="input-group">
+														<span class="input-group-addon">
+															<i class="material-icons">date_range</i>
+														</span>
+														
+														<div class="form-line">
+															<input type="text" class="form-control text-center txtFechagasto datetimepicker" id="txtFechagasto" name="txtFechagasto" />
+														</div>
+													</div>	
+												</div>
+												<div class="col-md-6">
+													<p><b>Subtotal</b></p>
+													<div class="input-group">
+														<span class="input-group-addon">
+														<i class="material-icons">attach_money</i>
+														</span>
+														<div class="form-line">
+															<input type="number" class="form-control text-primary font-weight-bold" 
+															name="txtSubtotal"/>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<div class="row-clearfix">
+												<div class="col-md-6">
+													<p><b>Tipo gasto *</b></p>
+													<div class="input-group">
+														<select name="cmbTipogasto" id="cmbTipogasto" class="form-control show-tick cmbTipogasto required"
+														v-model="nuevoPago.id_tipoGasto" data-live-search="true">
+															<option value="default" selected="selected">Elige el tipo de gasto</option>
+															<option v-for="item in tipoGasto" :value="item.id_tipo_gasto" v-text="item.nombre_gasto"></option>
+														</select>
+													</div>
+												</div>
+												<div class="col-md-6">
+													<p><b>Clasificación *</b></p>
+													<div class="input-group">
+														<select name="cmbClasificacion" id="cmbClasificacion" class="form-control show-tick cmbClasificacion required" 
+														v-model="nuevoPago.id_clasificacionGasto" data-live-search="true">
+															<option value="default" selected="selected">Seleccione una clasificacion</option>
+															<!-- <option v-for="item in clasificacionGasto" :value="item.id_tipo_gasto" v-text="item.nombre"></option> -->
+														</select>
+													</div>
+												</div>
+											</div>
+
+											<div class="row-clearfix">
+												<div class="col-md-3">
+													<p><b></b></p>
+													<input type="checkbox" id="chkCotizacion" class="filled-in chk-col-deep-purple" value="true" name="chkCotizacion" v-model="nuevoPago.checkCotizacion"/>
+													<label for="chkCotizacion">&iquest;Vincular Cotizacion SAR?</label>
+												</div>
+												<div v-show="nuevoPago.checkCotizacion==false">
+													<div class="col-md-4">
+														<b>Cotizaciones *</b>
+														<div class="input-group">
+															<div class="form-line">
+																<input type="text" name="txtCotizacion"  id="txtCotizacion" class="form-control" v-model="nuevoPago.txtCotizacion"/>
+															</div>
+														</div>
+													</div>
+													<div class="col-md-5">
+														<div class="form-group">	
+															<p><b>Archivo Cotizacion</b></p>							
+															<div class="form-line">
+																<input type="file" name="ficheroCotizacion" id="idficheroCotizacion" class="form-control-file" multiple="multiple"  
+																accept="image/x-png,image/jpeg" />
+															</div>
+														</div>
+													</div>
+												</div>
+												<div v-show="nuevoPago.checkCotizacion==true">
+													<div class="col-md-9">
+														<b>Cotizaciones *</b>
+														<div class="input-group">
+															<select name="cmbCotizacion" id="cmbCotizacion" class="form-control show-tick cmbCotizacion" data-live-search="true" v-model="nuevoPago.id_cotizacion">
+																<option value="default" selected="selected">Elige una cotización</option>
+																<option v-for="item in cotizacion" :value="item.id_cotizacion" v-text="item.factura_numero"></option>
+															</select>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row-clearfix">
+												<div class="col-md-12">
+													
+												</div>
+											</div>
+											<div class="row-clearfix">
+												<div class="col-md-4">
+													<p><b>Usuario *</b></p>
+													<div class="input-group">
+														<select name="cmbUsuario" id="cmbUsuario" class="form-control show-tick cmbUsuario required" v-model="nuevoPago.id_usuario" data-live-search="true">
+															<option value="default" selected="selected">Selecciona un usuario</option>
+															<option v-for="item in usuario" :value="item.id_usuario" v-text="item.nombre_completo"></option>
+														</select>
+													</div>
+												</div>
+												<div class="col-md-4">
+													<p><b>Departamento *</b></p>
+													<div class="input-group">
+														<div class="form-line">
+															<input type="text" class="form-control" disabled="disabled" :value="nuevoPago.depa"/>
+														</div>
+													</div>
+												</div>
+												
+												<div class="col-md-4">
+													<p><b>Sucursal *</b></p>
+													<div class="input-group">
+														<div class="form-line">
+															<input type="text" class="form-control" disabled="disabled" :value="nuevoPago.sucursal"/>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<div class="row-clearfix">
+												<div class="col-md-12">
+													<p><b>Observaciones *</b></p>
+													<div class="form-line">
+														<textarea rows="2"  name="txtObservaciones" class="form-control no-resize col-md-6" v-model="nuevoPago.observaciones"></textarea>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="row-clearfix">
+											<div class="col-md-12">
+											</div>
+										</div>
+										
+										<div class="modal-footer">
+											<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
+											<button type="submit" class="btn btn-primary waves-effect">Registrar	</button>
+										</div>
+									</form>
+								</div>
+							</div>
+					</div>
+    			</div>
+			</div>
+		</div>
+    </div>
+    
+	</div>
+
+</th:block>
+<th:block th:fragment="script">
+
+    <script th:src="@{/plugins/vue/vue.js}"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script th:src="@{/assets/js/gastos.js}"></script>
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+
+	<script type="application/javascript" th:inline="javascript">
+		
+		$("#dtGasto").bootstrapTable({
+			url					: [[@{/controlPanel/Gastos/table}]],
+			method				: 'post',
+			contentType 		: 'application/x-www-form-urlencoded',
+			sidePagination		: "server",
+			pagination			: true,
+			showColumns			: true,
+			showToggle 			: true,
+			showRefresh 		: true,
+			search				: true,
+			showExport			: true,
+			striped				: true,
+			pageSize 			: 10,
+			sortable			: true,
+			exportTypes			: ["excel"],
+			toolbar				: "#dtGastoToolBar",
+			queryParams 		: function(params) {
+										params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
+										params['txtBootstrapTableDesde'] = $('#txtBootstrapTableDesde').val();
+										params['txtBootstrapTableHasta'] = $('#txtBootstrapTableHasta').val();
+										return params;
+			}
+		});
+
+		$('#popup').popover();
+
+		var showPopover = $.fn.popover.Constructor.prototype.show;
+	    $.fn.popover.Constructor.prototype.show = function () {
+	        showPopover.call(this);
+	        if (this.options.showCallback) {
+	            this.options.showCallback.call(this);
+	        }
+	    }
+
+		$("[data-toggle=popover]").popover({
+			html: true, 
+			content: function() {
+				return $('#popover-content').html();
+				},
+			showCallback: function () {
+				$(function(){
+					$('.datetimepicker').bootstrapMaterialDatePicker({
+						format: 'DD/MM/YYYY',
+						clearButton: true,
+						weekStart: 1,
+						time:false
+					});
+				})
+
+	            $('#datetimepicker1').datetimepicker();
+	            $('#datetimepicker2').datetimepicker();
+	        }
+				
+		});
+
+		$(function () {
+				//Datetimepicker plugin
+				$('.datetimepicker').bootstrapMaterialDatePicker({
+					format: 'DD/MM/YYYY',
+					clearButton: true,
+					weekStart: 1,
+					time:false
+				});
+		});
+
+	function accionesFormatter(value, row, index) {
+		//urlDelete = [[@{/controlPanel/activos/}]] + row.id_activo_mobiliario + '/delete';
+		return [
+			'<a href="#" title="Editar Gasto" class="EditarGasto" data-toggle="modal" data-target="#modalEditGasto" onclick="edit('+row.idgasto+');" role="button">',
+				'<i class="material-icons edit">edit</i>',
+			'</a>',
+			'<a href="#" title="Eliminar" class="deleteGasto" onclick="deleteGasto('+row.idgasto+')">',
+				'<i class="material-icons remove">delete</i>',
+			'</a>'
+		].join(''); 
+	}
+	
+	function initAutocomplete(){
+			// Create the search box and link it to the UI element.
+			var input = document.getElementById('pac-input');
+			var searchBox = new google.maps.places.Autocomplete(input, {
+				types: ['(cities)'],
+				componentRestrictions: {country: "mx"}
+			});
+			var markers = [];
+			// Listen for the event fired when the user selects a prediction and retrieve
+			// more details for that place.
+			google.maps.event.addListener(searchBox, 'place_changed', function(){
+				var place = searchBox.getPlace();
+				gasto.lugares=place.address_components;
+			});
+		}
+
+	</script>
+	<script async ="async" defer = "defer" th:src="@{https://maps.googleapis.com/maps/api/js (key=${'AIzaSyDMfjYhmignmeftlviLDLTsyB383_ltJNc'},libraries=places,callback=initAutocomplete)}"></script>
+	<!-- th:src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMfjYhmignmeftlviLDLTsyB383_ltJNc&libraries=places&callback=initAutocomplete"></script>	 -->
+</th:block>
