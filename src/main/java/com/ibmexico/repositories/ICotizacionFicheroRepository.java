@@ -17,6 +17,14 @@ public interface ICotizacionFicheroRepository extends JpaRepository<CotizacionFi
 
 	public abstract CotizacionFicheroEntity findByIdCotizacionFichero(int idCotizacionFichero);
 	
+	public abstract CotizacionFicheroEntity findByGastoIdServicioProveedorMant(int idGasto);
+
+	@Query("SELECT objFichero FROM CotizacionFicheroEntity objFichero WHERE objFichero.gasto.idServicioProveedorMant=?1")
+	public abstract List<CotizacionFicheroEntity> findCotizacionFicheroByGastoID(int idGasto);
+
+	@Query("SELECT objFichero FROM CotizacionFicheroEntity  objFichero WHERE objFichero.gasto.idServicioProveedorMant=?1")
+	public abstract List<CotizacionFicheroEntity> findByIdGasto(int idGasto);
+	
 	public abstract List<CotizacionFicheroEntity> findByCotizacion_IdCotizacion(int IdCotizacion);
 	
 	@Query("SELECT objCotizacionFichero FROM CotizacionFicheroEntity objCotizacionFichero WHERE objCotizacionFichero.cotizacion.idCotizacion = ?1 AND objCotizacionFichero.cotizacionTipoFichero.idCotizacionTipoFichero = ?2")

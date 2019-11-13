@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.transaction.Transactional;
 
@@ -448,4 +450,40 @@ public class CotizacionService {
 	}
 	//**************************
 	
+	//Listado de cotizaciones activas 
+	public JsonObject jsonCotizacionesActivas(){
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+	
+		List<CotizacionEntity> lstCotizaciones =  cotizacionRepository.findCotizacionesActivas();
+	
+		lstCotizaciones.forEach((item)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_cotizacion", item.getIdCotizacion())
+				.add("factura_numero", item.getFolio())
+			);
+		});
+	
+		jsonReturn.add("rows", jsonRows);	
+		return jsonReturn.build();
+	}
+
+
+	//Listado de cotizaciones pasaron de aceptadas y no canceladas 
+	public JsonObject jsonCotizacionesActivos(){
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		
+		List<CotizacionEntity> lstCotizaciones =  cotizacionRepository.findCotizacionesActivos();
+		
+		lstCotizaciones.forEach((item)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_cotizacion", item.getIdCotizacion())
+				.add("factura_numero", item.getFolio())
+			);
+		});
+		
+		jsonReturn.add("rows", jsonRows);	
+		return jsonReturn.build();
+	}
 }

@@ -11,6 +11,13 @@ public enum EnumException {
 	ACTIVO_FICHEROS_ADD_FILE_004("Error de fichero de Activo","El fichero requiere un nombre"),
 
 
+	//Gastos
+	GASTO_CREATE_001("Error en el registro del gasto","El objeto gasto no es válido, póngase en contacto con el administrador del sistema"),
+	GASTO_DELETE_001("Error en la eliminacion del gasto","El objeto gasto no es válido, póngase en contacto con el administrador del sistema"),
+	GASTO_FICHERO_ADD_FILE_001("Error en el fichero del gasto","Ocurrio un error con el fichero, es posible que el archivo presente errores"),
+	GASTO_FICHERO_ADD_FILE_002("Error en el fichero del gasto","Ocurrio un error con el fichero de Activo es posible que el archivo presente erores"),
+	GASTO_FICHERO_ADD_FILE_003("Error en el fichero del gasto","Ocurrio un error con el fichero, es posible que el archivo presente errores"),
+	GASTO_FICHERO_ADD_FILE_004("Error en el fichero del gasto","El fichero requiere un nombre"),
 
 
 	//GENERALES

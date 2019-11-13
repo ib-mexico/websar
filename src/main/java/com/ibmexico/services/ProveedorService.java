@@ -3,6 +3,11 @@ package com.ibmexico.services;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -82,5 +87,21 @@ public class ProveedorService {
 		else {
 			throw new ApplicationException(EnumException.PROVEEDORES_UPDATE_001);
 		}
+	}
+
+	public JsonObject jsonProveedores(){
+		JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows=Json.createArrayBuilder();
+		List<ProveedorEntity> lstProveedores= proveedorRepository.findActivos();
+
+		lstProveedores.forEach((item)->{
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_proveedor", item.getIdProveedor())
+				.add("razon_social", item.getRazonSocial())
+				.add("proveedor", item.getProveedor())
+			);
+		});
+		jsonReturn.add("proveedores", jsonRows);
+		return jsonReturn.build();
 	}
 }

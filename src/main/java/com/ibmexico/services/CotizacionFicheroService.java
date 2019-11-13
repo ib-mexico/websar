@@ -11,6 +11,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +46,14 @@ public class CotizacionFicheroService {
 		return cotizacionFicheroRepository.findByIdCotizacionFichero(idCotizacionFichero);
 	}
 	
+	public CotizacionFicheroEntity findByIdGasto(int idGasto){
+		return cotizacionFicheroRepository.findByGastoIdServicioProveedorMant(idGasto);
+	}
+
+	public List<CotizacionFicheroEntity> CotizacionFIcheroByGastoID(int idGasto){
+		return cotizacionFicheroRepository.findCotizacionFicheroByGastoID(idGasto);
+	}
+
 	public List<CotizacionFicheroEntity> listCotizacionFicheros(int idCotizacion) {
 		return cotizacionFicheroRepository.findByCotizacion_IdCotizacion(idCotizacion);
 	}
@@ -85,7 +97,6 @@ public class CotizacionFicheroService {
 	//CREACIÓN DE FICHERO
 	@Transactional
 	public void addFile(CotizacionFicheroEntity objCotizacionFichero, MultipartFile file) {
-		
 		if(objCotizacionFichero != null) {
 			if(file != null) {
 	            try {
@@ -214,5 +225,24 @@ public class CotizacionFicheroService {
 		} else {
 			throw new ApplicationException(EnumException.COTIZACIONES_FICHEROS_DELETE_001);
 		}
+	}
+
+	public JsonObject GetFicheroEdit(int idGasto){
+		JsonObjectBuilder jsonReturn= Json.createObjectBuilder();
+		JsonArrayBuilder jsonRow=Json.createArrayBuilder();
+		List<CotizacionFicheroEntity> lstFichero=cotizacionFicheroRepository.findByIdGasto(idGasto);
+
+		lstFichero.forEach((item)->{
+			jsonRow.add(Json.createObjectBuilder()
+			.add("idCotizacionFichero", item.getIdCotizacionFichero())
+			.add("name", item.getCotizacion().getFolio())
+			.add("id_cotizacion", item.getCotizacion().getIdCotizacion())
+			.add("subTotal", item.getImporte())
+			.add("id_gasto", item.getGasto().getIdServicioProveedorMant())
+			);
+		});
+
+		jsonReturn.add("rows", jsonRow);
+		return jsonReturn.build();
 	}
 }

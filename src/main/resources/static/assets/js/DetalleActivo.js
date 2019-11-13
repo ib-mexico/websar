@@ -348,11 +348,11 @@ if (document.getElementById('appDetalle')) {
                     });
                 }
             },
-            async editActivoManto(idDetalleManto) {
+             editActivoManto(idDetalleManto) {
                 var formEditActivoManto = document.getElementById('formEditActivoManto');
                 var formEditActivoMantoData = new FormData(formEditActivoManto);
                 var url = host + "DetalleMant/get-servicio-proveedor/" + idDetalleManto;
-                await axios.get(url, formEditActivoMantoData).then(resp => {
+                 axios.get(url, formEditActivoMantoData).then(resp => {
                     if (resp.status == 200 && resp.data.respuesta) {
                         this.editDetalleManto = resp.data.jsonBienDetalleManto.bienDetalleManto[0];
                         let data = resp.data.jsonServicioProveedorManto.rows;

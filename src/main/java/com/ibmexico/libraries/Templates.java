@@ -193,4 +193,8 @@ public class Templates {
 	public static final String DETALLE_INDEX=PATH_CONTROL_PANEL+"adminRecursos/DetalleMantenimiento/Index";
 	public static final String VALIDATION_MANTO=PATH_CONTROL_PANEL+"adminRecursos/DetalleMantenimiento/validacion";
 
+	//Nuevos Gastos
+	public static final String DETALLE_GASTO=PATH_CONTROL_PANEL+"adminRecursos/gastos/Index";
+
+
 }

@@ -3,7 +3,6 @@ package com.ibmexico.controllers;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.json.Json;
@@ -17,7 +16,6 @@ import com.ibmexico.configurations.GeneralConfiguration;
 import com.ibmexico.entities.ActivoEstatusEntity;
 import com.ibmexico.entities.BienActivoEntity;
 import com.ibmexico.entities.BienDetalleMantenimientoEntity;
-import com.ibmexico.entities.RolEntity;
 import com.ibmexico.entities.UsuarioRolEntity;
 import com.ibmexico.libraries.DataTable;
 import com.ibmexico.libraries.Templates;

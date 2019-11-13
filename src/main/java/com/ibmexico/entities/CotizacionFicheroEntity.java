@@ -63,6 +63,10 @@ public class CotizacionFicheroEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "creacion_id_usuario", nullable = false)
 	private UsuarioEntity creacionUsuario;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_gasto", nullable = true)
+	private ActivoServicioProveedorMant2Entity gasto;
 	
 	@Column(nullable = false)
 	private LocalDateTime creacionFecha;
@@ -271,6 +275,14 @@ public class CotizacionFicheroEntity {
 
 	public void setProveedor(String proveedor) {
 		this.proveedor = proveedor;
+	}
+
+	public ActivoServicioProveedorMant2Entity getGasto() {
+		return gasto;
+	}
+
+	public void setGasto(ActivoServicioProveedorMant2Entity gasto) {
+		this.gasto = gasto;
 	}
 	
 	

@@ -80,6 +80,8 @@ public class UsuarioService {
 			jsonRows.add(Json.createObjectBuilder()
 				.add("id_usuario", item.getIdUsuario())
 				.add("nombre_completo", item.getNombreCompleto())
+				.add("departamento", item.getDepartamento()!=null ? item.getDepartamento().getDepartamento() :"N/A")
+				.add("sucursal", item.getSucursal()!=null ? item.getSucursal().getSucursal() :"N/A")
 			);
 		});
 
