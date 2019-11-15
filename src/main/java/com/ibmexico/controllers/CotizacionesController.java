@@ -739,8 +739,8 @@ public class CotizacionesController {
 		
 		CotizacionEntity objCotizacion = cotizacionService.findByIdCotizacion(hddIdCotizacion);
 		Boolean respuesta = false;
-		String titulo = "";
-		String mensaje = "";
+		String titulo = "Cotización Modificada!";
+		String mensaje = "El estatus de la cotizacion ha sido modificada exitosamente.";
 		
 		try {
 			
@@ -758,52 +758,64 @@ public class CotizacionesController {
 							"Your appointment is coming up on July 21 at 3PM").create();
 					
 					System.out.println(message.getSid());*/
+					objCotizacion.setCotizacionEstatus(cotizacionEstatusService.findByIdCotizacionEstatus(cmbEstatus));
+					cotizacionService.update(objCotizacion);
+					respuesta = true;
 				}
-				
-				if(cmbEstatus.equals(3) && objCotizacion.getCotizacionEstatus().getIdCotizacionEstatus() != 3) {
-					objCotizacion.setFacturacionFecha(LocalDate.parse(txtFacturaFecha, GeneralConfiguration.getInstance().getDateFormatterNatural()));
-					objCotizacion.setFacturaNumero(txtFacturaNumero);			
-					
-					//VALIDAMOS QUE LA COTIZACION NO SEA UNA RENTA
-					if(objCotizacion.isMaestra() || objCotizacion.isNormal()) {						
-						CotizacionUsuarioQuotaEntity objQuota = new CotizacionUsuarioQuotaEntity();
-						objQuota.setCotizacion(objCotizacion);
+
+				if(objCotizacion.getAprobacionFecha() != null && cmbEstatus > 2 ){
+					if(cmbEstatus.equals(3) && objCotizacion.getCotizacionEstatus().getIdCotizacionEstatus() != 3) {
+						objCotizacion.setFacturacionFecha(LocalDate.parse(txtFacturaFecha, GeneralConfiguration.getInstance().getDateFormatterNatural()));
+						objCotizacion.setFacturaNumero(txtFacturaNumero);			
 						
-						cotizacionUsuarioQuotaService.cargarQuota(objCotizacion);
-					}
-				}
-				
-				if(cmbEstatus.equals(4)) {
-					objCotizacion.setPagoFecha(LocalDate.parse(txtPagoFecha, GeneralConfiguration.getInstance().getDateFormatterNatural()));
-					objCotizacion.setPagoReferencia(txtPagoReferencia);					
-					
-					//VALIDAMOS QUE LA COTIZACION NO SE MAESTRA
-					if(objCotizacion.isRenta() || objCotizacion.isNormal()) {	
-						
-						//VALIDAMOS QUE NO EXISTA UN REGISTRO DE COMISION
-						CotizacionComisionEntity objComisionExistente = cotizacionComisionService.findByCotizacion(objCotizacion);
-						if(objComisionExistente == null) {							
-							CotizacionComisionEntity objComision = new CotizacionComisionEntity();
-							objComision.setCotizacion(objCotizacion);
+						//VALIDAMOS QUE LA COTIZACION NO SEA UNA RENTA
+						if(objCotizacion.isMaestra() || objCotizacion.isNormal()) {						
+							CotizacionUsuarioQuotaEntity objQuota = new CotizacionUsuarioQuotaEntity();
+							objQuota.setCotizacion(objCotizacion);
 							
-							cotizacionComisionService.create(objComision, objCotizacion);
+							cotizacionUsuarioQuotaService.cargarQuota(objCotizacion);
 						}
 					}
+					
+					if(cmbEstatus.equals(4)) {
+						objCotizacion.setPagoFecha(LocalDate.parse(txtPagoFecha, GeneralConfiguration.getInstance().getDateFormatterNatural()));
+						objCotizacion.setPagoReferencia(txtPagoReferencia);					
+						
+						//VALIDAMOS QUE LA COTIZACION NO SE MAESTRA
+						if(objCotizacion.isRenta() || objCotizacion.isNormal()) {	
+							
+							//VALIDAMOS QUE NO EXISTA UN REGISTRO DE COMISION
+							CotizacionComisionEntity objComisionExistente = cotizacionComisionService.findByCotizacion(objCotizacion);
+							if(objComisionExistente == null) {							
+								CotizacionComisionEntity objComision = new CotizacionComisionEntity();
+								objComision.setCotizacion(objCotizacion);
+								
+								cotizacionComisionService.create(objComision, objCotizacion);
+							}
+						}
+					}
+					
+					if(cmbEstatus.equals(6) && objCotizacion.getInicioCobranzaFecha() == null) {
+						LocalDate ldNow = LocalDate.now();
+						objCotizacion.setInicioCobranzaFecha(ldNow);
+						objCotizacion.setUsuarioCobranza(sessionService.getCurrentUser());
+					}
+					
+					objCotizacion.setCotizacionEstatus(cotizacionEstatusService.findByIdCotizacionEstatus(cmbEstatus));
+					cotizacionService.update(objCotizacion);
+					respuesta = true;
+				}else{
+					if(cmbEstatus.equals(5)) {
+						objCotizacion.setCotizacionEstatus(cotizacionEstatusService.findByIdCotizacionEstatus(cmbEstatus));
+						cotizacionService.update(objCotizacion);
+						respuesta = true;
+					}
 				}
 				
-				if(cmbEstatus.equals(6) && objCotizacion.getInicioCobranzaFecha() == null) {
-					LocalDate ldNow = LocalDate.now();
-					objCotizacion.setInicioCobranzaFecha(ldNow);
-					objCotizacion.setUsuarioCobranza(sessionService.getCurrentUser());
+				if(!respuesta) {
+					titulo = "Cotización Modificada!";
+					mensaje = "Es necesario tener la cotización aprobada para proceder con los demás estatus.";
 				}
-				
-				objCotizacion.setCotizacionEstatus(cotizacionEstatusService.findByIdCotizacionEstatus(cmbEstatus));
-				
-				cotizacionService.update(objCotizacion);
-				
-				respuesta = true;
-				titulo = "Cotización Modificada!";
-				mensaje = "El estatus de la cotizacion ha sido modificada exitosamente.";
 				
 			}
 			else {
