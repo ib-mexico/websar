@@ -193,8 +193,20 @@ public class ActivoServicioProveedorMant2Entity {
         return creacionFecha.format(GeneralConfiguration.getInstance().getDateFormatterNatural());
     }
     
+    LocalDate creacionFechaDate;
+
+    public LocalDate creacionFecha(){
+        String fecha=this.creacionFecha.format(GeneralConfiguration.getInstance().getDateFormatter());
+        String[] arrFecha=fecha.split("-");
+        int year = Integer.parseInt(arrFecha[0]);
+        int month = Integer.parseInt(arrFecha[1]);
+        int day = Integer.parseInt(arrFecha[2]);
+        return creacionFechaDate=LocalDate.of(year, month, day);
+    }
+    
     public void setCreacionFecha(LocalDateTime creacionFecha) {
         this.creacionFecha = creacionFecha;
+        
     }
     
     public LocalDateTime getModificacionFecha() {

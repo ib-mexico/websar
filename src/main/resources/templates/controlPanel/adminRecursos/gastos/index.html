@@ -16,6 +16,45 @@
 		#personalizada{
 			margin-left: -15px;
 		}
+		/*Extra small devices (portrait phones, less than 576px)*/
+		@media (max-width: 575.98px) {
+			.collapse .card-body{
+				min-height: 330px ;
+				height: 330px !important;
+			}
+		}
+		/* Small devices (landscape phones, 576px and up)*/
+		@media (min-width: 576px) and (max-width: 767.98px) {
+			.collapse .card-body{
+				min-height: 330px ;
+				height: 330px !important;
+			}
+		}
+		/* Medium devices (tablets, 768px and up)*/
+		@media (min-width: 768px) and (max-width: 991.98px) {
+			.collapse .card-body{
+				min-height: 220px ;
+				height: 220px !important;
+			}
+		}
+
+		/* Large devices (desktops, 992px and up)*/
+		@media (min-width: 992px) and (max-width: 1199.98px) {
+			.collapse .card-body{
+				min-height: 80px ;
+				height: 80px !important;
+			}
+		}
+
+		/* Extra large devices (large desktops, 1200px and up)*/
+		@media (min-width: 1200px) {
+			.collapse .card-body{
+				min-height: 80px ;
+				height: 80px !important;
+			}
+		}
+
+
 	</style>
 </th:block>
 <th:block th:fragment="body">
@@ -33,70 +72,121 @@
 				</div>
 		
     			<div class="body">
-    				<div class="row clearfix" th:if="${rolNuevoGasto}">
-    					<div class="col-md-4 col-md-offset-8 text-right">
-							<a href="#" role="button" class="btn bg-purple waves-effect" 
-								data-toggle="modal" data-target="#modalGasto" v-on:click="loadModal">
-								<i class="material-icons">add_circle</i> Nuevo Registro de gasto</a>
-    					</div>
-					</div>
-					<div class="row-clearfix" id="dtGastoToolBar">				
-						<div class="col-md-8 text-left">		
-							<div class="container">
-								<input type="hidden" id="numeroMes"/>
-								<button data-placement="right" data-toggle="popover" data-container="body" data-title="Seleccionar Fechas" 
-								type="button" data-html="true" class="btn btn-success" style="margin-top: -65px;">Busquedas por Fecha <span class="glyphicon glyphicon-search" style="margin:3px 0 0 0; margin-top: 4px;" 
-								></span></button>
-								
-								<div class="popover_title" style="display: none">
-									<h4>Filtrar Fechas<span class="close-popover float-right text-danger ">
-										<!-- <i class="fas fa-times"></i> -->
-									</span></h4>
+					<!-- <div class="row-clearfix" id="dtGastoToolBar">				
+							
+					</div> -->
+    				<div class="row clearfix">
+						<div class="col-md-4 col-md-offset-0  text-left" id="dtGastoToolBar">			
+							<input type="hidden" id="numeroMes"/>
+							<button data-placement="right" data-toggle="popover" data-container="body" data-title="Seleccionar Fechas" 
+								type="button" data-html="true" class="btn btn-success">Busquedas por Fecha 
+								<span class="glyphicon glyphicon-search" style="margin:3px 0 0 0; margin-top: 4px;">
+								</span>
+							</button>
+									
+							<div class="popover_title" style="display: none">
+								<h4>Filtrar Fechas<span class="close-popover float-right text-danger ">
+									<!-- <i class="fas fa-times"></i> -->
+								</span></h4>
+							</div>
+							<div id="popover-content" class="hide">
+								<div class="col-md-12">
+									<div class="form-group">											
+										<button class="btn btn-primary 1mes" id="1mes" name="filtro" value="1">Este mes</button>
+										<button class="btn btn-success 3mes" id="3mes" name="filtro" value="2">3 mes</button>
+										<button class="btn btn-warning 6mes" id="6mes" name="filtro" value="3">6 mes</button>
+										<button class="btn btn-danger anio" id="anio" name="filtro" value="4">1 año</button>
+									</div>
 								</div>
-									<div id="popover-content" class="hide">
-										<div class="col-md-12">
-											<div class="form-group">											
-												<button class="btn btn-primary 1mes" id="1mes" name="filtro" value="1">Este mes</button>
-												<button class="btn btn-success 3mes" id="3mes" name="filtro" value="2">3 mes</button>
-												<button class="btn btn-warning 6mes" id="6mes" name="filtro" value="3">6 mes</button>
-												<button class="btn btn-danger anio" id="anio" name="filtro" value="4">1 año</button>
+								<div class="col-md-12">
+									<h6>Fecha personalizada</h6>
+									<div class="col-md-5">
+										<div class="input-group">
+											<span class="input-group-addon">
+												<i class="material-icons">date_range</i>
+											</span>
+											<div class="form-line" id='groupDesde'>
+												<input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
 											</div>
 										</div>
-										<div class="col-md-12">
-												<h6>Fecha personalizada</h6>
-												<div class="col-md-5">
-													<div class="input-group">
-														<span class="input-group-addon">
-															<i class="material-icons">date_range</i>
-														</span>
-														<div class="form-line" id='groupDesde'>
-															<input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
-														</div>
-													</div>
-												</div>
-												<div class="col-md-5">
-													<div class="input-group">
-														<span class="input-group-addon">
-															<i class="material-icons">date_range</i>
-														</span>
-														<div class="form-line" id='groupHasta'>
-															<input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
-														</div>
-													</div>
-												</div>
-												<div class="col-md-2">
-													<button id="personalizada" class="btn btn-success"><i class="material-icons">search</i> Buscar</button>
-												</div>
-												
-											
-
+									</div>
+									<div class="col-md-5">
+										<div class="input-group">
+											<span class="input-group-addon">
+												<i class="material-icons">date_range</i>
+											</span>
+											<div class="form-line" id='groupHasta'>
+												<input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
+											</div>
 										</div>
 									</div>
-								
+									<div class="col-md-2">
+										<button id="personalizada" class="btn btn-success"><i class="material-icons">search</i> Buscar</button>
+									</div>
+								</div>
 							</div>
 						</div>
-					</div>
 
+    					<div class="col-md-4 col-md-offset-8  text-right" th_if="${rolNuevoGasto}">
+							<a href="#" role="button" class="btn bg-purple waves-effect" 
+								data-toggle="modal" data-target="#modalGasto" v-on:click="loadModal">
+								<i class="material-icons">add_circle</i> Nuevo Registro de gasto
+							</a>
+						</div>
+					</div>
+					<!--Boton reporteador-->
+					<div class="row clearfix">
+						<div class="col-md-4 col-md-offset-8 text-right">
+							<button  type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false"
+								aria-controls="collapseExample" class="btn bg-purple waves-effect">
+								<i class="material-icons">picture_as_pdf</i>Reporte de PDF
+							</button>
+						</div>
+					</div>
+					<div class="collapse" id="collapseExample">
+						<div class="card card-body reporte">
+							<h4 class="text-center">Seleccione las opciones para generar su reporte</h4>
+							<div class="col-md-3 col-xs-12 col-sm-6">
+								<select name="reporteUsuario" id="reporteUsuario" class="selectpicker form-control show-tick cmbReporteUsuario" data-live-search="true">
+									<option value="default" selected="selected">Seleccione un Usuario</option>
+									<option v-for="item in usuario" :value="item.id_usuario" v-text="item.nombre_completo"></option>
+								</select>
+							</div>
+							<div class="col-md-3 col-xs-12 col-sm-6">
+								<select name="reporteTipo" id="reporteTipo" class="selectpicker form-control show-tick cmbReporteTipoGasto" data-live-search="true">
+										<option value="default" selected="selected">Seleccione Tipo de Gasto</option>
+									<option v-for="item in tipoGasto" :value="item.id_tipo_gasto" v-text="item.nombre_gasto"></option>
+								</select>
+							</div>
+							<div class="col-md-2 col-xs-12 col-sm-6">
+								<div class="input-group">
+									<span class="input-group-addon">
+										<i class="material-icons">date_range</i>
+									</span>
+									<div class="form-line" id='groupDesde'>
+										<input type="text" class="form-control text-center" id="txtFechaReporteInicio" name="txtFechaReporteInicio" placeholder="Desde..." />
+									</div>
+								</div>
+							</div>
+							<div class="col-md-2 col-xs-12 col-sm-6">
+								<div class="input-group">
+									<span class="input-group-addon">
+										<i class="material-icons">date_range</i>
+									</span>
+									<div class="form-line" id='groupHasta'>
+										<input type="text" class="form-control text-center" id="txtFechaReporteFin" name="txtFechaReporteFin" placeholder="Hasta..." />
+									</div>
+								</div>
+							</div>
+							<div class="col-md-2 col-xs-12 col-sm-12">
+								<button  class="btn bg-purple waves-effect" data-target="#collapseExample" aria-expanded="false"
+								aria-controls="collapseExample"
+								 data-toggle="collapse" v-on:click="GenerarPDF"><i class="material-icons">picture_as_pdf</i>Generar Reporte</button>
+							</div>
+						</div>	
+					</div>					
+
+					<!--Estructura de la tabla-->
 					<div class="table-responsive-md table-responsive-lg table-responsive-xl">
 						<table id="dtGasto" class="table table-bordered table-striped table-hover">
 							<thead>
@@ -744,7 +834,7 @@
 			striped				: true,
 			pageSize 			: 10,
 			sortable			: true,
-			exportTypes			: ["excel"],
+			exportTypes			: ['excel'],
 			toolbar				: "#dtGastoToolBar",
 			queryParams 		: function(params) {
 									params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
@@ -755,6 +845,18 @@
 			}
 		});
 
+		$('#collapseExample').on('show.bs.collapse',function(){
+			$('#txtFechaReporteFin').bootstrapMaterialDatePicker({format: 'DD-MM-YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+			$(' #txtFechaReporteInicio').bootstrapMaterialDatePicker({format: 'DD-MM-YYYY', lang:'es', weekStart : 1, clearButton: true, time:false}).on('change', function(e, date)
+				{
+					$('#txtFechaReporteFin').bootstrapMaterialDatePicker('setMinDate', date);
+				});
+	
+			$('.cmbReporteTipoGasto').selectpicker('refresh');
+			$('.cmbReporteUsuario').selectpicker('refresh');
+		});
+		
+		
 		$(function () {
 			//Datetimepicker plugin
 		    $('.datetimepicker').bootstrapMaterialDatePicker({

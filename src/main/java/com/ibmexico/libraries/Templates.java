@@ -196,5 +196,6 @@ public class Templates {
 	//Nuevos Gastos
 	public static final String DETALLE_GASTO=PATH_CONTROL_PANEL+"adminRecursos/gastos/Index";
 
-
+	//Gastos documentos pdf
+	public static final String PDF_GASTO=PATH_DOCUMENTS_PDF+"gasto/ReporteGasto";
 }

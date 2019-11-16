@@ -66,8 +66,16 @@ public interface IActivoServicioProveedorMant2Repository extends JpaRepository<A
     public abstract List<ActivoServicioProveedorMant2Entity> findForDataTableManto(String search, LocalDate ldFechaInicio, LocalDate ldFechaFin, Pageable page);
 
 
+    /*REPORTE DE GASTOS */
+    @Query("SELECT objGasto FROM ActivoServicioProveedorMant2Entity objGasto WHERE (objGasto.isEliminado=false) AND (objGasto.usuario.idUsuario=?3) AND (CONVERT(objGasto.fechaPago, DATE) BETWEEN ?1 AND ?2)")
+    public abstract List<ActivoServicioProveedorMant2Entity> findByGastoUsarioFecha(LocalDate ldFechaInicio, LocalDate ldFechaFin,int idUsuario);
 
+    @Query("SELECT objGasto FROM ActivoServicioProveedorMant2Entity objGasto WHERE (objGasto.isEliminado=false) AND (objGasto.usuario.idUsuario=?3) AND (objGasto.tipoGasto.idTipoGasto=?4) AND (CONVERT(objGasto.fechaPago, DATE) BETWEEN ?1 AND ?2)")
+    public abstract List<ActivoServicioProveedorMant2Entity> findByGastoUsuarioFechaTipo(LocalDate ldFechaInicio, LocalDate ldFechaFin,int idUsuario, int idTipoGasto);
 
+    @Query("SELECT objGasto FROM ActivoServicioProveedorMant2Entity objGasto WHERE (objGasto.isEliminado=false) AND (objGasto.tipoGasto.idTipoGasto=?3) AND (CONVERT(objGasto.fechaPago, DATE) BETWEEN ?1 AND ?2)")
+    public abstract List<ActivoServicioProveedorMant2Entity> findByGastoTipoFecha(LocalDate ldFechaInicio, LocalDate ldFechaFin,int idTipoGasto);
 
-
+    @Query("SELECT objGasto FROM ActivoServicioProveedorMant2Entity objGasto WHERE (objGasto.isEliminado=false) AND (CONVERT(objGasto.fechaPago, DATE) BETWEEN ?1 AND ?2)")
+    public abstract List<ActivoServicioProveedorMant2Entity> findByGastoFecha(LocalDate ldFechaInicio, LocalDate ldFechaFin);
 }

@@ -1,10 +1,15 @@
 package com.ibmexico.controllers;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -12,12 +17,15 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import com.ibmexico.components.ModelAndViewComponent;
+import com.ibmexico.components.PdfComponent;
 import com.ibmexico.configurations.GeneralConfiguration;
 
 import com.ibmexico.entities.ActivoServicioProveedorMant2Entity;
 import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.CotizacionFicheroEntity;
+import com.ibmexico.entities.EmpresaEntity;
 import com.ibmexico.entities.FacturaEntity;
+import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.libraries.DataTable;
 import com.ibmexico.libraries.Templates;
 import com.ibmexico.libraries.notifications.ApplicationException;
@@ -35,10 +43,15 @@ import com.ibmexico.services.SessionService;
 import com.ibmexico.services.SucursalService;
 import com.ibmexico.services.TipoGastoService;
 import com.ibmexico.services.UsuarioService;
+import com.lowagie.text.DocumentException;
+import com.twilio.rest.api.v2010.account.availablephonenumbercountry.Local;
 
+import org.hibernate.sql.Template;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +60,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.thymeleaf.context.Context;
 
 @Controller
 @RequestMapping("controlPanel/Gastos")
@@ -106,7 +120,11 @@ public class GastosController {
 	
 	@Autowired
 	@Qualifier("cotizacionTipoFicheroService")
-	private CotizacionTipoFicheroService cotizacionTipoFicheroService;
+    private CotizacionTipoFicheroService cotizacionTipoFicheroService;
+    
+    @Autowired
+	@Qualifier("pdfComponent")
+	private PdfComponent pdfComponent;
 	
 
     @RequestMapping({ "", "/" })
@@ -498,6 +516,7 @@ public class GastosController {
         JsonArrayBuilder jsRows = Json.createArrayBuilder();
         BigDecimal d = BigDecimal.ZERO;
         dtDetalleMant.getRows().forEach((itemDetalle) -> {
+            
             jsRows.add(Json.createObjectBuilder()
                 .add("idgasto", itemDetalle.getIdServicioProveedorMant())
                 .add("creacion_fecha", itemDetalle.getCreacionFechaNatural())
@@ -512,7 +531,9 @@ public class GastosController {
                 .add("fileFactura", itemDetalle.getFacturaGasto().getUrl()!=null? itemDetalle.getFacturaGasto().getUrl() : "")
                 );
         });
-        jsonReturn.add("rows", jsRows);
+        String FechaInicio=txtBootstrapTableDesde;
+        String FechaFin=txtBootstrapTableHasta;
+        jsonReturn.add("rows", jsRows).add("fechaInicio", FechaInicio).add("fechaFin", FechaFin);
         return jsonReturn.build().toString();
     }
 
@@ -596,4 +617,117 @@ public class GastosController {
             return jsonReturn.build().toString();
 
     }
+
+    
+    @RequestMapping(value={"reporte-gasto-pdf",
+                            "reporte-gasto-pdf/{fechaInicio}/{fechaFin}/{idtipoGasto}/tipoGasto",
+                            "reporte-gasto-pdf/{fechaInicio}/{fechaFin}/{idUsuario}",
+                            "reporte-gasto-pdf/{fechaInicio}/{fechaFin}/{idtipoGasto}/{idUsuario}",
+                            "reporte-gasto-pdf/{fechaInicio}/{fechaFin}"}, 
+                            method=RequestMethod.GET,produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<InputStreamResource> previewPdfGasto(@PathVariable(value="fechaInicio",required=false)String fecha,
+                                                                @PathVariable(value="fechaFin", required = false) String fechaFinal,
+                                                                @PathVariable(value ="idtipoGasto",required = false)Integer idTipoGasto,
+                                                                @PathVariable(value = "idUsuario",required = false)Integer idUsuario) throws IOException,  DocumentException {
+        LocalDate fechaMesInicio=null;
+        LocalDate fechaMesFin= null;
+        UsuarioEntity objUsuario=null;
+
+        System.err.println(idUsuario +"values");
+        System.err.println(idTipoGasto +"values");
+        System.err.println(fecha +"values");
+        System.err.println(fechaFinal +"values");
+
+        if(idUsuario!=null && idUsuario>=1){
+            objUsuario=usuarioService.findByIdUsuario(idUsuario);
+        }
+
+        if(!fecha.equals("") && fecha.contains("-")){
+            String[] arrFecha=fecha.split("-");
+            int year= Integer.parseInt(arrFecha[2]);
+            int month= Integer.parseInt(arrFecha[1]);
+            int day=Integer.parseInt(arrFecha[0]);
+            fechaMesInicio=LocalDate.of(year, month, day);
+            if (!fechaFinal.equals("") && fechaFinal.contains("-")) {
+                String [] arrFechaFin=fechaFinal.split("-");
+                int anio= Integer.parseInt(arrFechaFin[2]);
+                int mes= Integer.parseInt(arrFechaFin[1]);
+                int dia=Integer.parseInt(arrFechaFin[0]);
+                fechaMesFin=LocalDate.of(anio, mes, dia);
+            }else{
+                fechaMesFin=LocalDate.now();
+            }
+        }else{
+            fechaMesInicio=LocalDate.now().withDayOfMonth(1);
+            fechaMesFin=LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth());
+        }
+
+        /**Totales del reporte para mostrar */
+        BigDecimal totalGastos=new BigDecimal(0);
+
+        final LocalDate fechaInicio=fechaMesInicio;
+        final LocalDate fechaFin=fechaMesFin;
+        List<ActivoServicioProveedorMant2Entity> lstGastos=null;
+     
+        String user="";
+        if(idUsuario!=null && idUsuario>=1){
+            if(idTipoGasto!=null && idTipoGasto>=1){
+                lstGastos=gastosService.findByGastoUsuarioFechaTipo(fechaInicio, fechaFin, idUsuario, idTipoGasto);
+            }else{
+                lstGastos=gastosService.findByGastoUsarioFecha(fechaInicio, fechaFin, idUsuario);
+            }
+            user="USUARIO";
+        }
+        if(idTipoGasto!=null && idTipoGasto>=1 && idUsuario==null){
+            lstGastos=gastosService.findByGastoTipoFecha(fechaInicio, fechaFin, idTipoGasto);
+        }else if(idTipoGasto==null && idUsuario==null){
+            lstGastos=gastosService.findByGastoFecha(fechaInicio, fechaFin);
+        }
+        // List<ActivoServicioProveedorMant2Entity> lstGastos= gastosService.findByGastoTipoFecha(fechaInicio, fechaFin, idUsuario);
+        List<Map<String, String>> myMap=new ArrayList<Map<String, String>>();
+        Integer iterator=0;
+        
+        for (ActivoServicioProveedorMant2Entity itemGasto : lstGastos) {
+            Map<String,String> myMap1 = new HashMap<String, String>();
+            /*Calculo de totales */
+            totalGastos= totalGastos.add(itemGasto.getPrecioServicioProveedor());
+            myMap1.put("folioCotizacion", itemGasto.getFolioCotizacion());
+            myMap1.put("folioFactura", itemGasto.getFacturaGasto().getNumeroFactura());
+            myMap1.put("ciudad", itemGasto.getCiudad());
+            myMap1.put("estado", itemGasto.getEstado());
+            myMap1.put("lugar_formatter", itemGasto.getFormatted_address());
+            myMap1.put("observaciones", itemGasto.getObservaciones());
+            myMap1.put("subTotal", GeneralConfiguration.getInstance().getNumberFormat().format(itemGasto.getPrecioServicioProveedor()));
+            // myMap1.put("perteneceCotizacion", GeneralConfiguration.getInstance().getNumberFormat().format(itemGasto.getPerteneceCotizacion()).equals("true") ? "SI" :"NO");
+            myMap1.put("clasificacionGasto", itemGasto.getClasificacionTipoGasto().getNombre());
+            myMap1.put("tipoGasto", itemGasto.getTipoGasto().getNombre());
+            myMap1.put("proveedor", itemGasto.getProveedor().getProveedor());
+            myMap1.put("usuario",itemGasto.getUsuario().getNombreCompleto());
+            myMap1.put("fechaRegistro", itemGasto.getCreacionFechaNatural());
+            myMap1.put("fechaGasto", itemGasto.getFechaPagoNatural());
+            myMap.add(iterator, myMap1);
+            iterator++;
+        }
+        
+        LocalDateTime ldtNow = LocalDateTime.now();
+        Templates objTemplates=new Templates();
+        String path_file=ldtNow.getYear() +"_"+ldtNow.getMonthValue() +"_"+ldtNow.getDayOfMonth() +"_REPORTE_GASTO.pdf";
+        EmpresaEntity objEmpresa=empresaService.findByIdEmpresa(1);
+        Context objContext = new Context();
+        objContext.setVariable("_TEMPLATE_", Templates.PDF_GASTO);
+        objContext.setVariable("title", "Reporte de Gasto");
+        objContext.setVariable("objUsuario", objUsuario);
+        objContext.setVariable("objEmpresa",objEmpresa);
+        objContext.setVariable("GastosMap", myMap);
+        objContext.setVariable("tieneUsuario",user);
+
+        objContext.setVariable("totalSubtotal", GeneralConfiguration.getInstance().getNumberFormat().format(totalGastos));
+        objContext.setVariable("fechaInicio", fechaInicio.format(GeneralConfiguration.getInstance().getDateFormatterNatural()));
+        objContext.setVariable("fechaFin", fechaFin.format(GeneralConfiguration.getInstance().getDateFormatterNatural()));
+        objContext.setVariable("mesActual", GeneralConfiguration.getInstance().getCurrentMonthNatural(fechaInicio.getMonthValue()));
+        System.err.println(user +"valor de user");
+        return pdfComponent.generate(path_file, objTemplates.FOUNDATION_PDF, objContext);
+    }
+    
+
 }

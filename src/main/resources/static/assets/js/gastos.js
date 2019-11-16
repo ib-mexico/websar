@@ -56,7 +56,7 @@ if (document.getElementById("appGastos")) {
                 id_usuario:'',
                 departamento:'',
                 sucursal:'',
-            }
+            },
         },
 
         methods: {
@@ -364,32 +364,36 @@ if (document.getElementById("appGastos")) {
 						});
 					}
 				}).catch(swal.noop);
+            },
+
+            GenerarPDF(){  
+                var urlRedirect = '';
+                var valorTipoGasto=$('.cmbReporteTipoGasto').selectpicker('val');
+                var valorUsuario=$('.cmbReporteUsuario').selectpicker('val');
+                var reporteFechaInicio=$('#txtFechaReporteInicio').val();
+                var reporteFechaFin=$('#txtFechaReporteFin').val();
+                if( valorUsuario!='default' && valorUsuario!=null){
+                    if (valorTipoGasto!='default' && valorTipoGasto!=null) {
+                        urlRedirect=host+'Gastos/reporte-gasto-pdf/'+reporteFechaInicio+'/'+reporteFechaFin+'/'+valorTipoGasto+'/'+valorUsuario;
+                    }
+                    else{
+                        urlRedirect=host+'Gastos/reporte-gasto-pdf/'+reporteFechaInicio+'/'+reporteFechaFin+'/'+valorUsuario;
+                    }
+                }
+                if(valorUsuario=='default' && valorTipoGasto!=null && valorTipoGasto!='default'){
+                    urlRedirect=host+'Gastos/reporte-gasto-pdf/'+reporteFechaInicio+'/'+reporteFechaFin+'/'+valorTipoGasto+"/tipoGasto";
+                }else if(valorTipoGasto=='default' && valorUsuario=='default'){
+                    urlRedirect=host+'Gastos/reporte-gasto-pdf/'+reporteFechaInicio+'/'+reporteFechaFin;
+                }
+                $('#txtFechaReporteInicio').val("");
+                $("#txtFechaReporteFin").val("");
+                $('.cmbReporteTipoGasto').val('default')
+                $('.cmbReporteTipoGasto').selectpicker('refresh');
+                $('.cmbReporteUsuario').val('default');
+                $('.cmbReporteUsuario').selectpicker('refresh');
+				window.open(urlRedirect);
             }
             
-        },
-        computed: {
-            // isDisabled:function(){
-            //     console.log("isDisabled");
-            //     if(this.opcionGasto===1){
-            //         if(this.formInputs.length>=1){
-            //             document.getElementById("addCotizacionGasto").disabled=true;
-            //             return true;
-            //         }else{
-            //             document.getElementById("addCotizacionGasto").disabled=false;
-            //             return false;
-            //         }
-                    // if($("#modalGasto").is(':visible')){
-                    //     var values=$('select[name=cmbCotizacion]').val();
-                    //     if(values.length>1){
-                    //         return true;
-                    //     }
-                    //     else{
-                    //         return false;
-                    //     }
-                    // }
-                // }
-         
-            // }
         },
         watch: {
             'nuevoPago.id_tipoGasto': function (val) {
