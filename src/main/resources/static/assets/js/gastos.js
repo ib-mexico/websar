@@ -187,21 +187,21 @@ if (document.getElementById("appGastos")) {
 
                 var fileInput= document.getElementById('idFicheroFactura').files.length;
 				if(!fileInput){
-					swal("Revisión!","Sube la factura para evidenciar gastos.");
+					swal("Revisión!","Sube la factura para evidenciar gastos.","warning");
 					return response;
                 }
-                if(this.nuevoPago.checkCotizacion==true){
+                // if(this.nuevoPago.checkCotizacion==true){
 
-                }else{
-                    var cotizacion=$("input[name=txtCotizacion]").val();
-                    console.log(cotizacion);
+                // }else{
+                //     var cotizacion=$("input[name=txtCotizacion]").val();
+                //     console.log(cotizacion);
                     
-                    var ficheroCotizacion= document.getElementById('idficheroCotizacion').files.length;
-                    if(!ficheroCotizacion){
-                        swal("Revisión!","Sube la evidencia de esta cotización");
-                        return response;
-                    }
-                }
+                //     var ficheroCotizacion= document.getElementById('idficheroCotizacion').files.length;
+                //     if(!ficheroCotizacion){
+                //         swal("Revisión!","Sube la evidencia de esta cotización","warning");
+                //         return response;
+                //     }
+                // }
 
 
 
@@ -365,33 +365,56 @@ if (document.getElementById("appGastos")) {
 					}
 				}).catch(swal.noop);
             },
-
+            validateReporte(){
+                var response=false;
+                var valorEmpresa=$('.cmbReporteEmpresa').selectpicker('val');
+                var reporteFechaInicio=$('#txtFechaReporteInicio').val();
+                var reporteFechaFin=$('#txtFechaReporteFin').val();
+                if(valorEmpresa=='default'){
+					swal("Revision!","Por favor eliga una empresa.","warning");
+                    return response;
+                }
+                if(reporteFechaInicio=='' && reporteFechaFin==''){
+					swal("Revisión!","Seleccione las fechas correspondientes.","warning");
+                    return response;
+                }
+               return response=true;
+            },
             GenerarPDF(){  
                 var urlRedirect = '';
+                var valorEmpresa=$('.cmbReporteEmpresa').selectpicker('val');
                 var valorTipoGasto=$('.cmbReporteTipoGasto').selectpicker('val');
                 var valorUsuario=$('.cmbReporteUsuario').selectpicker('val');
                 var reporteFechaInicio=$('#txtFechaReporteInicio').val();
                 var reporteFechaFin=$('#txtFechaReporteFin').val();
-                if( valorUsuario!='default' && valorUsuario!=null){
-                    if (valorTipoGasto!='default' && valorTipoGasto!=null) {
-                        urlRedirect=host+'Gastos/reporte-gasto-pdf/'+reporteFechaInicio+'/'+reporteFechaFin+'/'+valorTipoGasto+'/'+valorUsuario;
+                console.log(valorEmpresa);
+                console.log(reporteFechaInicio);
+                console.log(reporteFechaFin);
+                console.log(this.validateReporte())
+                if(this.validateReporte()){
+                    if( valorUsuario!='default' && valorUsuario!=null){
+                        if (valorTipoGasto!='default' && valorTipoGasto!=null) {
+                            urlRedirect=host+'Gastos/reporte-gasto-pdf/'+reporteFechaInicio+'/'+reporteFechaFin+'/'+valorEmpresa+'/'+valorTipoGasto+'/'+valorUsuario;
+                        }
+                        else{
+                            urlRedirect=host+'Gastos/reporte-gasto-pdf/'+reporteFechaInicio+'/'+reporteFechaFin+'/'+valorEmpresa+'/'+valorUsuario;
+                        }
                     }
-                    else{
-                        urlRedirect=host+'Gastos/reporte-gasto-pdf/'+reporteFechaInicio+'/'+reporteFechaFin+'/'+valorUsuario;
+                    if(valorUsuario=='default' && valorTipoGasto!=null && valorTipoGasto!='default'){
+                        urlRedirect=host+'Gastos/reporte-gasto-pdf/'+reporteFechaInicio+'/'+reporteFechaFin+'/'+valorEmpresa+'/'+valorTipoGasto+"/tipoGasto";
+                    }else if(valorTipoGasto=='default' && valorUsuario=='default'){
+                        urlRedirect=host+'Gastos/reporte-gasto-pdf/'+reporteFechaInicio+'/'+reporteFechaFin+'/'+valorEmpresa;
                     }
+                    $('#txtFechaReporteInicio').val("");
+                    $("#txtFechaReporteFin").val("");
+                    $('.cmbReporteEmpresa').val('default')
+                    $('.cmbReporteEmpresa').selectpicker('refresh');
+                    $('.cmbReporteTipoGasto').val('default')
+                    $('.cmbReporteTipoGasto').selectpicker('refresh');
+                    $('.cmbReporteUsuario').val('default');
+                    $('.cmbReporteUsuario').selectpicker('refresh');
+                    window.open(urlRedirect);
                 }
-                if(valorUsuario=='default' && valorTipoGasto!=null && valorTipoGasto!='default'){
-                    urlRedirect=host+'Gastos/reporte-gasto-pdf/'+reporteFechaInicio+'/'+reporteFechaFin+'/'+valorTipoGasto+"/tipoGasto";
-                }else if(valorTipoGasto=='default' && valorUsuario=='default'){
-                    urlRedirect=host+'Gastos/reporte-gasto-pdf/'+reporteFechaInicio+'/'+reporteFechaFin;
-                }
-                $('#txtFechaReporteInicio').val("");
-                $("#txtFechaReporteFin").val("");
-                $('.cmbReporteTipoGasto').val('default')
-                $('.cmbReporteTipoGasto').selectpicker('refresh');
-                $('.cmbReporteUsuario').val('default');
-                $('.cmbReporteUsuario').selectpicker('refresh');
-				window.open(urlRedirect);
             }
             
         },

@@ -5,8 +5,8 @@
     
     <ol class="breadcrumb breadcrumb-bg-red">
       	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
-    	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">view_list</i> Cotizaciones</a></li>
-    	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + objCotizacion.idCotizacion + '/ordenesServicios'}"> Ordenes de Servicio</a></li>
+    	<li><a th:href="${ {_PATH_} + 'controlPanel/ordenesServicios'}"><i class="material-icons">view_list</i> Ordenes de Servicio</a></li>
+    	<!-- <li><a th:href="${ {_PATH_} + 'controlPanel/ordenesServicios/' + objCotizacion.idCotizacion + '/ordenesServicios'}"> Ordenes de Servicio</a></li> -->
     	<li class="active"> Nuevo</li>
   	</ol>
     
@@ -18,8 +18,7 @@
     			</div>
     			
     			<div class="body">
-    				<form id="formOrden" th:action="${ {_PATH_} + 'controlPanel/cotizaciones/' + objCotizacion.idCotizacion + '/ordenesServicios'}" th:method="POST">
-						<input type="hidden" name="hddIdCotizacion" th:value="${objCotizacion.getIdCotizacion()}" />
+    				<form id="formOrden" th:action="${ {_PATH_} + 'controlPanel/ordenesServicios/storeOrdenServicio'}" th:method="POST">
 						<input type="hidden" id="imgFirmaEntrega" name="imgFirmaEntrega" value="" />
     					<input type="hidden" id="imgFirmaRecepcion" name="imgFirmaRecepcion" value="" />
 						
@@ -31,11 +30,6 @@
 		                            	<option value="default" selected="selected">Selecciona un Cliente...</option>
 		                            	<option th:each="itemCliente : ${lstClientes}" th:value="${itemCliente.idCliente}" th:text="${itemCliente.cliente}"></option>
 		                       		</select>
-		                       		<!-- <span class="input-group-addon">
-		                       			<a href="#" data-toggle="modal" data-target="#clienteModal">		                       			
-	                                        <i class="material-icons">add_circle</i>
-		                       			</a>
-                                    </span> -->
 								</div>	                           
 	                        </div>
 	                        
@@ -45,11 +39,6 @@
 		                            <select class="form-control show-tick" name="cmbClienteContacto" id="cmbClienteContacto" data-live-search="true" >
 		                            	<option value="default" selected="selected">Selecciona un Contacto...</option>
 		                            </select>
-		                            <!-- <span class="input-group-addon">
-		                       			<a href="#" data-toggle="modal" data-target="#contactoModal">		                       			
-	                                        <i class="material-icons">add_circle</i>
-		                       			</a>
-                                    </span> -->
 	                            </div>
 	                        </div>
 						</div>
@@ -90,14 +79,14 @@
                   		</div>
                   		
                   		<div class="row clearfix">
-							<div class="col-md-4">
+							<!-- <div class="col-md-4">
 								<div class="form-group">	
 									<b>Cotizaci&oacute;n</b>							
 									<div class="form-line">
 										<input type="text" class="form-control" th:value="${objCotizacion.folio}" />
 									</div>
 								</div>
-							</div>
+							</div> -->
 	                        
 	                        <div class="col-md-4">
 								<div class="form-group">	
@@ -268,7 +257,7 @@
 					
 						<div class="row clearfix">
 							<div class="col-md-3 col-md-offset-8 text-right">
-								<a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + objCotizacion.idCotizacion + '/ordenesServicios'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<a th:href="${ {_PATH_} + 'controlPanel/ordenesServicios'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
 								<button type="submit" class="btn btn-primary m-t-15 waves-effect">CREAR</button>
 							</div>
 						</div>
@@ -276,146 +265,8 @@
     			</div>
     		</div>
     	</div>
-    </div>
-    
-    <!-- CLIENTE MODAL -->
-    <div class="modal fade" id="clienteModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-            	<form id="formCliente" th:action="${ {_PATH_} + 'controlPanel/clientes/add-cliente'}" th:method="POST">
-	                <div class="modal-header">
-	                    <h4 class="modal-title" id="defaultModalLabel">Nuevo Cliente</h4>
-	                </div>
-	                <div class="modal-body">
-	                    <div class="row clearfix">
-							<div class="col-md-8">
-	                        	<div class="form-group">
-	                        		<p><b>Nombre Comercial *</b></p>
-	                                <div class="form-line">
-	                                    <input type="text" name="txtNombreComercial" class="form-control" required="required" />
-	                                </div>
-	                            </div>
-	                        </div>
-	                        
-							<div class="col-md-4">
-	                            <p><b>Sucursal *</b></p>
-	                            <select class="form-control show-tick" name="cmbSucursal" id="cmbSucursal" data-live-search="true" >
-	                       			<th:block th:each="itemSucursal : ${lstSucursales}" >
-	                       				<option th:if="${itemSucursal.idSucursal == _USER_.getSucursal().getIdSucursal()}" selected="selected" th:value="${itemSucursal.idSucursal}" th:text="${itemSucursal.sucursal}"></option>
-	                       				<option th:unless="${itemSucursal.idSucursal == _USER_.getSucursal().getIdSucursal()}" th:value="${itemSucursal.idSucursal}" th:text="${itemSucursal.sucursal}"></option>
-	                       			</th:block>
-	                       		</select>
-	                        </div>	                        	                       
-						</div>
-						
-						<div class="row clearfix">
-							<div class="col-md-4">
-	                            <p><b>Giro</b></p>
-	                            <select class="form-control show-tick" name="cmbGiro" id="cmbGiro" data-live-search="true" >
-	                            	<option th:each="itemGiro : ${lstClientesGiros}" th:value="${itemGiro.idClienteGiro}" th:text="${itemGiro.clienteGiro}"></option>
-	                       		</select>
-	                        </div>
-						
-							<div class="col-md-4">
-	                        	<div class="form-group">
-	                        		<p><b>Raz&oacute;n social*</b></p>
-	                                <div class="form-line">
-	                                    <input type="text" name="txtRazonSocial" class="form-control" required="required" />
-	                                </div>
-	                            </div>
-	                        </div>
-	                        
-	                       <div class="col-md-4">
-								<div class="form-group">
-	                        		<p><b>RFC *</b></p>
-	                                <div class="form-line">
-	                                    <input type="text" name="txtRFC" class="form-control" required="required" />
-	                                </div>
-	                            </div>
-							</div>
-						</div>
-	                </div>
-	                <div class="modal-footer">	                    
-	                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CANCELAR</button>
-	                    <button type="submit" class="btn btn-link waves-effect">CREAR</button>
-	                </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-	<!-- CONTACTO MODAL -->
-    <div class="modal fade" id="contactoModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-            	<form id="formContacto" th:action="${ {_PATH_} + 'controlPanel/clientes/add-contacto'}" th:method="POST">
-            		<input type="hidden" value="" name="hddIdCliente" id="hddIdCliente" />
-	                <div class="modal-header">
-	                    <h4 class="modal-title" id="defaultModalLabel">Nuevo Contacto</h4>
-	                </div>
-	                <div class="modal-body">
-	                    <div class="row clearfix">
-	                        <div class="col-md-6">
-	                        	<div class="form-group">
-	                        		<p><b>Contacto *</b></p>
-	                                <div class="form-line">
-	                                    <input type="text" name="txtContacto" class="form-control" required="required" />
-	                                </div>
-	                            </div>
-	                        </div>
-	                        
-	                        <div class="col-md-4">
-                        		<input type="checkbox" id="chkAdministrador" name="chkAdministrador" value="true" class="chk-col-red" />
-                               	<label for="chkAdministrador">&iquest;PROPIETARIO / GERENTE?</label>
-	                        </div>
-						</div>
-						
-						<div class="row clearfix">
-							<div class="col-md-3">
-								<div class="form-group">
-	                        		<p><b>Puesto</b></p>
-                                    <div class="form-line">
-                                        <input type="text" name="txtPuesto" class="form-control" />
-                                    </div>
-                                 </div>
-							</div>
-							
-							<div class="col-md-3">                        	
-	                        	<div class="form-group">
-	                        		<p><b>Correo *</b></p>
-	                                <div class="form-line">
-	                                    <input type="text" name="txtCorreo" class="form-control" required="required" />
-	                                </div>
-	                            </div>
-	                        </div>
-	                        
-	                        <div class="col-md-3">                        		
-	                        	<div class="form-group">
-	                        		<p><b>Tel&eacute;fono</b></p>
-	                                <div class="form-line">
-	                                    <input type="text" name="txtTelefono" class="form-control" />
-	                                </div>
-	                            </div>
-	                        </div>
-	                        
-	                        <div class="col-md-3">                        		
-	                        	<div class="form-group">
-	                        		<p><b>Celular *</b></p>
-	                                <div class="form-line">
-	                                    <input type="text" name="txtCelular" class="form-control" required="required" />
-	                                </div>
-	                            </div>
-	                        </div>
-						</div>
-	                </div>
-	                <div class="modal-footer">	                    
-	                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CANCELAR</button>
-	                    <button type="submit" class="btn btn-link waves-effect">CREAR</button>
-	                </div>
-                </form>
-            </div>
-        </div>
-    </div>
+	</div>
+	
 </th:block>
 
 <th:block th:fragment="script">

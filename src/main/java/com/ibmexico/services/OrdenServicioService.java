@@ -152,8 +152,11 @@ public class OrdenServicioService {
 		URL urlPath = this.getClass().getResource("/");
 		byte[] bytesFichero = Base64.getDecoder().decode(ficheroElabora);
 		 
-		if(objOrdenServicio != null) {			
-            	
+		if(objOrdenServicio != null) {
+				File urlFile=new File(urlPath.getPath()+"static/ficheros/ordenesServicios");			
+            	if(!urlFile.exists()){
+					urlFile.mkdir();
+				}
 			try{
 				BufferedImage img = ImageIO.read(new ByteArrayInputStream(bytesFichero));
 				File imgFile = new File(urlPath.getPath() +"static/ficheros/ordenesServicios/" + objOrdenServicio.getUrlFirmaElabora());
@@ -244,4 +247,20 @@ public class OrdenServicioService {
 		}
 		
 	}
+
+	/**Metodos para el modulo de ordenes servicio sin asociacion de una cotizacion */
+	public DataTable<OrdenServicioEntity> dataTableOrdenes(String search, int offset, int limit, String txtBootstrapTableDesde, String txtBootstrapTableHasta){
+		List<OrdenServicioEntity> lstOrdenServicio=null;
+		long totalServicios=100;
+		if (search!=null) {
+			lstOrdenServicio=ordenServicioRepository.findForDataTableOrdenes(search, DataTable.getPageRequest(offset, limit));
+			totalServicios=ordenServicioRepository.countForDataTableOrdenes(search);
+		}else{
+			lstOrdenServicio=ordenServicioRepository.findForDataTableOrdenes(DataTable.getPageRequest(offset, limit));
+			totalServicios=ordenServicioRepository.countForDataTableOrdenes();
+		}
+		DataTable<OrdenServicioEntity> returnDataTable=new DataTable<OrdenServicioEntity>(lstOrdenServicio, totalServicios);
+		return returnDataTable;	
+	}
+	/**Fin de los metodos de ordenServicios without cotizacion */
 }

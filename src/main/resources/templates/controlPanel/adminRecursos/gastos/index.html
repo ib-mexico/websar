@@ -16,41 +16,45 @@
 		#personalizada{
 			margin-left: -15px;
 		}
+		.titleReport{
+			padding-top: 8px;
+		}
+		
 		/*Extra small devices (portrait phones, less than 576px)*/
 		@media (max-width: 575.98px) {
 			.collapse .card-body{
-				min-height: 330px ;
-				height: 330px !important;
+				min-height: 410px ;
+				height: 410px !important;
 			}
 		}
 		/* Small devices (landscape phones, 576px and up)*/
 		@media (min-width: 576px) and (max-width: 767.98px) {
 			.collapse .card-body{
-				min-height: 330px ;
-				height: 330px !important;
+				min-height: 390px ;
+				height: 390px !important;
 			}
 		}
 		/* Medium devices (tablets, 768px and up)*/
 		@media (min-width: 768px) and (max-width: 991.98px) {
 			.collapse .card-body{
-				min-height: 220px ;
-				height: 220px !important;
+				min-height: 240px ;
+				height: 240px !important;
 			}
 		}
 
 		/* Large devices (desktops, 992px and up)*/
 		@media (min-width: 992px) and (max-width: 1199.98px) {
 			.collapse .card-body{
-				min-height: 80px ;
-				height: 80px !important;
+				min-height: 140px ;
+				height: 140px !important;
 			}
 		}
 
 		/* Extra large devices (large desktops, 1200px and up)*/
 		@media (min-width: 1200px) {
 			.collapse .card-body{
-				min-height: 80px ;
-				height: 80px !important;
+				min-height: 140px ;
+				height: 140px !important;
 			}
 		}
 
@@ -145,43 +149,52 @@
 					</div>
 					<div class="collapse" id="collapseExample">
 						<div class="card card-body reporte">
-							<h4 class="text-center">Seleccione las opciones para generar su reporte</h4>
-							<div class="col-md-3 col-xs-12 col-sm-6">
-								<select name="reporteUsuario" id="reporteUsuario" class="selectpicker form-control show-tick cmbReporteUsuario" data-live-search="true">
-									<option value="default" selected="selected">Seleccione un Usuario</option>
-									<option v-for="item in usuario" :value="item.id_usuario" v-text="item.nombre_completo"></option>
-								</select>
-							</div>
-							<div class="col-md-3 col-xs-12 col-sm-6">
-								<select name="reporteTipo" id="reporteTipo" class="selectpicker form-control show-tick cmbReporteTipoGasto" data-live-search="true">
-										<option value="default" selected="selected">Seleccione Tipo de Gasto</option>
-									<option v-for="item in tipoGasto" :value="item.id_tipo_gasto" v-text="item.nombre_gasto"></option>
-								</select>
-							</div>
-							<div class="col-md-2 col-xs-12 col-sm-6">
-								<div class="input-group">
-									<span class="input-group-addon">
-										<i class="material-icons">date_range</i>
-									</span>
-									<div class="form-line" id='groupDesde'>
-										<input type="text" class="form-control text-center" id="txtFechaReporteInicio" name="txtFechaReporteInicio" placeholder="Desde..." />
+							<h4 class="text-center titleReport">Seleccione las opciones para generar su reporte</h4>
+							<div class="row">
+								<div class="col-md-4 col-xs-12 col-sm-6">
+									<select name="reporteEmpresa" id="reporteEmpresa" class="selectpicker form-control show-tick cmbReporteEmpresa" data-live-search="true">
+										<option value="default" selected="selected">Seleccione la empresa</option>
+										<option v-for="item  in empresa" :value="item.id_empresa" v-text="item.razon_social"></option>
+									</select>
+								</div>
+								<div class="col-md-4 col-xs-12 col-sm-6">
+									<select name="reporteUsuario" id="reporteUsuario" class="selectpicker form-control show-tick cmbReporteUsuario" data-live-search="true">
+										<option value="default" selected="selected">Seleccione un Usuario</option>
+										<option v-for="item in usuario" :value="item.id_usuario" v-text="item.nombre_completo"></option>
+									</select>
+								</div>
+								<div class="col-md-4 col-xs-12 col-sm-6">
+									<select name="reporteTipo" id="reporteTipo" class="selectpicker form-control show-tick cmbReporteTipoGasto" data-live-search="true">
+											<option value="default" selected="selected">Seleccione Tipo de Gasto</option>
+										<option v-for="item in tipoGasto" :value="item.id_tipo_gasto" v-text="item.nombre_gasto"></option>
+									</select>
+								</div>
+							
+								<div class="col-md-4 col-xs-12 col-sm-6">
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="material-icons">date_range</i>
+										</span>
+										<div class="form-line" id='groupDesde'>
+											<input type="text" class="form-control text-center" id="txtFechaReporteInicio" name="txtFechaReporteInicio" placeholder="Desde..." />
+										</div>
 									</div>
 								</div>
-							</div>
-							<div class="col-md-2 col-xs-12 col-sm-6">
-								<div class="input-group">
-									<span class="input-group-addon">
-										<i class="material-icons">date_range</i>
-									</span>
-									<div class="form-line" id='groupHasta'>
-										<input type="text" class="form-control text-center" id="txtFechaReporteFin" name="txtFechaReporteFin" placeholder="Hasta..." />
+								<div class="col-md-4 col-xs-12 col-sm-6">
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="material-icons">date_range</i>
+										</span>
+										<div class="form-line" id='groupHasta'>
+											<input type="text" class="form-control text-center" id="txtFechaReporteFin" name="txtFechaReporteFin" placeholder="Hasta..." />
+										</div>
 									</div>
 								</div>
-							</div>
-							<div class="col-md-2 col-xs-12 col-sm-12">
-								<button  class="btn bg-purple waves-effect" data-target="#collapseExample" aria-expanded="false"
-								aria-controls="collapseExample"
-								 data-toggle="collapse" v-on:click="GenerarPDF"><i class="material-icons">picture_as_pdf</i>Generar Reporte</button>
+								<div class="col-md-4 col-xs-12 col-sm-6">
+									<button  class="btn bg-purple waves-effect" data-target="#collapseExample" aria-expanded="false"
+									aria-controls="collapseExample"
+									data-toggle="collapse" v-on:click="GenerarPDF"><i class="material-icons">picture_as_pdf</i>Generar Reporte</button>
+								</div>
 							</div>
 						</div>	
 					</div>					
@@ -307,7 +320,7 @@
 														<i class="material-icons">attach_money</i>
 														</span>
 														<div class="form-line">
-															<input type="number" class="form-control text-primary font-weight-bold" 
+															<input type="number" step="0.01" class="form-control text-primary font-weight-bold" 
 															name="txtSubtotal"/>
 														</div>
 													</div>
@@ -421,7 +434,7 @@
 																<i class="material-icons">attach_money</i>
 															</span>
 															<div class="form-line">
-																<input type="number" class="form-control text-primary font-weight-bold" 
+																<input type="number" step="0.01" class="form-control text-primary font-weight-bold" 
 																name="subTotal" v-model="formInput.subTotal"/>
 															</div>
 														</div>
@@ -595,7 +608,7 @@
 														<i class="material-icons">attach_money</i>
 														</span>
 														<div class="form-line">
-															<input type="number" class="form-control text-primary font-weight-bold" 
+															<input type="number" step="0.01" class="form-control text-primary font-weight-bold" 
 															name="txtSubtotal" v-model="editGastoData.subtotal"/>
 														</div>
 													</div>
@@ -710,7 +723,7 @@
 																	<i class="material-icons">attach_money</i>
 																</span>
 																<div class="form-line">
-																	<input type="number" class="form-control text-primary font-weight-bold" 
+																	<input type="number" step="0.01" class="form-control text-primary font-weight-bold" 
 																	name="subTotal" v-model="formInput.subTotal"/>
 																</div>
 															</div>
@@ -854,6 +867,7 @@
 	
 			$('.cmbReporteTipoGasto').selectpicker('refresh');
 			$('.cmbReporteUsuario').selectpicker('refresh');
+			$('.cmbReporteEmpresa').selectpicker('refresh');
 		});
 		
 		

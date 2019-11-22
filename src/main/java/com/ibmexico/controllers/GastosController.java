@@ -202,8 +202,6 @@ public class GastosController {
         return jsonReturn.build().toString();
     }
 
-
- 
     @RequestMapping(value = "storeGastos", method = RequestMethod.POST)
     public @ResponseBody String storeGastos(
             @RequestParam(value = "cmbEmpresa", required = false) Integer cmbEmpresa,
@@ -296,9 +294,12 @@ public class GastosController {
                         }
                     
                 }/**End for*/
-            }else{
+            }else if(!txtCotizacion.equals("")){
                 objServMant2.setFolioCotizacion(txtCotizacion);
-                gastosService.addCotizacion(objServMant2, ficheroCotizacion);
+                if (!ficheroCotizacion.isEmpty() && ficheroCotizacion !=null) {
+                    gastosService.addCotizacion(objServMant2, ficheroCotizacion);
+                }
+                gastosService.addGastoGeneral(objServMant2);
             }
             respuesta = true;
             titulo = "Excelente!";
@@ -620,14 +621,15 @@ public class GastosController {
 
     
     @RequestMapping(value={"reporte-gasto-pdf",
-                            "reporte-gasto-pdf/{fechaInicio}/{fechaFin}/{idtipoGasto}/tipoGasto",
-                            "reporte-gasto-pdf/{fechaInicio}/{fechaFin}/{idUsuario}",
-                            "reporte-gasto-pdf/{fechaInicio}/{fechaFin}/{idtipoGasto}/{idUsuario}",
-                            "reporte-gasto-pdf/{fechaInicio}/{fechaFin}"}, 
+                            "reporte-gasto-pdf/{fechaInicio}/{fechaFin}/{idEmpresa}/{idtipoGasto}/tipoGasto",
+                            "reporte-gasto-pdf/{fechaInicio}/{fechaFin}/{idEmpresa}/{idUsuario}",
+                            "reporte-gasto-pdf/{fechaInicio}/{fechaFin}/{idEmpresa}/{idtipoGasto}/{idUsuario}",
+                            "reporte-gasto-pdf/{fechaInicio}/{fechaFin}/{idEmpresa}"}, 
                             method=RequestMethod.GET,produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<InputStreamResource> previewPdfGasto(@PathVariable(value="fechaInicio",required=false)String fecha,
                                                                 @PathVariable(value="fechaFin", required = false) String fechaFinal,
                                                                 @PathVariable(value ="idtipoGasto",required = false)Integer idTipoGasto,
+                                                                @PathVariable(value="idEmpresa", required=false) Integer idEmpresa,
                                                                 @PathVariable(value = "idUsuario",required = false)Integer idUsuario) throws IOException,  DocumentException {
         LocalDate fechaMesInicio=null;
         LocalDate fechaMesFin= null;
@@ -672,16 +674,16 @@ public class GastosController {
         String user="";
         if(idUsuario!=null && idUsuario>=1){
             if(idTipoGasto!=null && idTipoGasto>=1){
-                lstGastos=gastosService.findByGastoUsuarioFechaTipo(fechaInicio, fechaFin, idUsuario, idTipoGasto);
+                lstGastos=gastosService.findByGastoUsuarioFechaTipo(fechaInicio, fechaFin, idUsuario, idTipoGasto, idEmpresa);
             }else{
-                lstGastos=gastosService.findByGastoUsarioFecha(fechaInicio, fechaFin, idUsuario);
+                lstGastos=gastosService.findByGastoUsarioFecha(fechaInicio, fechaFin, idUsuario, idEmpresa);
             }
             user="USUARIO";
         }
         if(idTipoGasto!=null && idTipoGasto>=1 && idUsuario==null){
-            lstGastos=gastosService.findByGastoTipoFecha(fechaInicio, fechaFin, idTipoGasto);
+            lstGastos=gastosService.findByGastoTipoFecha(fechaInicio, fechaFin, idTipoGasto, idEmpresa);
         }else if(idTipoGasto==null && idUsuario==null){
-            lstGastos=gastosService.findByGastoFecha(fechaInicio, fechaFin);
+            lstGastos=gastosService.findByGastoFecha(fechaInicio, fechaFin, idEmpresa);
         }
         // List<ActivoServicioProveedorMant2Entity> lstGastos= gastosService.findByGastoTipoFecha(fechaInicio, fechaFin, idUsuario);
         List<Map<String, String>> myMap=new ArrayList<Map<String, String>>();
@@ -712,7 +714,7 @@ public class GastosController {
         LocalDateTime ldtNow = LocalDateTime.now();
         Templates objTemplates=new Templates();
         String path_file=ldtNow.getYear() +"_"+ldtNow.getMonthValue() +"_"+ldtNow.getDayOfMonth() +"_REPORTE_GASTO.pdf";
-        EmpresaEntity objEmpresa=empresaService.findByIdEmpresa(1);
+        EmpresaEntity objEmpresa=empresaService.findByIdEmpresa(idEmpresa);
         Context objContext = new Context();
         objContext.setVariable("_TEMPLATE_", Templates.PDF_GASTO);
         objContext.setVariable("title", "Reporte de Gasto");
