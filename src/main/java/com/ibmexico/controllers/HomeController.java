@@ -205,7 +205,6 @@ public class HomeController {
 		
 		LocalDate fechaMesInicio = null;
 		LocalDate fechaMesFin = null;
-		
 		UsuarioEntity objUsuario = null;
 		EmpresaEntity objEmpresa = empresaService.findByIdEmpresa(idEmpresa);
 		

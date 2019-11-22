@@ -1,0 +1,152 @@
+<th:block th:fragment="body">
+	<div class="block-header">
+
+    </div>
+    
+    <ol class="breadcrumb breadcrumb-bg-red">
+      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+    	<li><a th:href="${ {_PATH_} + 'controlPanel/ordenesServicios'}"><i class="material-icons">view_list</i> Ordenes de Servicio</a></li>
+    	<li class="active">Ordenes de Servicio</li>
+  	</ol>
+    
+    <div class="row clearfix">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    		<div class="card">
+    			<div class="header">
+    				<h2>LISTA DE ORDENES DE SERVICIOS</h2>
+    				<ul class="header-dropdown m-r--5">
+                        <li class="dropdown">
+                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <i class="material-icons">more_vert</i>
+                            </a>
+                            <ul class="dropdown-menu pull-right">
+                                <li><a th:href="${ {_PATH_} + 'controlPanel/ordenesServicios/create'}">Nueva Orden de Servicio</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+    			</div>
+    			
+    			<div class="body">
+    				<div class="row clearfix" id="dtOrdenesToolBar" data-toolbar-align="left">
+						<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+   								<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupDesde'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
+	                           	</div>
+							</div>
+    					</div>
+    					
+    					<div class="col-xs-6 col-sm-6 col-md-4">
+    						<div class="input-group">
+    							<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupHasta'>
+                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
+	                           	</div>
+							</div>
+    					</div>							
+					</div>
+					
+					<div class="table-responsive">				
+							<table id="dtOrdenes" class="table table-bordered table-striped table-hover">
+								<thead>
+									<tr>
+										<th data-width="10%" data-field="idOrdenServicio" data-halign="left" data-align="center">ID</th>
+										<th data-width="10%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+										<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
+										<th data-width="25%" data-field="cliente" data-halign="center" data-align="left">Cliente</th>
+										<th data-width="25%" data-field="contacto" data-halign="center" data-align="left" data-visible="false">Contacto</th>
+										<th data-width="10%" data-field="subtotal" data-halign="right" data-align="right">Subtotal</th>
+																			
+										<th data-width="20%" data-field="nombreElabora" data-halign="center" data-align="left">Elabor&oacute;</th>
+										<th data-width="20%" data-field="nombreRecibe" data-halign="center" data-align="left">Recibi&oacute;</th>
+										
+										<th data-width="20%" data-field="fechaInicio" data-halign="center" data-align="center">Hora/Entrega</th>
+										<th data-width="30%" data-field="fechaEntrega" data-halign="center" data-align="center">Creaci&oacute;n/Fecha</th>																			
+									</tr>
+								</thead>
+							</table>
+					</div>
+					
+    			</div>
+    		</div>
+    	</div>
+    </div>
+</th:block>
+
+<th:block th:fragment="script">
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script type="application/javascript" th:inline="javascript">
+		
+		$(document).ready(function() {			
+			$("#dtOrdenes").bootstrapTable({
+				url					: [[@{/controlPanel/ordenesServicios/}]] + "table",
+				method				: 'post',
+				contentType 		: 'application/x-www-form-urlencoded',
+				sidePagination		: "server",
+				pagination			: true,
+				showColumns			: true,
+				showToggle 			: true,
+				showRefresh 		: true,
+				search				: true,
+				showExport			: true,
+				striped				: true,
+				pageSize 			: 50,
+				exportTypes			: ["excel"],
+				toolbar				: "#dtOrdenesToolBar",
+				queryParams 		: function(params) {
+											params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
+											params['txtBootstrapTableDesde'] = $('#txtBootstrapTableDesde').val();
+											params['txtBootstrapTableHasta'] = $('#txtBootstrapTableHasta').val();
+								        	return params;
+			    						}
+			});
+					
+		});
+			
+		function accionesFormatter(value, row, index) {
+			
+			urlPdf = [[@{/controlPanel/ordenesServicios/}]]  + row.idOrdenServicio + '/pdf';
+			urlFirma = [[@{/controlPanel/ordenesServicios/}]] + row.idOrdenServicio + '/revision';
+			
+			if(row.firmaRevisa == null || row.firmaRevisa == ' ') {
+				return [
+					'<a href="' + urlFirma + '" title="Revisi&oacute;n">',
+		        		'<i class="material-icons">receipt</i>',
+		        	'</a>',
+		        	'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+		        		'<i class="material-icons">print</i>',
+		        	'</a>',		        	
+			    ].join(' ');
+			} else {				
+			    return [
+			    	'<a title="Deshabilitado">',
+		        		'<i class="material-icons" style="color:grey">receipt</i>',
+		        	'</a>',
+		        	'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+		        		'<i class="material-icons">print</i>',
+		        	'</a>',		        	
+			    ].join(' ');
+			}
+			
+		}
+			
+		//Datetimepicker plugin
+		$(function () {
+			$('#txtBootstrapTableHasta').bootstrapMaterialDatePicker({format: 'MM/DD/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+			$('#txtBootstrapTableDesde').bootstrapMaterialDatePicker({format: 'MM/DD/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false}).on('change', function(e, date)
+			{
+				$('#txtBootstrapTableHasta').bootstrapMaterialDatePicker('setMinDate', date);
+			});					
+			
+	 	});						
+	</script>
+</th:block>

@@ -54,19 +54,19 @@ public class ActivoServicioProveedorMant2Service {
         return serviProveeMant.findByIdServicioProveedorMant(idServicioProvMant);
     }
     /* Regresar una lista de gastos para el reporte */
-    public List<ActivoServicioProveedorMant2Entity> findByGastoUsuarioFechaTipo(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idUsuario, int idTipoGasto){
-        return serviProveeMant.findByGastoUsuarioFechaTipo(ldFechaInicio, ldFechaFin, idUsuario,idTipoGasto);
+    public List<ActivoServicioProveedorMant2Entity> findByGastoUsuarioFechaTipo(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idUsuario, int idTipoGasto, int idEmpresa){
+        return serviProveeMant.findByGastoUsuarioFechaTipo(ldFechaInicio, ldFechaFin, idUsuario,idTipoGasto, idEmpresa);
     }
-    public List<ActivoServicioProveedorMant2Entity> findByGastoUsarioFecha(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idUsuario){
-        return serviProveeMant.findByGastoUsarioFecha(ldFechaInicio, ldFechaFin, idUsuario);
-    }
-
-    public List<ActivoServicioProveedorMant2Entity> findByGastoTipoFecha(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idTipoGasto){
-        return serviProveeMant.findByGastoTipoFecha(ldFechaInicio, ldFechaFin, idTipoGasto);
+    public List<ActivoServicioProveedorMant2Entity> findByGastoUsarioFecha(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idUsuario, int idEmpresa){
+        return serviProveeMant.findByGastoUsarioFecha(ldFechaInicio, ldFechaFin, idUsuario, idEmpresa);
     }
 
-    public List<ActivoServicioProveedorMant2Entity> findByGastoFecha(LocalDate ldFechaInicio, LocalDate ldFechaFin){
-        return serviProveeMant.findByGastoFecha(ldFechaInicio, ldFechaFin);
+    public List<ActivoServicioProveedorMant2Entity> findByGastoTipoFecha(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idTipoGasto, int idEmpresa){
+        return serviProveeMant.findByGastoTipoFecha(ldFechaInicio, ldFechaFin, idTipoGasto, idEmpresa);
+    }
+
+    public List<ActivoServicioProveedorMant2Entity> findByGastoFecha(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEmpresa){
+        return serviProveeMant.findByGastoFecha(ldFechaInicio, ldFechaFin, idEmpresa);
     }
 
 

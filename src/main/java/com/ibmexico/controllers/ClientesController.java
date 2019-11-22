@@ -408,7 +408,8 @@ public class ClientesController {
 			
 			jsonClientes.add(Json.createObjectBuilder()
 					.add("idCliente", itemCliente.getIdCliente())
-					.add("cliente", itemCliente.getCliente())					
+					.add("cliente", itemCliente.getCliente())
+					.add("rfc", itemCliente.getRfc())					
 			);
 		});
 					
