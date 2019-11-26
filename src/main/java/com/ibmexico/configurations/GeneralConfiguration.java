@@ -64,8 +64,8 @@ public class GeneralConfiguration {
 		
 		emailSender = "jorge.cortes@ib-mexico.com";
 		
-		twilio_ACCOUNT_SID = "ACb1d0149cdacf4961c682870a763d25bd";
-		twilio_AUTH_TOKEN = "7116970a79b1346bcd64aec10b3a563a";
+		twilio_ACCOUNT_SID = "ACd6081dd6ea62e62d4e70f3354e635da0";
+		twilio_AUTH_TOKEN = "75263e6ecfc8e45f99eec630d8ab266d";
 		
 	}
 	

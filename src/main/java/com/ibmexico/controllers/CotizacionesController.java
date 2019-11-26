@@ -71,9 +71,9 @@ import com.ibmexico.services.UsuarioRolService;
 import com.ibmexico.services.UsuarioService;
 import com.lowagie.text.DocumentException;
 import com.pusher.rest.Pusher;
-//import com.twilio.Twilio;
-//import com.twilio.rest.api.v2010.account.Message;
-//import com.twilio.type.PhoneNumber;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 
 @Controller
 @RequestMapping("controlPanel/cotizaciones")
@@ -744,20 +744,22 @@ public class CotizacionesController {
 		
 		try {
 			
-			if(objCotizacion != null) {												
-				
+			if(objCotizacion != null) {
+				/*Se hace una instancia Usuario para obtener el Usuario de Erick y enviarle a el unicamente el msj de aprobacion de Cotizacion */												
+				UsuarioEntity objUsuario=usuarioService.findByIdUsuario(2);
 				if(cmbEstatus.equals(2) && objCotizacion.getAprobacionFecha() == null) {
 					LocalDate ldNow = LocalDate.now();
 					objCotizacion.setAprobacionFecha(ldNow);
 					
 					//ESTA NOTIFICACION IRIA EN LA PARTE DE APROBACION AL MOMENTO QUE SE APRUEBE UNA COTIZACION MAYOR A 10,000
-					/*Twilio.init(GeneralConfiguration.getInstance().getTwilioAccountSID(), GeneralConfiguration.getInstance().getTwilioAuthToken());
-					
-					Message message = Message.creator(new PhoneNumber("whatsapp:+5219931695789"), 
-							new PhoneNumber("whatsapp:+14155238886"),
-							"Your appointment is coming up on July 21 at 3PM").create();
-					
-					System.out.println(message.getSid());*/
+					Twilio.init(GeneralConfiguration.getInstance().getTwilioAccountSID(), GeneralConfiguration.getInstance().getTwilioAuthToken());
+					if(objCotizacion.getTotal().doubleValue()>10000) {
+						Message message = Message.creator(new PhoneNumber("whatsapp:"+objUsuario.getCelular()), 
+								new PhoneNumber("whatsapp:+12053902893"),
+								"Se aprobó una cotización con folio *"+objCotizacion.getFolio()+"*, con un valor de *"+objCotizacion.getTotalNatural()+"* por el usuario *"+objCotizacion.getUsuario().getAliasCorreo()+"*").create();
+
+								System.out.println(message.getSid());
+					}
 					objCotizacion.setCotizacionEstatus(cotizacionEstatusService.findByIdCotizacionEstatus(cmbEstatus));
 					cotizacionService.update(objCotizacion);
 					respuesta = true;

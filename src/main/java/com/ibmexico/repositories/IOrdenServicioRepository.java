@@ -41,17 +41,17 @@ public interface IOrdenServicioRepository extends JpaRepository<OrdenServicioEnt
 
 	//TABLE FOR ORDENES SERVICIO SIN ASOCIACION DE UNA COTIZACION
 
-	@Query("SELECT COUNT(objOrdenServicio) FROM OrdenServicioEntity objOrdenServicio WHERE objOrdenServicio.cotizacion.idCotizacion = null")	
-	public abstract long countForDataTableOrdenes();
+	@Query("SELECT COUNT(objOrdenServicio) FROM OrdenServicioEntity objOrdenServicio WHERE objOrdenServicio.cotizacion.idCotizacion = null AND objOrdenServicio.usuarioElabora.idUsuario=?1")	
+	public abstract long countForDataTableOrdenes(int usuarioID);
 		
-	@Query("SELECT COUNT(objOrdenServicio) FROM OrdenServicioEntity objOrdenServicio WHERE objOrdenServicio.cotizacion.idCotizacion = null AND objOrdenServicio.eliminado = false AND (objOrdenServicio.folio like %?1% OR objOrdenServicio.usuarioElabora.nombreCompleto like %?1%) order by objOrdenServicio.idOrdenServicio DESC")	
-	public abstract long countForDataTableOrdenes(String search);
+	@Query("SELECT COUNT(objOrdenServicio) FROM OrdenServicioEntity objOrdenServicio WHERE objOrdenServicio.cotizacion.idCotizacion = null AND objOrdenServicio.usuarioElabora.idUsuario=?2 AND objOrdenServicio.eliminado = false AND (objOrdenServicio.folio like %?1% OR objOrdenServicio.usuarioElabora.nombreCompleto like %?1%) order by objOrdenServicio.idOrdenServicio DESC")	
+	public abstract long countForDataTableOrdenes(String search, int usuarioID);
 		
-	@Query("SELECT objOrdenServicio FROM OrdenServicioEntity objOrdenServicio WHERE objOrdenServicio.cotizacion.idCotizacion = null order by objOrdenServicio.idOrdenServicio DESC")
-	public abstract List<OrdenServicioEntity> findForDataTableOrdenes(Pageable page);
+	@Query("SELECT objOrdenServicio FROM OrdenServicioEntity objOrdenServicio WHERE objOrdenServicio.cotizacion.idCotizacion = null AND objOrdenServicio.usuarioElabora.idUsuario=?1 order by objOrdenServicio.idOrdenServicio DESC")
+	public abstract List<OrdenServicioEntity> findForDataTableOrdenes(int usuarioID,Pageable page);
 					
-	@Query("SELECT objOrdenServicio FROM OrdenServicioEntity objOrdenServicio WHERE objOrdenServicio.cotizacion.idCotizacion = null AND objOrdenServicio.eliminado = false AND (objOrdenServicio.folio like %?1% OR objOrdenServicio.usuarioElabora.nombreCompleto like %?1%) order by objOrdenServicio.idOrdenServicio DESC")
-	public abstract List<OrdenServicioEntity> findForDataTableOrdenes(String search, Pageable page);
+	@Query("SELECT objOrdenServicio FROM OrdenServicioEntity objOrdenServicio WHERE objOrdenServicio.cotizacion.idCotizacion = null AND objOrdenServicio.usuarioElabora.idUsuario=?2  AND objOrdenServicio.eliminado = false AND (objOrdenServicio.folio like %?1% OR objOrdenServicio.usuarioElabora.nombreCompleto like %?1%) order by objOrdenServicio.idOrdenServicio DESC")
+	public abstract List<OrdenServicioEntity> findForDataTableOrdenes(String search,int usuarioID, Pageable page);
 
 
 

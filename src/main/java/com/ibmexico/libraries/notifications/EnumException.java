@@ -1,7 +1,8 @@
 package com.ibmexico.libraries.notifications;
 
 public enum EnumException {
-	
+	//CORREOS
+	CORREO_ENVIO_001("Error al envio de correo para poliza","El objeto Correo no es valido, póngase en contacto con el administrador de sistema"),
 	//ACTIVOS
 	ACTIVO_CREATE_001("Error en creación de activos","El objeto activo no es válido, póngase en contacto con el administrador de sistema"),
 	ACTIVO_DELETE_001("Error de eliminación activo","El objeto activo no es válido, consulte a su administrador de sistema"),

@@ -6,9 +6,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.mail.util.ByteArrayDataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.InputStreamSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -63,8 +67,24 @@ public class PdfComponent {
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Disposition", "inline; filename="+filePath);
-		
 		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF).body(new InputStreamResource(bis));
+	}
+
+	public ByteArrayResource generateFile(String filePath, String template, Context objContext) throws DocumentException, IOException {
+		String processedHtml = templateEngine.process(template, objContext);
+		
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		ITextRenderer renderer = new ITextRenderer();
+		//SharedContext sharedContext = renderer.getSharedContext();
+		//sharedContext.setReplacedElementFactory(new B64ImgReplacedElementFactory());
+		renderer.setDocumentFromString(processedHtml);
+		renderer.layout();
+		renderer.createPDF(outputStream);
+		outputStream.flush();
+		outputStream.close();
+		//ByteArrayInputStream bis=new ByteArrayInputStream(outputStream.toByteArray());
+
+		return new ByteArrayResource(outputStream.toByteArray());
 	}
 
 }
