@@ -1034,6 +1034,9 @@
 		$('#modalGasto').on('hidden.bs.modal',function(){
 			cancel();
 		});
+		$('#modalEditGasto').on('hidden.bs.modal',function(){
+			cancel();
+		});
 	</script>
 	<script async ="async" defer = "defer" th:src="@{https://maps.googleapis.com/maps/api/js (key=${'AIzaSyDMfjYhmignmeftlviLDLTsyB383_ltJNc'},libraries=places,callback=initAutocomplete)}"></script>
 	<!-- th:src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMfjYhmignmeftlviLDLTsyB383_ltJNc&libraries=places&callback=initAutocomplete"></script>	 -->
