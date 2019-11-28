@@ -670,13 +670,13 @@
 															<div class="col-md-9">
 																<div class="col-md-6">
 																	<div class="form-check form-check-inline">
-																		<input type="radio" class="form-check-input"  id="opcionEdit" name="OpcionGasto" value="1" v-model="opcionGasto"/>
+																		<input type="radio" class="form-check-input"  id="opcionEdit" name="OpcionGasto" value="1" v-model="opcionGasto" :disabled="estatus1"/>
 																		<label class="form-check-label" for="opcionEdit" v-on:click="gastoTotal">Gasto total</label>
 																	</div>
 																</div>
 																<div class="col-md-6">
 																	<div class="form-check form-check-inline">
-																		<input type="radio" class="form-check-input"  id="opcionEdit2" name="OpcionGasto" value="2" v-model="opcionGasto"/>
+																		<input type="radio" class="form-check-input"  id="opcionEdit2" name="OpcionGasto" value="2" v-model="opcionGasto" :disabled="estatus2"/>
 																		<label class="form-check-label" for="opcionEdit2" v-on:click="gastoParcial">Gasto parcial</label>
 																	</div>
 																</div>
@@ -1029,6 +1029,8 @@
 			
 			this.gasto.opcionGasto='';
 			this.gasto.formInputs=[];
+			this.estatus1='';
+			this.estatus2='';
 			$('.cmbCotizacion').selectpicker('refresh');
 		}
 		$('#modalGasto').on('hidden.bs.modal',function(){

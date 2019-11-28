@@ -308,6 +308,8 @@ public class GastosController {
                     gastosService.addCotizacion(objServMant2, ficheroCotizacion);
                 }
                 gastosService.addGastoGeneral(objServMant2);
+            }else{
+                gastosService.addGastoGeneral(objServMant2);
             }
             respuesta = true;
             titulo = "Excelente!";

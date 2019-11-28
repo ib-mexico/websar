@@ -24,6 +24,8 @@ if (document.getElementById("appGastos")) {
             ],
             formCotizaciones: [],
             opcionGasto:'',
+            estatus1:'',
+            estatus2:'',
 
             lugares:[],
             empresa:[],
@@ -297,9 +299,13 @@ if (document.getElementById("appGastos")) {
                         $('.cmbUsuario').selectpicker('render');
                         if(this.editGastoData.checkGastoParcial==true){
                             this.opcionGasto=2;
+                            this.estatus1=true;
+                            this.estatus2=false;
                             this.gastoParcial();
                         }else{
                             this.opcionGasto=1;
+                            this.estatus2=true;
+                            this.estatus1=false;
                             this.gastoTotal();
                         }
                         valores=[];
@@ -329,6 +335,8 @@ if (document.getElementById("appGastos")) {
                         $("#formEditGasto")[0].reset();
                         $("#modalEditGasto").modal("hide");
                         this.editGastoData={};
+                        this.estatus1='';
+                        this.estatus2='';
                         swal(resp.data.titulo, resp.data.mensaje, "success");
                         $("#dtGasto").bootstrapTable('refresh');
                     }else{
