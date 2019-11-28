@@ -2,6 +2,7 @@ package com.ibmexico.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
@@ -44,11 +46,12 @@ import com.ibmexico.services.SucursalService;
 import com.ibmexico.services.TipoGastoService;
 import com.ibmexico.services.UsuarioService;
 import com.lowagie.text.DocumentException;
-import com.twilio.rest.api.v2010.account.availablephonenumbercountry.Local;
 
-import org.hibernate.sql.Template;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +62,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.context.Context;
 
@@ -97,7 +101,7 @@ public class GastosController {
     @Autowired
     @Qualifier("sucursalService")
     private SucursalService sucursalService;
-    
+
     @Autowired
     @Qualifier("cotizacionService")
     private CotizacionService cotizacionService;
@@ -115,54 +119,50 @@ public class GastosController {
     private FacturaService facturaService;
 
     @Autowired
-	@Qualifier("cotizacionFicheroService")
-	private CotizacionFicheroService cotizacionFicheroService;
-	
-	@Autowired
-	@Qualifier("cotizacionTipoFicheroService")
-    private CotizacionTipoFicheroService cotizacionTipoFicheroService;
-    
-    @Autowired
-	@Qualifier("pdfComponent")
-	private PdfComponent pdfComponent;
-	
+    @Qualifier("cotizacionFicheroService")
+    private CotizacionFicheroService cotizacionFicheroService;
 
-    @RequestMapping({ "", "/" })
+    @Autowired
+    @Qualifier("cotizacionTipoFicheroService")
+    private CotizacionTipoFicheroService cotizacionTipoFicheroService;
+
+    @Autowired
+    @Qualifier("pdfComponent")
+    private PdfComponent pdfComponent;
+
+    @RequestMapping(value = { "", "/" }, method = RequestMethod.GET)
     public ModelAndView index() {
         ModelAndView modelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.DETALLE_GASTO);
         modelAndView.addObject("rolNuevoGasto", sesionService.hasRol("DETALLE_GASTO"));
         return modelAndView;
     }
+
     // Obtener los datos necesarios para el select
     @RequestMapping(value = "get-recurso-data-form", method = RequestMethod.GET)
     public @ResponseBody String getDataRecursoForm() {
-        Boolean respuesta=false;
-        JsonObject jsonEmpresa=null;
-        JsonObject jsonProveedor=null;
-        JsonObject jsonTipoGasto=null;
-        JsonObject jsonCotizacion=null;
-        JsonObject jsonUsuario=null;
-        JsonObject jsonTipoFichero=null;
+        Boolean respuesta = false;
+        JsonObject jsonEmpresa = null;
+        JsonObject jsonProveedor = null;
+        JsonObject jsonTipoGasto = null;
+        JsonObject jsonCotizacion = null;
+        JsonObject jsonUsuario = null;
+        JsonObject jsonTipoFichero = null;
         try {
-            jsonEmpresa=empresaService.jsonEmpresas();
-            jsonProveedor=proveedorService.jsonProveedores();
-            jsonTipoGasto=gastoService.jsonTipoGasto();
-            jsonUsuario=usuarioService.jsonUsuariosActivos();
-            jsonCotizacion=cotizacionService.jsonCotizacionesActivos();
-            jsonTipoFichero=cotizacionTipoFicheroService.jsonTipoFichero();
+            jsonEmpresa = empresaService.jsonEmpresas();
+            jsonProveedor = proveedorService.jsonProveedores();
+            jsonTipoGasto = gastoService.jsonTipoGasto();
+            jsonUsuario = usuarioService.jsonUsuariosActivos();
+            jsonCotizacion = cotizacionService.jsonCotizacionesActivos();
+            jsonTipoFichero = cotizacionTipoFicheroService.jsonTipoFichero();
 
-            respuesta=true;
-        } catch (Exception   exception) {
+            respuesta = true;
+        } catch (Exception exception) {
             exception.getMessage();
         }
-        JsonObjectBuilder jsonReturn= Json.createObjectBuilder();
-        jsonReturn.add("respuesta", respuesta)
-        .add("jsonEmpresa", jsonEmpresa)
-        .add("jsonProveedor", jsonProveedor)
-        .add("jsonTipoGasto", jsonTipoGasto)
-        .add("jsonUsuario", jsonUsuario)
-        .add("jsonCotizacion", jsonCotizacion)
-        .add("jsonTipoFichero", jsonTipoFichero);
+        JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+        jsonReturn.add("respuesta", respuesta).add("jsonEmpresa", jsonEmpresa).add("jsonProveedor", jsonProveedor)
+                .add("jsonTipoGasto", jsonTipoGasto).add("jsonUsuario", jsonUsuario)
+                .add("jsonCotizacion", jsonCotizacion).add("jsonTipoFichero", jsonTipoFichero);
         return jsonReturn.build().toString();
     }
 
@@ -180,37 +180,36 @@ public class GastosController {
         jsonReturn.add("respuesta", respuesta).add("jsonClasificacionGasto", jsonClasificacionGasto);
         return jsonReturn.build().toString();
     }
-    
-    /**Obtener la data del gasto para editar */
+
+    /** Obtener la data del gasto para editar */
     @RequestMapping(value = "get-gasto/{idGasto}", method = RequestMethod.GET)
     public @ResponseBody String getServicioProveedorManto(@PathVariable("idGasto") int idGasto) {
         Boolean respuesta = false;
-        
-        JsonObject jsonCotizacionFichero=null;
-        JsonObject jsonGasto=null;
-        // ActivoServicioProveedorMant2Entity objGasto=gastosService.findByIdServicioProveedorMant(idGasto);
+
+        JsonObject jsonCotizacionFichero = null;
+        JsonObject jsonGasto = null;
+        // ActivoServicioProveedorMant2Entity
+        // objGasto=gastosService.findByIdServicioProveedorMant(idGasto);
         try {
-            jsonCotizacionFichero=cotizacionFicheroService.GetFicheroEdit(idGasto);
-            jsonGasto=gastosService.jsonGastoById(idGasto);
-            respuesta=true;
+            jsonCotizacionFichero = cotizacionFicheroService.GetFicheroEdit(idGasto);
+            jsonGasto = gastosService.jsonGastoById(idGasto);
+            respuesta = true;
         } catch (Exception e) {
             throw e;
         }
         JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
-        jsonReturn.add("respuesta", respuesta).add("jsonGasto", jsonGasto)
-        .add("jsonCotizacionFichero", jsonCotizacionFichero);
+        jsonReturn.add("respuesta", respuesta).add("jsonGasto", jsonGasto).add("jsonCotizacionFichero",
+                jsonCotizacionFichero);
         return jsonReturn.build().toString();
     }
 
     @RequestMapping(value = "storeGastos", method = RequestMethod.POST)
-    public @ResponseBody String storeGastos(
-            @RequestParam(value = "cmbEmpresa", required = false) Integer cmbEmpresa,
+    public @ResponseBody String storeGastos(@RequestParam(value = "cmbEmpresa", required = false) Integer cmbEmpresa,
             @RequestParam(value = "cmbProveedor", required = false) Integer cmbProveedor,
-            @RequestParam(value="cmbTipoFichero", required=false) Integer cmbTipoFichero,
-            @RequestParam(value = "txtFacturaNota",required=false)String txtFacturaNota,
-            @RequestParam(value = "ficheroFactura",required = false) MultipartFile fileFactura,
-            @RequestParam(value = "txtEstado") String txtEstado,
-            @RequestParam(value = "txtCiudad") String txtCiudad,
+            @RequestParam(value = "cmbTipoFichero", required = false) Integer cmbTipoFichero,
+            @RequestParam(value = "txtFacturaNota", required = false) String txtFacturaNota,
+            @RequestParam(value = "ficheroFactura", required = false) MultipartFile fileFactura,
+            @RequestParam(value = "txtEstado") String txtEstado, @RequestParam(value = "txtCiudad") String txtCiudad,
             @RequestParam(value = "txtPais") String txtPais,
             @RequestParam(value = "formatted_address") String formatted_address,
             @RequestParam(value = "txtFechagasto") String txtFechagasto,
@@ -218,23 +217,23 @@ public class GastosController {
             @RequestParam(value = "cmbTipogasto") Integer cmbTipogasto,
             @RequestParam(value = "cmbClasificacion") Integer cmbClasificacion,
 
-            @RequestParam(value="txtCotizacion", required = false) String txtCotizacion,
+            @RequestParam(value = "txtCotizacion", required = false) String txtCotizacion,
             @RequestParam(value = "chkCotizacion", required = false, defaultValue = "false") String chkCotizacion,
-            // @RequestParam(value = "cmbCotizacion", required = false,  defaultValue="0") Integer cmbCotizacion,
-            @RequestParam(value="OpcionGasto",required=false) Integer OpcionGasto,
-            @RequestParam(value="folioCotizacion",required = false) String[] folioCotizacion,
-            @RequestParam(value="subTotal", required=false) BigDecimal[] subTotal,
-            @RequestParam(value = "idCotizacion",required = false)int[] idCotizacion, 
+            // @RequestParam(value = "cmbCotizacion", required = false, defaultValue="0")
+            // Integer cmbCotizacion,
+            @RequestParam(value = "OpcionGasto", required = false) Integer OpcionGasto,
+            @RequestParam(value = "folioCotizacion", required = false) String[] folioCotizacion,
+            @RequestParam(value = "subTotal", required = false) BigDecimal[] subTotal,
+            @RequestParam(value = "idCotizacion", required = false) int[] idCotizacion,
             @RequestParam(value = "ficheroCotizacion", required = false) MultipartFile ficheroCotizacion,
-            
+
             @RequestParam(value = "cmbUsuario") Integer cmbUsuario,
-            @RequestParam(value = "txtObservaciones", required = false) String txtObservaciones
-            ) {
+            @RequestParam(value = "txtObservaciones", required = false) String txtObservaciones) {
         Boolean respuesta = false;
         String titulo = "Oops!";
         String mensaje = "Ocurrió un error al intentar mandar a mantenimiento el Activo.";
 
-        ActivoServicioProveedorMant2Entity objServMant2=new ActivoServicioProveedorMant2Entity();
+        ActivoServicioProveedorMant2Entity objServMant2 = new ActivoServicioProveedorMant2Entity();
         try {
             objServMant2.setEmpresa(empresaService.findByIdEmpresa(cmbEmpresa));
             objServMant2.setProveedor(proveedorService.findByIdProveedor(cmbProveedor));
@@ -242,30 +241,31 @@ public class GastosController {
             objServMant2.setCiudad(txtCiudad);
             objServMant2.setPais(txtPais);
             objServMant2.setFormatted_address(formatted_address);
-            objServMant2.setFechaPago(LocalDate.parse(txtFechagasto, GeneralConfiguration.getInstance().getDateFormatterNatural()));
+            objServMant2.setFechaPago(
+                    LocalDate.parse(txtFechagasto, GeneralConfiguration.getInstance().getDateFormatterNatural()));
             objServMant2.setPrecioServicioProveedor(txtSubtotal);
             objServMant2.setTipoGasto(gastoService.findByIdTipoGasto(cmbTipogasto));
             objServMant2.setClasificacionTipoGasto(tipoGastoService.findByIdClasificacion(cmbClasificacion));
-            /** Subiendo factura*/
-            if(!txtFacturaNota.isEmpty() ){
-                FacturaEntity objfactura=new FacturaEntity();
+            /** Subiendo factura */
+            if (!txtFacturaNota.isEmpty()) {
+                FacturaEntity objfactura = new FacturaEntity();
                 objfactura.setNumeroFactura(txtFacturaNota);
-                if (!fileFactura.isEmpty() && fileFactura!=null) {
+                if (!fileFactura.isEmpty() && fileFactura != null) {
                     facturaService.addFactura(objfactura, fileFactura);
-                }else{
+                } else {
                     facturaService.createFactura(objfactura);
                 }
-                
+
                 objServMant2.setFacturaGasto(facturaService.findByIdFactura(objfactura.getIdFactura()));
                 objServMant2.setCotizacionFichero(cotizacionFicheroService.findIdCotizacionFichero(cmbTipoFichero));
-            }   
+            }
             objServMant2.setUsuario(usuarioService.findByIdUsuario(cmbUsuario));
             objServMant2.setObservaciones(txtObservaciones);
             objServMant2.setAceptado(true);
-            
-            /**Subiendo cotizacion */
-            if(chkCotizacion.equals("true")){
-                if (OpcionGasto.intValue()==1) {
+
+            /** Subiendo cotizacion */
+            if (chkCotizacion.equals("true")) {
+                if (OpcionGasto.intValue() == 1) {
                     objServMant2.setIsGastoParcial(false);
                 } else {
                     objServMant2.setIsGastoParcial(true);
@@ -274,38 +274,47 @@ public class GastosController {
                 objServMant2.setFolioCotizacion(String.join("  / ", folioCotizacion));
                 // objServMant2.setCotizacion(cotizacionService.findByIdCotizacion(cmbCotizacion));
                 gastosService.addGastoGeneral(objServMant2);
-                for (int i = 0; i <idCotizacion.length; i++) {
-                    CotizacionFicheroEntity objFicheros=new CotizacionFicheroEntity();
-                    
-                        objFicheros.setCotizacion(cotizacionService.findByIdCotizacion(idCotizacion[i]));
-                        objFicheros.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(cmbTipoFichero));
-                        objFicheros.setFolio(txtFacturaNota);
-                        objFicheros.setProveedor(proveedorService.findByIdProveedor(cmbProveedor).getProveedor());
-                        if(!subTotal[i].equals("")){
-                            objFicheros.setImporte(subTotal[i]);
-                        }
-                        objFicheros.setObservaciones(txtObservaciones);
-                        objFicheros.setGasto(gastosService.findByIdServicioProveedorMant(objServMant2.getIdServicioProveedorMant()));
+                for (int i = 0; i < idCotizacion.length; i++) {
+                    CotizacionFicheroEntity objFicheros = new CotizacionFicheroEntity();
+
+                    objFicheros.setCotizacion(cotizacionService.findByIdCotizacion(idCotizacion[i]));
+                    objFicheros.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(cmbTipoFichero));
+                    objFicheros.setFolio(txtFacturaNota);
+                    objFicheros.setProveedor(proveedorService.findByIdProveedor(cmbProveedor).getProveedor());
+                    if (!subTotal[i].equals("")) {
+                        objFicheros.setImporte(subTotal[i]);
+                    }
+                    objFicheros.setObservaciones(txtObservaciones);
+                    objFicheros.setGasto(gastosService.findByIdServicioProveedorMant(objServMant2.getIdServicioProveedorMant()));
+                    // if(i>0){
+                    //     CotizacionFicheroEntity objUrlFactura = cotizacionFicheroService.findIdCotizacionFichero(0);
+                    //     String urlFacturaUnica=objUrlFactura.getUrl();
+                    //     objFicheros.setUrl(urlFacturaUnica);
+                    //     cotizacionFicheroService.addFile(objFicheros, null);
+                    // }else{
                         cotizacionFicheroService.addFile(objFicheros, fileFactura);
-                        if(cmbTipoFichero == 3 || cmbTipoFichero == 4) {					
-                            if(objFicheros.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() >= 3 &&  objFicheros.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() != 5) {	
-                                cotizacionService.recalcularCotizacion(objFicheros.getCotizacion());
-                            }				
+                    // }
+                    if (cmbTipoFichero == 3 || cmbTipoFichero == 4) {
+                        if (objFicheros.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() >= 3
+                                && objFicheros.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() != 5) {
+                            cotizacionService.recalcularCotizacion(objFicheros.getCotizacion());
                         }
-                    
-                }/**End for*/
-            }else if(!txtCotizacion.equals("")){
+                    }
+
+                } /** End for */
+            } else if (!txtCotizacion.equals("")) {
                 objServMant2.setFolioCotizacion(txtCotizacion);
-                if (!ficheroCotizacion.isEmpty() && ficheroCotizacion !=null) {
+                if (!ficheroCotizacion.isEmpty() && ficheroCotizacion != null) {
                     gastosService.addCotizacion(objServMant2, ficheroCotizacion);
                 }
+                gastosService.addGastoGeneral(objServMant2);
+            }else{
                 gastosService.addGastoGeneral(objServMant2);
             }
             respuesta = true;
             titulo = "Excelente!";
             mensaje = "Nuevo activo exitosamente creado.";
-        }
-        catch (ApplicationException e) {
+        } catch (ApplicationException e) {
             throw new ApplicationException(EnumException.GASTO_CREATE_001);
         }
         JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
@@ -313,150 +322,158 @@ public class GastosController {
         return jsonReturn.build().toString();
     }
 
+    @RequestMapping(value = { "{idGasto}/actualizar", "{idGasto}/actualizar/" }, method = RequestMethod.POST)
+    public @ResponseBody String updateGasto(@RequestParam(value = "cmbEmpresa", required = false) Integer cmbEmpresa,
+            @RequestParam(value = "cmbProveedor", required = false) Integer cmbProveedor,
+            @RequestParam(value = "cmbTipoFichero", required = false) Integer cmbTipoFichero,
+            @RequestParam(value = "txtFacturaNota", required = false) String txtFacturaNota,
+            @RequestParam(value = "ficheroFactura", required = false) MultipartFile fileFactura,
+            @RequestParam(value = "idFactura", required = false) int idFactura,
+            @RequestParam(value = "txtEstado", required = false) String txtEstado,
+            @RequestParam(value = "txtCiudad", required = false) String txtCiudad,
+            @RequestParam(value = "txtPais", required = false) String txtPais,
+            @RequestParam(value = "formatted_address", required = false) String formatted_address,
 
-    @RequestMapping(value = {"{idGasto}/actualizar","{idGasto}/actualizar/"}, method = RequestMethod.POST)
-    public @ResponseBody String updateGasto(
-        @RequestParam(value = "cmbEmpresa", required = false) Integer cmbEmpresa,
-        @RequestParam(value = "cmbProveedor", required = false) Integer cmbProveedor,
-        @RequestParam(value="cmbTipoFichero", required=false) Integer cmbTipoFichero,
-        @RequestParam(value = "txtFacturaNota",required=false)String txtFacturaNota,
-        @RequestParam(value = "ficheroFactura",required = false) MultipartFile fileFactura,
-        @RequestParam(value="idFactura", required=false) int idFactura,
-        @RequestParam(value = "txtEstado", required = false)String txtEstado,
-        @RequestParam(value = "txtCiudad",required = false)String txtCiudad,
-        @RequestParam(value = "txtPais", required = false) String txtPais,
-        @RequestParam(value = "formatted_address", required = false) String formatted_address,
+            @RequestParam(value = "txtFechagasto") String txtFechagasto,
+            @RequestParam(value = "txtSubtotal") BigDecimal txtSubtotal,
 
-        @RequestParam(value = "txtFechagasto") String txtFechagasto,
-        @RequestParam(value = "txtSubtotal") BigDecimal txtSubtotal,
+            @RequestParam(value = "cmbTipogasto") Integer cmbTipogasto,
+            @RequestParam(value = "cmbClasificacion") Integer cmbClasificacion,
 
-        @RequestParam(value = "cmbTipogasto") Integer cmbTipogasto,
-        @RequestParam(value = "cmbClasificacion") Integer cmbClasificacion,
+            @RequestParam(value = "txtCotizacion", required = false) String txtCotizacion,
+            @RequestParam(value = "chkCotizacion", required = false, defaultValue = "false") String chkCotizacion,
+            // @RequestParam(value = "cmbCotizacion", required = false, defaultValue="0")
+            // Integer cmbCotizacion,
+            @RequestParam(value = "ficheroCotizacion", required = false) MultipartFile ficheroCotizacion,
 
-        @RequestParam(value="txtCotizacion", required = false) String txtCotizacion,
-        @RequestParam(value = "chkCotizacion", required = false, defaultValue = "false") String chkCotizacion,
-        // @RequestParam(value = "cmbCotizacion", required = false,  defaultValue="0") Integer cmbCotizacion,
-        @RequestParam(value = "ficheroCotizacion", required = false) MultipartFile ficheroCotizacion,
-        
-        @RequestParam(value="folioCotizacion",required = false) String[] folioCotizacion,
-        @RequestParam(value="subTotal", required=false) BigDecimal[] subTotal,
-        @RequestParam(value = "idCotizacion",required = false)int[] idCotizacion,
-        @RequestParam(value = "idCotizacionFichero",required = false)int[] idCotizacionFichero,
-        @RequestParam(value = "NuevoFicheroGasto", required = false) String[] NuevoFicheroGasto,
+            @RequestParam(value = "folioCotizacion", required = false) String[] folioCotizacion,
+            @RequestParam(value = "subTotal", required = false) BigDecimal[] subTotal,
+            @RequestParam(value = "idCotizacion", required = false) int[] idCotizacion,
+            @RequestParam(value = "idCotizacionFichero", required = false) int[] idCotizacionFichero,
+            @RequestParam(value = "NuevoFicheroGasto", required = false) String[] NuevoFicheroGasto,
 
-        @RequestParam(value = "cmbUsuario") Integer cmbUsuario,
-        @RequestParam(value = "txtObservaciones", required = false) String txtObservaciones,
-        @PathVariable(name="idGasto")int idGasto
-        ){
+            @RequestParam(value = "cmbUsuario") Integer cmbUsuario,
+            @RequestParam(value = "txtObservaciones", required = false) String txtObservaciones,
+            @PathVariable(name = "idGasto") int idGasto) {
 
-            ActivoServicioProveedorMant2Entity objGasto=gastosService.findByIdServicioProveedorMant(idGasto);
-            Boolean respuesta=false;
-            String titulo="Oops!";
-            String mensaje="Ocurrio un error en la edicion.";
-            try {
-                if(objGasto!=null){
-                    objGasto.setEmpresa(empresaService.findByIdEmpresa(cmbEmpresa));
-                    objGasto.setProveedor(proveedorService.findByIdProveedor(cmbProveedor));
-                    if(txtEstado!=null && txtCiudad!=null && txtPais!=null){
-                        objGasto.setEstado(txtEstado);
-                        objGasto.setCiudad(txtCiudad);
-                        objGasto.setPais(txtPais);
-                        objGasto.setFormatted_address(formatted_address);
-                    }
-                    objGasto.setFechaPago(LocalDate.parse(txtFechagasto,GeneralConfiguration.getInstance().getDateFormatterNatural()));
-                    objGasto.setPrecioServicioProveedor(txtSubtotal);
-                    objGasto.setTipoGasto(gastoService.findByIdTipoGasto(cmbTipogasto));
-                    objGasto.setClasificacionTipoGasto(tipoGastoService.findByIdClasificacion(cmbClasificacion));
-                    if(idFactura>0){
-                        if(!txtFacturaNota.isEmpty()){
-                            FacturaEntity objFactura=facturaService.findByIdFactura(idFactura);
-                            objFactura.setNumeroFactura(txtFacturaNota);
-                            if(!fileFactura.isEmpty()){
-                                facturaService.addFactura(objFactura, fileFactura);
-                            }else{
-                                facturaService.createFactura(objFactura);
-                            }
-                            objGasto.setFacturaGasto(facturaService.findByIdFactura(objFactura.getIdFactura()));
+        ActivoServicioProveedorMant2Entity objGasto = gastosService.findByIdServicioProveedorMant(idGasto);
+        Boolean respuesta = false;
+        String titulo = "Oops!";
+        String mensaje = "Ocurrio un error en la edicion.";
+        try {
+            if (objGasto != null) {
+                objGasto.setEmpresa(empresaService.findByIdEmpresa(cmbEmpresa));
+                objGasto.setProveedor(proveedorService.findByIdProveedor(cmbProveedor));
+                if (txtEstado != null && txtCiudad != null && txtPais != null) {
+                    objGasto.setEstado(txtEstado);
+                    objGasto.setCiudad(txtCiudad);
+                    objGasto.setPais(txtPais);
+                    objGasto.setFormatted_address(formatted_address);
+                }
+                objGasto.setFechaPago(LocalDate.parse(txtFechagasto, GeneralConfiguration.getInstance().getDateFormatterNatural()));
+                objGasto.setPrecioServicioProveedor(txtSubtotal);
+                objGasto.setTipoGasto(gastoService.findByIdTipoGasto(cmbTipogasto));
+                objGasto.setClasificacionTipoGasto(tipoGastoService.findByIdClasificacion(cmbClasificacion));
+                if (idFactura > 0) {
+                    if (!txtFacturaNota.isEmpty()) {
+                        FacturaEntity objFactura = facturaService.findByIdFactura(idFactura);
+                        objFactura.setNumeroFactura(txtFacturaNota);
+                        if (!fileFactura.isEmpty()) {
+                            facturaService.addFactura(objFactura, fileFactura);
+                        } else {
+                            facturaService.createFactura(objFactura);
                         }
+                        objGasto.setFacturaGasto(facturaService.findByIdFactura(objFactura.getIdFactura()));
                     }
+                }
 
-                    objGasto.setUsuario(usuarioService.findByIdUsuario(cmbUsuario));
-                    objGasto.setObservaciones(txtObservaciones);
-                    objGasto.setAceptado(true);
-                    if(chkCotizacion.equals("true")){
-                        objGasto.setPerteneceCotizacion(true);
-                        // objGasto.setFolioCotizacion(cotizacionService.findByIdCotizacion(cmbCotizacion).getFolio());
-                        objGasto.setFolioCotizacion(String.join("/", folioCotizacion));
-                        // objGasto.setCotizacion(cotizacionService.findByIdCotizacion(cmbCotizacion));
-                        gastosService.addGastoGeneral(objGasto);
+                objGasto.setUsuario(usuarioService.findByIdUsuario(cmbUsuario));
+                objGasto.setObservaciones(txtObservaciones);
+                objGasto.setAceptado(true);
+                if (chkCotizacion.equals("true")) {
+                    objGasto.setPerteneceCotizacion(true);
+                    // objGasto.setFolioCotizacion(cotizacionService.findByIdCotizacion(cmbCotizacion).getFolio());
+                    objGasto.setFolioCotizacion(String.join("/", folioCotizacion));
+                    // objGasto.setCotizacion(cotizacionService.findByIdCotizacion(cmbCotizacion));
+                    gastosService.addGastoGeneral(objGasto);
 
-                        if(idCotizacion!= null){
-                            if(idCotizacionFichero!=null){
-                                for (int i = 0; i < idCotizacionFichero.length; i++) {
-                                    CotizacionFicheroEntity objFicheros=cotizacionFicheroService.findIdCotizacionFichero(idCotizacionFichero[i]);
-                                    if(idCotizacion[i]==objFicheros.getCotizacion().getIdCotizacion()){
-                                        try {
-                                            objFicheros.setCotizacion(cotizacionService.findByIdCotizacion(idCotizacion[i]));
-                                            objFicheros.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(cmbTipoFichero));
-                                            objFicheros.setFolio(txtFacturaNota);
-                                            objFicheros.setProveedor(proveedorService.findByIdProveedor(cmbProveedor).getProveedor());
-                                            if(!subTotal[i].equals("")){
-                                                objFicheros.setImporte(subTotal[i]);
-                                            }
-                                            objFicheros.setObservaciones(txtObservaciones);
-                                            objFicheros.setGasto(gastosService.findByIdServicioProveedorMant(objGasto.getIdServicioProveedorMant()));
-                                            cotizacionFicheroService.addFile(objFicheros, fileFactura);
-                                            if(cmbTipoFichero == 3 || cmbTipoFichero == 4) {					
-                                                if(objFicheros.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() >= 3 &&  objFicheros.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() != 5) {	
-                                                    cotizacionService.recalcularCotizacion(objFicheros.getCotizacion());
-                                                }				
-                                            }
-                                        } catch (Exception e) {
-                                            throw new ApplicationException(EnumException.GASTO_CREATE_001);
-                                        }
-                                    }
-                                } /*End for */
-                            }
-
-                            /**Si desea agregar una nueva Cotizacion en aquello Gasto */
-                            if(NuevoFicheroGasto!=null){
-                                int j=0;
-                                if(idCotizacionFichero!=null){
-                                    j = idCotizacionFichero.length;
-                                }
-                                System.err.println(j +" valor de j");
-                                int cantidad = NuevoFicheroGasto.length;
-                                System.err.println(cantidad +"   valor de la cantidad");
-                                if(cantidad==0){
-                                    cantidad=cantidad+1;
-                                }
-                                for (int n = j; n < j+cantidad; n++) {
-                                    CotizacionFicheroEntity nuevoFichero=new CotizacionFicheroEntity();
+                    if (idCotizacion != null) {
+                        if (idCotizacionFichero != null) {
+                            for (int i = 0; i < idCotizacionFichero.length; i++) {
+                                CotizacionFicheroEntity objFicheros = cotizacionFicheroService.findIdCotizacionFichero(idCotizacionFichero[i]);
+                                if (idCotizacion[i] == objFicheros.getCotizacion().getIdCotizacion()) {
                                     try {
-                                        nuevoFichero.setCotizacion(cotizacionService.findByIdCotizacion(idCotizacion[n]));
-                                        nuevoFichero.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(cmbTipoFichero));
-                                        nuevoFichero.setFolio(txtFacturaNota);
-                                        nuevoFichero.setProveedor(proveedorService.findByIdProveedor(cmbProveedor).getProveedor());
-                                        if(!subTotal[n].equals("")){
-                                            nuevoFichero.setImporte(subTotal[n]);
+                                        objFicheros.setCotizacion(cotizacionService.findByIdCotizacion(idCotizacion[i]));
+                                        objFicheros.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(cmbTipoFichero));
+                                        objFicheros.setFolio(txtFacturaNota);
+                                        objFicheros.setProveedor(proveedorService.findByIdProveedor(cmbProveedor).getProveedor());
+                                        if (!subTotal[i].equals("")) {
+                                            objFicheros.setImporte(subTotal[i]);
                                         }
-                                        nuevoFichero.setObservaciones(txtObservaciones);
-                                        nuevoFichero.setGasto(gastosService.findByIdServicioProveedorMant(objGasto.getIdServicioProveedorMant()));
+                                        objFicheros.setObservaciones(txtObservaciones);
+                                        objFicheros.setGasto(gastosService.findByIdServicioProveedorMant(objGasto.getIdServicioProveedorMant()));
+                                        cotizacionFicheroService.addFile(objFicheros, fileFactura);
+                                        if (cmbTipoFichero == 3 || cmbTipoFichero == 4) {
+                                            if (objFicheros.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() >= 3
+                                                    && objFicheros.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() != 5) {
+                                                cotizacionService.recalcularCotizacion(objFicheros.getCotizacion());
+                                            }
+                                        }
+                                    } catch (Exception e) {
+                                        throw new ApplicationException(EnumException.GASTO_CREATE_001);
+                                    }
+                                }
+                            } /* End for */
+                        }
 
+                        /** Si desea agregar una nueva Cotizacion en aquello Gasto */
+                        if (NuevoFicheroGasto != null) {
+                            int j = 0;
+                            /**Obtener el tamanio del arreglo CotizacionFichero que existe */
+                            if (idCotizacionFichero != null) {
+                                j = idCotizacionFichero.length;
+                            }
+                            /**Obtener el tamanio del arreglo NuevoCotizacioFichero*/
+                            int cantidad = NuevoFicheroGasto.length;
+                            System.err.println(cantidad + "   valor de la cantidad");
+                            if (cantidad == 0) {
+                                cantidad = cantidad + 1;
+                            }
+                            for (int n = j; n < j + cantidad; n++) {
+                                CotizacionFicheroEntity nuevoFichero = new CotizacionFicheroEntity();
+                                try {
+                                    nuevoFichero.setCotizacion(cotizacionService.findByIdCotizacion(idCotizacion[n]));
+                                    nuevoFichero.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(cmbTipoFichero));
+                                    nuevoFichero.setFolio(txtFacturaNota);
+                                    nuevoFichero.setProveedor(proveedorService.findByIdProveedor(cmbProveedor).getProveedor());
+                                    if (!subTotal[n].equals("")) {
+                                        nuevoFichero.setImporte(subTotal[n]);
+                                    }
+                                    nuevoFichero.setObservaciones(txtObservaciones);
+                                    nuevoFichero.setGasto(gastosService.findByIdServicioProveedorMant(objGasto.getIdServicioProveedorMant()));
+
+                                    // if (fileFactura.isEmpty()) {
+                                    //     ClassPathResource resource = new ClassPathResource(
+                                    //         "static/ficheros/FacturasGastos/" + objGasto.getFacturaGasto().getUrl());
                                         
-                                        if(fileFactura.isEmpty()){
-                                            fileFactura=null;
-                                        }                 
-                                        // URL urlPath = this.getClass().getResource("/");
+                                    //     File file=resource.getFile();
                                         
-                                        // ClassPathResource resource = new ClassPathResource(urlPath.getPath()+"static/ficheros/FacturasGastos/" + objGasto.getFacturaGasto().getUrl());
-                                        // System.err.println(resource);
-                                        // if (objGasto.getFacturaGasto()!=null && !objGasto.getFacturaGasto().getUrl().equals("") && objGasto.getFacturaGasto().getUrl()!=null) {
-                                        //     System.err.println("entro al if");
-                                        //     System.out.println(resource.getFile());
-                                        //     fileFactura= (MultipartFile) resource.getFile().getAbsoluteFile();
-                                        // }
+                                    //     if (objGasto.getFacturaGasto()!=null && !objGasto.getFacturaGasto().getUrl().equals("") && objGasto.getFacturaGasto().getUrl()!=null) {
+                                    //         DiskFileItem fileItem=new DiskFileItem("factura", null, false, file.getName(), (int) file.length(), file.getParentFile());                                            
+                                    //         fileItem.getOutputStream();
+                                    //         fileFactura=new CommonsMultipartFile(fileItem);
+                                    //     }
+                                    // }
+                                    if (fileFactura.isEmpty()) {
+                                        if(idCotizacionFichero!=null){
+                                        CotizacionFicheroEntity objFichero = cotizacionFicheroService.findIdCotizacionFichero(idCotizacionFichero[1]);
+                                        String urlFactura=objFichero.getUrl();
+                                        nuevoFichero.setUrl(urlFactura);                   
+                                        }
+                                        cotizacionFicheroService.addFile(nuevoFichero, null);
+                                    }else{
                                         cotizacionFicheroService.addFile(nuevoFichero, fileFactura);
+                                    }
                                         if(cmbTipoFichero == 3 || cmbTipoFichero == 4) {					
                                             if(nuevoFichero.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() >= 3 &&  nuevoFichero.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() != 5) {	
                                                 cotizacionService.recalcularCotizacion(nuevoFichero.getCotizacion());

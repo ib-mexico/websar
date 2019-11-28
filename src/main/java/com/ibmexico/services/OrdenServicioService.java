@@ -62,7 +62,7 @@ public class OrdenServicioService {
 	public DataTable<OrdenServicioEntity> dataTable(int idCotizacion, String search, int offset, int limit, String txtBootstrapTableDesde, String txtBootstrapTableHasta) {
 		List<OrdenServicioEntity> lstCotizacionOrdenServicio = null;
 		long totalServicios = 100;
-		
+
 		if(search != null) {			
 			lstCotizacionOrdenServicio = ordenServicioRepository.findForDataTable(idCotizacion, search, DataTable.getPageRequest(offset, limit));
 			totalServicios = ordenServicioRepository.countForDataTable(idCotizacion, search);
@@ -252,12 +252,13 @@ public class OrdenServicioService {
 	public DataTable<OrdenServicioEntity> dataTableOrdenes(String search, int offset, int limit, String txtBootstrapTableDesde, String txtBootstrapTableHasta){
 		List<OrdenServicioEntity> lstOrdenServicio=null;
 		long totalServicios=100;
+		int usuarioID=sessionService.getCurrentUser().getIdUsuario();
 		if (search!=null) {
-			lstOrdenServicio=ordenServicioRepository.findForDataTableOrdenes(search, DataTable.getPageRequest(offset, limit));
-			totalServicios=ordenServicioRepository.countForDataTableOrdenes(search);
+			lstOrdenServicio=ordenServicioRepository.findForDataTableOrdenes(search,usuarioID, DataTable.getPageRequest(offset, limit));
+			totalServicios=ordenServicioRepository.countForDataTableOrdenes(search,usuarioID);
 		}else{
-			lstOrdenServicio=ordenServicioRepository.findForDataTableOrdenes(DataTable.getPageRequest(offset, limit));
-			totalServicios=ordenServicioRepository.countForDataTableOrdenes();
+			lstOrdenServicio=ordenServicioRepository.findForDataTableOrdenes(usuarioID,DataTable.getPageRequest(offset, limit));
+			totalServicios=ordenServicioRepository.countForDataTableOrdenes(usuarioID);
 		}
 		DataTable<OrdenServicioEntity> returnDataTable=new DataTable<OrdenServicioEntity>(lstOrdenServicio, totalServicios);
 		return returnDataTable;	

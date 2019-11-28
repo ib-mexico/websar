@@ -14,19 +14,17 @@
     		<div class="card">
     			<div class="header">
     				<h2>LISTA DE ORDENES DE SERVICIOS</h2>
-    				<ul class="header-dropdown m-r--5">
-                        <li class="dropdown">
-                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                <i class="material-icons">more_vert</i>
-                            </a>
-                            <ul class="dropdown-menu pull-right">
-                                <li><a th:href="${ {_PATH_} + 'controlPanel/ordenesServicios/create'}">Nueva Orden de Servicio</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+
     			</div>
     			
     			<div class="body">
+					<div class="row clearfix" th:if="${rolNuevaOrdenServicio}">
+						<div class="col-md-4 col-md-offset-8 text-right">
+							<a th:href="${ {_PATH_} +'controlPanel/ordenesServicios/create'}" role="button" class="btn bg-purple waves-effect">
+								<i class="material-icons">add_circle</i>Nueva Orden de Servicio
+							</a>
+						</div>
+					</div>
     				<div class="row clearfix" id="dtOrdenesToolBar" data-toolbar-align="left">
 						<div class="col-xs-6 col-sm-6 col-md-4">
     						<div class="input-group">
@@ -52,24 +50,24 @@
 					</div>
 					
 					<div class="table-responsive">				
-							<table id="dtOrdenes" class="table table-bordered table-striped table-hover">
-								<thead>
-									<tr>
-										<th data-width="10%" data-field="idOrdenServicio" data-halign="left" data-align="center">ID</th>
-										<th data-width="10%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
-										<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
-										<th data-width="25%" data-field="cliente" data-halign="center" data-align="left">Cliente</th>
-										<th data-width="25%" data-field="contacto" data-halign="center" data-align="left" data-visible="false">Contacto</th>
-										<th data-width="10%" data-field="subtotal" data-halign="right" data-align="right">Subtotal</th>
+						<table id="dtOrdenes" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th data-width="10%" data-field="idOrdenServicio" data-halign="left" data-align="center">ID</th>
+									<th data-width="10%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+									<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
+									<th data-width="25%" data-field="cliente" data-halign="center" data-align="left">Cliente</th>
+									<th data-width="25%" data-field="contacto" data-halign="center" data-align="left" data-visible="false">Contacto</th>
+									<th data-width="10%" data-field="subtotal" data-halign="right" data-align="right">Subtotal</th>
 																			
-										<th data-width="20%" data-field="nombreElabora" data-halign="center" data-align="left">Elabor&oacute;</th>
-										<th data-width="20%" data-field="nombreRecibe" data-halign="center" data-align="left">Recibi&oacute;</th>
+									<th data-width="20%" data-field="nombreElabora" data-halign="center" data-align="left">Elabor&oacute;</th>
+									<th data-width="20%" data-field="nombreRecibe" data-halign="center" data-align="left">Recibi&oacute;</th>
 										
-										<th data-width="20%" data-field="fechaInicio" data-halign="center" data-align="center">Hora/Entrega</th>
-										<th data-width="30%" data-field="fechaEntrega" data-halign="center" data-align="center">Creaci&oacute;n/Fecha</th>																			
-									</tr>
-								</thead>
-							</table>
+									<th data-width="20%" data-field="fechaInicio" data-halign="center" data-align="center">Hora/Entrega</th>
+									<th data-width="30%" data-field="fechaEntrega" data-halign="center" data-align="center">Creaci&oacute;n/Fecha</th>																			
+								</tr>
+							</thead>
+						</table>
 					</div>
 					
     			</div>
@@ -84,6 +82,7 @@
 	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
 	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
 	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script type="application/javascript" th:inline="javascript">
 		
 		$(document).ready(function() {			
@@ -133,12 +132,44 @@
 		        	'</a>',
 		        	'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
 		        		'<i class="material-icons">print</i>',
-		        	'</a>',		        	
+		        	'</a>',
+					'<a  title="Enviar Poliza de Servicio" class="Validar" id="enviarPoliza" onclick="enviarPoliza('+row.idOrdenServicio+');"  >',
+						'<i class="material-icons email">email</i>',
+					'</a>'		        	
 			    ].join(' ');
 			}
 			
 		}
-			
+		var host = "http://localhost:8080/WebSar/controlPanel/";
+		//HEADERS EN AXIOS
+		let token = document.head.querySelector('meta[name="_csrf"]');
+		axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content; // for all requests
+		
+		function enviarPoliza(paramIdOrdenServicio){
+		// var url=host+'DetalleMant/'+param+'/sendvalidate';
+		var url=host+"ordenesServicios/"+paramIdOrdenServicio+"/envioPoliza";
+		
+				swal({
+					title	: "Enviar",
+					text	: "Seguro que desea enviar esto a validación.",
+					type	: "success",
+					showCancelButton: true,
+					cancelButtonText: 'Cancelar',
+					confirmButtonText: 'Enviar',
+				}).then((result)=>{
+					if(result){
+						axios.post(url).then(resp=>{
+							if(resp.status==200){
+								swal(resp.data.titulo, resp.data.mensaje, "success");
+							}else{
+								swal(resp.data.titulo, resp.data.mensaje, "error");
+							}
+						}).catch(error=>{
+							swal("Algo malo pasó!", error.resp.data, "error");
+						});
+					}
+				}).catch(swal.noop);
+		}
 		//Datetimepicker plugin
 		$(function () {
 			$('#txtBootstrapTableHasta').bootstrapMaterialDatePicker({format: 'MM/DD/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
