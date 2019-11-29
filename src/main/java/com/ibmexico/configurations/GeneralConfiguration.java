@@ -64,9 +64,10 @@ public class GeneralConfiguration {
 		
 		emailSender = "jorge.cortes@ib-mexico.com";
 		
-		twilio_ACCOUNT_SID = "ACd6081dd6ea62e62d4e70f3354e635da0";
-		twilio_AUTH_TOKEN = "f6d728f377c4a547453df54daffe950c";
-		
+		// twilio_ACCOUNT_SID = "ACd6081dd6ea62e62d4e70f3354e635da0";
+		// twilio_AUTH_TOKEN = "4d445461b918cc90351528676e8dae1e";
+		twilio_ACCOUNT_SID = "";
+		twilio_AUTH_TOKEN = "";
 	}
 	
 	public DateTimeFormatter getMonthFormatterNatural() {
