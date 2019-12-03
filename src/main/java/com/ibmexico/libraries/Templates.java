@@ -203,5 +203,9 @@ public class Templates {
 	//Gastos documentos pdf
 	public static final String PDF_GASTO=PATH_DOCUMENTS_PDF+"gasto/ReporteGasto";
 
+	//Indicadores de produccion Ejecutivo
+
+	public static final String INDICADORES_PRODUCCION=PATH_CONTROL_PANEL+"tableroIndicadores/Index";
+
 	
 }

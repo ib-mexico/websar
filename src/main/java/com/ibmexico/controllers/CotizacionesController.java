@@ -750,15 +750,18 @@ public class CotizacionesController {
 				if(cmbEstatus.equals(2) && objCotizacion.getAprobacionFecha() == null) {
 					LocalDate ldNow = LocalDate.now();
 					objCotizacion.setAprobacionFecha(ldNow);
-					
-					//ESTA NOTIFICACION IRIA EN LA PARTE DE APROBACION AL MOMENTO QUE SE APRUEBE UNA COTIZACION MAYOR A 10,000
-					Twilio.init(GeneralConfiguration.getInstance().getTwilioAccountSID(), GeneralConfiguration.getInstance().getTwilioAuthToken());
-					if(objCotizacion.getTotal().doubleValue()>10000) {
-						Message message = Message.creator(new PhoneNumber("whatsapp:"+objUsuario.getCelular()), 
-								new PhoneNumber("whatsapp:+12053902893"),
-								"Se aprobó una cotización con folio *"+objCotizacion.getFolio()+"*, con un valor de *"+objCotizacion.getTotalNatural()+"* por el usuario *"+objCotizacion.getUsuario().getAliasCorreo()+"*").create();
 
-								System.out.println(message.getSid());
+					try {
+						if(objCotizacion.getTotal().doubleValue()>10000) {
+							//ESTA NOTIFICACION IRIA EN LA PARTE DE APROBACION AL MOMENTO QUE SE APRUEBE UNA COTIZACION MAYOR A 10,000
+							Twilio.init(GeneralConfiguration.getInstance().getTwilioAccountSID(), GeneralConfiguration.getInstance().getTwilioAuthToken());
+							Message message = Message.creator(new PhoneNumber("whatsapp:"+objUsuario.getCelular()), 
+									new PhoneNumber("whatsapp:+12053902893"),
+									"Se aprobó una cotización con folio *"+objCotizacion.getFolio()+"*, con un valor de *"+objCotizacion.getTotalNatural()+"* por el usuario *"+objCotizacion.getUsuario().getAliasCorreo()+"*").create();
+									System.out.println(message.getSid());
+						}	
+					} catch (Exception e) {
+						throw new ApplicationException(EnumException.COTIZACIONES_UPDATE_001);
 					}
 					objCotizacion.setCotizacionEstatus(cotizacionEstatusService.findByIdCotizacionEstatus(cmbEstatus));
 					cotizacionService.update(objCotizacion);
@@ -938,6 +941,64 @@ public class CotizacionesController {
 
 		
 		return jsonReturn.build().toString();
+	}
+
+
+	@RequestMapping(value="get-indicadores-produccion/{paramIdEjecutivo}/{paramFechaInicio}/{paramFechaFin}",method = RequestMethod.GET)
+	public @ResponseBody String getIndicadoresProduccion(@PathVariable("paramIdEjecutivo")int paramIdEjecutivo,
+	@PathVariable("paramFechaInicio")String paramFechaInicio,@PathVariable("paramFechaFin")String paramFechaFin){
+		Boolean respuesta=false;
+		JsonObject jsonIndicadoresProduccion=null;
+		LocalDate fechaInicio;
+		LocalDate fechaFin;
+		
+		if(!paramFechaFin.equals("") && !paramFechaInicio.equals("")){
+			String arrFechaInicio[]= paramFechaInicio.split("-");
+			int yearInicio=Integer.parseInt(arrFechaInicio[2]);
+			int monthInicio=Integer.parseInt(arrFechaInicio[1]);
+			int dayInicio=Integer.parseInt(arrFechaInicio[0]);
+	
+			String arrFechaFin[]=paramFechaFin.split("-");
+			int yearFin=Integer.parseInt(arrFechaFin[2]);
+			int monthFin= Integer.parseInt(arrFechaFin[1]);
+			int dayFin= Integer.parseInt(arrFechaFin[0]);
+	
+			fechaInicio=LocalDate.of(yearInicio, monthInicio, dayInicio);
+			fechaFin=LocalDate.of(yearFin, monthFin, dayFin);
+			try {
+				jsonIndicadoresProduccion=cotizacionService.totalCotizadosPeriodoProduccion(fechaInicio, fechaFin, paramIdEjecutivo);
+				respuesta=true;
+			} catch (Exception e) {
+				
+			}
+		}
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("JsonIndicadores", jsonIndicadoresProduccion)
+					.add("respuesta", respuesta);
+		return jsonReturn.build().toString();			
+	}
+	@RequestMapping(value="get-ejecutivos", method=RequestMethod.GET)
+	public @ResponseBody String getEjecutivos(){
+		Boolean respuesta=false;
+		JsonObject jsonEjecutivos=null;
+		try {
+			jsonEjecutivos=usuarioService.jsonUsuariosGruposActivos();
+			respuesta=true;
+		} catch (ApplicationException e) {
+			
+		}
+		JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
+		jsonReturn.add("jsonEjecutivos", jsonEjecutivos)
+					.add("respuesta", respuesta);
+		return jsonReturn.build().toString();
+	}
+
+	
+	//Indicadores de producción	
+	@GetMapping({"tableroIndicadores/Index", "tableroIndicadores/Index/"})
+	public ModelAndView indicadores() {	
+		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.INDICADORES_PRODUCCION);
+		return objModelAndView;
 	}
 
 }
