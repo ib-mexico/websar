@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javax.json.Json;
@@ -484,6 +485,40 @@ public class CotizacionService {
 		});
 		
 		jsonReturn.add("rows", jsonRows);	
+		return jsonReturn.build();
+	}
+
+	public JsonObject totalCotizadosPeriodoProduccion(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo){
+		int numeroCotizacionesAprobadas=0;
+		int numeroCotizacionesFacturadas=0;
+		int numeroCotizacionesCobradasMayor90Dias=0;
+		int numeroCotizacionesCobradaMenor90Dias=0;
+		//Condicion solo para el usuario de ver Indicadores
+		List<CotizacionEntity> lstCotizaciones= cotizacionRepository.totalCotizacionesPagadas(idEjecutivo,ldFechaInicio, ldFechaFin);
+		int totalCotizaciones= (int) cotizacionRepository.countCotizacionesPeriodoEjecutivo(ldFechaInicio, ldFechaFin,idEjecutivo);
+		if(totalCotizaciones>0){
+			numeroCotizacionesAprobadas= (int) cotizacionRepository.countCotizacionesAprobada(ldFechaInicio, ldFechaFin, idEjecutivo);
+			numeroCotizacionesFacturadas= (int) cotizacionRepository.countCotizacionesFacturada(idEjecutivo, ldFechaInicio, ldFechaFin);
+		}
+		int valorMaximo=90;
+		for (int i = 0; i < lstCotizaciones.size(); i++) {
+			System.err.println(lstCotizaciones.get(i).getAprobacionFecha());
+			int diff = (int) ChronoUnit.DAYS.between(lstCotizaciones.get(i).getAprobacionFecha(), lstCotizaciones.get(i).getPagoFecha());
+			if(diff>valorMaximo){
+				numeroCotizacionesCobradasMayor90Dias++;
+				System.err.println(numeroCotizacionesCobradasMayor90Dias);
+			}
+			else{
+				numeroCotizacionesCobradaMenor90Dias++;
+				System.err.println(numeroCotizacionesCobradaMenor90Dias);
+			}
+		}
+		JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
+		jsonReturn.add("numCotizaciones", totalCotizaciones)
+					.add("numCotAprobadas", numeroCotizacionesAprobadas)
+					.add("numCotizacionesFacturadas", numeroCotizacionesFacturadas)
+					.add("numCotizacionesCobradasMayor90Dias", numeroCotizacionesCobradasMayor90Dias>0 ? numeroCotizacionesCobradasMayor90Dias : 0)
+					.add("numCotizacionesCobradasMenor90Dias", numeroCotizacionesCobradaMenor90Dias>0 ? numeroCotizacionesCobradaMenor90Dias : 0);
 		return jsonReturn.build();
 	}
 }

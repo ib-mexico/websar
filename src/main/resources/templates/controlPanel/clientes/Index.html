@@ -204,7 +204,7 @@
 			    ].join(' ');
 			} else {				
 			    return [
-			    	'<a href="' + urlEdit + '" title="Editar">',
+			    	'<a href="' + urlEdit + '" title="Editar" th:if="${rolNuevoCliente}">',
 		        		'<i class="material-icons">mode_edit</i>',
 		        	'</a>',
 		        	'<a href="' + urlContactos + '" title="Contactos">',
