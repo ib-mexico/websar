@@ -118,21 +118,29 @@ public interface ICotizacionRepository  extends JpaRepository<CotizacionEntity, 
 	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2%) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?3 AND ?4 order by objCotizacion.creacionFecha DESC")
 	public abstract List<CotizacionEntity> findForDataTable(int idUsuario, String search, LocalDate ldFechaInicio, LocalDate ldFechaFin, Pageable page);
 
-	//GRAFICAS INDICADORES DE PRODUCCION
-	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.idUsuario=?3 AND (CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?1 AND ?2)")	
-	public abstract long countCotizacionesPeriodoEjecutivo(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo);
+	// //GRAFICAS INDICADORES DE PRODUCCION
+	// @Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.idUsuario=?3 AND (CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?1 AND ?2)")	
+	// public abstract long countCotizacionesPeriodoEjecutivo(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo);
 
-	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.idUsuario=?3 AND (CONVERT(objCotizacion.aprobacionFecha, DATE) BETWEEN ?1 AND ?2)")	
-	public abstract long countCotizacionesAprobada(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo);
+	// @Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.idUsuario=?3 AND (CONVERT(objCotizacion.aprobacionFecha, DATE) BETWEEN ?1 AND ?2)")	
+	// public abstract long countCotizacionesAprobada(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo);
 	
-	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.idUsuario=?1 AND (CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?2 AND ?3)")	
-	public abstract long countCotizacionesFacturada(int idEjecutivo, LocalDate ldFechaInicio, LocalDate ldFechaFin);
+	// @Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.idUsuario=?1 AND (CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?2 AND ?3)")	
+	// public abstract long countCotizacionesFacturada(int idEjecutivo, LocalDate ldFechaInicio, LocalDate ldFechaFin);
 	
+	//GRAFICAS INDICADORES DE PRODUCCION
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.idUsuario=?3 AND (CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?1 AND ?2)")	
+	public abstract List<CotizacionEntity> cotizacionesPeriodoEjecutivo(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo);
+
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.idUsuario=?3 AND (CONVERT(objCotizacion.aprobacionFecha, DATE) BETWEEN ?1 AND ?2)")	
+	public abstract List<CotizacionEntity> cotizacionesAprobada(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo);
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.idUsuario=?1 AND (CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?2 AND ?3)")	
+	public abstract List<CotizacionEntity> cotizacionesFacturada(int idEjecutivo, LocalDate ldFechaInicio, LocalDate ldFechaFin);
+	
+
 	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.idUsuario=?1 AND objCotizacion.pagoFecha!=NULL AND objCotizacion.aprobacionFecha!=NULL AND (CONVERT(objCotizacion.pagoFecha, DATE) BETWEEN ?2 AND ?3)")	
 	public abstract List<CotizacionEntity> totalCotizacionesPagadas(int idEjecutivo, LocalDate ldFechaInicio, LocalDate ldFechaFin);
-	
-	// @Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE AND objCotizacion.cotizacionEstatus.idCotizacionEstatus = ?4 AND (CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?2 AND ?3) AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1)")	
-	// public abstract long countCotizacionesCobradasMas90Dias(int idEjecutivo, LocalDate ldFechaInicio, LocalDate ldFechaFin, int idCotizacionEstatus);
 	
 	
 }
