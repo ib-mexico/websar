@@ -1,0 +1,194 @@
+<th:block th:fragment="style">
+	<!-- Range Slider Css -->
+	<link th:href="@{/plugins/morrisjs/morris.css}" rel="stylesheet" />
+</th:block>
+<th:block th:fragment="body">
+	<div id="appIndicadores">
+		<ol class="breadcrumb breadcrumb-bg-red">
+            <li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+            <li class="active"><i class="material-icons">public</i> Indicadores de produccion</li>
+	    </ol>
+
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card">
+                    <div class="header">
+                        <h2 v-text="title"></h2>
+                    </div>
+            
+                    <div class="body">
+
+                    <!-- Busqueda en rangos de fecha -->
+                        <div class="row clearfix">
+                            <div class="row">
+                                <div class="col-xs-3 col-sm-3 col-md-3">
+                                    <div class="input-group">	                            
+                                        <select class="selectpicker form-control show-tick cmbEjecutivo required" v-model="idUsuario" data-live-search="true">
+                                            <option value="selected" >Seleccione un ejecutivo</option>
+                                            <option v-for="item in dataEjecutivo" :value="item.id_usuario" v-text="item.nombre_completo"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-xs-3 col-sm-3 col-md-3">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="material-icons">date_range</i>
+                                        </span>
+                                        <div class="form-line" id='groupDesde'>
+                                            <input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-3 col-sm-3 col-md-3">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="material-icons">date_range</i>
+                                        </span>
+                                        <div class="form-line" id='groupHasta'>
+                                            <input type="text" class="form-control text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-3 col-sm-3 col-md-3">
+                                    <div class="input-group">
+                                        <input type="button" value="Generar Estadistica" class="btn btn-success" id="GenerarIndicadores"/>
+                                    </div>
+                                </div>					
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="card">
+                                        <div class="header">
+                                            <h2>INDICADORES DEL EJECUTIVO  : {{ usuarioObtenido }}</h2>
+                                            <ul class="header-dropdown m-r--5">
+                                                <li class="dropdown">
+                                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+                                                        <i class="material-icons">more_vert</i>
+                                                    </a>
+                                                    <ul class="dropdown-menu pull-right">
+                                                        <li><a href="javascript:void(0);" class=" waves-effect waves-block">Action</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover dashboard-task-infos">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="col-md-1 text-success bold">#</th>
+                                                            <th class="col-md-3 text-success bold">Descripción</th>
+                                                            <th class="col-md-2 text-success bold">Cantidad</th>
+                                                            <th class="col-md-1 text-success bold">Meta</th>
+                                                            <th class="col-md-1 text-success bold">Monto</th>
+                                                            <th class="col-md-4 text-success bold">Avance</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="(value,key,index) in dataProduccion" v-if="dataProduccion!=null">
+                                                            <td v-text="key"></td>
+                                                            <td v-text="value.titulo"></td>
+                                                            <td><span class="label bg-green" v-text="value.total"></span></td>
+                                                            <td><span class="label bg-green" v-text="value.meta"></span></td>
+                                                            <td><span class="label bg-green" v-text="'$ '+value.montoCotizacion"></span></td>
+                                                            <td>
+                                                                <div class="progress" tabindex="0" data-toggle="tooltip" data-placement="top" :title="value.titulo +' son  ' +value.total" >
+                                                                    <div class="progress-bar progress-bar-striped bg-blue" role="progressbar" :aria-valuenow="value.total" aria-valuemin="0" 
+                                                                    :aria-valuemax="value.meta" :style="{width: value.total+'%'}">
+                                                                </div>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr v-if="dataProduccion.length==null">
+                                                            <td colspan="4" class="text-center h4 text-danger">No existen datos para mostrar.</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row-clearfix">
+                                    <!-- Bar Chart -->
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="card">
+                                            <div class="header">
+                                                <h2>INDICADORES DE : {{ usuarioObtenido }}</h2>
+                                                <ul class="header-dropdown m-r--5">
+                                                    <li class="dropdown">
+                                                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="material-icons">more_vert</i>
+                                                        </a>
+                                                        <ul class="dropdown-menu pull-right">
+                                                            <li><a href="javascript:void(0);">Exportar PDF</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="body">
+                                                <div id="bar_chart" height="700" width="auto"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- #END# Bar Chart -->
+            
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+	</div>
+
+
+</th:block>
+<th:block th:fragment="script">
+
+    <script th:src="@{/plugins/vue/vue.js}"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script th:src="@{/assets/js/indicadores.js}"></script>
+    <script th:src="@{/plugins/bootstrap-select/js/bootstrap-select.js}"></script>
+    
+	<script th:src="@{/plugins/raphael/raphael.min.js}"></script>
+    <script th:src="@{/plugins/morrisjs/morris.js}"></script>
+    
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+    <script type="application/javascript" th:inline="javascript">
+    $(document).ready(function() {
+        $(function () {
+            //Datetimepicker plugin
+            $('.datetimepicker').bootstrapMaterialDatePicker({
+                format: 'DD-MM-YYYY',
+                clearButton: true,
+                weekStart: 1,
+                time:false
+            });
+        });
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+        $('.cmbEjecutivo').selectpicker('refresh');
+        $("#GenerarIndicadores").click(async function(){
+            var FechaInicio= $("#txtBootstrapTableDesde").val();
+            var FechaFin=$("#txtBootstrapTableHasta").val();
+            var paramEjecutivo=$('.cmbEjecutivo').selectpicker('val');
+            $('[data-toggle="tooltip"]').tooltip()
+            var dataProduccion=await indicadores.getDataProduccion(paramEjecutivo,FechaInicio,FechaFin);
+            // console.log(dataProduccion);
+            // getMorris('bar','bar_chart',dataProduccion);
+        })
+    })
+
+    </script>
+
+</th:block>

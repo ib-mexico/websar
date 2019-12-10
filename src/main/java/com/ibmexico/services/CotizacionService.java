@@ -2,6 +2,7 @@ package com.ibmexico.services;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -55,6 +56,7 @@ public class CotizacionService {
 	@Autowired
 	@Qualifier("sessionService")
 	private SessionService sessionService;
+	private static DecimalFormat df = new DecimalFormat("0.00");
 	
 	public DataTable<CotizacionEntity> dataTable(String search, int offset, int limit, String txtBootstrapTableDesde, String txtBootstrapTableHasta) {
 		List<CotizacionEntity> lstCotizacionEntity = null;
@@ -488,37 +490,146 @@ public class CotizacionService {
 		return jsonReturn.build();
 	}
 
-	public JsonObject totalCotizadosPeriodoProduccion(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo){
-		int numeroCotizacionesAprobadas=0;
-		int numeroCotizacionesFacturadas=0;
-		int numeroCotizacionesCobradasMayor90Dias=0;
-		int numeroCotizacionesCobradaMenor90Dias=0;
-		//Condicion solo para el usuario de ver Indicadores
-		List<CotizacionEntity> lstCotizaciones= cotizacionRepository.totalCotizacionesPagadas(idEjecutivo,ldFechaInicio, ldFechaFin);
-		int totalCotizaciones= (int) cotizacionRepository.countCotizacionesPeriodoEjecutivo(ldFechaInicio, ldFechaFin,idEjecutivo);
-		if(totalCotizaciones>0){
-			numeroCotizacionesAprobadas= (int) cotizacionRepository.countCotizacionesAprobada(ldFechaInicio, ldFechaFin, idEjecutivo);
-			numeroCotizacionesFacturadas= (int) cotizacionRepository.countCotizacionesFacturada(idEjecutivo, ldFechaInicio, ldFechaFin);
+	public JsonObject jsonCotizacionesAceptadas(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo){
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		List<CotizacionEntity> lstCotizacionesAceptadas=cotizacionRepository.cotizacionesAprobada(ldFechaInicio, ldFechaFin, idEjecutivo);
+		int totalCotizacionesAceptadas=lstCotizacionesAceptadas.size();
+		double montoCotizacion=0;
+		for (CotizacionEntity cotAceptadas : lstCotizacionesAceptadas) {
+			double total = cotAceptadas.getTotal().doubleValue();
+			montoCotizacion=montoCotizacion + total;
 		}
-		int valorMaximo=90;
-		for (int i = 0; i < lstCotizaciones.size(); i++) {
-			System.err.println(lstCotizaciones.get(i).getAprobacionFecha());
-			int diff = (int) ChronoUnit.DAYS.between(lstCotizaciones.get(i).getAprobacionFecha(), lstCotizaciones.get(i).getPagoFecha());
-			if(diff>valorMaximo){
-				numeroCotizacionesCobradasMayor90Dias++;
-				System.err.println(numeroCotizacionesCobradasMayor90Dias);
+		df.setRoundingMode(RoundingMode.DOWN);
+		jsonRows.add(Json.createObjectBuilder()
+			.add("titulo", "Total de Cotizaciones Aceptadas")
+			.add("total", totalCotizacionesAceptadas)
+			.add("montoCotizacion", df.format(montoCotizacion))
+			.add("meta", 50)
+			);
+		jsonReturn.add("jsonCotizacionesAceptadas", jsonRows);	
+		return jsonReturn.build();
+	}
+	
+	public JsonObject jsonCotizacionesFacturadas(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo){
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		List<CotizacionEntity> lstCotizacionesFacturadas = cotizacionRepository.cotizacionesFacturada(idEjecutivo, ldFechaInicio, ldFechaFin);
+		int totalCotizacionesFacturadas=lstCotizacionesFacturadas.size();
+		double montoCotizacion = 0;
+		for (CotizacionEntity cotAceptadas : lstCotizacionesFacturadas) {
+			double total = cotAceptadas.getTotal().doubleValue();
+			montoCotizacion=montoCotizacion + total;
+		}
+		df.setRoundingMode(RoundingMode.DOWN);
+		jsonRows.add(Json.createObjectBuilder()
+			.add("titulo", "Total de Cotizaciones Facturadas")
+			.add("total", totalCotizacionesFacturadas)
+			.add("montoCotizacion", df.format(montoCotizacion))
+			.add("meta", 50)
+			);
+		jsonReturn.add("jsonCotizacionesFacturadas", jsonRows);	
+		return jsonReturn.build();
+	}
+	
+	public JsonObject jsonCotizacionesNuevas(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo){
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		List<CotizacionEntity> lstCotizacionesNuevas = cotizacionRepository.cotizacionesPeriodoEjecutivo(ldFechaInicio, ldFechaFin, idEjecutivo);
+		int totalCotizacionesNuevas=lstCotizacionesNuevas.size();
+		double montoCotizacion=0;
+		for (CotizacionEntity cotAceptadas : lstCotizacionesNuevas) {
+			double total = cotAceptadas.getTotal().doubleValue();
+			montoCotizacion=montoCotizacion + total;
+		}
+		df.setRoundingMode(RoundingMode.DOWN);
+		jsonRows.add(Json.createObjectBuilder()
+			.add("titulo", "Total de Cotizaciones Nuevas")
+			.add("total", totalCotizacionesNuevas)
+			.add("montoCotizacion", df.format(montoCotizacion))
+			.add("meta", 20)
+			);
+		jsonReturn.add("jsonCotizacionesNuevas", jsonRows);	
+		return jsonReturn.build();
+	}
+
+	public JsonObject jsonCotizacionesCobradasMas90(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo){
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		List<CotizacionEntity> lstCotizacionesPagadas=cotizacionRepository.totalCotizacionesPagadas(idEjecutivo,ldFechaInicio, ldFechaFin);
+		int valorMaximo = 90;
+		double montoCotizacion = 0;
+		int numeroCotCobradasMayor90Dias = 0;
+		for (int i = 0; i < lstCotizacionesPagadas.size(); i++) {
+			int diff = (int) ChronoUnit.DAYS.between(lstCotizacionesPagadas.get(i).getAprobacionFecha(), lstCotizacionesPagadas.get(i).getPagoFecha());
+			if(diff > valorMaximo){
+				montoCotizacion = montoCotizacion+lstCotizacionesPagadas.get(i).getTotal().doubleValue();
+				numeroCotCobradasMayor90Dias++;
 			}
-			else{
-				numeroCotizacionesCobradaMenor90Dias++;
-				System.err.println(numeroCotizacionesCobradaMenor90Dias);
+		}
+		df.setRoundingMode(RoundingMode.DOWN);
+		jsonRows.add(Json.createObjectBuilder()
+			.add("titulo", "Total de Cotizaciones Cobradas Mas de 90 Dias")
+			.add("total", numeroCotCobradasMayor90Dias)
+			.add("montoCotizacion", df.format(montoCotizacion))
+			.add("meta", 100)
+			);
+		jsonReturn.add("jsonCotCobradasMas90Dias", jsonRows);	
+		return jsonReturn.build();
+	}
+
+	public JsonObject jsonCotizacionesCobradasMenos90(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo){
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		List<CotizacionEntity> lstCotizacionesPagadas = cotizacionRepository.totalCotizacionesPagadas(idEjecutivo,ldFechaInicio, ldFechaFin);
+		int valorMaximo = 90;
+		double montoCotizacion = 0;
+		int numCotCobradasMenor90Dias=0;
+		for (int i = 0; i < lstCotizacionesPagadas.size(); i++) {
+			int diff = (int) ChronoUnit.DAYS.between(lstCotizacionesPagadas.get(i).getAprobacionFecha(), lstCotizacionesPagadas.get(i).getPagoFecha());
+			if(diff < valorMaximo){
+				montoCotizacion = montoCotizacion+lstCotizacionesPagadas.get(i).getTotal().doubleValue();
+				numCotCobradasMenor90Dias++;
 			}
+		}
+		df.setRoundingMode(RoundingMode.DOWN);
+		jsonRows.add(Json.createObjectBuilder()
+			.add("titulo", "Total de Cotizaciones Cobradas menos de 90 Dias")
+			.add("total", numCotCobradasMenor90Dias)
+			.add("montoCotizacion", df.format(montoCotizacion))
+			.add("meta", 100)
+			);
+		jsonReturn.add("jsonCotCobradasMenos90Dias", jsonRows);	
+		return jsonReturn.build();
+	}
+
+
+	public JsonObject totalCotizadosPeriodoProduccion(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo){
+
+		JsonObject jsonCotizacionesNuevas=null;
+		JsonObject jsonCotizacionesAprobadas=null;
+		JsonObject jsonCotizacionesFacturadas=null;
+		JsonObject jsonCotizacionesCobradasMas90=null;
+		JsonObject jsonCotizacionesCobradasMenos90=null;
+		Boolean respuesta=false;
+		try {
+			jsonCotizacionesNuevas=jsonCotizacionesNuevas(ldFechaInicio, ldFechaFin, idEjecutivo);
+			jsonCotizacionesAprobadas=jsonCotizacionesAceptadas(ldFechaInicio, ldFechaFin, idEjecutivo);
+			jsonCotizacionesFacturadas=jsonCotizacionesFacturadas(ldFechaInicio, ldFechaFin, idEjecutivo);
+			jsonCotizacionesCobradasMas90=jsonCotizacionesCobradasMas90(ldFechaInicio, ldFechaFin, idEjecutivo);
+			jsonCotizacionesCobradasMenos90=jsonCotizacionesCobradasMenos90(ldFechaInicio, ldFechaFin, idEjecutivo);
+			respuesta=true;
+		} catch (Exception e) {
+			respuesta=false;
 		}
 		JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
-		jsonReturn.add("numCotizaciones", totalCotizaciones)
-					.add("numCotAprobadas", numeroCotizacionesAprobadas)
-					.add("numCotizacionesFacturadas", numeroCotizacionesFacturadas)
-					.add("numCotizacionesCobradasMayor90Dias", numeroCotizacionesCobradasMayor90Dias>0 ? numeroCotizacionesCobradasMayor90Dias : 0)
-					.add("numCotizacionesCobradasMenor90Dias", numeroCotizacionesCobradaMenor90Dias>0 ? numeroCotizacionesCobradaMenor90Dias : 0);
+		jsonReturn.add("jsonCotNuevas", jsonCotizacionesNuevas)
+					.add("jsonCotAprobadas", jsonCotizacionesAprobadas)
+					.add("jsonCotFacturadas", jsonCotizacionesFacturadas)
+					.add("jsonCotCobradasMas90", jsonCotizacionesCobradasMas90)
+					.add("jsonCotCobradasMenos90", jsonCotizacionesCobradasMenos90)
+					.add("respuesta", respuesta);
 		return jsonReturn.build();
+
 	}
 }

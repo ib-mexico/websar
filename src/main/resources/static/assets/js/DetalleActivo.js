@@ -393,19 +393,6 @@ if (document.getElementById('appDetalle')) {
                 $('.cmbRecurso2').selectpicker('val', this.editDetalleManto.id_bien_activo);
                 $('.cmbRecurso2').selectpicker('render');
                 this.loadModal();
-                /**Formateando precio */
-                // $(".txtPrecio").on({
-                //     "focus": function(event) {
-                //         $(event.target).select();
-                //     },
-                //     "keyup": function(event) {
-                //         $(event.target).val(function(index, value) {
-                //         return value.replace(/\D/g, "")
-                //             .replace(/([0-9])([0-9]{2})$/, '$1.$2')
-                //             .replace(/\B(?=(\d{3})+(?!\d)\.?)/g, ",");
-                //         });
-                //     }
-                // });
             },
             sendvalidation(param){
                 var url=host+'DetalleMant/'+param+'/sendvalidate';
@@ -445,13 +432,13 @@ if (document.getElementById('appDetalle')) {
                                 this.editDetalleManto={};
                                 this.editdatafiltrado=[];
                                 this.checkdatafiltrado=[];
-                                    //Edicion ActivoManto.
-                                    this.recursoActivo = [],
-                                    this.servicio = [],
-                                    this.fichero = [],
-                                    this.proveedorServicio = [],
-                                    this.datafiltrado = [],
-                                    this.gastoAproximado=[];
+                                //Edicion ActivoManto.
+                                this.recursoActivo = [],
+                                this.servicio = [],
+                                this.fichero = [],
+                                this.proveedorServicio = [],
+                                this.datafiltrado = [],
+                                this.gastoAproximado=[];
                             
                             swal(resp.data.titulo, resp.data.mensaje, "success");
                             $("#dtDetalle").bootstrapTable('refresh');
@@ -472,25 +459,29 @@ if (document.getElementById('appDetalle')) {
                 var url = host + "DetalleMant/get-servicioAceptado/" + idDetalleManto;
                 await axios.get(url, formModalPagoData).then(resp => {
                     if (resp.status == 200 && resp.data.respuesta) {
+
                         this.editDetalleManto = resp.data.jsonBienDetalleManto.bienDetalleManto[0];
                         this.pagos = resp.data.jsonServicioAceptado.aceptado;
                         this.recursoActivo = resp.data.jsonActivoCatalogo.rows;
+
                         //Obtencion del tipo Activo
                         this.getServicioIdTipoActivo(this.editDetalleManto.id_tipo_activo);
-                        suma=0;
+                        
+                        var suma=0;
                         this.pagos.forEach(item => {
                             suma+=item.precio_servicio_proveedor;
                         });
                         this.totalgasto=suma;
+                        
                         $('.cmbCatalogo').selectpicker('val', this.editDetalleManto.id_tipo_activo);
                         $('.cmbCatalogo').selectpicker('render');
+                        $('.cmbRecurso2').selectpicker('val', this.editDetalleManto.id_bien_activo);
+                        $('.cmbRecurso2').selectpicker('render');
                     }
                 })
-                $('.cmbRecurso2').selectpicker('val', this.editDetalleManto.id_bien_activo);
-                $('.cmbRecurso2').selectpicker('render');
                 this.loadModal();
+                /*Datetimepicker plugin*/
                 $(function () {
-                    //Datetimepicker plugin
                     $('.datetimepicker').bootstrapMaterialDatePicker({
                         format: 'DD/MM/YYYY',
                         clearButton: true,
@@ -517,20 +508,7 @@ if (document.getElementById('appDetalle')) {
                             $("#formModalPago")[0].reset();
                             $("#modalpago").modal("hide");
                             this.pagados='';
-                            // this.newDetalle.id_activo_mobiliario = '';
-                            //     this.newDetalle.id_catalogo = '';
-                            //     this.newDetalle.observaciones = '';
-                            //     this.newDetalle.titulo = '';
-                            //     this.newDetalle.urlfichero = '';
-                            //     //Edicion ActivoManto.
-                            //     this.recursoActivo = [];
-                            //     this.servicio = [];
-                            //     this.fichero = [];
-                            //     this.gastoAproximado = [];
-                            //     this.proveedorServicio = [];
-                            //     this.datafiltrado = [];
-                            //     this.urlcompletofichero='';
-                            this.pagados='';
+                            this.editDetalleManto='';
                             swal(response.data.titulo, response.data.mensaje, "success");
                             $("#dtDetalle").bootstrapTable('refresh');
                         } else {
@@ -548,22 +526,19 @@ if (document.getElementById('appDetalle')) {
                 var url = host + 'DetalleMant/' + this.editDetalleManto.id_detalle_manto + '/update';
                 axios.post(url, formEditMantoData).then(resp => {
                     if (resp.status == 200 && resp.data.respuesta) {
-                            $("#formEditActivoManto")[0].reset();
-                            $("#modalEditActivoManto").modal("hide");
-                            this.editDetalleManto={};
-                                //Edicion ActivoManto.
-                                this.recursoActivo = [],
-                                this.servicio = [],
-                                this.fichero = [],
-                                this.proveedorServicio = [],
-                                this.datafiltrado = [],
-                                this.gastoAproximado=[];
-                        
+                        $("#formEditActivoManto")[0].reset();
+                        $("#modalEditActivoManto").modal("hide");
+                        this.editDetalleManto={};
+                        //Edicion ActivoManto.
+                        this.recursoActivo = [],
+                        this.servicio = [],
+                        this.fichero = [],
+                        this.proveedorServicio = [],
+                        this.datafiltrado = [],
+                        this.gastoAproximado=[];                    
                         swal(resp.data.titulo, resp.data.mensaje, "success");
                         $("#dtDetalle").bootstrapTable('refresh');
-
-                    }else{
-                        console.log(resp);
+                    } else {
                         swal(resp.data.titulo, resp.data.mensaje, "error");
                     }
                 }).catch(error => {
