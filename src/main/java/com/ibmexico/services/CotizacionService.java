@@ -489,7 +489,7 @@ public class CotizacionService {
 		jsonReturn.add("rows", jsonRows);	
 		return jsonReturn.build();
 	}
-
+	/*--------------------------------------------Tablero Indicadores*/
 	public JsonObject jsonCotizacionesAceptadas(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo){
 		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
 		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
@@ -501,11 +501,17 @@ public class CotizacionService {
 			montoCotizacion=montoCotizacion + total;
 		}
 		df.setRoundingMode(RoundingMode.DOWN);
+		int meta=50;
+		double porcentaje=(totalCotizacionesAceptadas*100)/meta;
+		if (porcentaje>100) {
+			porcentaje=100;
+		}
 		jsonRows.add(Json.createObjectBuilder()
 			.add("titulo", "Total de Cotizaciones Aceptadas")
 			.add("total", totalCotizacionesAceptadas)
 			.add("montoCotizacion", df.format(montoCotizacion))
-			.add("meta", 50)
+			.add("meta", meta)
+			.add("porcentaje", df.format(porcentaje))
 			);
 		jsonReturn.add("jsonCotizacionesAceptadas", jsonRows);	
 		return jsonReturn.build();
@@ -522,11 +528,17 @@ public class CotizacionService {
 			montoCotizacion=montoCotizacion + total;
 		}
 		df.setRoundingMode(RoundingMode.DOWN);
+		int meta=50;
+		double porcentaje=(totalCotizacionesFacturadas*100)/meta;
+		if (porcentaje>100) {
+			porcentaje=100;
+		}
 		jsonRows.add(Json.createObjectBuilder()
 			.add("titulo", "Total de Cotizaciones Facturadas")
 			.add("total", totalCotizacionesFacturadas)
 			.add("montoCotizacion", df.format(montoCotizacion))
-			.add("meta", 50)
+			.add("meta", meta)
+			.add("porcentaje", porcentaje)
 			);
 		jsonReturn.add("jsonCotizacionesFacturadas", jsonRows);	
 		return jsonReturn.build();
@@ -543,11 +555,17 @@ public class CotizacionService {
 			montoCotizacion=montoCotizacion + total;
 		}
 		df.setRoundingMode(RoundingMode.DOWN);
+		int meta=20;
+		double porcentaje=(totalCotizacionesNuevas*100)/meta;
+		if (porcentaje>100) {
+			porcentaje=100;
+		}
 		jsonRows.add(Json.createObjectBuilder()
 			.add("titulo", "Total de Cotizaciones Nuevas")
 			.add("total", totalCotizacionesNuevas)
 			.add("montoCotizacion", df.format(montoCotizacion))
-			.add("meta", 20)
+			.add("meta", meta)
+			.add("porcentaje", porcentaje)
 			);
 		jsonReturn.add("jsonCotizacionesNuevas", jsonRows);	
 		return jsonReturn.build();
@@ -568,11 +586,17 @@ public class CotizacionService {
 			}
 		}
 		df.setRoundingMode(RoundingMode.DOWN);
+		int meta=100;
+		double porcentaje=(numeroCotCobradasMayor90Dias*100)/meta;
+		if (porcentaje>100) {
+			porcentaje=100;
+		}
 		jsonRows.add(Json.createObjectBuilder()
 			.add("titulo", "Total de Cotizaciones Cobradas Mas de 90 Dias")
 			.add("total", numeroCotCobradasMayor90Dias)
 			.add("montoCotizacion", df.format(montoCotizacion))
 			.add("meta", 100)
+			.add("porcentaje", porcentaje)
 			);
 		jsonReturn.add("jsonCotCobradasMas90Dias", jsonRows);	
 		return jsonReturn.build();
@@ -593,11 +617,17 @@ public class CotizacionService {
 			}
 		}
 		df.setRoundingMode(RoundingMode.DOWN);
+		int meta=100;
+		double porcentaje=(numCotCobradasMenor90Dias*100)/100;
+		if (porcentaje>100) {
+			porcentaje=100;
+		}
 		jsonRows.add(Json.createObjectBuilder()
 			.add("titulo", "Total de Cotizaciones Cobradas menos de 90 Dias")
 			.add("total", numCotCobradasMenor90Dias)
 			.add("montoCotizacion", df.format(montoCotizacion))
-			.add("meta", 100)
+			.add("meta", meta)
+			.add("porcentaje", porcentaje)
 			);
 		jsonReturn.add("jsonCotCobradasMenos90Dias", jsonRows);	
 		return jsonReturn.build();
