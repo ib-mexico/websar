@@ -79,16 +79,17 @@ k<th:block th:fragment="body">
 													<div class="input-group">	                            
 														<select class="form-control show-tick cmbCatalogo required" name="cmbCatalogo" id="cmbCatalogo" v-model="newDetalle.id_catalogo">
 															<option value="default" selected="selected">Selecciona un tipo...</option>
-															<option v-for="item in catalogo" :value="item.id_catalogo_activo" :data-subtext="item.nombre">{{ item.nombre }}</option>
+															<option v-for="item in catalogo" :value="item.id_catalogo_activo" :data-subtext="item.nombre" v-text="item.nombre"></option>
 														</select>
 													</div>
 												</div>
 												<div class="col-md-6">
 													<b>Activos *</b>
 													<div class="input-group">	                            
-														<select class="form-control show-tick cmbRecurso required" name="cmbRecurso" id="cmbRecurso" v-model="newDetalle.id_activo_mobiliario">
+														<select class="form-control show-tick cmbRecurso required" name="cmbRecurso" id="cmbRecurso" 
+														v-model="newDetalle.id_activo_mobiliario" data-live-search="true">
 															<option value="default" selected="selected">Selecciona un activo...</option>
-															<option v-for="item in recursoActivo" :value="item.id_recurso_activo">{{ item.descripcion_completa }}</option>
+															<option v-for="item in recursoActivo" :value="item.id_recurso_activo" v-text="item.descripcion_completa"></option>
 														</select>
 													</div>
 												</div>
@@ -349,6 +350,16 @@ k<th:block th:fragment="body">
 										<h4 class="modal-title text-primary bold text-center">Registro de pagos : {{editDetalleManto.clave_unica}}</h4>
 									</div>
 									<div class="modal-body">
+										<div class="row-clearfix">
+											<div class="col-md-6">
+												<b class="font-weight-bold text-primary">Tipo de Activo :</b>
+												<label v-text="editDetalleManto.nombre_tipo_activo"></label>
+											</div>
+											<div class="col-md-6">
+												<b class="font-weight-bold text-primary">Tipo de Activo</b>
+												<label v-text="editDetalleManto.nombre_bien_activo"></label>
+											</div>
+										</div>
 										<div class="row clearfix">
 											<div class="col-md-6">
 												<b>Tipo de Activo *</b>
@@ -448,10 +459,10 @@ k<th:block th:fragment="body">
 	<template id="templateproveedor" >
 		<div class="row-clearfix">
 			<div class="col-md-12">						
-				<h3 v-for="nombreservicio in idservicio.slice(0,1)" class="text-center text-success">{{nombreservicio.nombre_servicio}}</h3>
+				<h5 v-for="nombreservicio in idservicio.slice(0,1)" class="text-center text-success" v-text="nombreservicio.nombre_servicio"></h5>
 				<hr class="btn-primary"/>
 				<!-- <h2 class="text-center">{{idservicio[0].nombre_servicio}}</h2> -->
-				<table class="table table-borderless table-responsive table-sm">
+				<table class="table table-sm table-borderless table-responsive">
 					<thead class="bg-primary">
 						<tr>
 							<th scope="col">Proveedor</th>
@@ -498,7 +509,7 @@ k<th:block th:fragment="body">
 	<template id="templateproveedor2" >
 		<div class="row-clearfix ">
 			<div class="col-md-12">						
-				<h3 v-for="nombreservicio in idservicio.slice(0,1)" class="text-center text-success">{{nombreservicio.nombre_servicio}}</h3>
+				<h5 v-for="nombreservicio in idservicio.slice(0,1)" class="text-center text-success" v-text="nombreservicio.nombre_servicio"></h5>
 				<hr class="btn-primary"/>
 				<!-- <table class="table table-borderless table-responsive table-sm"> -->
 				<div class="table-responsive-md table-responsive-lg table-responsive-xl">
@@ -593,9 +604,7 @@ k<th:block th:fragment="body">
 		function edit(param){			
 			detalleActivo.editActivoManto(param);
 		}
-		$(".pagar").ready(function(){
-			// detalleActivo.pagar();
-		});
+		
 		function pagar(param){
 			detalleActivo.getdataPagar(param);
 		}
@@ -644,13 +653,13 @@ k<th:block th:fragment="body">
 				].join('');
 			} else if(row.estatusmanto==7){
 				return [
-					'<a href="#" title="Editar Mantenimiento" class="EditarManto" data-toggle="modal" data-target="#modalEditActivoManto" onclick="edit('+row.idDetalleMant+');" role="button">',
-						'<i class="material-icons edit">edit</i>',
+					'<a href="#" title="Editar Mantenimiento">',
+						'<i class="material-icons edit" style="color:grey">edit</i>',
 					'</a>',
-					'<a href="#" title="Pagar">',
+					'<a href="#" title="Pago Deshabilitado">',
 						'<i class="material-icons attach_money" style="color:grey">attach_money</i>',
 					'</a>',
-					'<a href="#" title="Enviar a validación" onclick="sendValidate('+row.idDetalleMant+')" >',
+					'<a href="#" title="Envio Deshabilitado">',
 						'<i class="material-icons send">send</i>',
 					'</a>'
 				].join('');

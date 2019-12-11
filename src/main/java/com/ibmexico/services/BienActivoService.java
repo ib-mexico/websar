@@ -210,7 +210,7 @@ public class BienActivoService {
         lstRecursoActivo.forEach((item)->{
             jsonRows.add(Json.createObjectBuilder()
             .add("id_recurso_activo", item.getIdRecursoActivo())
-            .add("descripcion_completa", item.getNumeroEconomico()+'-'+item.getMarca())
+            .add("descripcion_completa", item.getPlaca() +'-'+ item.getNumeroEconomico()+'-'+item.getMarca())
             );
         });
         jsonReturn.add("rows", jsonRows);
@@ -224,7 +224,7 @@ public class BienActivoService {
         lstRecursoIdCatalogo.forEach((item)->{
             jsonRows.add(Json.createObjectBuilder()
             .add("id_recurso_activo", item.getIdRecursoActivo())
-            .add("descripcion_completa", item.getNumeroEconomico()+'-'+item.getMarca())
+            .add("descripcion_completa", item.getPlaca()+'-'+item.getNumeroEconomico()+'-'+item.getMarca())
             );
         });
         jsonReturn.add("rows", jsonRows);

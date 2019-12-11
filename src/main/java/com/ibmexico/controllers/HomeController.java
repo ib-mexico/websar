@@ -290,6 +290,7 @@ public class HomeController {
 			myMap1.put("utilidad_bruta", utilidadBrutaNatural);
 			myMap1.put("acumulado_cuota", totalCuotaNatural);
 			myMap1.put("acumulado_porcentaje", acumuladoPorcentajeNatural);
+			myMap1.put("factura",itemCotizacion.getFacturaNumero());
 			
 			myMap.add(iterator,myMap1);
 			
@@ -653,6 +654,7 @@ public class HomeController {
 			myMap1.put("comision_implementador", comisionImplementadorNatural);
 			myMap1.put("comision_acumulado", totalComisionNatural);
 			myMap1.put("estatus", estatusPago);
+			myMap1.put("factura",itemCotizacion.getFacturaNumero());
 			
 			myMap.add(iterator,myMap1);
 			

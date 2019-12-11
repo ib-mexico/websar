@@ -53,9 +53,11 @@
 				<td width="9%" class="tituloTH5" style="text-align:right">Ejecutivo (3%)</td>
 				<td width="9%" class="tituloTH5" style="text-align:right">Cotizador (3%)</td>
 				<td width="9%" class="tituloTH5" style="text-align:right">Vendedor (4%)</td>
-				<td width="9%" class="tituloTH5" style="text-align:right">Implementador (3%)</td>
+				<td width="9%" class="tituloTH5" style="text-align:right">Impl. (3%)</td>
 				<td width="8%" class="tituloTH5" style="text-align:right">Acumulado</td>
 				<td width="12%" class="tituloTH5">Estatus</td>
+				<td width="8%" class="tituloTH5">Factura</td>
+
 			</tr>
 			<tr th:each="item : ${cotizacionesMap}">
 				<td width="15%" class="celdaH6" th:text="${item.folio}"></td>			
@@ -68,6 +70,8 @@
 				<td width="9%" class="celdaH6" style="text-align:right" th:text="${'$' + item.comision_implementador}"></td>			
 				<td width="9%" class="celdaH6" style="text-align:right" th:text="${'$' + item.comision_acumulado}"></td>
 				<td width="12%" class="celdaH6" th:text="${item.estatus}"></td>
+				<td width="8%" class="celdaH6" th:text="${item.factura}"></td>
+
 			</tr>
 			<tr>
 				<td colspan="3"></td>

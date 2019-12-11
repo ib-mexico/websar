@@ -51,6 +51,7 @@
 			<td width="9%" class="tituloTH5" style="text-align:right">U.B.</td>
 			<td width="10%" class="tituloTH5" style="text-align:right">Acumulado Cuota</td>
 			<td width="8%" class="tituloTH5">Acumulado Porcentaje</td>
+			<td width="8%" class="tituloTH5">Factura</td>
 		</tr>
 		<tr th:each="item : ${cotizacionesMap}">
 			<td width="20%" class="celdaH6" th:text="${item.folio}"></td>			
@@ -62,6 +63,8 @@
 			<td width="9%" class="celdaH6" style="text-align:right" th:text="${'$' + item.utilidad_bruta}"></td>
 			<td width="10%" class="celdaH6" style="text-align:right" th:text="${'$' + item.acumulado_cuota}"></td>
 			<td width="8%" class="celdaH6" th:text="${item.acumulado_porcentaje + '%'}"></td>
+			<td width="8%" class="celdaH6" th:text="${item.factura }"></td>
+		
 		</tr>
 		<tr>
 			<td colspan="2"></td>
