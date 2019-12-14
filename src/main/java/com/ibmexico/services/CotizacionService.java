@@ -496,11 +496,10 @@ public class CotizacionService {
 		List<CotizacionEntity> lstCotizacionesAceptadas=cotizacionRepository.cotizacionesAprobada(ldFechaInicio, ldFechaFin, idEjecutivo);
 		int totalCotizacionesAceptadas=lstCotizacionesAceptadas.size();
 		double montoCotizacion=0;
-		for (CotizacionEntity cotAceptadas : lstCotizacionesAceptadas) {
-			double total = cotAceptadas.getTotal().doubleValue();
-			montoCotizacion=montoCotizacion + total;
-		}
 		df.setRoundingMode(RoundingMode.DOWN);
+		for (CotizacionEntity cotAceptadas : lstCotizacionesAceptadas) {
+			montoCotizacion=montoCotizacion + cotAceptadas.getSubtotal().doubleValue();
+		}
 		int meta=50;
 		double porcentaje=(totalCotizacionesAceptadas*100)/meta;
 		if (porcentaje>100) {
@@ -522,10 +521,9 @@ public class CotizacionService {
 		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
 		List<CotizacionEntity> lstCotizacionesFacturadas = cotizacionRepository.cotizacionesFacturada(idEjecutivo, ldFechaInicio, ldFechaFin);
 		int totalCotizacionesFacturadas=lstCotizacionesFacturadas.size();
-		double montoCotizacion = 0;
+		float montoCotizacion = 0;
 		for (CotizacionEntity cotAceptadas : lstCotizacionesFacturadas) {
-			double total = cotAceptadas.getTotal().doubleValue();
-			montoCotizacion=montoCotizacion + total;
+			montoCotizacion=montoCotizacion + cotAceptadas.getSubtotal().floatValue();
 		}
 		df.setRoundingMode(RoundingMode.DOWN);
 		int meta=50;
@@ -549,10 +547,9 @@ public class CotizacionService {
 		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
 		List<CotizacionEntity> lstCotizacionesNuevas = cotizacionRepository.cotizacionesPeriodoEjecutivo(ldFechaInicio, ldFechaFin, idEjecutivo);
 		int totalCotizacionesNuevas=lstCotizacionesNuevas.size();
-		double montoCotizacion=0;
+		float montoCotizacion=0;
 		for (CotizacionEntity cotAceptadas : lstCotizacionesNuevas) {
-			double total = cotAceptadas.getTotal().doubleValue();
-			montoCotizacion=montoCotizacion + total;
+			montoCotizacion =montoCotizacion+ cotAceptadas.getSubtotal().floatValue();
 		}
 		df.setRoundingMode(RoundingMode.DOWN);
 		int meta=20;
@@ -575,17 +572,16 @@ public class CotizacionService {
 		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
 		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
 		List<CotizacionEntity> lstCotizacionesPagadas=cotizacionRepository.totalCotizacionesPagadas(idEjecutivo,ldFechaInicio, ldFechaFin);
-		int valorMaximo = 90;
-		double montoCotizacion = 0;
-		int numeroCotCobradasMayor90Dias = 0;
+		int valorMaximo = 90; double montoCotizacion = 0; int numeroCotCobradasMayor90Dias = 0;
+		df.setRoundingMode(RoundingMode.DOWN);
+		
 		for (int i = 0; i < lstCotizacionesPagadas.size(); i++) {
 			int diff = (int) ChronoUnit.DAYS.between(lstCotizacionesPagadas.get(i).getAprobacionFecha(), lstCotizacionesPagadas.get(i).getPagoFecha());
 			if(diff > valorMaximo){
-				montoCotizacion = montoCotizacion+lstCotizacionesPagadas.get(i).getTotal().doubleValue();
+				montoCotizacion = montoCotizacion+lstCotizacionesPagadas.get(i).getSubtotal().doubleValue();
 				numeroCotCobradasMayor90Dias++;
 			}
 		}
-		df.setRoundingMode(RoundingMode.DOWN);
 		int meta=100;
 		double porcentaje=(numeroCotCobradasMayor90Dias*100)/meta;
 		if (porcentaje>100) {
@@ -606,13 +602,12 @@ public class CotizacionService {
 		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
 		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
 		List<CotizacionEntity> lstCotizacionesPagadas = cotizacionRepository.totalCotizacionesPagadas(idEjecutivo,ldFechaInicio, ldFechaFin);
-		int valorMaximo = 90;
-		double montoCotizacion = 0;
+		int valorMaximo = 90; double montoCotizacion = 0;
 		int numCotCobradasMenor90Dias=0;
 		for (int i = 0; i < lstCotizacionesPagadas.size(); i++) {
 			int diff = (int) ChronoUnit.DAYS.between(lstCotizacionesPagadas.get(i).getAprobacionFecha(), lstCotizacionesPagadas.get(i).getPagoFecha());
 			if(diff < valorMaximo){
-				montoCotizacion = montoCotizacion+lstCotizacionesPagadas.get(i).getTotal().doubleValue();
+				montoCotizacion = montoCotizacion+lstCotizacionesPagadas.get(i).getSubtotal().doubleValue();
 				numCotCobradasMenor90Dias++;
 			}
 		}

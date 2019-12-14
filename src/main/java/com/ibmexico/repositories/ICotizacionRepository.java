@@ -128,7 +128,7 @@ public interface ICotizacionRepository  extends JpaRepository<CotizacionEntity, 
 	// @Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.idUsuario=?1 AND (CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?2 AND ?3)")	
 	// public abstract long countCotizacionesFacturada(int idEjecutivo, LocalDate ldFechaInicio, LocalDate ldFechaFin);
 	
-	//GRAFICAS INDICADORES DE PRODUCCION
+	//GRAFICAS INDICADORES DE PRODUCCION UNITARIA
 	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.idUsuario=?3 AND (CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?1 AND ?2)")	
 	public abstract List<CotizacionEntity> cotizacionesPeriodoEjecutivo(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo);
 
@@ -138,9 +138,20 @@ public interface ICotizacionRepository  extends JpaRepository<CotizacionEntity, 
 	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.idUsuario=?1 AND (CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?2 AND ?3)")	
 	public abstract List<CotizacionEntity> cotizacionesFacturada(int idEjecutivo, LocalDate ldFechaInicio, LocalDate ldFechaFin);
 	
-
 	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.idUsuario=?1 AND objCotizacion.pagoFecha!=NULL AND objCotizacion.aprobacionFecha!=NULL AND (CONVERT(objCotizacion.pagoFecha, DATE) BETWEEN ?2 AND ?3)")	
 	public abstract List<CotizacionEntity> totalCotizacionesPagadas(int idEjecutivo, LocalDate ldFechaInicio, LocalDate ldFechaFin);
 	
+	/**----------INDICADORES DE PRODUCCION POR AREAS----------------*/
+
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.usuarioGrupo.idUsuarioGrupo=?1 AND objCotizacion.facturacionFecha!=NULL AND (CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?2 AND ?3)")	
+	public abstract List<CotizacionEntity> cotAreaFacturada(int idArea, LocalDate ldFechaInicio, LocalDate ldFechaFin);
+
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.usuario.usuarioGrupo.idUsuarioGrupo=?1 AND objCotizacion.pagoFecha!=NULL AND objCotizacion.aprobacionFecha!=NULL AND (CONVERT(objCotizacion.pagoFecha, DATE) BETWEEN ?2 AND ?3)")	
+	public abstract List<CotizacionEntity> cotAreaPagada(int idArea, LocalDate ldFechaInicio, LocalDate ldFechaFin);
 	
+	//@Query("SELECT usuario.nombre, COUNT(usuario.idUsuario), SUM(objCotizacion.subtotal) FROM CotizacionEntity objCotizacion, UsuarioEntity usuario, UsuarioGrupoEntity userGrupo WHERE usuario.usuarioGrupo=userGrupo.idUsuarioGrupo AND userGrupo.idUsuarioGrupo=?1 AND usuario.eliminado!=1 AND objCotizacion.usuario=usuario.idUsuario AND objCotizacion.facturacionFecha IS NOT NULL  AND (CONVERT(objCotizacion.facturacionFecha, DATE) BETWEEN ?2 AND ?3) GROUP BY usuario.idUsuario")	
+	//public abstract List<CotizacionEntity> cotAreaFacturada(int idArea, LocalDate ldFechaInicio, LocalDate ldFechaFin);
+	
+	@Query(value = "{call subtotalCotizacion}", nativeQuery = true)
+	public abstract List<CotizacionEntity> spCotFacturada();
 }
