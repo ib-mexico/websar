@@ -49,12 +49,18 @@ public interface IOportunidadNegocioRepository extends JpaRepository<Oportunidad
 	@Query("SELECT objOportunidad FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.usuarioVendedor.idUsuario = ?1 AND objOportunidad.eliminado = 0 AND objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = 3 AND objOportunidad.renovacionFecha = ?2")
 	public abstract List<OportunidadNegocioEntity> listOportunidadesNegociosRenovaciones(int idUsuario, LocalDate ldFechaRenovacion);
 	
-	
-	
+		
 	
 	@Query("SELECT COALESCE(SUM(objOportunidad.ingresoEstimado), 0) FROM OportunidadNegocioEntity objOportunidad WHERE (objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = 3 OR objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = 4) AND CONVERT(objOportunidad.creacionFecha, DATE) BETWEEN ?1 AND ?2 " )
 	public abstract BigDecimal sumTotalOportunidadPorMes(LocalDate ldFechaInicio, LocalDate ldFechaFin);
 	
 	@Query("SELECT COALESCE(SUM(objOportunidad.ingresoEstimado), 0) FROM OportunidadNegocioEntity objOportunidad WHERE (objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = 3 OR objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = 4) AND objOportunidad.usuarioVendedor.idUsuario = ?3 AND (CONVERT(objOportunidad.creacionFecha, DATE) BETWEEN ?1 AND ?2)")
 	public abstract BigDecimal sumTotalOportunidadPorMes(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idUsuario);
+
+	/**Consultas para el segundo tablero de indicadores */
+	@Query("SELECT objOportunidad FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.usuarioVendedor.usuarioGrupo.idUsuarioGrupo=?1 AND objOportunidad.usuarioVendedor.eliminado!=1 AND objOportunidad.creacionFecha!=NULL AND objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus=1 AND	(CONVERT(objOportunidad.creacionFecha, DATE) BETWEEN ?2 AND ?3)")
+	public abstract List<OportunidadNegocioEntity> opnNuevasArea(int idArea,LocalDate ldFechaInicio, LocalDate ldFechaFin);
+
+	@Query("SELECT objOportunidad FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.usuarioVendedor.usuarioGrupo.idUsuarioGrupo=?1 AND objOportunidad.usuarioVendedor.eliminado!=1 AND objOportunidad.creacionFecha!=NULL AND objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus=4 AND	(CONVERT(objOportunidad.creacionFecha, DATE) BETWEEN ?2 AND ?3)")
+	public abstract List<OportunidadNegocioEntity> opnNuevasGanadas(int idArea,LocalDate ldFechaInicio, LocalDate ldFechaFin);
 }

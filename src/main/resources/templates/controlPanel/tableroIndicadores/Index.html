@@ -109,7 +109,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <!--Grafica del indicador 1-->
+                            <div class="row hidden" >
                                 <div class="row-clearfix">
                                     <!-- Bar Chart -->
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -136,6 +137,91 @@
             
                                 </div>
                             </div>
+                            <!--Segunda Indicador-->
+                            <div class="row">
+                                <div class="col-xs-3 col-sm-3 col-md-3">
+                                    <div class="input-group">	                            
+                                        <select class="selectpicker form-control show-tick cmbVenta required" v-model="idGrupoVenta" data-live-search="true">
+                                            <option value="selected" >Seleccione un grupo de ventas</option>
+                                            <option v-for="item in dataUsuarioGrupo" :value="item.idUsuarioGrupo" v-text="item.nombre_completo"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-xs-3 col-sm-3 col-md-3">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="material-icons">date_range</i>
+                                        </span>
+                                        <div class="form-line">
+                                            <input type="text" class="form-control text-center datetimepicker" id="txtFechaInicio" name="txtFechaInicio" placeholder="Desde..." />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-3 col-sm-3 col-md-3">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="material-icons">date_range</i>
+                                        </span>
+                                        <div class="form-line">
+                                            <input type="text" class="form-control text-center datetimepicker" id="txtFechaFin" name="txtFechaFin" placeholder="Hasta..." />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-3 col-sm-3 col-md-3">
+                                    <div class="input-group">
+                                        <input type="button" value="Generar Estadistica" class="btn btn-success" id="GenerarTopIndicador"/>
+                                    </div>
+                                </div>					
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                    <div class="card">
+                                        <div class="header">
+                                            <h2>INDICADORES DEL AREA   : {{ grupoVentaObtenido }}</h2>
+                                            <ul class="header-dropdown m-r--5">
+                                                <li class="dropdown">
+                                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+                                                        <i class="material-icons">more_vert</i>
+                                                    </a>
+                                                    <ul class="dropdown-menu pull-right">
+                                                        <li><a href="javascript:void(0);" class=" waves-effect waves-block">Action</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover dashboard-task-infos">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="col-md-1 text-success bold">#</th>
+                                                            <th class="col-md-3 text-success bold">Descripción</th>
+                                                            <th class="col-md-2 text-success bold">Nombre</th>
+                                                            <th class="col-md-1 text-success bold">Cantidad</th>
+                                                            <th class="col-md-1 text-success bold">Monto</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="(value,key,index) in dataIndicadoresGanador" v-if="dataIndicadoresGanador!=null">
+                                                            <td v-text="key"></td>
+                                                            <td v-text="value.titulo"></td>
+                                                            <td><span class="label bg-green" v-text="value.usuario"></span></td>
+                                                            <td><span class="label bg-green" v-text="value.numeroFactura"></span></td>
+                                                            <td><span class="label bg-green" v-text="'$ '+value.monto"></span></td>
+                                                           
+                                                        </tr>
+                                                        <tr v-if="dataIndicadoresGanador.length==null">
+                                                            <td colspan="4" class="text-center h4 text-danger">No existen datos para mostrar.</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
 
                         </div>
                     </div>
@@ -177,7 +263,10 @@
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
         });
+        /*Listar los ejecutivos y grupo de ventas con selectpicker*/
         $('.cmbEjecutivo').selectpicker('refresh');
+        $('.cmbVenta').selectpicker('refresh');
+
         $("#GenerarIndicadores").click(async function(){
             var FechaInicio= $("#txtBootstrapTableDesde").val();
             var FechaFin=$("#txtBootstrapTableHasta").val();
@@ -186,7 +275,16 @@
             var dataProduccion=await indicadores.getDataProduccion(paramEjecutivo,FechaInicio,FechaFin);
             // console.log(dataProduccion);
             // getMorris('bar','bar_chart',dataProduccion);
-        })
+        });
+
+        $("#GenerarTopIndicador").click(async function(){
+            var FechaInicio= $("#txtFechaInicio").val();
+            var FechaFin=$("#txtFechaFin").val();
+            var paramVenta=$('.cmbVenta').selectpicker('val');
+            await indicadores.getDataProduccionArea(paramVenta,FechaInicio,FechaFin);
+        });
+
+
     })
 
     </script>

@@ -9,13 +9,21 @@ if(document.getElementById("appIndicadores")){
         el:"#appIndicadores",
         mounted() {
             this.getDataEjecutivo();
+            this.getDataUsuarioGrupo();
+            // this.getDataProduccionArea(4,'1-11-2019','29-11-2019');
         },
         data:{
             title:"INDICADORES DE PRODUCCIÓN",
             idUsuario:null,
             dataProduccion:[],
             dataEjecutivo:[],
-            usuarioObtenido:''
+            usuarioObtenido:'',
+
+            dataProduccionArea:[],
+            dataUsuarioGrupo:[],
+            dataIndicadoresGanador:[],
+            idGrupoVenta:null,
+            grupoVentaObtenido:null,
         },
         methods: {
             loadComponent(){
@@ -36,7 +44,7 @@ if(document.getElementById("appIndicadores")){
                 this.dataProduccion = [];
 
                 $('[data-toggle="tooltip"]').tooltip()
-                var url=host+"Indicadores/get-indicadores-produccion/"+paramEjecutivo+"/"+paramFechaInicio+"/"+paramFechaFin;
+                var url = host+"Indicadores/get-indicadores-produccion/"+paramEjecutivo+"/"+paramFechaInicio+"/"+paramFechaFin;
                 if(this.validateForm()){
                     await axios.get(url).then((resp) => {
                         this.dataProduccion.push(resp.data.jsonIndicadores.jsonCotNuevas.jsonCotizacionesNuevas[0]);
@@ -50,9 +58,185 @@ if(document.getElementById("appIndicadores")){
                     }).catch((error) => {
                         console.log(error)
                     });
+                    // var paramIdArea=4;
+                    // this.getDataProduccionArea(paramIdArea,paramFechaInicio,paramFechaFin);
                 }
             },
+            async getDataProduccionArea(paramIdArea,paramFechaInicio, paramFechaFin){
+                // $("#bar_chart").empty();
+                this.dataIndicadoresGanador = [];
+                var url=host+"Indicadores/get-indicadoresArea-produccion/"+paramIdArea+"/"+paramFechaInicio+"/"+paramFechaFin;
+                await axios.get(url).then((resp) => {
+                    if (resp.status==200 && resp.data.respuesta) {
+                        this.obtenerUsuarioGrupoSeleccionado(paramIdArea);
+                        var dataProdArea=resp.data.jsonIndicadoresArea.jsonCotArea;
+                        var dataProdCobradaArea=resp.data.jsonIndicadorPagada.jsonCotMenos90Dias;
+                        var dataOpnGeneradaArea=resp.data.jsonOpnArea.jsonOpns;
+                        var dataOpnCerradaArea=resp.data.jsonOpnCerrada.jsonOpnsClose;
+                        console.log(dataOpnCerradaArea);
 
+                        // this.dataProduccionArea=_.reject(dataProdArea,function(o){return o.idUsuario});
+                        
+                        if (dataProdArea.length!=null) {
+                            var produccionArea=_.chain(dataProdArea).groupBy("idUsuario").toArray().value();
+                            var dataFinalFactura=[],dataFinalIngreso=[];
+                            /**Iteracion para el mayor numero de facturas y mayor ingreso de facturas */
+                            for (let ejecutivo = 0; ejecutivo < produccionArea.length; ejecutivo++) {
+                                let suma = 0 , aux=0;
+                                for (let y = aux; y < produccionArea[ejecutivo].length; y++) {
+                                    suma=suma+parseFloat(produccionArea[ejecutivo][y].subtotal); 
+                                }
+                                dataFinalFactura.push(
+                                    {   
+                                        "titulo":"Ejecutivo con Mayor Número de Facturas", "usuario":produccionArea[ejecutivo][aux].nombreCompleto,
+                                        "numeroFactura":produccionArea[ejecutivo].length, "monto":suma.toFixed(2)
+                                    }
+                                );
+                                dataFinalIngreso.push(
+                                    {
+                                        "titulo":"Ejecutivo con Mayor Ingreso en Facturación", "usuario":produccionArea[ejecutivo][aux].nombreCompleto,
+                                        "numeroFactura":produccionArea[ejecutivo].length, "monto":suma.toFixed(2)
+                                    }
+                                )
+                            }
+
+                            //Ordenar dataFinalFactura
+                            var dataFacturaOrdenado=dataFinalFactura.sort((a, b) => {return (b.numeroFactura - a.numeroFactura)});
+                            var dataMontoOrdenado=dataFinalIngreso.sort((a, b) => {return (b.monto - a.monto)});
+
+                            //this.dataIndicadoresGanador=[];
+                            this.dataIndicadoresGanador.push(dataFacturaOrdenado[0]);
+                            for (let ivendedor = 1; ivendedor < dataFacturaOrdenado.length; ivendedor++) {
+                                if (dataFacturaOrdenado[0].numeroFactura===dataFacturaOrdenado[ivendedor].numeroFactura) {
+                                    this.dataIndicadoresGanador.push(dataFacturaOrdenado[ivendedor]);
+                                }else{
+                                    break;
+                                }
+                            }
+                            this.dataIndicadoresGanador.push(dataMontoOrdenado[0]);
+                            for (let ivendedor = 1; ivendedor < dataMontoOrdenado.length; ivendedor++) {
+                                if (dataMontoOrdenado[0].monto===dataMontoOrdenado[ivendedor].monto) {
+                                    this.dataIndicadoresGanador.push(dataMontoOrdenado[ivendedor]);
+                                }else{
+                                    break;
+                                }
+                            }                   
+                            // var dataGanador=_.maxBy(dataFinal, function(x) { return x.mayor==x.mayor; });
+                        }
+                        if (dataProdCobradaArea!=null) {
+                            var produccionCobrada=_.chain(dataProdCobradaArea).groupBy("idUsuario").toArray().value();
+                            var dataCobradaMenos90=[];
+                            /**Iteracion para el mayor numero de facturas y mayor ingreso de facturas */
+                            for (let ejecutivo = 0; ejecutivo < produccionCobrada.length; ejecutivo++) {
+                                let suma = 0 , aux=0;
+                                for (let y = aux; y < produccionCobrada[ejecutivo].length; y++) {
+                                    suma=suma+parseFloat(produccionCobrada[ejecutivo][y].subtotal); 
+                                }
+                                dataCobradaMenos90.push(
+                                    {   
+                                        "titulo":"Ejecutivo con Mayor Recuperacion de Cobranza antes de los 90 dias",
+                                        "usuario":produccionCobrada[ejecutivo][aux].nombreCompleto,
+                                        "numeroFactura":produccionCobrada[ejecutivo].length, "monto":suma.toFixed(2)
+                                    }
+                                );
+                            }
+                            //Ordenar dataFinalFactura
+                            var dataFacturaCobradaMenos=dataCobradaMenos90.sort((a, b) => {return (b.numeroFactura - a.numeroFactura)});
+                            
+                            //this.dataIndicadoresGanador=[];
+                            this.dataIndicadoresGanador.push(dataFacturaCobradaMenos[0]);
+                            for (let ivendedor = 1; ivendedor < dataFacturaCobradaMenos.length; ivendedor++) {
+                                if (dataFacturaCobradaMenos[0].numeroFactura===dataFacturaCobradaMenos[ivendedor].numeroFactura) {
+                                    this.dataIndicadoresGanador.push(dataFacturaCobradaMenos[ivendedor]);
+                                }else{
+                                    break;
+                                }
+                            }
+                        }
+
+
+                        if (dataOpnGeneradaArea!=null) {
+                            var dataOPNGen=_.chain(dataOpnGeneradaArea).groupBy("idUsuario").toArray().value();
+                            console.log('OPN Generadas',dataOPNGen);
+                            var dataOPNGenerado=[];
+                            /**Iteracion para el mayor numero de facturas y mayor ingreso de facturas */
+                            for (let ejecutivo = 0; ejecutivo < dataOPNGen.length; ejecutivo++) {
+                                let suma = 0 , aux=0;
+                                for (let y = aux; y < dataOPNGen[ejecutivo].length; y++) {
+                                    suma=suma+parseFloat(dataOPNGen[ejecutivo][y].subtotal); 
+                                }
+                                dataOPNGenerado.push(
+                                    {   
+                                        "titulo":"Ejecutivo con Mayor Numero de OPN Generadas",
+                                        "usuario":dataOPNGen[ejecutivo][aux].nombreCompleto,
+                                        "numeroFactura":dataOPNGen[ejecutivo].length, "monto":suma.toFixed(2)
+                                    }
+                                );
+                            }
+                            //Ordenar dataFinalFactura
+                            var dataOPNGenOrden=dataOPNGenerado.sort((a, b) => {return (b.numeroFactura - a.numeroFactura)});
+                            
+                            //this.dataIndicadoresGanador=[];
+                            this.dataIndicadoresGanador.push(dataOPNGenOrden[0]);
+                            for (let ivendedor = 1; ivendedor < dataOPNGenOrden.length; ivendedor++) {
+                                if (dataOPNGenOrden[0].numeroFactura===dataOPNGenOrden[ivendedor].numeroFactura) {
+                                    this.dataIndicadoresGanador.push(dataOPNGenOrden[ivendedor]);
+                                }else{
+                                    break;
+                                }
+                            }
+                        }
+
+
+
+                        if (dataOpnCerradaArea!=null && dataOpnCerradaArea.length>0) {
+                            var dataOPNCerrado=_.chain(dataOpnCerradaArea).groupBy("idUsuario").toArray().value();
+                            console.log('OPN Generadas',dataOPNCerrado);
+                            var dataOPNclose=[];
+                            /**Iteracion para el mayor numero de facturas y mayor ingreso de facturas */
+                            for (let ejecutivo = 0; ejecutivo < dataOPNCerrado.length; ejecutivo++) {
+                                let suma = 0 , aux=0;
+                                for (let y = aux; y < dataOPNCerrado[ejecutivo].length; y++) {
+                                    suma=suma+parseFloat(dataOPNCerrado[ejecutivo][y].subtotal); 
+                                }
+                                dataOPNclose.push(
+                                    {   
+                                        "titulo":"Ejecutivo con Mayor Numero de OPN Ganadas o Cerradas",
+                                        "usuario":dataOPNCerrado[ejecutivo][aux].nombreCompleto,
+                                        "numeroFactura":dataOPNCerrado[ejecutivo].length, "monto":suma.toFixed(2)
+                                    }
+                                );
+                            }
+                            //Ordenar dataFinalFactura
+                            var dataOPNcloseOrder=dataOPNclose.sort((a, b) => {return (b.numeroFactura - a.numeroFactura)});
+                            
+                            //this.dataIndicadoresGanador=[];
+                            this.dataIndicadoresGanador.push(dataOPNcloseOrder[0]);
+                            for (let ivendedor = 1; ivendedor < dataOPNcloseOrder.length; ivendedor++) {
+                                if (dataOPNcloseOrder[0].numeroFactura===dataOPNcloseOrder[ivendedor].numeroFactura) {
+                                    this.dataIndicadoresGanador.push(dataOPNcloseOrder[ivendedor]);
+                                }else{
+                                    break;
+                                }
+                            }
+                        }
+
+                        else{
+                            var dataVacio=[];
+                            dataVacio.push(
+                                {   
+                                    "titulo":"Ejecutivo con Mayor Numero de OPN Ganadas o Cerradas",
+                                    "usuario":"N/A",
+                                    "numeroFactura":"N/A", "monto":"N/A"
+                                }
+                            );
+                            this.dataIndicadoresGanador.push(dataVacio[0]);
+                        }
+
+                        
+                    }
+                })
+            },
             getMorris(type,element,value){
                 console.log(value)
                 var data=this.dataProduccion;
@@ -78,18 +262,32 @@ if(document.getElementById("appIndicadores")){
                 }
             },
             
-            getDataEjecutivo(){
+            async getDataEjecutivo(){
                 var url=host+"Indicadores/get-ejecutivos";
-                axios.get(url).then((resp)=>{
+               await axios.get(url).then((resp)=>{
                     if(resp.status==200 && resp.data.respuesta){
                         this.dataEjecutivo=resp.data.jsonEjecutivos.rows;
                     }
                 })
             },
-            
+            async getDataUsuarioGrupo(){
+                var url=host+"Indicadores/get-usuarioGrupo";
+                await axios.get(url).then((resp) => {
+                    if (resp.status==200 && resp.data.respuesta) {
+                        this.dataUsuarioGrupo=resp.data.jsonUsuarioGrupo.jsonGrupo;
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
+            }
+            ,
             obtenerUsuarioSeleccionado(paramEjecutivo){
                 var ejecutivo=this.dataEjecutivo.filter(user=>user.id_usuario ==paramEjecutivo);
                 this.usuarioObtenido=ejecutivo[0].nombre_completo;
+            },
+            obtenerUsuarioGrupoSeleccionado(paramGrupo){
+                var usuarioGrupo=this.dataUsuarioGrupo.filter(grupo=>grupo.idUsuarioGrupo ==paramGrupo);
+                this.grupoVentaObtenido=usuarioGrupo[0].nombre_completo;
             }
         },
         watch: {
