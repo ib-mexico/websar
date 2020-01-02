@@ -110,6 +110,9 @@ public class ClientesController {
 								@RequestParam(value="cmbEjecutivoR2a") int cmbEjecutivoR2a,
 								@RequestParam(value="cmbGrupoEmpresarial", required=false, defaultValue="0") int cmbGrupoEmpresarial,
 								@RequestParam(value="txtClienteSae", required=false) String txtClienteSae,
+								@RequestParam(value="txtClienteSaeIbMexico", required=false) String txtClienteSaeIbMexico,
+								@RequestParam(value="txtClienteSaeS3s", required=false) String txtClienteSaeS3s,
+								@RequestParam(value="txtClienteSaeR2a", required=false) String txtClienteSaeR2a,
 								@RequestParam(value="txtRazonSocial") String txtRazonSocial,
 								@RequestParam(value="txtDireccion", required=false) String txtDireccion,
 								@RequestParam(value="txtRFC") String txtRFC,
@@ -138,6 +141,10 @@ public class ClientesController {
 			objCliente.setUsuarioEjecutivoS3s(usuarioService.findByIdUsuarioNoEliminado(cmbEjecutivoS3s));
 			objCliente.setUsuarioEjecutivoR2a(usuarioService.findByIdUsuarioNoEliminado(cmbEjecutivoR2a));
 			objCliente.setClienteSae(txtClienteSae);
+			/**Campos adicionales para el manejo de num de cliente de las empresas*/
+			objCliente.setClienteSaeIbMexico(txtClienteSaeIbMexico);
+			objCliente.setClienteSaeR2a(txtClienteSaeR2a);
+			objCliente.setClienteSaeS3s(txtClienteSaeS3s);
 			
 			if(cmbGrupoEmpresarial > 0) {
 				objCliente.setClienteGrupoEmpresarial(clienteGrupoEmpresarialService.findByIdGrupoEmpresarial(cmbGrupoEmpresarial));
@@ -185,6 +192,11 @@ public class ClientesController {
 								@RequestParam(value="cmbEjecutivoR2a") int cmbEjecutivoR2a,
 								@RequestParam(value="cmbGrupoEmpresarial", required=false, defaultValue="0") int cmbGrupoEmpresarial,
 								@RequestParam(value="txtClienteSae", required=false) String txtClienteSae,
+
+								@RequestParam(value="txtClienteSaeIbMexico", required=false) String txtClienteSaeIbMexico,
+								@RequestParam(value="txtClienteSaeS3s", required=false) String txtClienteSaeS3s,
+								@RequestParam(value="txtClienteSaeR2a", required=false) String txtClienteSaeR2a,
+								
 								@RequestParam(value="txtRazonSocial") String txtRazonSocial,
 								@RequestParam(value="txtDireccion", required=false) String txtDireccion,
 								@RequestParam(value="txtRFC") String txtRFC,
@@ -215,6 +227,10 @@ public class ClientesController {
 				objCliente.setUsuarioEjecutivoS3s(usuarioService.findByIdUsuarioNoEliminado(cmbEjecutivoS3s));
 				objCliente.setUsuarioEjecutivoR2a(usuarioService.findByIdUsuarioNoEliminado(cmbEjecutivoR2a));
 				objCliente.setClienteSae(txtClienteSae);
+				/**Datos adicionales para el manejo de cliente SAE por empresa */
+				objCliente.setClienteSaeIbMexico(txtClienteSaeIbMexico);
+				objCliente.setClienteSaeR2a(txtClienteSaeR2a);
+				objCliente.setClienteSaeS3s(txtClienteSaeS3s);
 				
 				if(cmbGrupoEmpresarial > 0) {
 					objCliente.setClienteGrupoEmpresarial(clienteGrupoEmpresarialService.findByIdGrupoEmpresarial(cmbGrupoEmpresarial));

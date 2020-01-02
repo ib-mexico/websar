@@ -57,6 +57,7 @@ import com.ibmexico.services.ClienteGiroService;
 import com.ibmexico.services.ClienteService;
 import com.ibmexico.services.CotizacionComisionService;
 import com.ibmexico.services.CotizacionEstatusService;
+import com.ibmexico.services.CotizacionFicheroService;
 import com.ibmexico.services.CotizacionPartidaService;
 import com.ibmexico.services.CotizacionService;
 import com.ibmexico.services.CotizacionUsuarioQuotaService;
@@ -146,6 +147,10 @@ public class CotizacionesController {
 	@Autowired
 	@Qualifier("rolesService")
 	private RolesService rolesService;
+
+	@Autowired
+	@Qualifier("cotizacionFicheroService")
+	private CotizacionFicheroService cotizaFicheroService;
 	
 	@Autowired
 	@Qualifier("usuarioRolService")
@@ -642,14 +647,20 @@ public class CotizacionesController {
 			default:
 				break;
 			}
-			
+			LocalDate ldtInicioCalidad =  LocalDate.of(2019, 12, 31);
+			String arrFechaInicio[]= itemCotizacion.getCreacionFechaNatural().split("/");
+			int yearInicio=Integer.parseInt(arrFechaInicio[2]);
+			int monthInicio=Integer.parseInt(arrFechaInicio[1]);
+			int dayInicio=Integer.parseInt(arrFechaInicio[0]);
+			LocalDate fechaInicio=LocalDate.of(yearInicio, monthInicio, dayInicio);
 
 			jsonRows.add(Json.createObjectBuilder()
 				.add("idCotizacion", itemCotizacion.getIdCotizacion())
 				.add("idEstatus", itemCotizacion.getCotizacionEstatus().getIdCotizacionEstatus())
 				.add("estatus", itemCotizacion.getCotizacionEstatus().getCotizacionEstatus())
 				.add("sucursal", itemCotizacion.getSucursal().getSucursal())
-				
+				.add("calidad",cotizaFicheroService.countCotizacionFicheroCalidad(itemCotizacion.getIdCotizacion())>0 ? 1: 0 )
+				.add("paseCalidad", fechaInicio.isAfter(ldtInicioCalidad) ? true : false)
 				.add("folio", itemCotizacion.getFolio())
 				.add("concepto", itemCotizacion.getConcepto())
 				
@@ -798,6 +809,8 @@ public class CotizacionesController {
 								objComision.setCotizacion(objCotizacion);
 								
 								cotizacionComisionService.create(objComision, objCotizacion);
+							}else{
+								cotizacionComisionService.create(objComisionExistente, objCotizacion);
 							}
 						}
 					}
@@ -945,4 +958,20 @@ public class CotizacionesController {
 	}
 
 
+	@RequestMapping(value = "getCotizacionUnique/{paramIdCotizacion}", method = RequestMethod.GET)
+	public @ResponseBody String getCotizacionUnique(@PathVariable("paramIdCotizacion") int paramIdCotizacion) {
+		Boolean respuesta = false;
+		JsonObject jsonCotizacionUnique = null;
+		try {
+			jsonCotizacionUnique = cotizacionService.jsonCotizacionSeleccionado(paramIdCotizacion);
+			respuesta = true;
+		} catch(ApplicationException exception) {
+
+		}
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("jsonCotizacionUnique", jsonCotizacionUnique);
+						
+		return jsonReturn.build().toString();	
+	}
 }

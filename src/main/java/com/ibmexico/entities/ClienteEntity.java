@@ -43,7 +43,20 @@ public class ClienteEntity {
 	
 	@Column(length = 10)
 	private String clienteSae;
+
+	/**Nuevos campos para cliente SAE para cada empresa */
+
+	@Column(length = 10, nullable = true)
+	private String clienteSaeIbMexico;
 	
+	@Column(length = 10, nullable = true)
+	private String clienteSaeR2a;
+
+	@Column(length = 10, nullable = true)
+	private String clienteSaeS3s;
+
+	/**Fin de campos cliente SAE */
+
 	@Column(length = 200)
 	private String razonSocial;
 	
@@ -296,6 +309,30 @@ public class ClienteEntity {
 		this.eliminado = eliminado;
 	}
 
+	public String getClienteSaeIbMexico() {
+		return clienteSaeIbMexico;
+	}
+
+	public void setClienteSaeIbMexico(String clienteSaeIbMexico) {
+		this.clienteSaeIbMexico = clienteSaeIbMexico;
+	}
+
+	public String getClienteSaeR2a() {
+		return clienteSaeR2a;
+	}
+
+	public void setClienteSaeR2a(String clienteSaeR2a) {
+		this.clienteSaeR2a = clienteSaeR2a;
+	}
+
+	public String getClienteSaeS3s() {
+		return clienteSaeS3s;
+	}
+
+	public void setClienteSaeS3s(String clienteSaeS3s) {
+		this.clienteSaeS3s = clienteSaeS3s;
+	}
+	
 	@Override
 	public String toString() {
 		return "ClienteEntity [idCliente=" + idCliente + ", sucursal=" + sucursal.getSucursal() + ", cliente=" + cliente
@@ -304,7 +341,6 @@ public class ClienteEntity {
 				+ ", creacionUsuario=" + creacionUsuario.getIdUsuario() + ", creacionFecha=" + creacionFecha + ", modificacionUsuario="
 				+ modificacionUsuario.getIdUsuario() + ", modificacionFecha=" + modificacionFecha + ", eliminado=" + eliminado + "]";
 	}
-	
-	
-	
+
+		
 }

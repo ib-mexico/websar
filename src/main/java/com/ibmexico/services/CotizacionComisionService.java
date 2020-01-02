@@ -33,6 +33,14 @@ public class CotizacionComisionService {
 	@Autowired
 	@Qualifier("cotizacionFicheroService")
 	private CotizacionFicheroService cotizacionFicheroService;
+
+	@Autowired
+	@Qualifier("cotizacionService")
+	private CotizacionService cotizacionService;
+
+	@Autowired
+	@Qualifier("oportunidadNegocioFicheroService")
+	private OportunidadNegocioFicheroService opnNegocioFicheroService;
 	
 	@Autowired
 	@Qualifier("configuracionService")
@@ -86,112 +94,293 @@ public class CotizacionComisionService {
 			/* CALCULO DEL 10% DE COMISION DE LA UTILIDAD BRUTA */
 			BigDecimal comisionTotal = utilidadBruta.divide(new BigDecimal(100)).multiply(new BigDecimal(10));
 			
-			if( objCotizacion.getInicioCobranzaFecha() == null) {				
-				/*CALCULO DE COMISION DEL EJECUTIVO O IMPLEMENTADOR */
-				if(objCotizacion.isImplementacion()) {
-					objComision.setUsuarioImplementador(objCotizacion.getUsuarioImplementador());
-					objComision.setPorcentajeImplementador((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_IMPLEMENTADOR"));
-					objComision.setComisionImplementador(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_IMPLEMENTADOR")));
-					
-					objComision.setPorcentajeEjecutivo(new BigDecimal(0));
-					objComision.setComisionEjecutivo(new BigDecimal(0));								
-					
-				} else {
-					//SELECCIÓN DE EJECUTIVO POR EMPRESA
-					switch (objCotizacion.getEmpresa().getIdEmpresa()) {
-					case 1:
-						objComision.setUsuarioEjecutivo(objCotizacion.getCliente().getUsuarioEjecutivo());
-						break;
+			/**Validacion de la llamada de calidad en una cotizacion */
+			Boolean status=false;
+			List<CotizacionEntity> objCotizacionFiltrada=cotizacionService.findByCotizacionIdOpn(objCotizacion.getIdCotizacion());
+			
+			if(cotizacionFicheroService.countCotizacionFicheroCalidad(objCotizacion.getIdCotizacion())>0){
+				status=true;
+			}else if(objCotizacionFiltrada.size()>0){
+				int idOpnNegocio=objCotizacionFiltrada.get(0).getIdCotizacion();
+				/**Retornara false si encuentran archivos pero que no sean del catalogo fichero Calidad */
+				if(opnNegocioFicheroService.countOpnFicheroCalidad(idOpnNegocio)>0){
+					status=true;
+				}
+			}
+			/** Fecha de inicio de la llamada de calidad */
+			LocalDate ldtInicioCalidad =  LocalDate.of(2019, 12, 31);
+			String arrFechaInicio[]= objCotizacion.getCreacionFechaNatural().split("/");
+			int yearInicio=Integer.parseInt(arrFechaInicio[2]);
+			int monthInicio=Integer.parseInt(arrFechaInicio[1]);
+			int dayInicio=Integer.parseInt(arrFechaInicio[0]);
+			LocalDate fechaInicio=LocalDate.of(yearInicio, monthInicio, dayInicio);
+			/**Comparar fecha de creacion si es mayor a la fecha de inicio de Calidad */
+			// Boolean paseCalidad = fechaInicio.isAfter(ldtInicioCalidad);
+			if (fechaInicio.isAfter(ldtInicioCalidad)) {
+				
+				if( objCotizacion.getInicioCobranzaFecha() == null) {
+					/**Si encuentra una llamada de calidad, realiza el calculo de Comisión */
+					if (status) {
+						/*CALCULO DE COMISION DEL EJECUTIVO O IMPLEMENTADOR */
+						if(objCotizacion.isImplementacion()) {
+							objComision.setUsuarioImplementador(objCotizacion.getUsuarioImplementador());
+							objComision.setPorcentajeImplementador((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_IMPLEMENTADOR"));
+							objComision.setComisionImplementador(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_IMPLEMENTADOR")));
+							
+							objComision.setPorcentajeEjecutivo(new BigDecimal(0));
+							objComision.setComisionEjecutivo(new BigDecimal(0));								
+						} else {
+						//SELECCIÓN DE EJECUTIVO POR EMPRESA
+							switch (objCotizacion.getEmpresa().getIdEmpresa()){
+								case 1:
+									objComision.setUsuarioEjecutivo(objCotizacion.getCliente().getUsuarioEjecutivo());
+									break;
+									
+								case 2:
+									objComision.setUsuarioEjecutivo(objCotizacion.getCliente().getUsuarioEjecutivoS3s());
+									break;
+	
+								case 3:
+									objComision.setUsuarioEjecutivo(objCotizacion.getCliente().getUsuarioEjecutivoR2a());
+									break;
+	
+								default:
+									break;
+							}
 						
-					case 2:
-						objComision.setUsuarioEjecutivo(objCotizacion.getCliente().getUsuarioEjecutivoS3s());
-						break;
+							objComision.setPorcentajeEjecutivo((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_EJECUTIVO"));
+							objComision.setComisionEjecutivo(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_EJECUTIVO")));
+							
+							objComision.setPorcentajeImplementador(new BigDecimal(0));
+							objComision.setComisionImplementador(new BigDecimal(0));						
+						}
+		
+						/*CALCULO DE COMISION DEL COTIZANTE */
+						objComision.setUsuarioCotizante(objCotizacion.getUsuario());
+						objComision.setPorcentajeCotizante((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZADOR"));
+						objComision.setComisionCotizante(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZADOR")));									
+								
+						/*CALCULO DE COMISION DEL VENDEDOR */
+						objComision.setUsuarioVendedor(objCotizacion.getUsuarioVendedor());
+						objComision.setPorcentajeVendedor((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_VENDEDOR"));
+						objComision.setComisionVendedor(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_VENDEDOR")));
 						
-					case 3:
-						objComision.setUsuarioEjecutivo(objCotizacion.getCliente().getUsuarioEjecutivoR2a());
-						break;
+						/* CALCULO DE COMISION DE COBRANZA */
+						objComision.setPorcentajeCobranza(new BigDecimal(0));
+						objComision.setComisionCobranza(new BigDecimal(0));		
 						
-					default:
-						break;
+						/* TOTAL DE COMISIONES */
+						objComision.setTotalComisiones(objComision.getComisionEjecutivo().add(objComision.getComisionCotizante()).add(objComision.getComisionVendedor()).add(objComision.getComisionImplementador()));	
+					}
+					else{
+						//COMISION EJECUTIVO
+						objComision.setPorcentajeEjecutivo(new BigDecimal(0));
+						objComision.setComisionEjecutivo(new BigDecimal(0));
+						
+						//COMISION COTIZANTE
+						objComision.setUsuarioCotizante(objCotizacion.getUsuario());
+						objComision.setPorcentajeCotizante(new BigDecimal(0));
+						objComision.setComisionCotizante(new BigDecimal(0));
+						
+						//COMISION VENDEDOR
+						objComision.setUsuarioVendedor(objCotizacion.getUsuarioVendedor());
+						objComision.setPorcentajeVendedor(new BigDecimal(0));
+						objComision.setComisionVendedor(new BigDecimal(0));
+						
+						//COMISION IMPLEMENTADOR
+						objComision.setPorcentajeImplementador(new BigDecimal(0));
+						objComision.setComisionImplementador(new BigDecimal(0));
+						
+						//COMISION COBRANZA
+						objComision.setUsuarioCobranza(sessionService.getCurrentUser());
+						
+						if(objCotizacion.getFormaPago().getFormaPago().equals("Credito")) {
+
+							if(objCotizacion.getInicioCobranzaFecha() !=null){
+								int diff = (int) ChronoUnit.DAYS.between(objCotizacion.getInicioCobranzaFecha(), objCotizacion.getPagoFecha());
+								if(diff <= 30) {
+									objComision.setPorcentajeCobranza((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_30_DIAS"));
+									objComision.setComisionCobranza(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_30_DIAS")));
+								} else if(diff <= 60) {
+									objComision.setPorcentajeCobranza((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_60_DIAS"));
+									objComision.setComisionCobranza(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_60_DIAS")));
+								} else if(diff <= 90) {
+									objComision.setPorcentajeCobranza((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_90_DIAS"));
+									objComision.setComisionCobranza(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_90_DIAS")));
+								} else {
+									objComision.setPorcentajeCobranza(new BigDecimal(0));
+									objComision.setComisionCobranza(new BigDecimal(0));
+								}
+							}else{
+								objComision.setPorcentajeCobranza(new BigDecimal(0));
+								objComision.setComisionCobranza(new BigDecimal(0));
+							}
+												
+						} else {
+							objComision.setPorcentajeCobranza(new BigDecimal(0));
+							objComision.setComisionCobranza(new BigDecimal(0));
+						}
+						
+						/* TOTAL DE COMISIONES */
+						objComision.setTotalComisiones(objComision.getComisionCobranza());
 					}
 					
-					objComision.setPorcentajeEjecutivo((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_EJECUTIVO"));
-					objComision.setComisionEjecutivo(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_EJECUTIVO")));
-					
-					objComision.setPorcentajeImplementador(new BigDecimal(0));
-					objComision.setComisionImplementador(new BigDecimal(0));								
 				}
-				
-				
-				/*CALCULO DE COMISION DEL COTIZANTE */
-				objComision.setUsuarioCotizante(objCotizacion.getUsuario());
-				objComision.setPorcentajeCotizante((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZADOR"));
-				objComision.setComisionCotizante(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZADOR")));									
-				
-				
-				
-				/*CALCULO DE COMISION DEL VENDEDOR */
-				objComision.setUsuarioVendedor(objCotizacion.getUsuarioVendedor());
-				objComision.setPorcentajeVendedor((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_VENDEDOR"));
-				objComision.setComisionVendedor(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_VENDEDOR")));
-				
-				
-				/* CALCULO DE COMISION DE COBRANZA */
-				objComision.setPorcentajeCobranza(new BigDecimal(0));
-				objComision.setComisionCobranza(new BigDecimal(0));		
-				
-				
-				/* TOTAL DE COMISIONES */
-				objComision.setTotalComisiones(objComision.getComisionEjecutivo().add(objComision.getComisionCotizante()).add(objComision.getComisionVendedor()).add(objComision.getComisionImplementador()));
-			
-			} else {
-				
-				//COMISION EJECUTIVO
-				objComision.setPorcentajeEjecutivo(new BigDecimal(0));
-				objComision.setComisionEjecutivo(new BigDecimal(0));
-				
-				//COMISION COTIZANTE
-				objComision.setUsuarioCotizante(objCotizacion.getUsuario());
-				objComision.setPorcentajeCotizante(new BigDecimal(0));
-				objComision.setComisionCotizante(new BigDecimal(0));
-				
-				//COMISION VENDEDOR
-				objComision.setUsuarioVendedor(objCotizacion.getUsuarioVendedor());
-				objComision.setPorcentajeVendedor(new BigDecimal(0));
-				objComision.setComisionVendedor(new BigDecimal(0));
-				
-				//COMISION IMPLEMENTADOR
-				objComision.setPorcentajeImplementador(new BigDecimal(0));
-				objComision.setComisionImplementador(new BigDecimal(0));
-				
-				//COMISION COBRANZA
-				objComision.setUsuarioCobranza(sessionService.getCurrentUser());
-				
-				if(objCotizacion.getFormaPago().getFormaPago().equals("Credito")) {					
-					int diff = (int) ChronoUnit.DAYS.between(objCotizacion.getInicioCobranzaFecha(), objCotizacion.getPagoFecha());
-					if(diff <= 30) {
-						objComision.setPorcentajeCobranza((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_30_DIAS"));
-						objComision.setComisionCobranza(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_30_DIAS")));
-					} else if(diff <= 60) {
-						objComision.setPorcentajeCobranza((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_60_DIAS"));
-						objComision.setComisionCobranza(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_60_DIAS")));
-					} else if(diff <= 90) {
-						objComision.setPorcentajeCobranza((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_90_DIAS"));
-						objComision.setComisionCobranza(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_90_DIAS")));
+				else {
+					
+					//COMISION EJECUTIVO
+					objComision.setPorcentajeEjecutivo(new BigDecimal(0));
+					objComision.setComisionEjecutivo(new BigDecimal(0));
+					
+					//COMISION COTIZANTE
+					objComision.setUsuarioCotizante(objCotizacion.getUsuario());
+					objComision.setPorcentajeCotizante(new BigDecimal(0));
+					objComision.setComisionCotizante(new BigDecimal(0));
+					
+					//COMISION VENDEDOR
+					objComision.setUsuarioVendedor(objCotizacion.getUsuarioVendedor());
+					objComision.setPorcentajeVendedor(new BigDecimal(0));
+					objComision.setComisionVendedor(new BigDecimal(0));
+					
+					//COMISION IMPLEMENTADOR
+					objComision.setPorcentajeImplementador(new BigDecimal(0));
+					objComision.setComisionImplementador(new BigDecimal(0));
+					
+					//COMISION COBRANZA
+					objComision.setUsuarioCobranza(sessionService.getCurrentUser());
+					
+					if(objCotizacion.getFormaPago().getFormaPago().equals("Credito")) {
+						int diff = (int) ChronoUnit.DAYS.between(objCotizacion.getInicioCobranzaFecha(), objCotizacion.getPagoFecha());
+						if(diff <= 30) {
+							objComision.setPorcentajeCobranza((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_30_DIAS"));
+							objComision.setComisionCobranza(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_30_DIAS")));
+						} else if(diff <= 60) {
+							objComision.setPorcentajeCobranza((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_60_DIAS"));
+							objComision.setComisionCobranza(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_60_DIAS")));
+						} else if(diff <= 90) {
+							objComision.setPorcentajeCobranza((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_90_DIAS"));
+							objComision.setComisionCobranza(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_90_DIAS")));
+						} else {
+							objComision.setPorcentajeCobranza(new BigDecimal(0));
+							objComision.setComisionCobranza(new BigDecimal(0));
+						}
+											
 					} else {
 						objComision.setPorcentajeCobranza(new BigDecimal(0));
 						objComision.setComisionCobranza(new BigDecimal(0));
 					}
-				} else {
-					objComision.setPorcentajeCobranza(new BigDecimal(0));
-					objComision.setComisionCobranza(new BigDecimal(0));
-				}
-				
-				/* TOTAL DE COMISIONES */
-				objComision.setTotalComisiones(objComision.getComisionCobranza());
-				
+					
+					/* TOTAL DE COMISIONES */
+					objComision.setTotalComisiones(objComision.getComisionCobranza());
+					
+				}	
 			}
-			
+			/**end pase Calidad */
+			else{
+
+				if( objCotizacion.getInicioCobranzaFecha() == null) {				
+					/*CALCULO DE COMISION DEL EJECUTIVO O IMPLEMENTADOR */
+					if(objCotizacion.isImplementacion()) {
+						objComision.setUsuarioImplementador(objCotizacion.getUsuarioImplementador());
+						objComision.setPorcentajeImplementador((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_IMPLEMENTADOR"));
+						objComision.setComisionImplementador(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_IMPLEMENTADOR")));
+						
+						objComision.setPorcentajeEjecutivo(new BigDecimal(0));
+						objComision.setComisionEjecutivo(new BigDecimal(0));								
+						
+					} else {
+						//SELECCIÓN DE EJECUTIVO POR EMPRESA
+						switch (objCotizacion.getEmpresa().getIdEmpresa()) {
+						case 1:
+							objComision.setUsuarioEjecutivo(objCotizacion.getCliente().getUsuarioEjecutivo());
+							break;
+							
+						case 2:
+							objComision.setUsuarioEjecutivo(objCotizacion.getCliente().getUsuarioEjecutivoS3s());
+							break;
+							
+						case 3:
+							objComision.setUsuarioEjecutivo(objCotizacion.getCliente().getUsuarioEjecutivoR2a());
+							break;
+							
+						default:
+							break;
+						}
+						
+						objComision.setPorcentajeEjecutivo((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_EJECUTIVO"));
+						objComision.setComisionEjecutivo(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_EJECUTIVO")));
+						
+						objComision.setPorcentajeImplementador(new BigDecimal(0));
+						objComision.setComisionImplementador(new BigDecimal(0));								
+					}
+					
+					
+					/*CALCULO DE COMISION DEL COTIZANTE */
+					objComision.setUsuarioCotizante(objCotizacion.getUsuario());
+					objComision.setPorcentajeCotizante((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZADOR"));
+					objComision.setComisionCotizante(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZADOR")));									
+														
+					/*CALCULO DE COMISION DEL VENDEDOR */
+					objComision.setUsuarioVendedor(objCotizacion.getUsuarioVendedor());
+					objComision.setPorcentajeVendedor((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_VENDEDOR"));
+					objComision.setComisionVendedor(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_VENDEDOR")));
+					
+					/* CALCULO DE COMISION DE COBRANZA */
+					objComision.setPorcentajeCobranza(new BigDecimal(0));
+					objComision.setComisionCobranza(new BigDecimal(0));		
+										
+					/* TOTAL DE COMISIONES */
+					objComision.setTotalComisiones(objComision.getComisionEjecutivo().add(objComision.getComisionCotizante()).add(objComision.getComisionVendedor()).add(objComision.getComisionImplementador()));
+				
+				} else {
+					
+					//COMISION EJECUTIVO
+					objComision.setPorcentajeEjecutivo(new BigDecimal(0));
+					objComision.setComisionEjecutivo(new BigDecimal(0));
+					
+					//COMISION COTIZANTE
+					objComision.setUsuarioCotizante(objCotizacion.getUsuario());
+					objComision.setPorcentajeCotizante(new BigDecimal(0));
+					objComision.setComisionCotizante(new BigDecimal(0));
+					
+					//COMISION VENDEDOR
+					objComision.setUsuarioVendedor(objCotizacion.getUsuarioVendedor());
+					objComision.setPorcentajeVendedor(new BigDecimal(0));
+					objComision.setComisionVendedor(new BigDecimal(0));
+					
+					//COMISION IMPLEMENTADOR
+					objComision.setPorcentajeImplementador(new BigDecimal(0));
+					objComision.setComisionImplementador(new BigDecimal(0));
+					
+					//COMISION COBRANZA
+					objComision.setUsuarioCobranza(sessionService.getCurrentUser());
+					
+					if(objCotizacion.getFormaPago().getFormaPago().equals("Credito")) {					
+						int diff = (int) ChronoUnit.DAYS.between(objCotizacion.getInicioCobranzaFecha(), objCotizacion.getPagoFecha());
+						if(diff <= 30) {
+							objComision.setPorcentajeCobranza((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_30_DIAS"));
+							objComision.setComisionCobranza(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_30_DIAS")));
+						} else if(diff <= 60) {
+							objComision.setPorcentajeCobranza((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_60_DIAS"));
+							objComision.setComisionCobranza(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_60_DIAS")));
+						} else if(diff <= 90) {
+							objComision.setPorcentajeCobranza((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_90_DIAS"));
+							objComision.setComisionCobranza(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PROCENTAJE_COBRANZA_90_DIAS")));
+						} else {
+							objComision.setPorcentajeCobranza(new BigDecimal(0));
+							objComision.setComisionCobranza(new BigDecimal(0));
+						}
+					} else {
+						objComision.setPorcentajeCobranza(new BigDecimal(0));
+						objComision.setComisionCobranza(new BigDecimal(0));
+					}
+					
+					/* TOTAL DE COMISIONES */
+					objComision.setTotalComisiones(objComision.getComisionCobranza());
+					
+				}
+
+			}
 			LocalDateTime ldtNow = LocalDateTime.now();
 			UsuarioEntity objUsuarioCreacion = sessionService.getCurrentUser();
 			objComision.setCreacionFecha(ldtNow);

@@ -298,6 +298,7 @@ public class BienActivoController {
                 .add("marca", itemCatActivo.getMarca())
                 .add("modelo",itemCatActivo.getModelo() !=null ?  itemCatActivo.getModelo() : "N/A" )
                 .add("estatus", itemCatActivo.isEstatus())
+                .add("placa", itemCatActivo.getPlaca()!=null ? itemCatActivo.getPlaca() : "N/A")
                 .add("catalogo", itemCatActivo.getIdActivo().getNombre())
                 .add("departamento", itemCatActivo.getIdDepartamento() != null ? itemCatActivo.getIdDepartamento().getDepartamento() : "No definido" )
                 .add("usuario_asignado", itemCatActivo.getUsuario() != null ? itemCatActivo.getUsuario().getNombreCompleto() : "No definido")

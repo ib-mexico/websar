@@ -111,7 +111,7 @@
                             </div>
                             <!--Grafica del indicador 1-->
                             <div class="row hidden" >
-                                <div class="row-clearfix">
+                                <div class="row clearfix">
                                     <!-- Bar Chart -->
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="card">
@@ -134,7 +134,6 @@
                                         </div>
                                     </div>
                                     <!-- #END# Bar Chart -->
-            
                                 </div>
                             </div>
                             <!--Segunda Indicador-->
@@ -228,6 +227,60 @@
                             </div>
 
 
+                            <div class="row" >
+                                <div class="row clearfix">
+                                    <!-- Bar Chart -->
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="card">
+                                            <div class="header">
+                                                <h2 class="text-uppercase">GRAFICA INDICADORA DEL AREA : {{ usuarioObtenido }}</h2>
+                                                <ul class="header-dropdown m-r--5">
+                                                    <li class="dropdown">
+                                                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="material-icons">more_vert</i>
+                                                        </a>
+                                                        <ul class="dropdown-menu pull-right">
+                                                            <li><a href="javascript:void(0);">Exportar PDF</a></li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="body">
+
+                                                <div class="row hidden" >
+                                                    <div class="row clearfix">
+                                                        <!-- Bar Chart -->
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="card">
+                                                                <div class="header">
+                                                                    <h2 class="text-uppercase">GRAFICA INDICADORA DE : {{ usuarioObtenido }}</h2>
+                                                                    <ul class="header-dropdown m-r--5">
+                                                                        <li class="dropdown">
+                                                                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                                                                <i class="material-icons">more_vert</i>
+                                                                            </a>
+                                                                            <ul class="dropdown-menu pull-right">
+                                                                                <li><a href="javascript:void(0);">Exportar PDF</a></li>
+                                                                            </ul>
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                                <div class="body">
+                                                                    <div id="bar_chart" height="700" width="auto"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- #END# Bar Chart -->
+                                                    </div>
+                                                </div>
+                                                <div id="bar_chart" height="700" width="auto"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- #END# Bar Chart -->
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -253,7 +306,15 @@
 	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
 	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
 	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
-	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+    
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
     <script type="application/javascript" th:inline="javascript">
     $(document).ready(function() {
         $(function () {

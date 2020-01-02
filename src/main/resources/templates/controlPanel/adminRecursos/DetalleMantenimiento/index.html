@@ -94,7 +94,7 @@ k<th:block th:fragment="body">
 													</div>
 												</div>
 											</div>
-											<div class="row-clearfix">
+											<div class="row clearfix">
 												<div class="col-md-12">
 													<p><b>Descripcion *</b></p>
 													<div class="form-line">
@@ -103,7 +103,11 @@ k<th:block th:fragment="body">
 													</div>
 												</div>
 											</div>
-											<div class="row-clearfix">
+											<div id="table">
+												<bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
+											</div>
+
+											<div class="row clearfix">
 												<table class="table table-borderless table-responsive table-sm">
 													<thead class="bg-primary">
 													  <tr>
@@ -150,7 +154,7 @@ k<th:block th:fragment="body">
 										</proveedor>
 										</div>
 
-										<div class="row-clearfix">
+										<div class="row clearfix">
 											<div class="col-md-12 col-xs-12 col-sm-12">
 												<div class="col-md-8 col-xs-12 col-sm-12">
 													<h4 class="text-primary text-center">Indicar detalles de mantenimiento</h4>
@@ -180,7 +184,7 @@ k<th:block th:fragment="body">
 											</div>
 										</div>
 
-										<div class="row-clearfix">
+										<div class="row clearfix">
 											<div class="col-md-12">
 											</div>
 										</div>
@@ -226,7 +230,7 @@ k<th:block th:fragment="body">
 												</div>
 											</div>
 										</div>
-										<div class="row-clearfix">
+										<div class="row clearfix">
 											<div class="col-md-12">
 												<p><b>Descripcion *</b></p>
 												<div class="form-line">
@@ -235,7 +239,7 @@ k<th:block th:fragment="body">
 												</div>
 											</div>
 										</div>
-										<div class="row-clearfix">
+										<div class="row clearfix">
 											<table class="table table-borderless table-responsive table-sm">
 												<thead class="bg-primary">
 												  <tr>
@@ -284,7 +288,7 @@ k<th:block th:fragment="body">
 									</proveedor2>
 									</div>
 
-									<div class="row-clearfix">
+									<div class="row clearfix">
 										<div class="col-md-12 col-xs-12-col-sm-12">
 											<div class="col-md-8 col-xs-12 col-sm-12">
 												<h4 class="text-primary text-center">Indicar detalles de mantenimiento</h4>
@@ -324,7 +328,7 @@ k<th:block th:fragment="body">
 											</div>
 										</div>
 									</div>
-									<div class="row-clearfix">
+									<div class="row clearfix">
 										<div class="col-md-12">
 										</div>
 									</div>
@@ -350,7 +354,7 @@ k<th:block th:fragment="body">
 										<h4 class="modal-title text-primary bold text-center">Registro de pagos : {{editDetalleManto.clave_unica}}</h4>
 									</div>
 									<div class="modal-body">
-										<div class="row-clearfix">
+										<div class="row clearfix">
 											<div class="col-md-6">
 												<b class="font-weight-bold text-primary">Tipo de Activo :</b>
 												<label v-text="editDetalleManto.nombre_tipo_activo"></label>
@@ -381,7 +385,7 @@ k<th:block th:fragment="body">
 												</div>
 											</div>
 										</div>
-										<div class="row-clearfix">
+										<div class="row clearfix">
 											<table class="table table-borderless table-responsive table-sm">
 												<thead class="bg-primary">
 												  <tr>
@@ -452,12 +456,13 @@ k<th:block th:fragment="body">
     			</div>
 			</div>
 		</div>
-    </div>
+	</div>
+	
     
 	</div>
 	<!--Template para registro de proveedor-servicio-->
 	<template id="templateproveedor" >
-		<div class="row-clearfix">
+		<div class="row clearfix">
 			<div class="col-md-12">						
 				<h5 v-for="nombreservicio in idservicio.slice(0,1)" class="text-center text-success" v-text="nombreservicio.nombre_servicio"></h5>
 				<hr class="btn-primary"/>
@@ -507,7 +512,7 @@ k<th:block th:fragment="body">
 
 	<!--Component for edit proveedor-servicio-->
 	<template id="templateproveedor2" >
-		<div class="row-clearfix ">
+		<div class="row clearfix ">
 			<div class="col-md-12">						
 				<h5 v-for="nombreservicio in idservicio.slice(0,1)" class="text-center text-success" v-text="nombreservicio.nombre_servicio"></h5>
 				<hr class="btn-primary"/>
@@ -566,7 +571,9 @@ k<th:block th:fragment="body">
 </th:block>
 <th:block th:fragment="script">
 
-    <script th:src="@{/plugins/vue/vue.js}"></script>
+	<script th:src="@{/plugins/vue/vue.js}"></script>
+	<script src="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.js"></script>
+	<script src="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table-vue.min.js"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script th:src="@{/assets/js/DetalleActivo.js}"></script>
 	<!-- Wenzhixin DataTable -->

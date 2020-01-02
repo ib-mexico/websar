@@ -391,7 +391,10 @@
 										<input type="text" id="txtPagoReferencia" name="txtPagoReferencia" class="form-control" />
 									</div>
 								</div>
-								</div>	
+								</div>
+								<div class="col-md-12 text-center">
+									<p>Nota : no olvidar subir el audio de calidad de servicio en sus sig. cotizaciones para validar sus cotizaciónes</p>	
+								</div>
 							</div>                    
 						</div>
 						<div class="modal-footer">
@@ -402,6 +405,85 @@
 				</div>
 			</div>
 		</div>
+
+
+		<!-- LLAMADA DE CALIDAD DE SERVICIO MODAL -->
+		<div class="modal fade" id="modalCalidad" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<form id="formCalidad" v-on:submit.prevent="createCalidad"  method="POST" enctype="multipart/form-data" role="form">
+						<div class="modal-header">
+							<h4 class="modal-title text-uppercase">Registro de Llamada de calidad</h4>
+						</div>
+						<div class="modal-body">
+							<input type="hidden" :value="dataCotizacion.idCotizacion" name="idCotizacion"/>
+							<div class="row clearfix">
+								<div class="col-md-12">
+									<div class="col-md-4 col-sm-6">
+										<p id="nombreEmpresa"><h4 class="text-primary">Empresa</h4></p>
+										<div class="form-group">
+											<label class="custom-control-label" for="nombreEmpresa" v-text="dataCotizacion.empresa"></label>
+										</div>
+									</div>
+									<div class="col-md-4 col-sm-6">
+										<p id="nombrevendedor"><h4 class="text-primary">Vendedor</h4></p>
+										<div class="form-group">
+											<label class="custom-control-label" for="nombrevendedor" v-text="dataCotizacion.usuarioVendedor"></label>
+										</div>
+									</div>
+									<div class="col-md-4 col-sm-12">
+										<p id="numeroCotizacion"><h4 class="text-primary">Cotización</h4></p>
+										<div class="form-group">
+											<label class="custom-control-label" for="numeroCotizacion" v-text="dataCotizacion.folio"></label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row clearfix">
+								<div class="col-md-12">
+									<hr class="btn-secondary"/>
+								</div>
+							</div>
+							<div class="row clearfix">
+								<div class="col-md-12">
+									<b>Fecha/Hora Inicio *</b>
+									<div class="input-group">
+										<span class="input-group-addon">
+											<i class="material-icons">date_range</i>
+										</span>
+										<div class="form-line">
+											<input type="text" class="form-control text-center" id="txtFechaHoraLlamada" name="txtFechaHoraLlamada" required="required" />
+										</div>
+									</div>				
+								</div>
+										
+								<div class="col-md-12">
+									<div class="form-group files color">
+										<p><b>Audio de la llamada de calidad *</b></p>
+										<input id="ficheroCalidad" type="file" name="ficheroCalidad" class="form-control-drop"/>
+									</div>
+								</div>
+											
+								<div class="col-md-12">
+									<div class="form-group">
+										<p><b>Perspectiva de la llamada*</b></p>
+										<div class="form-line">
+											<textarea rows="4" name="txtTranscripcion" class="form-control no-resize" required="required"></textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger waves-effect text-uppercase" data-dismiss="modal">Cancelar</button>
+							<button type="submit" class="btn btn-primary waves-effect text-uppercase">Guardar registro</button>
+						</div>		
+					</form>
+				</div>
+			</div>
+		</div>
+
+
 	</div>
 </th:block>
 
@@ -409,6 +491,8 @@
 	<script th:src="@{/plugins/vue/vue.js}"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script th:src="@{/assets/js/script.js}"></script>
+	<!-- <script th:src="@{/assets/js/calidad.js}"></script> -->
+
 
 	<!-- Wenzhixin DataTable -->
 	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
@@ -552,6 +636,9 @@
 			$('.solicitud-fecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false, minDate : new Date()});
 			$('.solicitud-fecha').bootstrapMaterialDatePicker('setDate', moment());
 
+			//DATEPICKER FECHA HORA DE LLAMADA DE CALIDAD
+			$('#txtFechaHoraLlamada').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY HH:mm', weekStart : 1, clearButton: true, time:true});
+
 			$('#chkVentaCompartida').on('change', function() {				
 				if($(this).prop('checked')) {
 					$('#cmbVendedor').prop('disabled', false);
@@ -573,7 +660,11 @@
 				}
 			});
 		});
-			
+		
+		function createCalidad(idCotizacion){			
+			app3.obtenerCotizacion(idCotizacion);
+		}
+
 		function accionesFormatter(value, row, index) {
 			
 			urlEdit = [[@{/controlPanel/cotizaciones/}]] + row.idCotizacion + '/edit';
@@ -581,27 +672,115 @@
 			urlPdf = [[@{/controlPanel/cotizaciones/}]] + row.idCotizacion + '/pdf';
 			urlFicheros = [[@{/controlPanel/cotizaciones/}]] + row.idCotizacion + '/ficheros';
 			urlOrdenes = [[@{/controlPanel/cotizaciones/}]] + row.idCotizacion + '/ordenesServicios';
+			/*Validar que ya tenga realizada una llamada de calidad*/
+			var idCotizacion=row.idCotizacion;
 			
-		    return [
-		    	'<a href="' + urlEdit + '" title="Editar">',
-	        		'<i class="material-icons">mode_edit</i>',
-	        	'</a>',
-	        	'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
-		        	'<i class="material-icons">flip_to_front</i>',
-		        '</a>',
-	        	'<a href="' + urlPartidas + '" title="Partidas">',
-	        		'<i class="material-icons">format_list_numbered</i>',
-	        	'</a>',
-	        	'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
-	        		'<i class="material-icons">assignment_turned_in</i>',
-	        	'</a>',
-	        	'<a href="' + ((rolExpediente)?urlFicheros:'#') + '" title="Ficheros">',
-	        		'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
-	        	'</a>',
-	        	'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
-	        		'<i class="material-icons">print</i>',
-	        	'</a>'
-		    ].join(' ');
+			if(row.paseCalidad){
+				if(row.calidad>0){
+					p_onclick=""
+					target="false"
+					togle="false"
+					icon="library_music",
+					title="Revisar llamada de Calidad"
+					if(rolExpediente){
+						href=urlFicheros;
+					}else{
+						href="#";
+					}
+				}else{
+					icon="call"
+					title="Registrar llamada de calidad"
+					p_onclick='createCalidad('+idCotizacion+')';
+					togle="modal";
+					target="#modalCalidad";
+					href="#";
+				}
+			}else{
+				icon=""
+				title=""
+				p_onclick='';
+				togle="";
+				target="";
+				href="";
+				oculto :"none"
+			}
+			/*Fin de la validacion*/
+			/*Los valores previamente definidos, se usa para hacer dinamica la funcionalidad de registro de llamada de calidad*/
+
+			if(row.idEstatus==1){
+				return [
+					'<a href="' + urlEdit + '" title="Editar">',
+						'<i class="material-icons">mode_edit</i>',
+					'</a>',
+					'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
+						'<i class="material-icons">flip_to_front</i>',
+					'</a>',
+					'<a href="' + urlPartidas + '" title="Partidas">',
+						'<i class="material-icons">format_list_numbered</i>',
+					'</a>',
+					'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
+						'<i class="material-icons">assignment_turned_in</i>',
+					'</a>',
+					'<a href="' + ((rolExpediente)?urlFicheros:'#') + '" title="Ficheros">',
+						'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
+					'</a>',
+					'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+						'<i class="material-icons">print</i>',
+					'</a>'
+				].join(' ');
+			}
+			
+			if(row.idEstatus==4 || row.idEstatus==2 || row.idEstatus==3 ){
+				return [
+					'<a href="' + urlEdit + '" title="Editar">',
+						'<i class="material-icons">mode_edit</i>',
+					'</a>',
+					'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
+						'<i class="material-icons">flip_to_front</i>',
+					'</a>',
+					'<a href="' + urlPartidas + '" title="Partidas">',
+						'<i class="material-icons">format_list_numbered</i>',
+					'</a>',
+					'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
+						'<i class="material-icons">assignment_turned_in</i>',
+					'</a>',
+					'<a href="' + ((rolExpediente)?urlFicheros:'#') + '" title="Ficheros">',
+						'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
+					'</a>',
+					
+					'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+						'<i class="material-icons">print</i>',
+					'</a>',
+					'<a href="'+href+'" title="'+title+'" class="calidad" data-toggle="'+togle+'" data-target="'+target+'" onclick="'+p_onclick+'" role="button">',
+						'<i class="material-icons +'+icon+'" style="color: green;">'+icon+'</i>',
+					'</a>'
+				].join(' ');
+			}
+			
+
+
+			if(row.idEstatus==5 || row.idEstatus==6){
+				return [
+					'<a href="' + urlEdit + '" title="Editar">',
+						'<i class="material-icons">mode_edit</i>',
+					'</a>',
+					'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
+						'<i class="material-icons">flip_to_front</i>',
+					'</a>',
+					'<a href="' + urlPartidas + '" title="Partidas">',
+						'<i class="material-icons">format_list_numbered</i>',
+					'</a>',
+					'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
+						'<i class="material-icons">assignment_turned_in</i>',
+					'</a>',
+					'<a href="' + ((rolExpediente)?urlFicheros:'#') + '" title="Ficheros">',
+						'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
+					'</a>',
+					'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+						'<i class="material-icons">print</i>',
+					'</a>'
+				].join(' ');
+			}
 		}
 			
 		function estatusFormatter(value, row, index) {

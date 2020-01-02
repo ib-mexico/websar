@@ -41,4 +41,9 @@ public interface ICotizacionFicheroRepository extends JpaRepository<CotizacionFi
 	
 	@Query("SELECT COALESCE(SUM(objCotizacionFichero.importe), 0) FROM CotizacionFicheroEntity objCotizacionFichero WHERE objCotizacionFichero.cotizacionTipoFichero.idCotizacionTipoFichero = ?1 AND (objCotizacionFichero.cotizacion.cotizacionEstatus.idCotizacionEstatus = 3 OR objCotizacionFichero.cotizacion.cotizacionEstatus.idCotizacionEstatus = 4 OR objCotizacionFichero.cotizacion.cotizacionEstatus.idCotizacionEstatus = 6) AND (CONVERT(objCotizacionFichero.cotizacion.facturacionFecha, DATE) BETWEEN ?3 AND ?4) AND (objCotizacionFichero.cotizacion.usuario.idUsuario = ?5 OR objCotizacionFichero.cotizacion.usuarioVendedor.idUsuario = ?5 OR objCotizacionFichero.cotizacion.usuarioImplementador.idUsuario = ?5 OR objCotizacionFichero.cotizacion.cliente.usuarioEjecutivo.idUsuario = ?5) AND objCotizacionFichero.cotizacion.idCotizacion = ?2")
 	public abstract BigDecimal sumTipoDocumentoPeriodo(int idFicheroTipo, int idCotizacion,  LocalDate ldFechaInicio, LocalDate ldFechaFin, int idUsuario);
+
+
+	/**Buscar si existe una llamda de calidad para esta cotización */
+	@Query("SELECT COUNT(objCotizacionFichero) FROM CotizacionFicheroEntity objCotizacionFichero WHERE objCotizacionFichero.cotizacionTipoFichero.idCotizacionTipoFichero =6 AND objCotizacionFichero.cotizacion.idCotizacion = ?1 AND objCotizacionFichero.inicioLlamada IS NOT NULL")
+	public abstract long countCotizacionFicheroCalidad(int idCotizacion);
 }

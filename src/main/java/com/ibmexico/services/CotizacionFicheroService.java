@@ -62,6 +62,9 @@ public class CotizacionFicheroService {
 		return cotizacionFicheroRepository.listTipoDocumento(idCotizacion, 4);
 	}
 	
+	public long countCotizacionFicheroCalidad(int idCotizacion){
+		return cotizacionFicheroRepository.countCotizacionFicheroCalidad(idCotizacion);
+	}
 	public String totalImporteFacturas(int idCotizacion) {
 		
 		BigDecimal total = null;

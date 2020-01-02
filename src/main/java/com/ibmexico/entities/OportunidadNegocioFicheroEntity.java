@@ -46,7 +46,16 @@ public class OportunidadNegocioFicheroEntity {
 	@Column(nullable = false)
 	private LocalDateTime creacionFecha;
 
+	/** Campos adicionales para la funcionalidad de la llamada de calidad, se hace uso de la tabla cotizacionTipoFichero debido, a que
+	 * es una categoria de tipos de fichero y la llamada de calidad, se encuentra en uno de ellas "CALIDAD" */	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_cotizacion_tipo_fichero", nullable = true)
+	private CotizacionTipoFicheroEntity cotizacionTipoFichero;
 	
+	@Column(nullable = true)
+	private LocalDateTime inicioLlamada;
+	/**End call */
+
 	//ACCESORS METHODS
 	public int getIdOportunidadNegocioFichero() {
 		return idOportunidadNegocioFichero;
@@ -180,6 +189,54 @@ public class OportunidadNegocioFicheroEntity {
 	
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
+	}
+
+	public CotizacionTipoFicheroEntity getCotizacionTipoFichero() {
+		return cotizacionTipoFichero;
+	}
+
+	public void setCotizacionTipoFichero(CotizacionTipoFicheroEntity cotizacionTipoFichero) {
+		this.cotizacionTipoFichero = cotizacionTipoFichero;
+	}
+
+	public LocalDateTime getInicioLlamada() {
+		return inicioLlamada;
+	}
+
+	public String getInicioLlamadaFullNatural() {
+		
+		String fechaFull = "";
+		
+		if(inicioLlamada != null) {			
+			fechaFull = inicioLlamada.format(GeneralConfiguration.getInstance().getDateTimeFullFormatterNatural());
+		}
+		
+		return fechaFull;
+	}
+	
+	public String getInicioLlamadaNatural() {
+		
+		String fecha = "";
+		
+		if(inicioLlamada != null) {			
+			fecha = inicioLlamada.format(GeneralConfiguration.getInstance().getDateFormatterNatural());
+		}
+		
+		return fecha;		
+	}
+	
+	public String getInicioLlamadaHoraNatural() {
+		
+		String hora = "";
+		
+		if(inicioLlamada != null) {			
+			hora = inicioLlamada.format(GeneralConfiguration.getInstance().getTimeFormatterNatural());
+		}
+		return hora;		
+	}
+	
+	public void setInicioLlamada(LocalDateTime inicioLlamada) {
+		this.inicioLlamada = inicioLlamada;
 	}
 	
 }
