@@ -145,13 +145,21 @@ public class CotizacionUsuarioQuotaService {
 				create(objQuotaEjecutivo);
 			}
 			
-						
-			//QUOTA DE COTIZANTE
-			CotizacionUsuarioQuotaEntity objQuotaCotizador = new CotizacionUsuarioQuotaEntity();
-			objQuotaCotizador.setCotizacion(objCotizacion);
-			objQuotaCotizador.setUsuario(objCotizacion.getUsuario());
-			objQuotaCotizador.setValorQuota(utilidadBruta.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("QUOTA_COTIZADOR")));
-			create(objQuotaCotizador);			
+			if(objCotizacion.isImplementacion()){
+				//QUOTA DE COTIZANTE
+				CotizacionUsuarioQuotaEntity objQuotaCotizador = new CotizacionUsuarioQuotaEntity();
+				objQuotaCotizador.setCotizacion(objCotizacion);
+				objQuotaCotizador.setUsuario(objCotizacion.getUsuario());
+				objQuotaCotizador.setValorQuota(utilidadBruta.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("QUOTA_COTIZADOR_IMPL")));
+				create(objQuotaCotizador);
+			}else{
+				//QUOTA DE COTIZANTE
+				CotizacionUsuarioQuotaEntity objQuotaCotizador = new CotizacionUsuarioQuotaEntity();
+				objQuotaCotizador.setCotizacion(objCotizacion);
+				objQuotaCotizador.setUsuario(objCotizacion.getUsuario());
+				objQuotaCotizador.setValorQuota(utilidadBruta.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("QUOTA_COTIZADOR")));
+				create(objQuotaCotizador);
+			}
 			
 			
 			//QUOTA DE VENDEDOR
