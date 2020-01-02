@@ -128,7 +128,15 @@ public class CotizacionComisionService {
 							objComision.setComisionImplementador(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_IMPLEMENTADOR")));
 							
 							objComision.setPorcentajeEjecutivo(new BigDecimal(0));
-							objComision.setComisionEjecutivo(new BigDecimal(0));								
+							objComision.setComisionEjecutivo(new BigDecimal(0));	
+							
+
+							/*CALCULO DE COMISION DEL COTIZANTE  CON IMPLEMENTADOR*/
+						objComision.setUsuarioCotizante(objCotizacion.getUsuario());
+						objComision.setPorcentajeCotizante((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZANTE_IMPL"));
+						objComision.setComisionCotizante(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZANTE_IMPL")));									
+								
+							
 						} else {
 						//SELECCIÓN DE EJECUTIVO POR EMPRESA
 							switch (objCotizacion.getEmpresa().getIdEmpresa()){
@@ -153,13 +161,13 @@ public class CotizacionComisionService {
 							
 							objComision.setPorcentajeImplementador(new BigDecimal(0));
 							objComision.setComisionImplementador(new BigDecimal(0));						
+							/*CALCULO DE COMISION DEL COTIZANTE */
+							objComision.setUsuarioCotizante(objCotizacion.getUsuario());
+							objComision.setPorcentajeCotizante((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZADOR"));
+							objComision.setComisionCotizante(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZADOR")));									
+									
 						}
 		
-						/*CALCULO DE COMISION DEL COTIZANTE */
-						objComision.setUsuarioCotizante(objCotizacion.getUsuario());
-						objComision.setPorcentajeCotizante((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZADOR"));
-						objComision.setComisionCotizante(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZADOR")));									
-								
 						/*CALCULO DE COMISION DEL VENDEDOR */
 						objComision.setUsuarioVendedor(objCotizacion.getUsuarioVendedor());
 						objComision.setPorcentajeVendedor((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_VENDEDOR"));
@@ -286,7 +294,13 @@ public class CotizacionComisionService {
 						objComision.setComisionImplementador(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_IMPLEMENTADOR")));
 						
 						objComision.setPorcentajeEjecutivo(new BigDecimal(0));
-						objComision.setComisionEjecutivo(new BigDecimal(0));								
+						objComision.setComisionEjecutivo(new BigDecimal(0));
+
+						/*CALCULO DE COMISION DEL COTIZANTE */
+						objComision.setUsuarioCotizante(objCotizacion.getUsuario());
+						objComision.setPorcentajeCotizante((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZANTE_IMPL"));
+						objComision.setComisionCotizante(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZANTE_IMPL")));									
+														
 						
 					} else {
 						//SELECCIÓN DE EJECUTIVO POR EMPRESA
@@ -312,14 +326,15 @@ public class CotizacionComisionService {
 						
 						objComision.setPorcentajeImplementador(new BigDecimal(0));
 						objComision.setComisionImplementador(new BigDecimal(0));								
+					
+						/*CALCULO DE COMISION DEL COTIZANTE */
+						objComision.setUsuarioCotizante(objCotizacion.getUsuario());
+						objComision.setPorcentajeCotizante((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZADOR"));
+						objComision.setComisionCotizante(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZADOR")));									
+															
 					}
 					
 					
-					/*CALCULO DE COMISION DEL COTIZANTE */
-					objComision.setUsuarioCotizante(objCotizacion.getUsuario());
-					objComision.setPorcentajeCotizante((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZADOR"));
-					objComision.setComisionCotizante(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZADOR")));									
-														
 					/*CALCULO DE COMISION DEL VENDEDOR */
 					objComision.setUsuarioVendedor(objCotizacion.getUsuarioVendedor());
 					objComision.setPorcentajeVendedor((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_VENDEDOR"));
