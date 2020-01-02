@@ -59,9 +59,9 @@
 	                       			</th:block>
 	                       		</select>
 	                        </div>	                        	                        
-						</div>												
+						<!-- </div>												
 						
-						<div class="row clearfix">
+						<div class="row clearfix"> -->
 							<div class="col-md-4">
 	                            <p><b>Grupo Empresarial</b></p>
 	                            <select class="form-control show-tick" name="cmbGrupoEmpresarial" id="cmbGrupoEmpresarial" data-live-search="true" required="required">
@@ -79,7 +79,7 @@
 	                       		</select>
 	                        </div>
 	                        
-	                        <div class="col-md-4">
+	                        <div class="col-md-4 hidden">
 	                        	<div class="form-group">
 	                        		<p><b># Cliente SAE</b></p>
 	                                <div class="form-line">
@@ -90,8 +90,19 @@
 						</div>
 						
 						<div class="row clearfix">
+							<div class="col-md-12">
+								<h4 class="h4 text-uppercase" style="font-weight: bolder;">Ejecutivo por empresa :</h4>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-12">
+								<hr class="btn-primary" style="margin-top: -15px; font-weight: bold;"/>
+							</div>
+						</div>
+
+						<div class="row clearfix">
 							<div class="col-md-4">
-	                            <p><b>Ejecutivo de Cuenta IB-M&eacute;xico *</b></p>
+	                            <p><b>IB-M&eacute;xico *</b></p>
 	                            <select class="form-control show-tick" name="cmbEjecutivo" id="cmbEjecutivo" data-live-search="true" required="required">
 	                            	<th:block th:if="${objCliente.getUsuarioEjecutivo() != null}">
 	                            		<th:block th:each="itemUsuario : ${lstUsuarios}">
@@ -108,7 +119,7 @@
 	                        </div>
 	                        
 	                        <div class="col-md-4">
-	                            <p><b>Ejecutivo de Cuenta S3S *</b></p>
+	                            <p><b>S3S *</b></p>
 	                            <select class="form-control show-tick" name="cmbEjecutivoS3s" id="cmbEjecutivoS3s" data-live-search="true" required="required">
 	                            	<th:block th:if="${objCliente.getUsuarioEjecutivoS3s() != null}">
 	                            		<th:block th:each="itemUsuario : ${lstUsuarios}">
@@ -125,7 +136,7 @@
 	                        </div>
 	                        
 	                        <div class="col-md-4">
-	                            <p><b>Ejecutivo de Cuenta R2A *</b></p>
+	                            <p><b>R2A *</b></p>
 	                            <select class="form-control show-tick" name="cmbEjecutivoR2a" id="cmbEjecutivoR2a" data-live-search="true" required="required">
 	                            	<th:block th:if="${objCliente.getUsuarioEjecutivoR2a() != null}">
 	                            		<th:block th:each="itemUsuario : ${lstUsuarios}">
@@ -144,6 +155,49 @@
 						
 						<hr />
 						
+
+						<div class="row clearfix">
+							<div class="col-md-12">
+								<h4 class="h4 text-uppercase" style="font-weight: bolder;">Cliente SAE por empresa :</h4>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-12">
+								<hr class="btn-primary" style="margin-top: -15px; font-weight: bold;"/>
+							</div>
+						</div>
+						<hr/>
+						<div class="row clearfix">
+							<div class="col-md-12">
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b># Cliente SAE IB-M&eacute;xico *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtClienteSaeIbMexico" th:value="${objCliente.clienteSaeIbMexico}" class="form-control" />
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b># Cliente SAE S3S *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtClienteSaeS3s" th:value="${objCliente.clienteSaeS3s}" class="form-control" />
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b># Cliente SAE R2A *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtClienteSaeR2a" th:value="${objCliente.clienteSaeR2a}" class="form-control" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+
+
 						<div class="row clearfix">
 							<div class="col-md-8">
 	                        	<div class="form-group">

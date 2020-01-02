@@ -32,6 +32,10 @@ public class OportunidadNegocioService {
 	private IOportunidadNegocioRepository oportunidadNegocioRepository;
 
 	@Autowired
+	@Qualifier("oportunidadNegocioFicheroService")
+	private OportunidadNegocioFicheroService opnNegocioFicheroService;
+
+	@Autowired
 	@Qualifier("sessionService")
 	private SessionService sessionService;
 	
@@ -99,6 +103,7 @@ public class OportunidadNegocioService {
 				.add("ingreso_estimado", itemOportunidad.getIngresoEstimadoNatural())
 				.add("prioridad", itemOportunidad.getPrioridad())
 				.add("oportunidad", itemOportunidad.getOportunidad())
+				.add("ficheroCalidad", opnNegocioFicheroService.countOpnFicheroCalidad(itemOportunidad.getIdOportunidadNegocio())>0 ? true : false )
 			);
 		});
 		
@@ -173,6 +178,8 @@ public class OportunidadNegocioService {
 				.add("titulo", itemFichero.getTitulo())
 				.add("descripcion", itemFichero.getDescripcion())
 				.add("url", itemFichero.getUrl())
+				.add("fechallamada", itemFichero.getInicioLlamada()!=null ? itemFichero.getInicioLlamadaFullNatural() : "N/A")
+				.add("tipoFichero", itemFichero.getCotizacionTipoFichero()!=null ? true : false)
 			);
 		});
 		
@@ -276,5 +283,21 @@ public class OportunidadNegocioService {
 		else {
 			throw new ApplicationException(EnumException.OPORTUNIDADES_UPDATE_001);
 		}
+	}
+
+	public JsonObject jsonOportunidades(int idOportunidadNegocio){
+		JsonObjectBuilder jsonReturn= Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows=Json.createArrayBuilder();
+
+		OportunidadNegocioEntity objOportunidad=oportunidadNegocioRepository.findByIdOportunidadNegocio(idOportunidadNegocio);
+		
+		jsonRows.add(Json.createObjectBuilder()
+			.add("idOportunidad", objOportunidad.getIdOportunidadNegocio())
+			.add("nombre", objOportunidad.getOportunidad())
+			.add("usuarioEncargado", objOportunidad.getUsuarioEncargado() != null ? objOportunidad.getUsuarioEncargado().getNombreCompleto() :"N/A" )
+			.add("empresa", objOportunidad.getEmpresa() != null ? objOportunidad.getEmpresa().getEmpresa() : "N/A")
+		);
+		jsonReturn.add("oportunidad", jsonRows);
+		return jsonReturn.build();
 	}
 }

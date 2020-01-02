@@ -51,7 +51,7 @@
 		</div>
 	</div>
 
-			<!-- NUEVA ACTIVO -->
+		<!-- NUEVA ACTIVO -->
 		<div class="modal fade" id="modalNuevoActivo" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
@@ -62,7 +62,7 @@
 						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />				
 						<div class="modal-body">
 							<!-- Campos generales -->
-							<div class="row-clearfix">
+							<div class="row clearfix">
 								<div class="col-md-6">
 									<p><b>Tipo de activo *</b></p>
 									<div class="input-group">	                            
@@ -73,12 +73,12 @@
 									</div>
 								</div>
 								<div class="col-md-6">
-										<div class="form-group">
-											<p><b>Descripción</b></p>
-											<div class="form-line">
-												<input type="text" name="txtDescripcion" class="form-control" required="required" placeholder="Descripcion activo" v-model="newActivo.descripcion"/>
-											</div>
+									<div class="form-group">
+										<p><b>Descripción</b></p>
+										<div class="form-line">
+											<input type="text" name="txtDescripcion" class="form-control" required="required" placeholder="Descripcion activo" v-model="newActivo.descripcion"/>
 										</div>
+									</div>
 								</div>
 							</div>
 
@@ -103,21 +103,20 @@
 								</div>
 
 								<div class="col-md-3">
-										<div class="form-group">
-											<p><b>Serie *</b></p>
-											<div class="form-line">
-												<input type="text" name="txtSerie" class="form-control" required="required" 
-												placeholder="Num. Serie.." v-model="newActivo.serie"/>
-											</div>
+									<div class="form-group">
+										<p><b>Serie *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtSerie" class="form-control" required="required" placeholder="Num. Serie.." v-model="newActivo.serie"/>
 										</div>
+									</div>
 								</div>
 								<div class="col-md-3">
-										<div class="form-group">
-											<p><b>Color *</b></p>
-											<div class="form-line">
-												<input type="text" name="txtColor" class="form-control" placeholder="Color del recurso" v-model="newActivo.color"/>
-											</div>
+									<div class="form-group">
+										<p><b>Color *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtColor" class="form-control" placeholder="Color del recurso" v-model="newActivo.color"/>
 										</div>
+									</div>
 								</div>
 							</div>
 
@@ -167,7 +166,7 @@
 							</div>
 
 							<!-- Campos vehicular -->
-							<div class="row-clearfix" v-show="newActivo.id_catalogo==1">
+							<div class="row clearfix" v-show="newActivo.id_catalogo==1">
 								<div class="col-md-6">
 									<div class="form-group">
 										<p><b>Num. de Placa</b></p>
@@ -192,7 +191,7 @@
 								<!-- campos exculusivamente no hay -->
 							
 								<!-- Campos de EAC -->
-							<div class="row-clearfix" v-show="newActivo.id_catalogo==2">
+							<div class="row clearfix" v-show="newActivo.id_catalogo==2">
 								<div class="col-md-4">
 									<div class="form-group">
 										<p><b>Serie evaporadora</b></p>
@@ -219,7 +218,7 @@
 							</div>
 
 								<!-- Campos de ETC -->
-							<div class="row-clearfix" v-show="newActivo.id_catalogo==3">
+							<div class="row clearfix" v-show="newActivo.id_catalogo==3">
 								<div class="col-md-4">
 									<p><b>Fecha de Entrega</b></p>
 									<div class="input-group">
@@ -254,7 +253,7 @@
 							</div>
 
 							<!-- Campos de ECP -->
-							<div class="row-clearfix" v-show="newActivo.id_catalogo==4">
+							<div class="row clearfix" v-show="newActivo.id_catalogo==4">
 								<div class="col-md-4">
 									<div class="form-group">
 										<p><b>Tipo Equipo</b></p>
@@ -328,11 +327,11 @@
 									<label for="chkMonitor">&iquest;Tiene monitor?</label>
 								</div>
 							</div>
-							<div class="row-clearfix" v-show="newActivo.id_catalogo==4">
+							<div class="row clearfix" v-show="newActivo.id_catalogo==4">
 								<div class="col-md-12">
 								</div>
 							</div>
-							<div class="row-clearfix" v-show="newActivo.tieneMonitor==true">
+							<div class="row clearfix" v-show="newActivo.tieneMonitor==true">
 								<div class="col-md-3">
 									<div class="form-group">
 										<p><b>Tamaño</b></p>
@@ -371,13 +370,13 @@
 							</div>
 							<!-- End campos de ECP -->
 
-							<div class="row-clearfix">
+							<div class="row clearfix">
 								<div class="col-md-12">
 									<hr class="btn-secondary"/>
 								</div>
 							</div>
 
-							<div class="row-clearfix">	
+							<div class="row clearfix">	
 								<div class="col-md-4">
 									<div class="form-group">
 										<p><b>Periodo Mant. Estimado</b></p>
@@ -400,13 +399,13 @@
 							</div>
 
 
-							<div class="row-clearfix">
+							<div class="row clearfix">
 								<div class="col-md-12 text-center">
 									<hr class="btn-primary"/>
 									<h4  class="text-primary">Asignacion de activo</h4>
 								</div>
 							</div>
-							<div class="row-clearfix">
+							<div class="row clearfix">
 								<div class="col-md-4">
 									<b>Empresa *</b>
 									<div class="input-group">
@@ -468,7 +467,7 @@
 								</div>
 						<div class="modal-body">
 								<!-- Campos generales -->
-								<div class="row-clearfix">
+								<div class="row clearfix">
 									<div class="col-md-6">
 										<p><b>Tipo de activo *</b></p>
 										<div class="input-group">
@@ -574,7 +573,7 @@
 								</div>
 	
 								<!-- Campos vehicular -->
-								<div class="row-clearfix" v-show="editData.id_tipo_activo==1">
+								<div class="row clearfix" v-show="editData.id_tipo_activo==1">
 									<div class="col-md-6">
 										<div class="form-group">
 											<p><b>Num. de Placa</b></p>
@@ -599,7 +598,7 @@
 									<!-- campos exculusivamente no hay -->
 								
 									<!-- Campos de EAC -->
-								<div class="row-clearfix" v-show="editData.id_tipo_activo==2">
+								<div class="row clearfix" v-show="editData.id_tipo_activo==2">
 									<div class="col-md-4">
 										<div class="form-group">
 											<p><b>Serie evaporadora</b></p>
@@ -626,7 +625,7 @@
 								</div>
 	
 									<!-- Campos de HTC -->
-								<div class="row-clearfix" v-show="editData.id_tipo_activo==3">
+								<div class="row clearfix" v-show="editData.id_tipo_activo==3">
 									<div class="col-md-4">
 										<p><b>Fecha de Entrega</b></p>
 										<div class="input-group">
@@ -661,7 +660,7 @@
 								</div>
 	
 								<!-- Campos de ECP -->
-								<div class="row-clearfix" v-show="editData.id_tipo_activo==4">
+								<div class="row clearfix" v-show="editData.id_tipo_activo==4">
 									<div class="col-md-4">
 										<div class="form-group">
 											<p><b>Tipo Equipo</b></p>
@@ -735,11 +734,11 @@
 										<label for="chkMonitor2">&iquest;Tiene monitor?</label>
 									</div>
 								</div>
-								<div class="row-clearfix" v-show="editData.id_tipo_activo==4">
+								<div class="row clearfix" v-show="editData.id_tipo_activo==4">
 									<div class="col-md-12">
 									</div>
 								</div>
-								<div class="row-clearfix" v-show="editData.chkMonitor==true">
+								<div class="row clearfix" v-show="editData.chkMonitor==true">
 									<div class="col-md-3">
 										<div class="form-group">
 											<p><b>Tamaño</b></p>
@@ -778,13 +777,13 @@
 								</div>
 								<!-- End campos de ECP -->
 	
-								<div class="row-clearfix">
+								<div class="row clearfix">
 									<div class="col-md-12">
 										<hr class="btn-secondary"/>
 									</div>
 								</div>
 
-								<div class="row-clearfix">	
+								<div class="row clearfix">	
 									<div class="col-md-4">
 										<div class="form-group">
 											<p><b>Periodo Mant. Estimado</b></p>
@@ -806,13 +805,13 @@
 									</div>
 								</div>
 	
-								<div class="row-clearfix">
+								<div class="row clearfix">
 									<div class="col-md-12 text-center">
 										<hr class="btn-primary"/>
 										<h4  class="text-primary">Asignacion de activo</h4>
 									</div>
 								</div>
-								<div class="row-clearfix">
+								<div class="row clearfix">
 									<div class="col-md-4">
 										<b>Empresa *</b>
 										<div class="input-group">

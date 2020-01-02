@@ -1,6 +1,5 @@
 package com.ibmexico.controllers;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,7 +9,6 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.mail.MessagingException;
-import javax.mail.util.ByteArrayDataSource;
 
 import com.ibmexico.components.MailerComponent;
 import com.ibmexico.components.ModelAndViewComponent;

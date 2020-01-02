@@ -57,6 +57,9 @@ public class CotizacionFicheroEntity {
 	@Column(nullable = true)
 	private LocalDate vencimientoFecha;
 	
+	@Column(nullable = true)
+	private LocalDateTime inicioLlamada;
+	
 	@Column
 	private String url;
 	
@@ -284,8 +287,47 @@ public class CotizacionFicheroEntity {
 	public void setGasto(ActivoServicioProveedorMant2Entity gasto) {
 		this.gasto = gasto;
 	}
+
 	
+	public LocalDateTime getInicioLlamada() {
+		return inicioLlamada;
+	}
+
+
+	public String getInicioLlamadaFullNatural() {
+		
+		String fechaFull = "";
+		
+		if(inicioLlamada != null) {			
+			fechaFull = inicioLlamada.format(GeneralConfiguration.getInstance().getDateTimeFullFormatterNatural());
+		}
+		
+		return fechaFull;
+	}
 	
+	public String getInicioLlamadaNatural() {
+		
+		String fecha = "";
+		
+		if(inicioLlamada != null) {			
+			fecha = inicioLlamada.format(GeneralConfiguration.getInstance().getDateFormatterNatural());
+		}
+		
+		return fecha;		
+	}
 	
+	public String getInicioLlamadaHoraNatural() {
+		
+		String hora = "";
+		
+		if(inicioLlamada != null) {			
+			hora = inicioLlamada.format(GeneralConfiguration.getInstance().getTimeFormatterNatural());
+		}
+		return hora;		
+	}
+
+	public void setInicioLlamada(LocalDateTime inicioLlamada) {
+		this.inicioLlamada = inicioLlamada;
+	}
 	
 }

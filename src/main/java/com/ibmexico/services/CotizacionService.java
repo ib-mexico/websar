@@ -123,6 +123,10 @@ public class CotizacionService {
 	public CotizacionEntity findByIdCotizacion(int idCotizacion) {
 		return cotizacionRepository.findByIdCotizacion(idCotizacion);
 	}
+
+	public List<CotizacionEntity> findByCotizacionIdOpn(int idCotizacion){
+		return cotizacionRepository.findCotizacionIdOpn(idCotizacion);
+	}
 	
 	public String sumCotizacionesTotalesPorFecha(LocalDate ldFechaInicial, LocalDate ldFechaFinal) {
 		
@@ -489,7 +493,8 @@ public class CotizacionService {
 		jsonReturn.add("rows", jsonRows);	
 		return jsonReturn.build();
 	}
-	/*--------------------------------------------Tablero Indicadores*/
+	
+	/*------------------Tablero Indicadores---------------*/
 	public JsonObject jsonCotizacionesAceptadas(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo){
 		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
 		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
@@ -656,5 +661,21 @@ public class CotizacionService {
 					.add("respuesta", respuesta);
 		return jsonReturn.build();
 
+	}
+
+	public JsonObject jsonCotizacionSeleccionado(int idCotizacion){
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows=Json.createArrayBuilder();
+
+		List<CotizacionEntity> lstCotizacionUnique=cotizacionRepository.findCotizacionId(idCotizacion);
+
+		jsonRows.add(Json.createObjectBuilder().
+		add("idCotizacion", lstCotizacionUnique.get(0).getIdCotizacion()).
+		add("empresa", lstCotizacionUnique.get(0).getEmpresa().getEmpresa()).
+		add("usuarioVendedor", lstCotizacionUnique.get(0).getUsuarioVendedor().getNombreCompleto()).
+		add("folio", lstCotizacionUnique.get(0).getFolio()));
+
+		jsonReturn.add("jsonCotizacionSeleccionado", jsonRows);
+		return jsonReturn.build();
 	}
 }

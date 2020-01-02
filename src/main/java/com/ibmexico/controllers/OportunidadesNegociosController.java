@@ -12,6 +12,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import org.jboss.logging.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
@@ -41,6 +42,8 @@ import com.ibmexico.entities.ActividadTipoEntity;
 import com.ibmexico.entities.ClienteContactoEntity;
 import com.ibmexico.entities.ClienteEntity;
 import com.ibmexico.entities.ClienteGiroEntity;
+import com.ibmexico.entities.CotizacionComisionEntity;
+import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.EmpresaEntity;
 import com.ibmexico.entities.MonedaEntity;
 import com.ibmexico.entities.OportunidadNegocioEntity;
@@ -48,12 +51,16 @@ import com.ibmexico.entities.OportunidadNegocioEstatusEntity;
 import com.ibmexico.entities.OportunidadNegocioFicheroEntity;
 import com.ibmexico.entities.SucursalEntity;
 import com.ibmexico.entities.UsuarioEntity;
+import com.ibmexico.libraries.Formats;
 import com.ibmexico.libraries.Templates;
 import com.ibmexico.services.ActividadService;
 import com.ibmexico.services.ActividadTipoService;
 import com.ibmexico.services.ClienteContactoService;
 import com.ibmexico.services.ClienteGiroService;
 import com.ibmexico.services.ClienteService;
+import com.ibmexico.services.CotizacionComisionService;
+import com.ibmexico.services.CotizacionService;
+import com.ibmexico.services.CotizacionTipoFicheroService;
 import com.ibmexico.services.EmpresaService;
 import com.ibmexico.services.MonedaService;
 import com.ibmexico.services.OportunidadNegocioEstatusService;
@@ -88,7 +95,20 @@ public class OportunidadesNegociosController {
 	@Autowired
 	@Qualifier("oportunidadNegocioEstatusService")
 	private OportunidadNegocioEstatusService oportunidadNegocioEstatusService;
-	
+	/**Para la llamada de calidad */
+	@Autowired
+	@Qualifier("cotizacionTipoFicheroService")
+	private CotizacionTipoFicheroService cotizacionTipoFicheroService;
+
+	@Autowired
+	@Qualifier("cotizacionService")
+	private CotizacionService cotizacionService;
+
+	@Autowired
+	@Qualifier("cotizacionComisionService")
+	private CotizacionComisionService cotizacionComisionService;
+	/**end resources */
+
 	@Autowired
 	@Qualifier("usuarioService")
 	private UsuarioService usuarioService;
@@ -462,7 +482,7 @@ public class OportunidadesNegociosController {
 			objOportunidadFichero.setTitulo(txtTitulo);
 			objOportunidadFichero.setDescripcion(txtDescripcion);
 			objOportunidadFichero.setOportunidadNegocio(objOportunidad);
-			
+			objOportunidadFichero.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(5));
 			oportunidadNegocioFicheroService.addFile(objOportunidadFichero, fichero);
 			objRedirectView = new RedirectView("/WebSar/controlPanel/oportunidadesNegocios");
 			modelAndViewComponent.addResult(objRedirectAttributes, EnumMessage.OPORTUNIDADES_FICHEROS_CREATE_001);
@@ -697,9 +717,107 @@ public class OportunidadesNegociosController {
 		objModelAndView.addObject("jsonActividades", jsonActividades.build().toString());
 		
 		return objModelAndView;
-	}	
+	}
+
+	/**Recurso para acceder a las propiedades de una Oportunidad */
 	
+	@RequestMapping(value={"{paramIdOportunidad}/get-oportunidad","{paraIdOportunidad}/get-oportunidad/"}, method = RequestMethod.GET)
+	public @ResponseBody String jsonOportunidad(@PathVariable("paramIdOportunidad")int idOportunidad){
+		Boolean respuesta = false;
+		JsonObject dataOportunidad=null;
+		try {
+			dataOportunidad=oportunidadNegocioService.jsonOportunidades(idOportunidad);
+			respuesta=true;
+		} catch (ApplicationException exception) {
+			throw new ApplicationException(EnumException.OPORTUNIDADES_SHOW_001);
+		}
+
+		JsonObjectBuilder jsonReturn=Json.createObjectBuilder();
+		jsonReturn.add("respuesta", respuesta)
+					.add("dataOportunidad", dataOportunidad);
+		
+		return jsonReturn.build().toString();
+	}
 	
+	/**Guardar una llamada de calidad */
+
+	@RequestMapping(value = {"{paramIdOportunidad}/storeCalidad","{paramIdOportunidad}/storeCalidad/"},method = RequestMethod.POST)
+	public @ResponseBody String StoreCalidad(
+		@PathVariable("paramIdOportunidad")int idOportunidad,
+		@RequestParam(value="txtTranscripcion") String txtDescripcion,
+		@RequestParam("txtFechaHoraLlamada") String txtFechaHoraLlamada,
+		@RequestParam(value="ficheroCalidad", required=false) MultipartFile ficheroCalidad)
+		{
+			OportunidadNegocioFicheroEntity objOpnFichero=new OportunidadNegocioFicheroEntity();
+			OportunidadNegocioEntity objOportunidad=oportunidadNegocioService.findByIdOportunidadNegocio(idOportunidad);
+			
+			Boolean respuesta=false;
+			String titulo = "";
+			String mensaje = "";
+
+			try {
+				objOpnFichero.setTitulo("Llamada de calidad a la OPN #"+idOportunidad);
+				objOpnFichero.setInicioLlamada(Formats.getInstance().toLocalDateTime(txtFechaHoraLlamada));
+				objOpnFichero.setDescripcion(txtDescripcion);
+				objOpnFichero.setOportunidadNegocio(objOportunidad);
+				objOpnFichero.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(6));
+				oportunidadNegocioFicheroService.addFile(objOpnFichero, ficheroCalidad);
+				respuesta = true;
+				titulo = "Cargado!";
+				mensaje = "Registro de calidad cargada exitosamente.";
+			} catch (ApplicationException exception) {
+				respuesta = false;
+				titulo = "Error!";
+				mensaje = "Ocurrió un error al guardar el registro de calidad.";
+			}
+			if(respuesta == true){
+				/*Si se registra un archivo de llamada de calidad,se procede a recalcular las comisiones de las cotizaciones, correspondientes a ese OPN */
+				List<CotizacionEntity> lstCotizacion=cotizacionService.findByCotizacionIdOpn(idOportunidad);
+				for (CotizacionEntity item : lstCotizacion) {
+					CotizacionEntity objCotizacion = cotizacionService.findByIdCotizacion(item.getIdCotizacion());
+					if(objCotizacion.isRenta() || objCotizacion.isNormal()) {
+						if(objCotizacion.getCotizacionEstatus().getIdCotizacionEstatus() == 4){
+							
+							//VALIDAMOS QUE NO EXISTA UN REGISTRO DE COMISION
+							CotizacionComisionEntity objComisionExistente = cotizacionComisionService.findByCotizacion(objCotizacion);
+							if(objComisionExistente == null) {							
+								CotizacionComisionEntity objComision = new CotizacionComisionEntity();
+								objComision.setCotizacion(objCotizacion);
+								cotizacionComisionService.create(objComision, objCotizacion);
+								
+							}else{
+								cotizacionComisionService.create(objComisionExistente, objCotizacion);
+							}
+						}	
+					}
+				}
+			}
+			/**End if */
+
+			JsonObjectBuilder jsonReturn= Json.createObjectBuilder();
+			jsonReturn	.add("respuesta", respuesta)
+						.add("titulo", titulo)
+						.add("mensaje", mensaje);
+			return jsonReturn.build().toString();
+		}
 	
+	@RequestMapping(value={"{paramIdOportunidad}/getCalidad","{paramIdOportunidad}/getCalidad/"}, method = RequestMethod.GET)
+	public @ResponseBody String getCotizacionOpn(@PathVariable("paramIdOportunidad")int idOportunidad){
+		Boolean respuesta=false;
+		try {
+			if (oportunidadNegocioFicheroService.countOpnFicheroCalidad(idOportunidad)>0) {
+				respuesta = true;
+			}else{
+				respuesta = false;
+			}
+		} catch (Exception e) {
+			respuesta=false;
+		}
+		JsonObjectBuilder jsonReturn= Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta);
+		
+		return jsonReturn.build().toString();
+		
+	}
 	
 }

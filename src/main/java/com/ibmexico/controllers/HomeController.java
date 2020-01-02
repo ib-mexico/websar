@@ -8,8 +8,10 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
@@ -45,6 +47,7 @@ import com.ibmexico.services.CotizacionService;
 import com.ibmexico.services.CotizacionUsuarioQuotaService;
 import com.ibmexico.services.EmpresaService;
 import com.ibmexico.services.NoticiaService;
+import com.ibmexico.services.OportunidadNegocioFicheroService;
 import com.ibmexico.services.OportunidadNegocioService;
 import com.ibmexico.services.SessionService;
 import com.ibmexico.services.UsuarioService;
@@ -94,6 +97,10 @@ public class HomeController {
 	@Autowired
 	@Qualifier("oportunidadNegocioService")
 	private OportunidadNegocioService oportunidadNegocioService;
+
+	@Autowired
+	@Qualifier("oportunidadNegocioFicheroService")
+	private OportunidadNegocioFicheroService opnNegocioFicheroService;
 	
 	@Autowired
 	@Qualifier("empresaService")
@@ -556,7 +563,7 @@ public class HomeController {
 		List<Map<String , String>> myMap  = new ArrayList<Map<String,String>>();
 		Integer iterator = 0;
 		
-		
+	
 		for(CotizacionEntity itemCotizacion: lstCotizaciones) {
 			
 			Map<String,String> myMap1 = new HashMap<String, String>();
@@ -609,15 +616,42 @@ public class HomeController {
 			//***********************************************************************************************************
 			// VALIDACIÓN DE COMISIONES Y FORMAS DE PAGO DE COTIZACIÓN
 			String estatusPago = "PROCEDE";
-			
+
+			/**Validacion de si existe archivo de llamada de calidad */
+			Boolean status=false;
+			List<CotizacionEntity> objCotizacionFiltrada=cotizacionService.findByCotizacionIdOpn(itemCotizacion.getIdCotizacion());
+			if(cotizacionFicheroService.countCotizacionFicheroCalidad(itemCotizacion.getIdCotizacion())>0){
+				status=true;
+			}else
+			if(objCotizacionFiltrada.size()>0){
+				int idOpnNegocio=objCotizacionFiltrada.get(0).getIdCotizacion();
+				/**Retornara false si encuentran archivos pero que no sean del catalogo fichero Calidad */
+				if(opnNegocioFicheroService.countOpnFicheroCalidad(idOpnNegocio)>0){
+					status=true;
+				}
+			}
+			LocalDate ldtInicioCalidad =  LocalDate.of(2019, 12, 31);
+			String arrFechaInicio[]= itemCotizacion.getCreacionFechaNatural().split("/");
+			int yearInicio=Integer.parseInt(arrFechaInicio[2]);
+			int monthInicio=Integer.parseInt(arrFechaInicio[1]);
+			int dayInicio=Integer.parseInt(arrFechaInicio[0]);
+			LocalDate creacionCotizacion=LocalDate.of(yearInicio, monthInicio, dayInicio);
+
 			if(itemCotizacion.getFormaPago().getFormaPago().equals("Credito")) {
 				if(itemCotizacion.getAprobacionFecha() != null) {					
 					int diff = (int) ChronoUnit.DAYS.between(itemCotizacion.getAprobacionFecha(), itemCotizacion.getPagoFecha());
 					
 					if(!itemCotizacion.getDiasCredito().trim().equals("")) {					
-						if(diff > Integer.parseInt(itemCotizacion.getDiasCredito())) {
-							estatusPago = "NO PROCEDE";						
-						} else {
+						if(diff > Integer.parseInt(itemCotizacion.getDiasCredito()) ) {
+							estatusPago = "NO PROCEDE";	
+						} 
+						//validar cotizacionFicheroService.countCotizacionFicheroCalidad(itemCotizacion.getIdCotizacion())>0
+						else {
+							if(creacionCotizacion.isAfter(ldtInicioCalidad)){
+								if(!status){
+									estatusPago="PROCEDE, FALTA LLAMADA DE CALIDAD";
+								}
+							}
 							//******************************************************************
 							//CALCULO DE TOTALES
 							totalEjecutivo 			= totalEjecutivo.add(comisionEjecutivo);
@@ -652,15 +686,25 @@ public class HomeController {
 			myMap1.put("comision_cotizador", comisionCotizanteNatural);
 			myMap1.put("comision_vendedor", comisionVendedorNatural);
 			myMap1.put("comision_implementador", comisionImplementadorNatural);
-			myMap1.put("comision_acumulado", totalComisionNatural);
+			if (estatusPago.equals("PROCEDE")) {
+				myMap1.put("comision_acumulado", totalComisionNatural);
+			}else{
+				myMap1.put("comision_acumulado", "0");
+			}
+			if(creacionCotizacion.isAfter(ldtInicioCalidad)){
+				if(!status){
+					estatusPago="PROCEDE, FALTA LLAMADA DE CALIDAD";
+				}
+			}
 			myMap1.put("estatus", estatusPago);
+			
 			myMap1.put("factura",itemCotizacion.getFacturaNumero());
 			
 			myMap.add(iterator,myMap1);
 			
 			iterator++;						
 		};
-		
+
 		/*TOTAL DE QUOTA DEL USUARIO */
 		BigDecimal totalQuota = cotizacionUsuarioQuotaService.totalUsuarioQuotaPeriodo(objUsuario, fechaInicio, fechaFin, objEmpresa);
 		BigDecimal cuotaMinima = new BigDecimal(0);
@@ -675,7 +719,9 @@ public class HomeController {
 			}
 		}
 		
-		
+		for (Map<String,String> cot : myMap) {
+			System.err.println(cot +"valor de las cotizaciones");
+		}
 		LocalDateTime ldtNow = LocalDateTime.now();
 		Templates objTemplates = new Templates();
 		

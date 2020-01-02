@@ -34,11 +34,14 @@ import com.ibmexico.libraries.notifications.EnumMessage;
 import com.ibmexico.components.ModelAndViewComponent;
 import com.ibmexico.components.PdfComponent;
 import com.ibmexico.configurations.GeneralConfiguration;
+import com.ibmexico.entities.CotizacionComisionEntity;
 import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.CotizacionFicheroEntity;
 import com.ibmexico.entities.CotizacionTipoFicheroEntity;
+import com.ibmexico.libraries.Formats;
 import com.ibmexico.libraries.Templates;
 import com.lowagie.text.DocumentException;
+import com.ibmexico.services.CotizacionComisionService;
 import com.ibmexico.services.CotizacionFicheroService;
 import com.ibmexico.services.CotizacionService;
 import com.ibmexico.services.CotizacionTipoFicheroService;
@@ -67,6 +70,10 @@ public class CotizacionesFicherosController {
 	@Autowired
 	@Qualifier("cotizacionTipoFicheroService")
 	private CotizacionTipoFicheroService cotizacionTipoFicheroService;
+
+	@Autowired
+	@Qualifier("cotizacionComisionService")
+	private CotizacionComisionService cotizacionComisionService;
 	
 	@Autowired
 	@Qualifier("sessionService")
@@ -395,4 +402,63 @@ public class CotizacionesFicherosController {
 		
 		return jsonReturn.build().toString();
 	}
+
+
+	@RequestMapping(value = {"{paramIdCotizacion}/calidad", "{paramIdCotizacion}/calidad/"}, method = RequestMethod.POST)
+	public @ResponseBody String storeCalidad(@PathVariable("paramIdCotizacion") int paramIdCotizacion,
+								@RequestParam(value="txtTranscripcion") String txtDescripcion,
+								@RequestParam("txtFechaHoraLlamada") String txtFechaHoraLlamada,
+								@RequestParam(value="ficheroCalidad", required=false) MultipartFile ficheroCalidad,					
+								RedirectAttributes objRedirectAttributes) {
+		CotizacionFicheroEntity objFichero = new CotizacionFicheroEntity();
+		
+		Boolean respuesta = false;
+		String titulo = "";
+		String mensaje = "";
+		
+		try {
+			objFichero.setCotizacion(cotizacionService.findByIdCotizacion(paramIdCotizacion));
+			objFichero.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(6));
+			objFichero.setInicioLlamada(Formats.getInstance().toLocalDateTime(txtFechaHoraLlamada));
+			objFichero.setObservaciones(txtDescripcion);
+
+			cotizacionFicheroService.addFile(objFichero, ficheroCalidad);
+			respuesta = true;
+			titulo = "Cargado!";
+			mensaje = "Registro de calidad cargada exitosamente.";
+			
+		} catch(ApplicationException exception) {
+			respuesta = false;
+			titulo = "Error!";
+			mensaje = "Ocurrió un error al guardar el registro de calidad.";
+		}
+		if(respuesta==true){
+			CotizacionEntity objCotizacion = cotizacionService.findByIdCotizacion(paramIdCotizacion);
+			if(objCotizacion.isRenta() || objCotizacion.isNormal()) {
+				if (objCotizacion.getCotizacionEstatus().getIdCotizacionEstatus() == 4) {
+					//VALIDAMOS QUE NO EXISTA UN REGISTRO DE COMISION
+					CotizacionComisionEntity objComisionExistente = cotizacionComisionService.findByCotizacion(objCotizacion);
+					if(objComisionExistente == null) {							
+						CotizacionComisionEntity objComision = new CotizacionComisionEntity();
+						objComision.setCotizacion(objCotizacion);
+						cotizacionComisionService.create(objComision, objCotizacion);
+					}else{
+						cotizacionComisionService.create(objComisionExistente, objCotizacion);
+					}
+				}
+							
+			}
+
+		}
+		
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("titulo", titulo)
+					.add("mensaje", mensaje);
+		
+		return jsonReturn.build().toString();
+	}
+	
+
+
 }

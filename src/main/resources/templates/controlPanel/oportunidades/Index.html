@@ -217,14 +217,21 @@
 				</div>
 
 				<div class="row">
-					<div class="col-md-6 align-left">						
+					<div class="col-md-4 align-left">						
 						<div v-if="data.prioridad == 0" style="color:gold;"><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>
 						<div v-if="data.prioridad == 1" style="color:gold;"><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i></div>
 						<div v-if="data.prioridad == 2" style="color:gold;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
 						<div v-if="data.prioridad == 3" style="color:gold;"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
 					</div>
 
-					<div class="col-md-6 align-right">
+					<div class="col-md-8 align-right">
+						<a v-if="porTipoOpn" title="Lllamada de calidad" type="button" href="#" data-toggle="modal" :data-target="'#opnModal' + data.id_oportunidad" 
+						v-on:click="validarCalidad ? getFicheros() : getCalidad()">
+							<i class="material-icons call" v-if="!validarCalidad">call</i>
+							<i class="material-icons library_music" style="color: green;" v-if="validarCalidad">library_music</i>
+
+						</a>
+						
 						<a title="Cotizaciones" type="button" href="#" data-toggle="modal" :data-target="'#opnModal' + data.id_oportunidad" v-on:click="getCotizaciones">
 							<i class="material-icons">view_list</i>
 						</a>
@@ -338,11 +345,24 @@
 													<p>
 														{{ item.descripcion }}
 													</p>
+												</div>
+												<div class="col-md 12 text-center" v-if="item.tipoFichero">
+													<strong>Fecha y Hora de la Llamada</strong>
+													<p class="text-capitalize" v-text="item.fechallamada"></p>
 												</div>					 				
 											</div>								 				
-											<div class="row clearfix">
-												<div class="col-md-12 align-right">
-													<a :href="'http://corp-mx.com:8080/WebSar/ficheros/oportunidades/' + item.url" target="_blank" role="button" class="btn btn-primary waves-effect" >Ver Fichero</a>
+											<div class="row clearfix" v-if="!item.tipoFichero">
+												<div class="col-md-12 align-center">
+													<a :href="'http://localhost:8080/WebSar/ficheros/oportunidades/' + item.url" target="_blank" role="button" class="btn btn-primary waves-effect" >Ver Fichero</a>
+												</div>								 					
+											</div>
+											<div class="row clearfix" v-if="item.tipoFichero">
+												<div class="col-md-12 align-center">
+													<audio controls="controls" v-if="item.tipoFichero != null">
+														<source :src="'http://localhost:8080/WebSar/ficheros/oportunidades/' + item.url" type="audio/wav" />
+														<source :src="'http://localhost:8080/WebSar/ficheros/oportunidades/' + item.url" type="audio/mp3"/>
+														Tu navegador no soporta el audio.
+													</audio>
 												</div>								 					
 											</div>									 												 					
 										</li>
@@ -355,11 +375,90 @@
 									</div>
 								</div>
 							</div>
+							
+							<div v-if="modalTipo == 4">
+								<!-- LLAMADA DE CALIDAD DE SERVICIO MODAL -->	
+								<form id="formOpnCalidad" v-on:submit.prevent="storeOpnCalidad"  method="POST" enctype="multipart/form-data" role="form">
+									<input type="hidden" :value="idOportunidad" name="idOportunidad"/>
+									<div class="row clearfix">
+										<div class="col-md-12">
+												
+											<div class="col-md-4 col-sm-6 text-center">
+												<p id="nombreEmpresa"><h4 class="text-primary">Empresa :</h4></p>
+												<div class="form-group">
+													<label class="custom-control-label" for="nombreEmpresa" v-text="collection.empresa"></label>
+												</div>
+											</div>
+											<div class="col-md-4 col-sm-6 text-center">
+												<p id="nombreEncargado"><h4 class="text-primary">Encargado :</h4></p>
+												<div class="form-group">
+													<label class="custom-control-label" for="nombreEncargado" v-text="collection.usuarioEncargado"></label>
+												</div>
+											</div>
+													
+											<div class="col-md-4 col-sm-6 text-center">
+												<p id="collection.idOportunidad"><h4 class="text-primary">#OPN :</h4></p>
+												<div class="form-group">
+													<label class="custom-control-label" for="nombreOportunidad" v-text="collection.idOportunidad"></label>
+												</div>
+											</div>
+											<div class="col-md-12 col-sm-6 text-center">
+												<p id="collection.idOportunidad"><h4 class="text-primary">Nombre :</h4></p>
+												<div class="form-group">
+													<label class="custom-control-label" for="nombreOportunidad" v-text="collection.nombre"></label>
+												</div>
+											</div>
+
+										</div>
+									</div>
+
+									<div class="row clearfix">
+										<div class="col-md-12">
+											<b>Fecha/Hora Inicio *</b>
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">date_range</i>
+												</span>
+												<div class="form-line">
+													<input type="text" class="form-control text-center txtFechaHoraLlamada"  name="txtFechaHoraLlamada" required="required" />
+												</div>
+											</div>				
+										</div>
+															
+										<div class="col-md-12">
+											<div class="form-group files color">
+												<p><b>Audio de la llamada de calidad *</b></p>
+												<input id="ficheroCalidad" type="file" name="ficheroCalidad" class="form-control-drop"/>
+											</div>
+										</div>
+																
+										<div class="col-md-12">
+											<div class="form-group">
+												<p><b>Perspectiva de la llamada*</b></p>
+												<div class="form-line">
+													<textarea rows="4" name="txtTranscripcion" class="form-control no-resize" required="required"></textarea>
+												</div>
+											</div>
+										</div>
+									</div>
+								
+									<div class="modal-footer" >
+										<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">CERRAR</button>
+										<button type="submit" class="btn btn-primary waves-effect text-uppercase">Guardar registro</button>
+									</div>
+								
+								
+								</form>
+
+								
+							</div>
+
 						</div>
 					</div>
-					<div class="modal-footer">
+					<div class="modal-footer" v-if="modalTipo!=4">
 						<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">CERRAR</button>
 					</div>
+					
 				</div>
 			</div>
 		</div>
@@ -371,6 +470,8 @@
 	<script th:src="@{/plugins/vue/vue.js}"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script th:src="@{/assets/js/script.js}"></script>
+
+	<!-- Wenzhixin DataTable -->
 	<script type="application/javascript" th:inline="javascript">
 	/*<![CDATA[*/
 		$(document).ready(function() {
@@ -402,6 +503,8 @@
 				}				
 			});
 			// *****************************************************************
+
+
 		});
 	/*]]>*/
 	</script>

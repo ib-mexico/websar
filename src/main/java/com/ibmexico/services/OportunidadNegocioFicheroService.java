@@ -41,8 +41,10 @@ public class OportunidadNegocioFicheroService {
 		return oportunidadNegocioFicheroRepository.findByOportunidadNegocio_IdOportunidadNegocio(idOportunidad);
 	}	
 	
-	
-	
+	public long countOpnFicheroCalidad(int idOpnCalidad){
+		return oportunidadNegocioFicheroRepository.countOpnFicheroCalidad(idOpnCalidad);
+	}
+		
 	//CREACIÓN DE FICHERO
 	@Transactional
 	public void addFile(OportunidadNegocioFicheroEntity objOportunidadFichero, MultipartFile file) {
@@ -83,7 +85,11 @@ public class OportunidadNegocioFicheroService {
 		if(objOportunidadFichero != null) {
 			if(objOportunidadFichero.getUrl() != "") {
 				byte[] bytesFichero = objFile.getBytes();
-				
+				  // Crear carpeta si no existe
+				  File fileruta = new File(urlPath.getPath() + "static/ficheros/oportunidades");
+				  if (!fileruta.exists()) {
+					  fileruta.mkdirs();
+				  }
 	            try( BufferedOutputStream buffStream = new BufferedOutputStream(new FileOutputStream(new File(urlPath.getPath() +"static/ficheros/oportunidades/" + objOportunidadFichero.getUrl()))) ) {
 	            	buffStream.write(bytesFichero);
 	            	

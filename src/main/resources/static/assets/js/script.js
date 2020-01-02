@@ -37,12 +37,33 @@ var modalOpn = Vue.component('example-modal', {
 				case 3:
 					this.titulo = 'Ficheros';
 				break;
+				case 4:
+					this.titulo='Llamada de calidad';
+				break;
 			}
 		},
 		getDate(vencimientoFecha) {
 			var date = moment(vencimientoFecha, "YYYY-MM-DD").fromNow();
 			return "Vencimiento " + date;
-		}
+		},
+		storeOpnCalidad(){
+			/**Guardar un audio de calidad para las OPN de negocios */
+			var formCalidad = document.getElementById('formOpnCalidad');
+			var formCalidadData = new FormData(formCalidad);
+			var url = host + "oportunidadesNegocios/"+this.idOportunidad+"/storeCalidad";
+			axios.post(url,formCalidadData).then((resp) => {
+				if (resp.status == 200 && resp.data.respuesta) {
+					$("#formOpnCalidad")[0].reset();
+					$("#opnModal"+this.idOportunidad).modal("hide");
+					swal(resp.data.titulo, resp.data.mensaje, "success");
+				}
+				else{
+					swal(resp.data.titulo, resp.data.mensaje, "error");
+				}
+			}).catch((error) => {
+				swal("Algo malo pasó!",error.resp,"error")
+			});
+		},
 	},
 	watch: {
 		modalTipo: function(val) {
@@ -64,6 +85,7 @@ Vue.component('opn-card', {
 		this.oportunidadTipo = this.tipoOportunidad;
 		this.csrf = this.token;
 		this.flag = this.index;
+		this.getCotizacionbyOpn();
 	},
 	data() {
 		return {
@@ -76,6 +98,9 @@ Vue.component('opn-card', {
 			modalTipo: null,
 			csrf: null,
 			flag: null,
+			oportunidad:null,
+			/**dynamic button calidad */
+			propiedades:[]
 		}
 	},
 	methods: {
@@ -127,6 +152,38 @@ Vue.component('opn-card', {
 
 			this.modalTipo = 2;
 		},
+		/**method for get one oportunidad */
+		getCalidad(){
+			this.modalInfo = null;
+			if (this.oportunidad == null) {
+				var url=host + 'oportunidadesNegocios/' +this.identificador + '/get-oportunidad';
+				axios.get(url).then((resp) => {
+					this.oportunidad=resp.data.dataOportunidad.oportunidad[0];
+					this.modalInfo=this.oportunidad;
+				});
+			} else {
+				this.modalInfo=this.oportunidad;
+			}
+			this.modalTipo=4;
+			//DATEPICKER FECHA HORA DE LLAMADA DE CALIDAD
+			$('.txtFechaHoraLlamada').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY HH:mm', weekStart : 1, clearButton: true, time:true});
+
+		},
+		/**End getOportunidad */
+		getCotizacionbyOpn(){
+			var url=host+'oportunidadesNegocios/'+this.identificador+'/getCalidad';
+			axios.get(url).then((resp) => {
+				if (status == 200)
+					if (resp.data.respuesta){
+						return true
+					}
+					else{
+						return false
+					}
+			}).catch((error) => {
+				console.log("Algo salio mal", error);
+			})
+		},
 		deleteOportunidad(param) {
 			var url = host + 'oportunidadesNegocios/' + param + '/delete';
 
@@ -167,7 +224,29 @@ Vue.component('opn-card', {
 	},
 	components: {
 		"example-modal": modalOpn,
-	}
+	},
+	computed: {
+		porTipoOpn(){
+			if(this.tipoOportunidad != 1 && this.tipoOportunidad!=5){
+				/**OPN sin llamada de calidad */
+				return true;
+			}else
+				/**OPN con llamadas de calidad */
+				return false;
+		},
+		validarCalidad(){
+			if (this.data.ficheroCalidad == true) {
+				console.log("Retorno de verdadero");
+				// this.propiedades.push({p_onclick:'getFicheros',icon:'library_music',title:'Revisar llamada de calidad'});
+				return true
+			}
+			else{
+				console.log("Retorno de falso");
+				// this.propiedades.push({p_onclick:'getCalidad',icon:'call',title:'Registrar llamada de calidad'});
+				return false
+			}
+		}
+	},
 });
 
 if(document.getElementById('appOportunidades')) {
@@ -463,7 +542,8 @@ if(document.getElementById('appCotizaciones')) {
 				observaciones: '',
 				chkVenta: false,
 				chkImplementa: false
-			}
+			},
+			dataCotizacion:{}
 		},
 		methods: {
 			getFormData() {
@@ -611,6 +691,40 @@ if(document.getElementById('appCotizaciones')) {
 				} else {
 					console.log("Error en validacion de FORM");
 				}
+			},
+
+			obtenerCotizacion(idCotizacion){
+                var formCalidad = document.getElementById('formCalidad');
+                var formCalidadData = new FormData(formCalidad);
+                var url = host + "cotizaciones/getCotizacionUnique/" + idCotizacion;
+                axios.get(url, formCalidadData).then(resp => {
+                    if (resp.status == 200 && resp.data.respuesta) {
+                        this.dataCotizacion = resp.data.jsonCotizacionUnique.jsonCotizacionSeleccionado[0];
+                    }
+                    console.log(this.dataCotizacion);
+                }).catch((error) => {
+                    console.log("Algo ha salido mal ",error);
+                })
+			},
+			async createCalidad(){
+				var formCalidad = document.getElementById('formCalidad');
+                var formCalidadData = new FormData(formCalidad);
+				var url = host + "cotizaciones/"+this.dataCotizacion.idCotizacion+"/calidad";
+				console.log("entrando a la peticion")
+				await axios.post(url,formCalidadData).then((resp) => {
+					if (resp.status == 200 && resp.data.respuesta) {
+						$("#formCalidad")[0].reset();
+						$("#modalCalidad").modal("hide");
+						this.dataCotizacion='';
+						swal(resp.data.titulo, resp.data.mensaje, "success");
+						$("#dtCotizaciones").bootstrapTable('refresh');
+					}
+					else{
+						swal(resp.data.titulo, resp.data.mensaje, "error");
+					}
+				}).catch((error) => {
+					swal("Algo malo pasó!",error.resp,"error")
+				});
 			}
 		},
 		watch: {

@@ -96,6 +96,11 @@ public class CotizacionUsuarioQuotaService {
 	public void cargarQuota(CotizacionEntity objCotizacion) {
 		
 		if(objCotizacion != null) {
+			List<CotizacionUsuarioQuotaEntity> lstCuotas = listCotizacionQuotas(objCotizacion);
+				
+			if(!lstCuotas.isEmpty()) {						
+				eliminarQuota(objCotizacion);													
+			}
 			
 			/* CALCULO DE LA UTILIDAD BRUTA */
 			BigDecimal gastos = cotizacionFicheroService.totalImporteDocumentoTipo(objCotizacion.getIdCotizacion(), 3);
