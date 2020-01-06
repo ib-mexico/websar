@@ -84,7 +84,137 @@ public class OportunidadNegocioService {
 		
 		return lstOportunidades;
 	}
+
+	/**Consulta para las OPN Cerradas y perdidas de este anio */
+	public List<OportunidadNegocioEntity> lstOpnNegocioEmpresa(int idOportunidadEstatus, int idEmpresa, int anio){
+		List<OportunidadNegocioEntity> lstOportunidades = null;
+		if(sessionService.hasRol("OPORTUNIDADES_ADMINISTRADOR")){
+			lstOportunidades = oportunidadNegocioRepository.findAllEmpresaAnio(idOportunidadEstatus, idEmpresa, anio);
+		}else{
+			lstOportunidades = oportunidadNegocioRepository.findAllEmpresaAnio(idOportunidadEstatus, sessionService.getCurrentUser().getIdUsuario(), idEmpresa,anio);
+		}
+		return lstOportunidades;
+	}
+
+	/**Consulta de OPN cerradas y perdidas en Historico */
+	public List<OportunidadNegocioEntity> lstOpnNegocioEmpresaHistorico(int idOportunidadEstatus, int idEmpresa, int anio){
+		List<OportunidadNegocioEntity> lstOportunidades = null;
+		if(sessionService.hasRol("OPORTUNIDADES_ADMINISTRADOR")){
+			lstOportunidades = oportunidadNegocioRepository.findAllEmpresaHistorico(idOportunidadEstatus, idEmpresa, anio);
+		}else{
+			lstOportunidades = oportunidadNegocioRepository.findAllEmpresaHistorico(idOportunidadEstatus, sessionService.getCurrentUser().getIdUsuario(), idEmpresa, anio);
+		}
+		return lstOportunidades;
+	}
+
+	/**Lista de las OPN Cerradas y perdidas de los años anteriores */
+	public JsonObject jsonOportunidadesNegociosEmpresaHistorico(int idOportunidadEstatus, int idEmpresa, int anio) {
+		
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		String estatus_key;
+
+		List<OportunidadNegocioEntity> lstOportunidades = lstOpnNegocioEmpresaHistorico(idOportunidadEstatus, idEmpresa, anio);
+		
+		lstOportunidades.forEach((itemOportunidad)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_oportunidad", itemOportunidad.getIdOportunidadNegocio())
+				.add("oportunidad", itemOportunidad.getOportunidad())
+				.add("vendedor", itemOportunidad.getUsuarioVendedor().getNombreCompleto())
+				.add("ultima_modificacion", itemOportunidad.getModificacionFechaNatural())
+				.add("cliente", itemOportunidad.getCliente().getCliente())
+				.add("ingreso_estimado", itemOportunidad.getIngresoEstimadoNatural())
+				.add("prioridad", itemOportunidad.getPrioridad())
+				.add("oportunidad", itemOportunidad.getOportunidad())
+				.add("ficheroCalidad", opnNegocioFicheroService.countOpnFicheroCalidad(itemOportunidad.getIdOportunidadNegocio())>0 ? true : false )
+			);
+		});
+		
+		switch (idOportunidadEstatus) {	
+			case 1:
+				estatus_key = "abiertos";
+				break;
+			case 2:
+				estatus_key = "en_curso";
+				break;
+			case 3:
+				estatus_key = "rentas";
+				break;
+			case 4:
+				estatus_key = "cerrados";
+				break;
+			case 5:
+				estatus_key = "perdidos";
+				break;
+			default:
+				estatus_key = "abiertos";
+				break;
+		}
+		
+		jsonReturn.add(estatus_key, jsonRows);
+		jsonReturn.add("total_" + estatus_key, totalIngresoEstimadoEmpresaHistorico(idOportunidadEstatus, idEmpresa, anio));
+		
+		return jsonReturn.build();
+	}
 	
+	
+	//Lista de las OPN cerradas y perdidas de este anio
+	public JsonObject jsonOportunidadesNegociosEmpresaAnio(int idOportunidadEstatus, int idEmpresa, int anio) {
+		
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		String estatus_key;
+		
+		List<OportunidadNegocioEntity> lstOportunidades = lstOpnNegocioEmpresa(idOportunidadEstatus, idEmpresa, anio);
+		
+		lstOportunidades.forEach((itemOportunidad)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_oportunidad", itemOportunidad.getIdOportunidadNegocio())
+				.add("oportunidad", itemOportunidad.getOportunidad())
+				.add("vendedor", itemOportunidad.getUsuarioVendedor().getNombreCompleto())
+				.add("ultima_modificacion", itemOportunidad.getModificacionFechaNatural())
+				.add("cliente", itemOportunidad.getCliente().getCliente())
+				.add("ingreso_estimado", itemOportunidad.getIngresoEstimadoNatural())
+				.add("prioridad", itemOportunidad.getPrioridad())
+				.add("oportunidad", itemOportunidad.getOportunidad())
+				.add("ficheroCalidad", opnNegocioFicheroService.countOpnFicheroCalidad(itemOportunidad.getIdOportunidadNegocio())>0 ? true : false )
+			);
+		});
+		
+		switch (idOportunidadEstatus) {
+		
+		case 1:
+			estatus_key = "abiertos";
+			break;
+			
+		case 2:
+			estatus_key = "en_curso";
+			break;
+			
+		case 3:
+			estatus_key = "rentas";
+			break;
+	
+		case 4:
+			estatus_key = "cerrados";
+			break;
+	
+		case 5:
+			estatus_key = "perdidos";
+			break;
+
+		default:
+			estatus_key = "abiertos";
+			break;
+		}
+		
+		jsonReturn.add(estatus_key, jsonRows);
+		jsonReturn.add("total_" + estatus_key, totalIngresoEstimadoEmpresaAnual(idOportunidadEstatus, idEmpresa, anio));
+		
+		return jsonReturn.build();
+	}
+	
+
 	public JsonObject jsonOportunidadesNegociosEmpresa(int idOportunidadEstatus, int idEmpresa) {
 		
 		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
@@ -242,6 +372,32 @@ public class OportunidadNegocioService {
 		return GeneralConfiguration.getInstance().getNumberFormat().format(total);
 	}
 	
+	/**Calcular el total de las OPN perdidas o cerradas de este año*/
+	public String totalIngresoEstimadoEmpresaAnual(int idOportunidadEstatus, int idEmpresa, int anio) {	
+		BigDecimal total = null;
+		if(sessionService.hasRol("OPORTUNIDADES_ADMINISTRADOR")) {
+			total = oportunidadNegocioRepository.sumIngresosEstimadosEmpresaAnio(idOportunidadEstatus, idEmpresa, anio);
+		}
+		else {			
+			total = oportunidadNegocioRepository.sumIngresosEstimadosEmpresaAnio(idOportunidadEstatus, sessionService.getCurrentUser().getIdUsuario(), idEmpresa, anio);
+		}
+		return GeneralConfiguration.getInstance().getNumberFormat().format(total);
+	}
+	
+
+	/**Calculo de el total de las OPN perdidas o cerradas de los años anteriores */
+	public String totalIngresoEstimadoEmpresaHistorico(int idOportunidadEstatus, int idEmpresa, int anio) {	
+		BigDecimal total = null;
+		if(sessionService.hasRol("OPORTUNIDADES_ADMINISTRADOR")) {
+			total = oportunidadNegocioRepository.sumIngresosEstimadosEmpresaHistorico(idOportunidadEstatus, idEmpresa, anio);
+		}
+		else {			
+			total = oportunidadNegocioRepository.sumIngresosEstimadosEmpresaHistorico(idOportunidadEstatus, sessionService.getCurrentUser().getIdUsuario(), idEmpresa, anio);
+		}
+		return GeneralConfiguration.getInstance().getNumberFormat().format(total);
+	}
+	
+
 	public String sumOportunidadesTotalesPorFecha(LocalDate ldFechaInicial, LocalDate ldFechaFinal) {
 		
 		String total = "";

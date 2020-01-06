@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAdjuster;
 import java.util.List;
 
 import javax.json.Json;
@@ -176,8 +177,10 @@ public class OportunidadesNegociosController {
 				dataAbiertos = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(1, objEmpresa.getIdEmpresa());
 				dataEnCurso	 = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(2, objEmpresa.getIdEmpresa());
 				dataRentas	 = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(3, objEmpresa.getIdEmpresa());
-				dataCerrados = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(4, objEmpresa.getIdEmpresa());
-				dataPerdidos = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(5, objEmpresa.getIdEmpresa());
+				int  ldtYearNow = LocalDate.now().getYear();
+				
+				dataCerrados = oportunidadNegocioService.jsonOportunidadesNegociosEmpresaAnio(4, objEmpresa.getIdEmpresa(), ldtYearNow);
+				dataPerdidos = oportunidadNegocioService.jsonOportunidadesNegociosEmpresaAnio(5, objEmpresa.getIdEmpresa(), ldtYearNow );
 				
 				respuesta = true;
 			}
@@ -196,11 +199,44 @@ public class OportunidadesNegociosController {
 					.add("dataRentas", dataRentas)
 					.add("dataCerrados", dataCerrados)
 					.add("dataPerdidos", dataPerdidos);
-
 										
 		return jsonReturn.build().toString();
 	}
 	
+
+	/**Recurso para listar todos las OPN cerradas y perdidas, en los años anteriores */
+
+	@RequestMapping(value = {"{paramIdEmpresa}/get-oportunidades-Historico", "{paramIdEmpresa}/get-oportunidades-Historico/"}, method = RequestMethod.GET)
+	public @ResponseBody String showOportunidadesHistorico( @PathVariable("paramIdEmpresa") int paramIdEmpresa) {
+		
+		EmpresaEntity objEmpresa = empresaService.findByIdEmpresa(paramIdEmpresa);
+		Boolean respuesta = false;
+		JsonObject dataCerrados = null;
+		JsonObject dataPerdidos = null;
+				
+		try {
+			if(objEmpresa != null) {		
+				int  ldtYearNow = LocalDate.now().getYear();		
+				dataCerrados = oportunidadNegocioService.jsonOportunidadesNegociosEmpresaHistorico(4, objEmpresa.getIdEmpresa(), ldtYearNow);
+				dataPerdidos = oportunidadNegocioService.jsonOportunidadesNegociosEmpresaHistorico(5, objEmpresa.getIdEmpresa(), ldtYearNow );
+				respuesta = true;
+			}
+			else {
+				throw new ApplicationException(EnumException.OPORTUNIDADES_SHOW_001);
+			}
+			
+		} catch(ApplicationException exception) {
+			throw new ApplicationException(EnumException.OPORTUNIDADES_SHOW_002);
+		}
+		
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("dataCerrados", dataCerrados)
+					.add("dataPerdidos", dataPerdidos);			
+		return jsonReturn.build().toString();
+	}
+	
+
 	@RequestMapping(value = {"{paramIdOportunidad}/get-cotizaciones", "{paramIdOportunidad}/get-cotizaciones/"}, method = RequestMethod.GET)
 	public @ResponseBody String showOportunidadCotizaciones( @PathVariable("paramIdOportunidad") int paramIdOportunidad) {
 		

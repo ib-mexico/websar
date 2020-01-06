@@ -74,14 +74,14 @@
 	    								<td th:text="${itemFichero.getObservaciones()}"></td>
 	    								<td class="text-left">
 	    									<div class="row">
-	    										<div class="col-md-12 col-lg-4" th:if="${itemFichero.getCotizacionTipoFichero().getIdCotizacionTipoFichero()!=6}">
+	    										<div class="col-md-12 col-lg-12 col-sm-12" th:if="${itemFichero.getCotizacionTipoFichero().getIdCotizacionTipoFichero()!=6}">
 			    									<a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {objCotizacion.idCotizacion} + '/ficheros/' + {itemFichero.getIdCotizacionFichero()} + '/edit'}" class="btn btn-warning">Editar</a>
 	    										</div>
-	    										<div class="col-md-12 col-lg-4" th:if="${itemFichero.getCotizacionTipoFichero().getIdCotizacionTipoFichero()!=6}">
+	    										<div class="col-md-12 col-lg-12 col-sm-12" th:if="${itemFichero.getCotizacionTipoFichero().getIdCotizacionTipoFichero()!=6}">
 													<a th:if="${itemFichero.getUrl() != null}" target="_blank" th:href="@{'/ficheros/cotizaciones/' + ${itemFichero.getUrl()}}" class="btn btn-primary">Ver Archivo</a>
 													<a th:unless="${itemFichero.getUrl() != null}" href="#" class="btn btn-primary disabled">Ver Archivo</a>
 												</div>
-												<div class="col-md-12 col-lg-4 col-sm-12" th:unless="${itemFichero.getCotizacionTipoFichero().getIdCotizacionTipoFichero()!=6}">
+												<div class="col-md-12 col-lg-12 col-sm-12" th:unless="${itemFichero.getCotizacionTipoFichero().getIdCotizacionTipoFichero()!=6}">
 													<h5 class="text-center" th:if="${itemFichero.getUrl()!=null}">Reproducir audio</h5>
 													<audio controls="controls" th:if="${itemFichero.getUrl()!=null}">
 														<source th:src="@{'/ficheros/cotizaciones/' + ${itemFichero.getUrl()}}" type="audio/wav" />

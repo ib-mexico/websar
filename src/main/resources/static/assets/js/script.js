@@ -268,14 +268,35 @@ if(document.getElementById('appOportunidades')) {
 			s3sData: null,
 			r2aData: null,
 			ucaData: null,
+
+			historicoIbmData : null,
+			historicoS3sData : null,
+			historicoR2aData : null,
+			historicoUcaData : null,
+
 			ibmActive: true,
 			s3sActive: false,
-			r2aActive: false,
+			r2aActive: false,		
 			ucaActive: false,
+
+			historicoActive: false,
+
+			historicoIbmActive : false,
+			historicoS3sActive : false,
+			historicoR2aActive : false,
+			historicoUcaActive : false,
+			
 			activeClass: 'btn btn-default btn-lg waves-effect',
 			inactiveClass: 'btn btn-indigo btn-lg waves-effect',
 			token: null,
 			tokenName: null,
+
+			abiertoShow: false,
+			enCursoShow: false,
+			rentaShow: false,
+			cerradoShow: false,
+			perdidoShow: false,
+			flag : null,
 		},
 		methods: {
 			formatNumber(num) {
@@ -285,20 +306,39 @@ if(document.getElementById('appOportunidades')) {
 				var url = host + 'oportunidadesNegocios/' + paramEmpresa + '/get-oportunidades';
 				axios.get(url).then(response => {
 					if(response.status == 200 && response.data.respuesta) {
-						this.opnData 		= {...response.data.dataAbiertos, ...response.data.dataEnCurso, ...response.data.dataRentas, ...response.data.dataCerrados, ...response.data.dataPerdidos};
+						this.opnData 		= {	...response.data.dataAbiertos.abiertos.length > 0 ? response.data.dataAbiertos : null,
+												...response.data.dataEnCurso.en_curso.length > 0 ? response.data.dataEnCurso : null,
+												...response.data.dataRentas.rentas.length > 0 ? response.data.dataRentas : null,
+												...response.data.dataCerrados.cerrados.length >0 ? response.data.dataCerrados : null, 
+												...response.data.dataPerdidos.perdidos.length >0 ? responde.data.perdidos : null};
 						this.totalAbiertos 	= this.opnData.total_abiertos;
 						this.totalEnCurso 	= this.opnData.total_en_curso;
 						this.totalRentas 	= this.opnData.total_rentas;
-						this.totalCerrados 	= this.opnData.total_cerrados;
+						this.totalCerrados 	= this.opnData.totalCerrados;
 						this.totalPerdidos 	= this.opnData.total_perdidos;
 	
 						this.setDataEmpresa(this.opnData);
 					}
 				});
 			},
+			/**Se le considera para las OPN cerradas y perdidas del año pasado como historico */
+			getOportunidadesHistorico(paramEmpresa) {
+				
+				var url = host + 'oportunidadesNegocios/' + paramEmpresa + '/get-oportunidades-Historico';
+				axios.get(url).then(response => {
+					if(response.status == 200 && response.data.respuesta) {
+						this.opnData 		= {	...response.data.dataCerrados.cerrados.length >0 ? response.data.dataCerrados : null,
+												...response.data.dataPerdidos.perdidos.length >0 ? response.data.dataPerdidos : null};
+						this.totalCerrados 	= this.opnData.total_cerrados;
+						this.totalPerdidos 	= this.opnData.total_perdidos;
+						this.setDataEmpresa(this.opnData);
+					}
+				});
+			},
+			/**End Historic */
 			changeEmpresa(paramEmpresa) {
 				this.idEmpresa = paramEmpresa;
-	
+				this.flag = false;
 				switch(this.idEmpresa) {
 					case 1:
 						if(this.ibmData != null)
@@ -310,6 +350,9 @@ if(document.getElementById('appOportunidades')) {
 						this.s3sActive = false;
 						this.r2aActive = false;
 						this.ucaActive = false;
+						this.historicoActive = false;
+						
+						document.getElementById('historicos').style.display = "none";
 					break;
 	
 					case 2:
@@ -322,6 +365,10 @@ if(document.getElementById('appOportunidades')) {
 						this.s3sActive = true;
 						this.r2aActive = false;
 						this.ucaActive = false;
+						this.historicoActive = false;
+
+						document.getElementById('historicos').style.display = "none";
+
 					break;
 	
 					case 3:
@@ -334,6 +381,10 @@ if(document.getElementById('appOportunidades')) {
 						this.s3sActive = false;
 						this.r2aActive = true;
 						this.ucaActive = false;
+						this.historicoActive = false;
+
+						document.getElementById('historicos').style.display = "none";
+
 					break;
 	
 					case 4:
@@ -346,6 +397,10 @@ if(document.getElementById('appOportunidades')) {
 						this.s3sActive = false;
 						this.r2aActive = false;
 						this.ucaActive = true;
+						this.historicoActive = false;
+
+						document.getElementById('historicos').style.display = "none";
+
 					break;
 	
 				}
@@ -356,46 +411,155 @@ if(document.getElementById('appOportunidades')) {
 				this.totalCerrados 	= this.opnData.total_cerrados;
 				this.totalPerdidos 	= this.opnData.total_perdidos;
 			},
-			setDataEmpresa(objResponse) {
-				switch(this.idEmpresa) {
+			changeEmpresaHistorico(paramEmpresa){
+				this.idEmpresa = paramEmpresa;
+				this.flag= true;
+				switch(this.idEmpresa){
 					case 1:
-						this.ibmData = objResponse;
-					break;
-	
+						if (this.historicoIbmData !=null){
+							this.totalCerrados 	= this.historicoIbmData.total_cerrados;
+							this.totalPerdidos 	= this.historicoIbmData.total_perdidos;
+							this.opnData = this.historicoIbmData;
+						}else
+							this.getOportunidadesHistorico(this.idEmpresa);
+						this.ibmActive = false;
+						this.s3sActive = false;
+						this.r2aActive = false;
+						this.ucaActive = false;
+						this.historicoIbmActive =  true;
+						this.historicoS3sActive = false;	this.historicoR2aActive = false;	this.historicoUcaActive = false;
+						break;
 					case 2:
-						this.s3sData = objResponse;
-					break;
-	
+						if(this.historicoS3sData != null){
+							this.opnData = this.historicoS3sData;
+							this.totalCerrados 	= this.historicoS3sData.total_cerrados;
+							this.totalPerdidos 	= this.historicoS3sData.total_perdidos;
+						}else
+							this.getOportunidadesHistorico(this.idEmpresa);
+
+						this.ibmActive = false;
+						this.s3sActive = false;
+						this.r2aActive = false;
+						this.ucaActive = false;
+						this.historicoS3sActive =  true;
+						this.historicoIbmActive = false;	this.historicoR2aActive = false;	this.historicoUcaActive = false;
+						break;
 					case 3:
-						this.r2aData = objResponse;
-					break;
-	
+						if(this.historicoR2aData != null){
+							this.opnData = this.historicoR2aData
+							this.totalCerrados 	= this.historicoR2aData.total_cerrados;
+							this.totalPerdidos 	= this.historicoR2aData.total_perdidos;
+						}else
+							this.getOportunidadesHistorico(this.idEmpresa);
+						this.ibmActive = false;
+						this.s3sActive = false;
+						this.r2aActive = false;
+						this.ucaActive = false;
+						this.historicoR2aActive =  true;
+						this.historicoIbmActive = false;	this.historicoS3sActive = false;	this.historicoUcaActive = false;
+						break;
 					case 4:
-						this.ucaData = objResponse;
-					break;
+						if(this.historicoUcaData != null){
+							this.opnData = this.historicoUcaData
+							this.totalCerrados 	= this.historicoUcaData.total_cerrados;
+							this.totalPerdidos 	= this.historicoUcaData.total_perdidos;
+						}else
+							this.getOportunidadesHistorico(this.idEmpresa);
+						this.ibmActive = false;
+						this.s3sActive = false;
+						this.r2aActive = false;
+						this.ucaActive = false;
+						this.historicoUcaActive =  true;
+						this.historicoIbmActive = false;	this.historicoS3sActive = false;	this.historicoR2aActive = false;
+						break;
 				}
+			},
+			setDataEmpresa(objResponse) {
+				
+				console.log( "valor de flag " +this.flag)
+				if(this.flag == true){
+					switch (this.idEmpresa) {
+						case 1:
+							this.historicoIbmData = objResponse;
+							this.totalCerrados 	= this.historicoIbmData.total_cerrados;
+							this.totalPerdidos 	= this.historicoIbmData.total_perdidos;
+							break;
+						case 2:
+							this.historicoS3sData = objResponse;
+							this.totalCerrados 	= this.historicoS3sData.total_cerrados;
+							this.totalPerdidos 	= this.historicoS3sData.total_perdidos;
+							break;
+						case 3:
+							this.historicoR2aData = objResponse;
+							this.totalCerrados 	= this.historicoR2aData.total_cerrados;
+							this.totalPerdidos 	= this.historicoR2aData.total_perdidos;
+							break;
+						case 4:
+							this.historicoUcaData = objResponse;
+							this.totalCerrados 	= this.historicoUcaData.total_cerrados;
+							this.totalPerdidos 	= this.historicoUcaData.total_perdidos;
+							break;
+					}
+				}else{
+					switch(this.idEmpresa) {
+						case 1:
+							this.ibmData = objResponse;
+						break;
+		
+						case 2:
+							this.s3sData = objResponse;
+						break;
+		
+						case 3:
+							this.r2aData = objResponse;
+						break;
+		
+						case 4:
+							this.ucaData = objResponse;
+						break;
+					}
+				}
+				
 			},
 			getDataEmpresa(paramEmpresa) {
 				var objResponse;
-	
-				switch(paramEmpresa) {
-					case 1:
-						objResponse = this.ibmData;
-					break;
-	
-					case 2:
-						objResponse = this.s3sData;
-					break;
-	
-					case 3:
-						objResponse = this.r2aData;
-					break;
-	
-					case 4:
-						objResponse = this.ucaData;
-					break;
-				}
-	
+				if(this.flag == true)
+					switch(paramEmpresa) {
+						case 1:
+							objResponse = this.historicoIbmData;
+						break;
+		
+						case 2:
+							objResponse = this.historicoS3sData;
+						break;
+		
+						case 3:
+							objResponse = this.historicoR2aData;
+						break;
+		
+						case 4:
+							objResponse = this.historicoUcaData;
+						break;
+					}
+				else
+					switch(paramEmpresa) {
+						case 1:
+							objResponse = this.ibmData;
+						break;
+		
+						case 2:
+							objResponse = this.s3sData;
+						break;
+		
+						case 3:
+							objResponse = this.r2aData;
+						break;
+		
+						case 4:
+							objResponse = this.ucaData;
+						break;
+					}
+				
 				return objResponse;
 			},
 			removeElementData(paramOpn, paramTipo, index) {
@@ -710,7 +874,7 @@ if(document.getElementById('appCotizaciones')) {
 				var formCalidad = document.getElementById('formCalidad');
                 var formCalidadData = new FormData(formCalidad);
 				var url = host + "cotizaciones/"+this.dataCotizacion.idCotizacion+"/calidad";
-				console.log("entrando a la peticion")
+
 				await axios.post(url,formCalidadData).then((resp) => {
 					if (resp.status == 200 && resp.data.respuesta) {
 						$("#formCalidad")[0].reset();

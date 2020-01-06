@@ -68,12 +68,61 @@
 						<span>UCA</span>
 					</button>
 				</th:block>
+				<th:block>
+
+					<div class="btn-group">
+						<button type="button"  id="btnHistorico" :class="historicoActive ? activeClass : inactiveClass + ' dropdown-toggle'" data-toggle="dropdown">
+							OPN HISTORICO<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#" v-on:click="changeEmpresaHistorico(1)" class="btnHistorico">HISTORICO IB-MEXICO</a></li>
+							<li><a href="#" v-on:click="changeEmpresaHistorico(2)" class="btnHistorico">HISTORICO S3S</a></li>
+							<li><a href="#" v-on:click="changeEmpresaHistorico(3)" class="btnHistorico">HISTORICO R2A</a></li>
+							<li class="divider"></li>
+							<li><a href="#" v-on:click="changeEmpresaHistorico(4)" class="btnHistorico">HISTORICO UCA</a></li>
+						  </ul>
+					</div>
+					<!-- <button type="button" :class="historicoIbmActive ? activeClass : inactiveClass" onclick="mostrarHistorico()">
+						<i class="material-icons">history</i>
+						<span>HISTORICO</span>
+					</button> -->
+				</th:block>
 			</div>
-		</div>      	
+		</div>
+		<!--Botones de los historicos-->
+		<div class="row clearfix" style="display: none;" id="historicos">
+			<div class="col-md-12">
+				<th:block>
+					<button type="button" :class="historicoIbmActive ? activeClass : inactiveClass" v-on:click="changeEmpresaHistorico(1)">
+						<i class="material-icons">history</i>
+						<span>HISTORICO IB-MEXICO</span>
+					</button>
+				</th:block>
+				<th:block>
+					<button type="button" :class="historicoS3sActive ? activeClass : inactiveClass" v-on:click="changeEmpresaHistorico(2)">
+						<i class="material-icons">history</i>
+						<span>HISTORICO S3S</span>
+					</button>
+				</th:block>
+				<th:block>
+					<button type="button" :class="historicoR2aActive ? activeClass : inactiveClass" v-on:click="changeEmpresaHistorico(3)">
+						<i class="material-icons">history</i>
+						<span>HISTORICO R2A</span>
+					</button>
+				</th:block>
+				<th:block>
+					<button type="button" :class="historicoUcaActive ? activeClass : inactiveClass" v-on:click="changeEmpresaHistorico(4)">
+						<i class="material-icons">history</i>
+						<span>HISTORICO UCA</span>
+					</button>
+				</th:block>
+			</div>
+		</div>    	
 							
 		<div class="row clearfix opn-deck m-t-10">
+			
 			<!-- ABIERTOS -->
-			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn">
+			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn" v-if="opnData.abiertos != null" >
 				<div class="info-box bg-orange hover-zoom-effect">
 					<div class="icon">
 						<i class="material-icons">attach_money</i>
@@ -92,9 +141,9 @@
 					:token="token">
 				</opn-card>
 			</div>
-			
+
 			<!-- EN CURSO -->
-			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn">
+			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn" v-if="opnData.en_curso != null" >
 				<div class="info-box bg-light-green hover-zoom-effect">
 					<div class="icon">
 						<i class="material-icons">attach_money</i>
@@ -115,7 +164,7 @@
 			</div>
 			
 			<!-- RENTAS -->
-			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn">
+			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn" v-if="opnData.rentas != null" >
 				<div class="info-box bg-pink hover-zoom-effect">
 					<div class="icon">
 						<i class="material-icons">attach_money</i>
@@ -136,7 +185,7 @@
 			</div>
 			
 			<!-- CERRADO -->
-			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn">
+			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn" v-if="opnData.cerrados != null" >
 				<div class="info-box bg-indigo hover-zoom-effect">
 					<div class="icon">
 						<i class="material-icons">attach_money</i>
@@ -157,7 +206,7 @@
 			</div>
 			
 			<!-- PERDIDA -->
-			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn">
+			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn" v-if="(opnData.perdidos) != null" >
 				<div class="info-box bg-cyan hover-zoom-effect">
 					<div class="icon">
 						<i class="material-icons">attach_money</i>
@@ -269,7 +318,7 @@
 						<div class="row clearfix">
 							<!-- COTIZACIONES -->
 							<div v-if="modalTipo == 1">
-								<div v-if="collection.length != 0">
+								<div v-if="collection.length != null">
 									<ul class="list-group">
 										<li class="list-group-item" v-for="item in collection" :key="item.id_cotizacion">
 											<div class="row clearfix">
@@ -303,7 +352,7 @@
 
 							<!-- ACTIVIDADES -->
 							<div v-if="modalTipo == 2">
-								<div v-if="collection.length != 0">
+								<div v-if="collection.length != null">
 									<ul class="list-group"> 
 										<li class="list-group-item" v-for="item in collection" :key="item.id_actividad">								 												 				
 											<div class="row clearfix">
@@ -506,6 +555,11 @@
 
 
 		});
+
+		function mostrarHistorico() {
+   			document.getElementById('historicos').style.display = "block";
+		}
+
 	/*]]>*/
 	</script>
 </th:block>
