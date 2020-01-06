@@ -63,4 +63,33 @@ public interface IOportunidadNegocioRepository extends JpaRepository<Oportunidad
 
 	@Query("SELECT objOportunidad FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.usuarioVendedor.usuarioGrupo.idUsuarioGrupo=?1 AND objOportunidad.usuarioVendedor.eliminado!=1 AND objOportunidad.creacionFecha!=NULL AND objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus=4 AND	(CONVERT(objOportunidad.creacionFecha, DATE) BETWEEN ?2 AND ?3)")
 	public abstract List<OportunidadNegocioEntity> opnNuevasGanadas(int idArea,LocalDate ldFechaInicio, LocalDate ldFechaFin);
+
+
+	/**Consultar las oportunidades de Negocio,cerradas y perdidas de este año */
+	@Query("SELECT objOportunidad FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = ?1 AND objOportunidad.empresa.idEmpresa = ?2 AND CONVERT(objOportunidad.creacionFecha, DATE) like %?3%  AND objOportunidad.eliminado = 0 order by objOportunidad.creacionFecha DESC")
+	public abstract List<OportunidadNegocioEntity> findAllEmpresaAnio(int idOportunidadEstatus, int idEmpresa, int anio);
+
+	@Query("SELECT objOportunidad FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = ?1 AND objOportunidad.usuarioVendedor.idUsuario = ?2 AND objOportunidad.empresa.idEmpresa = ?3 AND CONVERT(objOportunidad.creacionFecha, DATE) like %?4% AND objOportunidad.eliminado = 0 order by objOportunidad.creacionFecha DESC")
+	public abstract List<OportunidadNegocioEntity> findAllEmpresaAnio(int idOportunidadEstatus, int idUsuario, int idEmpresa, int anio);
+	
+	@Query("SELECT COALESCE(SUM(objOportunidad.ingresoEstimado), 0) FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = ?1 AND objOportunidad.empresa.idEmpresa = ?2 AND CONVERT(objOportunidad.creacionFecha,DATE) LIKE %?3% AND objOportunidad.eliminado = 0")
+	public abstract BigDecimal sumIngresosEstimadosEmpresaAnio(int idOportunidadEstatus, int idEmpresa, int anio);
+	
+	@Query("SELECT COALESCE(SUM(objOportunidad.ingresoEstimado), 0) FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = ?1 AND objOportunidad.usuarioVendedor.idUsuario = ?2 AND objOportunidad.empresa.idEmpresa = ?3  AND CONVERT(objOportunidad.creacionFecha,DATE) LIKE %?4% AND objOportunidad.eliminado = 0")
+	public abstract BigDecimal sumIngresosEstimadosEmpresaAnio(int idOportunidadEstatus, int idUsuario, int idEmpresa, int anio);
+	
+
+	/**Consultar las oportunidades de Negocio,cerradas y perdidas Historicos */
+	@Query("SELECT objOportunidad FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = ?1 AND objOportunidad.empresa.idEmpresa = ?2 AND CONVERT(objOportunidad.creacionFecha, DATE) not like %?3%  AND objOportunidad.eliminado = 0 order by objOportunidad.creacionFecha DESC")
+	public abstract List<OportunidadNegocioEntity> findAllEmpresaHistorico(int idOportunidadEstatus, int idEmpresa, int anio);
+
+	@Query("SELECT objOportunidad FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = ?1 AND objOportunidad.usuarioVendedor.idUsuario = ?2 AND objOportunidad.empresa.idEmpresa = ?3 AND CONVERT(objOportunidad.creacionFecha, DATE) not like %?4% AND objOportunidad.eliminado = 0 order by objOportunidad.creacionFecha DESC")
+	public abstract List<OportunidadNegocioEntity> findAllEmpresaHistorico(int idOportunidadEstatus, int idUsuario, int idEmpresa, int anio);
+	
+	@Query("SELECT COALESCE(SUM(objOportunidad.ingresoEstimado), 0) FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = ?1 AND objOportunidad.empresa.idEmpresa = ?2 AND CONVERT(objOportunidad.creacionFecha,DATE) NOT LIKE %?3% AND objOportunidad.eliminado = 0")
+	public abstract BigDecimal sumIngresosEstimadosEmpresaHistorico(int idOportunidadEstatus, int idEmpresa, int anio);
+	
+	@Query("SELECT COALESCE(SUM(objOportunidad.ingresoEstimado), 0) FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = ?1 AND objOportunidad.usuarioVendedor.idUsuario = ?2 AND objOportunidad.empresa.idEmpresa = ?3  AND CONVERT(objOportunidad.creacionFecha,DATE) NOT LIKE %?4% AND objOportunidad.eliminado = 0")
+	public abstract BigDecimal sumIngresosEstimadosEmpresaHistorico(int idOportunidadEstatus, int idUsuario, int idEmpresa, int anio);
+	
 }
