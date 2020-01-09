@@ -33,10 +33,11 @@ public class ActivoServicioEntity {
     @Column(nullable = true, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
     private BigDecimal precioEstimado;
     
-
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "activoServicio", cascade = CascadeType.ALL)
     private List<ActivoServicioProveedorEntity> ActivoServicioProveedor_Servicio=new ArrayList<ActivoServicioProveedorEntity>();
-  
+
+    @Column(nullable = true)
+    private Boolean eliminado = false;
 
     @ManyToOne
     @JoinColumn(name = "id_tipo_activo", nullable = true)
@@ -68,6 +69,9 @@ public class ActivoServicioEntity {
 
     public BigDecimal getPrecioEstimado() {
         return precioEstimado;
+    }
+    public String getPrecioEstimadoNatural(){
+        return "$ "+ GeneralConfiguration.getInstance().getNumberFormat().format(precioEstimado);
     }
 
     public void setPrecioEstimado(BigDecimal precioEstimado) {
@@ -135,6 +139,14 @@ public class ActivoServicioEntity {
 
     public void setIdServicioActivo(int idServicioActivo) {
         this.idServicioActivo = idServicioActivo;
+    }
+
+    public Boolean getEliminado() {
+        return eliminado;
+    }
+
+    public void setEliminado(Boolean eliminado) {
+        this.eliminado = eliminado;
     }
 
 }

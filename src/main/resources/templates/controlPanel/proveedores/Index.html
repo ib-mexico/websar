@@ -178,7 +178,7 @@
 			
 			urlEdit = [[@{/controlPanel/proveedores/}]] + row.idProveedor + '/edit';
 			urlContactos = [[@{/controlPanel/proveedores/}]] + row.idProveedor + '/contactos';
-			
+			urlServicioProveedor = [[@{/controlPanel/proveedores/}]] + row.idProveedor + '/servicios';
 			if(row.eliminado) {
 			    return [
 			    	'<a title="Deshabilitado">',
@@ -198,13 +198,15 @@
 	        		'</a>',
 	        		'<a href="' + urlContactos + '" title="Contactos">',
 		        		'<i class="material-icons">contacts</i>',
-		        	'</a>',
+					'</a>',
+					'<a href="'+urlServicioProveedor+'" title="Servicios">',
+						'<i class="material-icons">work</i>',
+					'</a>',
 			        '<a href="#" class="lock-proveedor" data-proveedor="'+ row.idProveedor +'" title="Bloquear">',
 			        	'<i class="material-icons">lock_outline</i>',
 			        '</a>'
 			    ].join(' ');
 			}
-			
 		}
 		
 		$(function () {
