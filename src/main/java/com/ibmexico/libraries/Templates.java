@@ -40,7 +40,9 @@ public class Templates {
 	public static final String CONTROL_PANEL_PROVEEDORES_CONTACTOS_CREATE = PATH_CONTROL_PANEL + "proveedores/contactos/Create";
 	public static final String CONTROL_PANEL_PROVEEDORES_CONTACTOS_EDIT = PATH_CONTROL_PANEL + "proveedores/contactos/Edit";
 	
-	
+	//PROVEEDORES - SERVICIO
+	public static final String CONTROL_PANEL_PROVEEDORES_SERVICIO_INDEX= PATH_CONTROL_PANEL + "proveedores/Servicio/Index";
+
 	// COTIZACIONES
 	public static final String CONTROL_PANEL_COTIZACIONES_INDEX = PATH_CONTROL_PANEL + "cotizaciones/Index";
 	public static final String CONTROL_PANEL_COTIZACIONES_CREATE = PATH_CONTROL_PANEL + "cotizaciones/Create";
@@ -196,6 +198,9 @@ public class Templates {
 	//New Mantenimiento
 	public static final String DETALLE_INDEX=PATH_CONTROL_PANEL+"adminRecursos/DetalleMantenimiento/Index";
 	public static final String VALIDATION_MANTO=PATH_CONTROL_PANEL+"adminRecursos/DetalleMantenimiento/validacion";
+
+	//Catalogo Activo-Servicio
+	public static final String CAT_ACTIVO_SERVICIO = PATH_CONTROL_PANEL +"adminRecursos/servicio/Index";
 
 	//Nuevos Gastos
 	public static final String DETALLE_GASTO=PATH_CONTROL_PANEL+"adminRecursos/gastos/Index";
