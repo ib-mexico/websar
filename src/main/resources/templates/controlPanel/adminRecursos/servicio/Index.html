@@ -1,0 +1,260 @@
+<th:block th:fragment="body">
+	<div id="appServicio">
+		<ol class="breadcrumb breadcrumb-bg-red">
+		<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+		<li class="active"><i class="material-icons">public</i> Catalogo Servicio</li>
+	</ol>
+
+	<div class="row clearfix">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+			<div class="card">
+				<div class="header">
+					<h2>Lista de servicios para mantenimiento</h2>
+				</div>
+		
+    			<div class="body">
+                    <div class="row clearfix">
+    					<div class="col-md-4 col-md-offset-8 text-right">
+							<a href="#" role="button" class="btn bg-purple waves-effect" 
+								data-toggle="modal" data-target="#modalNuevoServicio" v-on:click="loadModal">
+								<i class="material-icons">add_circle</i> Nuevo Servicio</a>
+    					</div>
+                    </div>
+                    <div class="row clearfix"  id="dtServicioToolbar">
+                        <div class="col-xs-3 col-sm-3 col-md-3">
+    						<div class="input-group">
+   								<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupDesde'>
+                               		<input type="text" class="form-control text-center datetimepicker" id="txtTableDesde" name="txtTableDesde" placeholder="Desde..." />
+	                           	</div>
+							</div>
+    					</div>
+    					<div class="col-xs-3 col-sm-3 col-md-3">
+    						<div class="input-group">
+    							<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupHasta'>
+                               		<input type="text" class="form-control text-center datetimepicker" id="txtTableHasta" name="txtTableHasta" placeholder="Hasta..." />
+	                           	</div>
+							</div>
+    					</div>	
+                    </div>		
+
+					<!--Estructura de la tabla-->
+					<div class="table-responsive-md table-responsive-lg table-responsive-xl">
+						<table id="dtServicio" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th data-width="10%" data-field="idServicio" data-sortable="true" data-halign="left" data-align="center">Id Servicio</th>
+                                    <th data-width="10%" data-formatter="accionesFormatter" data-align="center" style="display: inline">Acciones</th>
+                                    <th data-width="10%" data-field="descripcion" data-halign="left" data-align="center" data-visible="true">Descripcion -Servicio</th>
+                                    <th data-width="10%" data-field="precioEstimado" data-halign="left" data-align="center" data-visible="true">Precio Estimado</th>
+                                    <th data-width="10%" data-field="catalogoClave" data-halign="left" data-align="center" data-visible="true">Clave</th>
+                                    <th data-width="10%" data-field="catalogoNombre" data-halign="left" data-align="center" data-visible="true"> Catalogo - Activo</th>
+                                    <th data-width="10%" data-field="creacionFecha" data-halign="left" data-align="center" data-visible="true">Creacion Fecha</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+					
+					<!--Registrar un nuevo servicio-->
+					<div class="modal fade" id="modalNuevoServicio" tabindex="-1" role="dialog">
+							<div class="modal-dialog modal-lg" role="document">
+								<div class="modal-content">
+									<form id="formServicio" v-on:submit.prevent="createServicio" method="POST" role="form" enctype="multipart/form-data">
+										<div class="modal-header">
+											<h4 class="modal-title">Registrar Servicio</h4>
+										</div>
+										<div class="modal-body">
+                                            <div class="row clearfix">
+                                                <div class="col-md-12">
+                                                    <b>Seleccione el tipo de Servicio *</b>
+                                                    <div class="input-group">
+                                                        <select name="cmbTipoActivo" class="form-control show-tick cmbTipoActivo required" v-model="nuevoServicio.idActivo" data-live-search="true">
+                                                            <option value="default" selected="selected">Seleccione un tipo - servicio</option>
+                                                            <option v-for="item in catalogo" :value="item.id_catalogo_activo" v-text="item.nombre"></option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row clearfix">
+                                                <div class="col-md-12">
+                                                    <p><b>Descripcion del Servicio*</b></p>
+                                                    <div class="form-line">
+                                                        <textarea rows="2" minlength="10" maxlength="100" name="txtDescripcion" class="form-control no-resize col-md-6" v-model="nuevoServicio.descripcion"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row cleafix">
+                                                <div class="col-md-12">
+													<p><b>Precio Estimado *</b></p>
+													<div class="input-group">
+														<span class="input-group-addon">
+														<i class="material-icons">attach_money</i>
+														</span>
+														<div class="form-line">
+															<input type="number" step="0.01" class="form-control text-primary font-weight-bold" 
+															name="txtPrecioEstimado" v-model="nuevoServicio.precioEstimado"/>
+														</div>
+													</div>
+												</div>
+                                            </div>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
+											<button type="submit" class="btn btn-primary waves-effect">Registrar</button>
+										</div>
+									</form>
+								</div>
+							</div>
+                    </div>
+                    
+                    <div class="modal fade" id="modalEditServicio" tabindex="-1" role="dialog">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <form id="formEditServicio" v-on:submit.prevent="updateServicio" method="POST" role="form" enctype="multipart/form-data">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Registrar Servicio</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row clearfix">
+                                            <div class="col-md-12">
+                                                <b>Seleccione un catalogo del Activo *</b>
+                                                <div class="input-group">
+                                                    <select name="cmbTipoActivo" class="form-control show-tick cmbTipoActivo required" v-model="editServicioData.idActivo" data-live-search="true">
+                                                        <option value="default" selected="selected">Seleccione un Catalogo - Activo</option>
+                                                        <option v-for="item in catalogo" :value="item.id_catalogo_activo" v-text="item.nombre"></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row clearfix">
+                                            <div class="col-md-12">
+                                                <p><b>Descripcion del Servicio*</b></p>
+                                                <div class="form-line">
+                                                    <textarea rows="2" minlength="10" maxlength="100" name="txtDescripcion" class="form-control no-resize col-md-6" v-model="editServicioData.descripcion"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row cleafix">
+                                            <div class="col-md-12">
+                                                <p><b>Precio Estimado *</b></p>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                    <i class="material-icons">attach_money</i>
+                                                    </span>
+                                                    <div class="form-line">
+                                                        <input type="number" step="0.01" class="form-control text-primary font-weight-bold" 
+                                                        name="txtPrecioEstimado" v-model="editServicioData.precioEstimado"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
+                                        <button type="submit" class="btn btn-primary waves-effect">Registrar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                </div>
+
+    			</div>
+			</div>
+		</div>
+    </div>
+    
+	</div>
+
+</th:block>
+<th:block th:fragment="script">
+
+    <script th:src="@{/plugins/vue/vue.js}"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script th:src="@{/assets/js/activos.js}"></script>
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+
+	<script type="application/javascript" th:inline="javascript">
+		
+		$("#dtServicio").bootstrapTable({
+			url					: [[@{/controlPanel/activoServicio/tableService}]],
+			method				: 'post',
+			contentType 		: 'application/x-www-form-urlencoded',
+			sidePagination		: "server",
+			pagination			: true,
+			showColumns			: true,
+			showToggle 			: true,
+			showRefresh 		: true,
+			search				: true,
+			showExport			: true,
+			striped				: true,
+			pageSize 			: 10,
+			sortable			: true,
+			exportTypes			: ['excel'],
+			toolbar				: "#dtServicioToolbar",
+			queryParams 		: function(params) {
+									params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
+									params['txtTableDesde'] = $("#txtTableDesde").val();
+									params['txtTableHasta'] = $("#txtTableHasta").val();
+								return params;
+			}
+		});
+
+		$(function () {
+			//Datetimepicker plugin
+		    $('.datetimepicker').bootstrapMaterialDatePicker({
+				format: 'DD/MM/YYYY',
+				lang:'es',
+		        clearButton: true,
+		        weekStart: 1,
+		        time:false
+		    });
+         });
+        
+         function eliminarServicio(idServicio) {
+            servicio.deleteServicio(idServicio);
+        }
+        function editServicio(idServicio){
+            servicio.getDataEditServicio(idServicio);
+        }
+
+	    function accionesFormatter(value, row, index) {
+			//urlDelete = [[@{/controlPanel/activos/}]] + row.id_activo_mobiliario + '/delete';
+			return [
+				'<a href="#" title="Editar Servicio" class="EditarServicio" data-toggle="modal" data-target="#modalEditServicio" onclick="editServicio('+row.idServicio+');" role="button">',
+					'<i class="material-icons edit">edit</i>',
+				'</a>',
+				'<a href="#" title="Eliminar" class="deleteGasto" onclick="eliminarServicio('+row.idServicio+')">',
+					'<i class="material-icons remove">delete</i>',
+				'</a>'
+			].join(''); 
+		}
+		 
+		function cancel(){
+			$('#formServicio')[0].reset();
+			
+			this.servicio.nuevoServicio.idServicio = '',
+            this.servicio.nuevoServicio.descripcion = '',
+            this.servicio.nuevoServicio.precioEstimado = '',
+            this.servicio.nuevoServicio.idTipoActivo = '',
+            $('.cmbTipoActivo').selectpicker('refresh');
+            
+        }
+        
+		$('#modalNuevoServicio').on('hidden.bs.modal',function(){
+			cancel();
+		});
+		$('#modalEditServicio').on('hidden.bs.modal',function(){
+			cancel();
+		});
+	</script>
+</th:block>

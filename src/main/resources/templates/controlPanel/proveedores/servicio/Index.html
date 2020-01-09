@@ -1,0 +1,203 @@
+<th:block th:fragment="style">
+	<style>
+		.v-center {
+			min-height:200px;
+			display: flex;
+			justify-content:center;
+			flex-flow: column wrap;
+		}
+	</style>
+
+</th:block>
+
+<th:block th:fragment="body">
+	<div id="appProveedorServicio">
+		<ol class="breadcrumb breadcrumb-bg-red">
+		<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+		<li class="active"><i class="material-icons">public</i> Servicios del proveedor</li>
+	</ol>
+
+	<div class="row clearfix">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+			<div class="card">
+				<div class="header">
+					<h2>LISTA DE SERVICIOS DE : <th:block th:text="${objProveedor.getProveedor()}"></th:block></h2>
+				</div>
+
+    			<div class="body">
+                    <div class="row clearfix">
+    					<div class="col-md-4 col-md-offset-8 text-right">
+							<a href="#" role="button" class="btn bg-purple waves-effect" 
+								data-toggle="modal" data-target="#modalServicioProveedor" v-on:click="getData()">
+								<i class="material-icons">add_circle</i> Asociar un nuevo servicio</a>
+    					</div>
+                    </div>
+                    <div class="row clearfix"  id="dtServicioProveedorToolbar">
+                        <div class="col-xs-3 col-sm-3 col-md-3">
+    						<div class="input-group">
+   								<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupDesde'>
+                               		<input type="text" class="form-control text-center datetimepicker" id="txtTableDesde" name="txtTableDesde" placeholder="Desde..." />
+	                           	</div>
+							</div>
+    					</div>
+    					<div class="col-xs-3 col-sm-3 col-md-3">
+    						<div class="input-group">
+    							<span class="input-group-addon">
+                                	<i class="material-icons">date_range</i>
+	                           	</span>
+	                           	<div class="form-line" id='groupHasta'>
+                               		<input type="text" class="form-control text-center datetimepicker" id="txtTableHasta" name="txtTableHasta" placeholder="Hasta..." />
+	                           	</div>
+							</div>
+    					</div>	
+                    </div>		
+
+					<!--Estructura de la tabla-->
+					<div class="table-responsive-md table-responsive-lg table-responsive-xl">
+						<table id="dtServicioProveedor" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th class="col-md-1" data-field="idServicioProveedor" data-halign="left" data-align="center">ID</th>
+									<th class="col-md-1" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+									<th class="col-md-3" data-field="proveedor" data-halign="left">Proveedor</th>
+									<th class="col-md-3" data-field="servicio" data-halign="left">Servicio</th>
+									<th class="col-md-3" data-field="tipoServicio" data-halign="left">Tipo Servicio</th>
+									<th class="col-md-2" data-field="precioEstimado" data-halign="right" data-align="right">Precio Estimado</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+					
+					<!--Relacionar un nuevo servicio al proveedor-->
+					<div class="modal fade" id="modalServicioProveedor" tabindex="-1" role="dialog">
+							<div class="modal-dialog modal-lg" role="document">
+								<div class="modal-content">
+									<form id="formServicioProveedor" v-on:submit.prevent="saveServicio" method="POST" role="form" enctype="multipart/form-data">
+										<div class="modal-header">
+											<h4 class="modal-title">Relacionar un nuevo servicio al Proveedor</h4>
+										</div>
+										<div class="modal-body">
+											<div class="row clearfix">
+												<div class="col-md-12">
+													<button type="button" class="btn btn-primary pull-right" aria-label="Left Align" v-on:click="reset()">
+														Reiniciar Opciones <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+													  </button>
+												</div>
+											</div>
+                                            <div class="row clearfix">
+                                                <div class="col-md-6">
+                                                	<h5 class="text-primary font-weight text-uppercase mb-5">servicios en curso </h5>
+													<ul class="list-group">
+														<div class="custom-control custom-checkbox"  v-for="item in proveedorServicio">
+															<input type="hidden" :name="item.idProveedor !=null  ? 'existe' : 'nuevo'" :value="item.idServicio"/>
+															<input type="checkbox" name ="txtServicioProveedor" class="custom-control-input" :id="'p'+item.idServicio"
+															:value="item.idServicio"/>
+															<li class="list-group-item d-flex justify-content-between align-items-center" :for="'p'+item.idServicio">
+															  {{item.descripcion}}
+															  <span class="badge badge-primary badge-pill">{{item.precio_estimado}}</span>
+															</li>
+														</div>
+													</ul>
+												</div>
+												<div class="col-md-6">
+													<h5 class="text-primary font-weight text-uppercase mb-5">servicios disponibles</h5>
+													<ul class="list-group">
+														<input type="text" placeholder="Buscar y seleccionar ..." class="form-control" v-model="buscarServicio"/>
+														<div class="custom-control custom-checkbox"  v-for="item in searchServicio">
+															<input type="checkbox" name ="txtServicio" class="custom-control-input" :id="item.idServicio"
+															:value="item.idServicio"/>
+															<li class="list-group-item d-flex justify-content-between align-items-center" :for="item.idServicio" v-on:click="asignar(item.idServicio)">
+															  {{item.descripcion}}
+															  <span class="badge badge-primary badge-pill">{{item.precio_estimado}}</span>
+															</li>
+														</div>
+													
+													  </ul>
+												</div>
+											</div>
+											
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
+											<button type="submit" class="btn btn-primary waves-effect">Guardar Cambios</button>
+										</div>
+									</form>
+								</div>
+							</div>
+					</div>
+					
+    			</div>
+			</div>
+		</div>
+    </div>
+    
+	</div>
+
+</th:block>
+<th:block th:fragment="script">
+
+    <script th:src="@{/plugins/vue/vue.js}"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script th:src="@{/assets/js/activos.js}"></script>
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+
+	<script type="application/javascript" th:inline="javascript">
+		var idProveedor = [[${objProveedor.getIdProveedor()}]];
+		$("#dtServicioProveedor").bootstrapTable({
+			url					: [[@{/controlPanel/proveedores/}]] + idProveedor + '/servicios/table',
+			method				: 'post',
+			contentType 		: 'application/x-www-form-urlencoded',
+			sidePagination		: "server",
+			pagination			: true,
+			showColumns			: true,
+			showToggle 			: true,
+			showRefresh 		: true,
+			search				: true,
+			showExport			: true,
+			striped				: true,
+			pageSize 			: 10,
+			sortable			: true,
+			exportTypes			: ['excel'],
+			toolbar				: "#dtServicioProveedorToolbar",
+			queryParams 		: function(params) {
+									params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
+									params['txtTableDesde'] = $("#txtTableDesde").val();
+									params['txtTableHasta'] = $("#txtTableHasta").val();
+								return params;
+							}
+			});
+
+		servicioProveedor.idProveedor = idProveedor;
+		$(function () {
+			//Datetimepicker plugin
+		    $('.datetimepicker').bootstrapMaterialDatePicker({
+				format: 'DD/MM/YYYY',
+				lang:'es',
+		        clearButton: true,
+		        weekStart: 1,
+		        time:false
+		    });
+		 });
+
+		function eliminarServicio(idServicioProveedor) {
+            servicioProveedor.deleteServicio(idServicioProveedor);
+        }
+
+	    function accionesFormatter(value, row, index) {
+			return ['<a href="#" title="Eliminar" class="eliminarServicio" onclick="eliminarServicio('+row.idServicioProveedor+')">',
+					'<i class="material-icons remove">delete</i>',
+				'</a>'
+			].join(''); 
+		}
+
+	</script>
+</th:block>
+

@@ -11,7 +11,10 @@ public enum EnumException {
 	ACTIVO_FICHEROS_ADD_FILE_003("Error de fichero de Activo","Ocurrio un error con el fichero, es posible que el archivo presente errores"),
 	ACTIVO_FICHEROS_ADD_FILE_004("Error de fichero de Activo","El fichero requiere un nombre"),
 
-
+	//ACTIVO-SERVICIO
+	ACTIVO_SERVICIO_CREATE_001("Error en la creación de servicio","El objeto Servicio no es válido. póngase en contacto con el administrador del sistema"),
+	ACTIVO_SERVICIO_DELETE_001("Error en la eliminación del servicio","El objeto servicio no es válido, póngase en contacto con el administrador del sistema"),
+	
 	//Gastos
 	GASTO_CREATE_001("Error en el registro del gasto","El objeto gasto no es válido, póngase en contacto con el administrador del sistema"),
 	GASTO_DELETE_001("Error en la eliminacion del gasto","El objeto gasto no es válido, póngase en contacto con el administrador del sistema"),

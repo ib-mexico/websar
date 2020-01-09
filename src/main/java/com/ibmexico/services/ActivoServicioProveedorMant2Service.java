@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +19,6 @@ import javax.json.JsonObjectBuilder;
 import javax.transaction.Transactional;
 
 import com.ibmexico.entities.ActivoServicioProveedorMant2Entity;
-
 import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.libraries.DataTable;
 import com.ibmexico.libraries.notifications.ApplicationException;

@@ -18,7 +18,6 @@ public interface ICatalogoActivoRepository extends JpaRepository<CatalogoActivoE
 	@Query("SELECT objCatalogo FROM CatalogoActivoEntity objCatalogo WHERE objCatalogo.eliminado=false")
 	public abstract List<CatalogoActivoEntity> listCatalogoActivo();
 	
-	
 	//TABLE
 	@Query("SELECT COUNT(objCatalogo) FROM CatalogoActivoEntity objCatalogo ")	
 	public abstract long countForDataTable();
