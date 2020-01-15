@@ -12,7 +12,24 @@
 						<span>NUEVA OPORTUNIDAD</span>
 					</a>
 				</th:block>
-				
+				<th:block>
+					<div class="btn-group">
+						<button type="button"  id="btnHistorico" :class="historicoActive ? activeClass : inactiveClass + ' dropdown-toggle'" data-toggle="dropdown">
+							OPN HISTORICO<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="#" v-on:click="changeEmpresaHistorico(1)" class="btnHistorico">HISTORICO IB-MEXICO</a></li>
+							<li><a href="#" v-on:click="changeEmpresaHistorico(2)" class="btnHistorico">HISTORICO S3S</a></li>
+							<li><a href="#" v-on:click="changeEmpresaHistorico(3)" class="btnHistorico">HISTORICO R2A</a></li>
+							<li class="divider"></li>
+							<li><a href="#" v-on:click="changeEmpresaHistorico(4)" class="btnHistorico">HISTORICO UCA</a></li>
+						  </ul>
+					</div>
+					<!-- <button type="button" :class="historicoIbmActive ? activeClass : inactiveClass" onclick="mostrarHistorico()">
+						<i class="material-icons">history</i>
+						<span>HISTORICO</span>
+					</button> -->
+				</th:block>
 				<a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/calendario'}" type="button" class="btn bg-teal waves-effect">
 					<i class="material-icons">date_range</i>
 					<span>VER CALENDARIO</span>
@@ -44,7 +61,7 @@
 				</div>
 			</div>
 		</div>
-		
+	
 		<div class="row clearfix">
 			<div class="col-md-12">    	
 				<button type="button" :class="ibmActive ? activeClass : inactiveClass" v-on:click="changeEmpresa(1)">
@@ -68,25 +85,7 @@
 						<span>UCA</span>
 					</button>
 				</th:block>
-				<th:block>
 
-					<div class="btn-group">
-						<button type="button"  id="btnHistorico" :class="historicoActive ? activeClass : inactiveClass + ' dropdown-toggle'" data-toggle="dropdown">
-							OPN HISTORICO<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-							<li><a href="#" v-on:click="changeEmpresaHistorico(1)" class="btnHistorico">HISTORICO IB-MEXICO</a></li>
-							<li><a href="#" v-on:click="changeEmpresaHistorico(2)" class="btnHistorico">HISTORICO S3S</a></li>
-							<li><a href="#" v-on:click="changeEmpresaHistorico(3)" class="btnHistorico">HISTORICO R2A</a></li>
-							<li class="divider"></li>
-							<li><a href="#" v-on:click="changeEmpresaHistorico(4)" class="btnHistorico">HISTORICO UCA</a></li>
-						  </ul>
-					</div>
-					<!-- <button type="button" :class="historicoIbmActive ? activeClass : inactiveClass" onclick="mostrarHistorico()">
-						<i class="material-icons">history</i>
-						<span>HISTORICO</span>
-					</button> -->
-				</th:block>
 			</div>
 		</div>
 		<!--Botones de los historicos-->
@@ -117,8 +116,21 @@
 					</button>
 				</th:block>
 			</div>
-		</div>    	
-							
+		</div>
+		<!--Fin de los opciones de historicos-->
+		
+		<!-- <div class="row clearfix">
+			<div class="col-md-4 col-xs-12 col-sm-6">
+				<div class="input-group">
+					<select  class="selectpicker form-control show-tick cmbEmpresas" data-live-search="true" v-model="idEmpresa">
+						<option value="default" selected="selected">Seleccione la empresa</option>
+						<option v-for="item  in empresa" :value="item.id_empresa" v-text="item.razon_social"></option>
+					</select>
+				</div>
+			</div>
+		</div> -->
+
+
 		<div class="row clearfix opn-deck m-t-10">
 			
 			<!-- ABIERTOS -->
@@ -274,7 +286,7 @@
 					</div>
 
 					<div class="col-md-8 align-right">
-						<a v-if="porTipoOpn" title="Lllamada de calidad" type="button" href="#" data-toggle="modal" :data-target="'#opnModal' + data.id_oportunidad" 
+						<a v-if="porTipoOpn" title="Llamada de calidad" type="button" href="#" data-toggle="modal" :data-target="'#opnModal' + data.id_oportunidad" 
 						v-on:click="validarCalidad ? getFicheros() : getCalidad()">
 							<i class="material-icons call" v-if="!validarCalidad">call</i>
 							<i class="material-icons library_music" style="color: green;" v-if="validarCalidad">library_music</i>
@@ -309,7 +321,7 @@
 
 	<template id="opn-modal-template">
 		<div class="modal fade" :id="'opnModal' + idOportunidad" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			<div class="modal-dialog" role="document">
+			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h4 class="modal-title">{{ titulo }}</h4>
@@ -328,6 +340,7 @@
 													<small v-if="item.maestra == 1">Cotizaci&oacute;n Maestra</small>
 													<small v-if="item.renta == 1">Cotizaci&oacute;n de Renta</small>
 													<small v-if="item.normal == 1">Cotizaci&oacute;n Normal</small>
+													<small v-if="item.boom == 1">Cotizaci&oacute;n Boom</small>
 												</div>
 											</div>								 				
 											<div class="row cleafix">
@@ -432,26 +445,26 @@
 									<div class="row clearfix">
 										<div class="col-md-12">
 												
-											<div class="col-md-4 col-sm-6 text-center">
+											<div class="col-md-3 col-sm-6 text-center">
 												<p id="nombreEmpresa"><h4 class="text-primary">Empresa :</h4></p>
 												<div class="form-group">
 													<label class="custom-control-label" for="nombreEmpresa" v-text="collection.empresa"></label>
 												</div>
 											</div>
-											<div class="col-md-4 col-sm-6 text-center">
+											<div class="col-md-3 col-sm-6 text-center">
 												<p id="nombreEncargado"><h4 class="text-primary">Encargado :</h4></p>
 												<div class="form-group">
 													<label class="custom-control-label" for="nombreEncargado" v-text="collection.usuarioEncargado"></label>
 												</div>
 											</div>
 													
-											<div class="col-md-4 col-sm-6 text-center">
+											<div class="col-md-3 col-sm-6 text-center">
 												<p id="collection.idOportunidad"><h4 class="text-primary">#OPN :</h4></p>
 												<div class="form-group">
 													<label class="custom-control-label" for="nombreOportunidad" v-text="collection.idOportunidad"></label>
 												</div>
 											</div>
-											<div class="col-md-12 col-sm-6 text-center">
+											<div class="col-md-3 col-sm-6 text-center">
 												<p id="collection.idOportunidad"><h4 class="text-primary">Nombre :</h4></p>
 												<div class="form-group">
 													<label class="custom-control-label" for="nombreOportunidad" v-text="collection.nombre"></label>
@@ -461,7 +474,7 @@
 										</div>
 									</div>
 
-									<div class="row clearfix">
+									<div class="row clearfix mt-2">
 										<div class="col-md-12">
 											<b>Fecha/Hora Inicio *</b>
 											<div class="input-group">
@@ -483,7 +496,7 @@
 																
 										<div class="col-md-12">
 											<div class="form-group">
-												<p><b>Perspectiva de la llamada*</b></p>
+												<p><b>Descripcion de la llamada de calidad*</b></p>
 												<div class="form-line">
 													<textarea rows="4" name="txtTranscripcion" class="form-control no-resize" required="required"></textarea>
 												</div>
@@ -526,7 +539,6 @@
 		$(document).ready(function() {
 			var csrftoken = [[${_csrf.token}]];			
 			app1.token = csrftoken;
-
 			//FILTRADO DE OPN
 			$('#txtBusqueda').keyup(function() {
 				$('.card').removeClass('hidden');
@@ -553,8 +565,11 @@
 			});
 			// *****************************************************************
 
-
 		});
+
+		// $('select').on('change', function() {
+		// 	  alert( this.value );
+		// });
 
 		function mostrarHistorico() {
    			document.getElementById('historicos').style.display = "block";

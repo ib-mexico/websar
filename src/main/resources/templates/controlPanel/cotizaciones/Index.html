@@ -17,13 +17,13 @@
 					</div>
 					
 					<div class="body">
-						<div class="row clearfix" th:if="${rolNuevaCotizacion}">
+						<!-- <div class="row clearfix" th:if="${rolNuevaCotizacion}">
 							<div class="col-md-4 col-md-offset-8 text-right">
 								<a href="#" role="button" class="btn bg-purple waves-effect" data-toggle="modal" data-target="#modalNuevaCotizacion" v-on:click="loadModal">
 									<i class="material-icons">add_circle</i> Nueva Cotizaci&oacute;n
 								</a>
 							</div>
-						</div>
+						</div> -->
 					
 						<div class="row clearfix" id="dtCotizacionesToolBar" data-toolbar-align="left">
 							<div class="col-xs-3 col-sm-3 col-md-3">
@@ -253,23 +253,26 @@
 							</div>
 							
 							<div class="row clearfix">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<input name="rdTipoCotizacion" type="radio" id="rdMaster" class="with-gap radio-col-red" value="master" v-model="newCotizacion.rdTipoCotizacion" />
 									<label for="rdMaster"><strong>Maestra</strong> (Ej. Cotizaci&oacute;n principal de una p&oacute;liza)</label>
 								</div>
-							</div>
 
-							<div class="row clearfix">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<input name="rdTipoCotizacion" type="radio" id="rdRenta" class="with-gap radio-col-purple" value="renta" v-model="newCotizacion.rdTipoCotizacion" />
 									<label for="rdRenta"><strong>Renta</strong> (Ej. Cotizaci&oacute;n mensual de una p&oacute;liza)</label>
 								</div>
 							</div>
 
 							<div class="row clearfix">
-								<div class="col-md-8">
+								<div class="col-md-6">
 									<input name="rdTipoCotizacion" type="radio" id="rdNormal" class="with-gap radio-col-blue" value="normal" checked="checked" v-model="newCotizacion.rdTipoCotizacion" />
 									<label for="rdNormal"><strong>Normal</strong> (Ej. Cualquier tipo de cotizaci&oacute;n que no sea p&oacute;liza)</label>
+								</div>
+							
+								<div class="col-md-6">
+									<input type="radio" name="rdTipoCotizacion" id="rdBoom" class="with-gap radio-col-red" value="boom" v-model="newCotizacion.rdTipoCotizacion" />
+									<label for="rdBoom"><strong>Boom</strong>(Ej. Cotizaci&oacute;n mayor. Principal de una p&oacute;liza)</label>
 								</div>
 							</div>
 							
@@ -466,7 +469,7 @@
 											
 								<div class="col-md-12">
 									<div class="form-group">
-										<p><b>Perspectiva de la llamada*</b></p>
+										<p><b>Descripción de la llamada*</b></p>
 										<div class="form-line">
 											<textarea rows="4" name="txtTranscripcion" class="form-control no-resize" required="required"></textarea>
 										</div>
@@ -476,7 +479,7 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-danger waves-effect text-uppercase" data-dismiss="modal">Cancelar</button>
-							<button type="submit" class="btn btn-primary waves-effect text-uppercase">Guardar registro</button>
+							<button type="submit" class="btn btn-primary waves-effect text-uppercase">Guardar llamada</button>
 						</div>		
 					</form>
 				</div>

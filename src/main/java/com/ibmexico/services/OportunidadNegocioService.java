@@ -281,6 +281,7 @@ public class OportunidadNegocioService {
 				.add("id_cotizacion", itemCotizacion.getIdCotizacion())
 				.add("folio", itemCotizacion.getFolio())
 				.add("maestra", itemCotizacion.isMaestra())
+				.add("boom", itemCotizacion.isBoom())
 				.add("renta", itemCotizacion.isRenta())
 				.add("normal", itemCotizacion.isNormal())
 				.add("usuario", itemCotizacion.getUsuario().getAliasCorreo())

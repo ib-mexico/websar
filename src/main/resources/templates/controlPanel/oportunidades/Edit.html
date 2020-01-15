@@ -124,11 +124,11 @@
 			                            	<option th:unless="${objOportunidad.cliente.idCliente == itemCliente.idCliente}"  th:value="${itemCliente.idCliente}" th:text="${itemCliente.cliente}"></option>
 		                            	</th:block> 
 		                       		</select>
-		                       		<span class="input-group-addon">
+		                       		<!-- <span class="input-group-addon">
 		                       			<a href="#" data-toggle="modal" data-target="#clienteModal">		                       			
 	                                        <i class="material-icons">add_circle</i>
 		                       			</a>
-                                    </span>
+                                    </span> -->
 								</div>	                           
 	                        </div>
 	                        
@@ -156,15 +156,23 @@
 		                            		<option th:unless="${itemContacto.idClienteContacto == objOportunidad.clienteContacto.idClienteContacto}"  th:value="${itemContacto.idClienteContacto}" th:text="${itemContacto.contacto}"></option>                            	
 		                            	</th:block>
 		                            </select>
-		                            <span class="input-group-addon">
+		                            <!-- <span class="input-group-addon">
 		                       			<a href="#" data-toggle="modal" data-target="#contactoModal">		                       			
 	                                        <i class="material-icons">add_circle</i>
 		                       			</a>
-                                    </span>
+                                    </span> -->
 	                            </div>
 	                        </div>
-	                        
-	                        <div class="col-md-6"></div>							
+							<div class="col-md-6">
+	                        	<div class="form-group">
+	                        		<b>Prioridad</b>	                        		
+	                                <div class="m-t-10">
+	                                	<div class='starrr'></div>
+	                                	<input type="hidden" id="txtPrioridad" name="txtPrioridad" th:value="${objOportunidad.prioridad}" />
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <!-- <div class="col-md-6"></div>							 -->
 						</div>
 						
 						<br />
@@ -180,15 +188,6 @@
 	                       		</select>
 	                        </div>
 	                        
-	                        <div class="col-md-6">
-	                        	<div class="form-group">
-	                        		<b>Prioridad</b>	                        		
-	                                <div class="m-t-10">
-	                                	<div class='starrr'></div>
-	                                	<input type="hidden" id="txtPrioridad" name="txtPrioridad" th:value="${objOportunidad.prioridad}" />
-	                                </div>
-	                            </div>
-	                        </div>
 						</div>						
 					
 						<div class="row clearfix">

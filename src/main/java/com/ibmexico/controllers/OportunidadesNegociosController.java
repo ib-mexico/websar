@@ -171,8 +171,10 @@ public class OportunidadesNegociosController {
 		JsonObject dataRentas = null;
 		JsonObject dataCerrados = null;
 		JsonObject dataPerdidos = null;
+		JsonObject dataEmpresa = null;
 				
 		try {
+			dataEmpresa = empresaService.jsonEmpresas();
 			if(objEmpresa != null) {				
 				dataAbiertos = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(1, objEmpresa.getIdEmpresa());
 				dataEnCurso	 = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(2, objEmpresa.getIdEmpresa());
@@ -198,7 +200,8 @@ public class OportunidadesNegociosController {
 					.add("dataEnCurso", dataEnCurso)
 					.add("dataRentas", dataRentas)
 					.add("dataCerrados", dataCerrados)
-					.add("dataPerdidos", dataPerdidos);
+					.add("dataPerdidos", dataPerdidos)
+					.add("dataEmpresa", dataEmpresa);
 										
 		return jsonReturn.build().toString();
 	}
