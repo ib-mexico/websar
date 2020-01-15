@@ -41,7 +41,7 @@ public class Templates {
 	public static final String CONTROL_PANEL_PROVEEDORES_CONTACTOS_EDIT = PATH_CONTROL_PANEL + "proveedores/contactos/Edit";
 	
 	//PROVEEDORES - SERVICIO
-	public static final String CONTROL_PANEL_PROVEEDORES_SERVICIO_INDEX= PATH_CONTROL_PANEL + "proveedores/Servicio/Index";
+	public static final String CONTROL_PANEL_PROVEEDORES_SERVICIO_INDEX= PATH_CONTROL_PANEL + "proveedores/servicio/Index";
 
 	// COTIZACIONES
 	public static final String CONTROL_PANEL_COTIZACIONES_INDEX = PATH_CONTROL_PANEL + "cotizaciones/Index";

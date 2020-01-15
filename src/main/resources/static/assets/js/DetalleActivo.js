@@ -55,7 +55,8 @@ if (document.getElementById('appDetalle')) {
             estatus:[],
             changeestatus:'',
             pagos:[],
-            pagados:''
+            pagados:'',
+            buscarServicio: ''
         },
         methods: {
             getFormData() {
@@ -192,29 +193,40 @@ if (document.getElementById('appDetalle')) {
                 return this.editproveedorServicio;
             },
 
-            async ObtenerIdServicio(index) {
-                if ($('#' + index + '').is(':checked') == true) {
-                    valor = $('#' + index + '').val();
+            async ObtenerIdServicio(idService) {
+                index = this.servicio.findIndex(x => x.id_servicio == idService);
+                if ($('#' + idService + '').is(':checked') == true) {
+                    valor = $('#' + idService + '').val();
                     // idTipoActivo=$('select').find('option:selected').val();
                     idTipoActivo = $("select#cmbCatalogo option:checked").val();
-                    this.proveedorServicio = await this.getProveedorServicio(idTipoActivo, index);
+
+                    detalleActivo.$set(detalleActivo.servicio[index],'check',true);
+
+                    this.proveedorServicio = await this.getProveedorServicio(idTipoActivo, idService);
                     if (this.proveedorServicio.length > 0) {
                         this.datafiltrado.push(this.proveedorServicio);
                     }
                     /*Add gasto aproximado if checked service */
                     this.servicio.forEach(item => {
-                        if(index==item.id_servicio){
+                        if(idService==item.id_servicio){
                             this.gastoAproximado.push({"precio":item.precio_estimado,"id_servicio":item.id_servicio});
                         }
                     });
                 } else
-                if ($('#' + index + '').is(':checked') == false) {
+                if ($('#' + idService + '').is(':checked') == false) {
+                    // Uncheck
+                    if(this.servicio[index].check != undefined){
+                        this.servicio[index].check = false;
+                    }else{
+                        detalleActivo.$set(detalleActivo.servicio[index],'check',false);    
+                    }
+
                     for (i = 0; i < this.datafiltrado.length; i++) {
                         capacidad = this.datafiltrado[i].length;
                         if (this.datafiltrado[i].length != null && this.datafiltrado[i]) {
                             for (j = 0; j < capacidad; j++) {
                                 tamanio = this.datafiltrado[i].length;
-                                if (this.datafiltrado[i][j].id_servicio === index) {
+                                if (this.datafiltrado[i][j].id_servicio === idService) {
                                     this.datafiltrado.splice(i, 1);
                                 }
                                 j = tamanio;
@@ -223,38 +235,51 @@ if (document.getElementById('appDetalle')) {
                     }
                     /*Delete gasto if unchecked */
                     for (var i = 0; i < this.gastoAproximado.length; i++) {
-                        if (this.gastoAproximado[i].id_servicio===index) {
+                        if (this.gastoAproximado[i].id_servicio===idService) {
                             this.gastoAproximado.splice(i,1);
                         }
                     }
 
                 }
             },
-            async ObtenerIdServicioedit(index) {
-                if ($('#serv' + index + '').is(':checked') == true) {
-                    valor = $('#' + index + '').val();
+            async ObtenerIdServicioedit(idServicio) {
+                index = this.servicio.findIndex(x => x.id_servicio == idServicio);
+                // console.log($('#serv'+idServicio).prop('checked'));
+                // console.log($('#serv' + idServicio + '').is(':checked') == true)
+                if ($('#serv' + idServicio + '').prop('checked')) {
+
+                    detalleActivo.$set(detalleActivo.servicio[index],'check',true);
+
+                    valor = $('#' + idServicio + '').val();
                     idTipoActivo = detalleActivo.editDetalleManto.id_tipo_activo;
-                    this.editproveedorServicio = await this.getProveedorServicioedit(idTipoActivo, index);
+                    this.editproveedorServicio = await this.getProveedorServicioedit(idTipoActivo, idServicio);
                     if (this.editproveedorServicio.length > 0) {
                         this.editdatafiltrado.push(this.editproveedorServicio);
                     }
                     
                     /*Add gasto aproximado if checked service */
                     this.servicio.forEach(item => {
-                        if(index==item.id_servicio){
+                        if(idServicio==item.id_servicio){
                             this.gastoAproximado.push({"precio":item.precio_estimado,"id_servicio":item.id_servicio});
                         }
                     });
 
-
                 } else
-                if ($('#serv' + index + '').is(':checked') == false) {
+                if (!$('#serv' + idServicio + '').prop('checked')) {
+
+                    // Uncheck
+                    if(this.servicio[index].check != undefined){
+                        this.servicio[index].check = false;
+                    }else{
+                        detalleActivo.$set(detalleActivo.servicio[index],'check',false);
+                    }
+
                     for (i = 0; i < this.editdatafiltrado.length; i++) {
                         capacidad = this.editdatafiltrado[i].length;
                         if (this.editdatafiltrado[i].length != null && this.editdatafiltrado[i]) {
                             for (j = 0; j < capacidad; j++) {
                                 tamanio = this.editdatafiltrado[i].length;
-                                if (this.editdatafiltrado[i][j].id_servicio === index) {
+                                if (this.editdatafiltrado[i][j].id_servicio === idServicio) {
                                     this.editdatafiltrado.splice(i, 1);
                                 }
                                 j = tamanio;
@@ -264,7 +289,7 @@ if (document.getElementById('appDetalle')) {
                     //end for
                     /*Delete gasto if unchecked */
                     for (var i = 0; i < this.gastoAproximado.length; i++) {
-                        if (this.gastoAproximado[i].id_servicio===index) {
+                        if (this.gastoAproximado[i].id_servicio === idServicio) {
                             this.gastoAproximado.splice(i,1);
                         }
                     }
@@ -281,19 +306,19 @@ if (document.getElementById('appDetalle')) {
                             $("#formActivoManto")[0].reset();
                             $("#modalNuevoActivoManto").modal("hide");
                             this.newDetalle.id_activo_mobiliario = '';
-                                this.newDetalle.id_catalogo = '';
-                                this.newDetalle.observaciones = '';
-                                this.newDetalle.titulo = '';
-                                this.newDetalle.urlfichero = '';
-                                //Edicion ActivoManto.
-                                this.recursoActivo = [];
-                                this.servicio = [];
-                                this.fichero = [];
-                                this.gastoAproximado = [];
-                                this.proveedorServicio = [];
-                                this.datafiltrado = [];
-                                this.urlcompletofichero='';
-                                swal(response.data.titulo, response.data.mensaje, "success");
+                            this.newDetalle.id_catalogo = '';
+                            this.newDetalle.observaciones = '';
+                            this.newDetalle.titulo = '';
+                            this.newDetalle.urlfichero = '';
+                            //Edicion ActivoManto.
+                            this.recursoActivo = [];
+                            this.servicio = [];
+                            this.fichero = [];
+                            this.gastoAproximado = [];
+                            this.proveedorServicio = [];
+                            this.datafiltrado = [];
+                            this.urlcompletofichero='';
+                            swal(response.data.titulo, response.data.mensaje, "success");
                             $("#dtDetalle").bootstrapTable('refresh');
                         } else {
                             console.log(response);
@@ -310,7 +335,7 @@ if (document.getElementById('appDetalle')) {
             /**Comprobar value de los checks */
             fillcheck() {
                 if (!this.servicio.isNaN) {
-                    if(this.checkdatafiltrado.length>0){
+                    if(this.checkdatafiltrado.length > 0){
                         for (x = 0; x < this.checkdatafiltrado.length; x++) {
                             this.findCheckedvalidator(this.checkdatafiltrado[x][0].id_servicio);
                         }
@@ -323,17 +348,32 @@ if (document.getElementById('appDetalle')) {
                 }
             },
             findChecked(idServicio) {
-                if ($('#serv' + idServicio).val() == idServicio) {
-                    document.getElementById('serv' + idServicio).checked = true;
-                    // $('#serv'+idServicio).prop("checked",true);
-                    
-                    /**En este apartado se necesita hacer el calculo del gasto aproximado en modo edición */
-                    this.servicio.forEach(item => {
-                        if(idServicio==item.id_servicio){
-                            this.gastoAproximado.push({"precio":item.precio_estimado,"id_servicio":item.id_servicio});
-                        }
-                    });
+
+                var cadenaID = $('#serv'+idServicio).attr('id');
+                if(cadenaID != undefined){
+                    let arrId = cadenaID.split('serv');
+                    index = this.servicio.findIndex(x => x.id_servicio == idServicio);
+                    //console.log($('#serv'+idServicio).val(),"valor del check que pasa por alli");
+                    // if ($('#serv' + idServicio).val() == idServicio) {
+                    if ( parseInt(arrId[1]) === idServicio) {
+                        console.log("prueba que si encontrado algo");
+
+
+                        detalleActivo.$set(detalleActivo.servicio[index],'check', true );
+                        detalleActivo.$set(detalleActivo.servicio[index],'disabled', true );
+                        // document.getElementById('serv' + idServicio).checked = true;
+                        // $('#serv'+idServicio).prop("checked",true);
+                        
+                        /**En este apartado se necesita hacer el calculo del gasto aproximado en modo edición */
+                        this.servicio.forEach(item => {
+                            if(idServicio==item.id_servicio){
+                                this.gastoAproximado.push({"precio":item.precio_estimado,"id_servicio":item.id_servicio});
+                            }
+                        });
+                    }
                 }
+                // console.log(arrId[1]);
+
             },
             findCheckedvalidator(idServicio) {
                 if ($('#validator' + idServicio).val() == idServicio) {
@@ -590,6 +630,12 @@ if (document.getElementById('appDetalle')) {
             },
 
 
-        }
+        },
+        computed: {
+            searchServicio: function () {
+                return this.servicio.filter((item) => item.descripcion.includes(this.buscarServicio));
+            }
+            
+        },
     });
 }

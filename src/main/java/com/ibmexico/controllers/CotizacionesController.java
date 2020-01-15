@@ -293,6 +293,8 @@ public class CotizacionesController {
 				objCotizacion.setMaestra(true);
 			} else if(rdTipoCotizacion.equals("renta")) {
 				objCotizacion.setRenta(true);
+			}else if(rdTipoCotizacion.equals("boom")){
+				objCotizacion.setBoom(true);
 			} else {
 				objCotizacion.setNormal(true);
 			}
@@ -422,6 +424,8 @@ public class CotizacionesController {
 				objCotizacion.setMaestra(true);
 			} else if(rdTipoCotizacion.equals("renta")) {
 				objCotizacion.setRenta(true);
+			} else if(rdTipoCotizacion.equals("boom")){
+				objCotizacion.setBoom(true);
 			} else {
 				objCotizacion.setNormal(true);
 			}
@@ -574,22 +578,29 @@ public class CotizacionesController {
 				} else {
 					objCotizacion.setImplementacion(false);
 				}
-				
-				
+						
 				
 				//TIPO DE COTIZACION
 				if(rdTipoCotizacion.equals("master")) {
 					objCotizacion.setMaestra(true);
 					objCotizacion.setRenta(false);
 					objCotizacion.setNormal(false);
+					objCotizacion.setBoom(false);
 				} else if(rdTipoCotizacion.equals("renta")) {
 					objCotizacion.setRenta(true);
 					objCotizacion.setMaestra(false);
+					objCotizacion.setNormal(false);
+					objCotizacion.setBoom(false);
+				} else if(rdTipoCotizacion.equals("boom")){
+					objCotizacion.setBoom(true);
+					objCotizacion.setMaestra(false);
+					objCotizacion.setRenta(false);
 					objCotizacion.setNormal(false);
 				} else {
 					objCotizacion.setNormal(true);
 					objCotizacion.setMaestra(false);
 					objCotizacion.setRenta(false);
+					objCotizacion.setBoom(false);
 				}
 				
 				cotizacionService.update(objCotizacion);
@@ -787,7 +798,7 @@ public class CotizacionesController {
 						objCotizacion.setFacturaNumero(txtFacturaNumero);			
 						
 						//VALIDAMOS QUE LA COTIZACION NO SEA UNA RENTA
-						if(objCotizacion.isMaestra() || objCotizacion.isNormal()) {						
+						if(objCotizacion.isMaestra() || objCotizacion.isNormal() || objCotizacion.isBoom() ) {						
 							CotizacionUsuarioQuotaEntity objQuota = new CotizacionUsuarioQuotaEntity();
 							objQuota.setCotizacion(objCotizacion);
 							
@@ -890,6 +901,7 @@ public class CotizacionesController {
 				objCotizacionNueva.setMaestra(objCotizacion.isMaestra());
 				objCotizacionNueva.setRenta(objCotizacion.isRenta());
 				objCotizacionNueva.setNormal(objCotizacion.isNormal());
+				objCotizacionNueva.setBoom(objCotizacion.isBoom());
 				
 				if(objCotizacion.getOportunidadNegocio() != null) {
 					objCotizacionNueva.setOportunidadNegocio(objCotizacion.getOportunidadNegocio());

@@ -70,11 +70,11 @@
 		                            	<option value="default" selected="selected">Selecciona un Cliente...</option>
 		                            	<option th:each="itemCliente : ${lstClientes}" th:value="${itemCliente.idCliente}" th:text="${itemCliente.cliente}"></option>
 		                       		</select>
-		                       		<span class="input-group-addon">
+		                       		<!-- <span class="input-group-addon">
 		                       			<a href="#" data-toggle="modal" data-target="#clienteModal">		                       			
 	                                        <i class="material-icons">add_circle</i>
 		                       			</a>
-                                    </span>
+                                    </span> -->
 								</div>	                           
 	                        </div>
 	                        
@@ -84,11 +84,11 @@
 		                            <select class="form-control show-tick" name="cmbClienteContacto" id="cmbClienteContacto" data-live-search="true" >
 		                            	<option value="default" selected="selected">Selecciona un Contacto...</option>
 		                            </select>
-		                            <span class="input-group-addon">
+		                            <!-- <span class="input-group-addon">
 		                       			<a href="#" data-toggle="modal" data-target="#contactoModal">		                       			
 	                                        <i class="material-icons">add_circle</i>
 		                       			</a>
-                                    </span>
+                                    </span> -->
 	                            </div>
 	                        </div>
 						</div>
@@ -206,7 +206,10 @@
                                 <label for="rdRenta"><strong>Renta</strong> (Ej. Cotizaci&oacute;n mensual de una p&oacute;liza)</label>
                                 
                                 <input name="rdTipoCotizacion" type="radio" id="rdNormal" class="with-gap radio-col-blue" value="normal" checked="checked" />
-                                <label for="rdNormal"><strong>Normal</strong> (Ej. Cualquier tipo de cotizaci&oacute;n que no sea p&oacute;liza)</label>
+								<label for="rdNormal"><strong>Normal</strong> (Ej. Cualquier tipo de cotizaci&oacute;n que no sea p&oacute;liza)</label>
+								
+								<input name="rdTipoCotizacion" type="radio" id="rdBoom" class="with-gap radio-col-red" value="boom" />
+                                <label for="rdBoom"><strong>Boom</strong> (Ej. Cotizaci&oacute;n mayor. Principal de una p&oacute;liza)</label>
 	                        </div>
 						</div>
 						

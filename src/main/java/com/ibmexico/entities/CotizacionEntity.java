@@ -132,7 +132,10 @@ public class CotizacionEntity {
 	
 	@Column
 	private boolean boolMaestra = false;
-	
+
+	@Column
+	private boolean boolBoom = false;
+		
 	@Column
 	private boolean boolRenta = false;
 	
@@ -549,6 +552,14 @@ public class CotizacionEntity {
 
 	public void setMaestra(boolean boolMaestra) {
 		this.boolMaestra = boolMaestra;
+	}
+
+	public boolean isBoom(){
+		return boolBoom;
+	}
+
+	public void setBoom(boolean boolBoom){
+		this.boolBoom = boolBoom;
 	}
 	
 	public boolean isRenta() {

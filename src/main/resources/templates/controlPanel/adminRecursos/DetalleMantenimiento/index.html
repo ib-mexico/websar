@@ -1,4 +1,22 @@
-k<th:block th:fragment="body">
+
+<th:block th:fragment="style">
+	<style>
+
+		.table-fixed .servicios {
+			height: 230px;
+			overflow-y: scroll;
+			display: table-caption;
+		}
+		.table-fixed .titulo{
+			display: table-caption;
+		}
+
+	</style>
+
+</th:block>
+
+
+<th:block th:fragment="body">
 	<div id="appDetalle">
 		<ol class="breadcrumb breadcrumb-bg-red">
 		<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
@@ -103,25 +121,32 @@ k<th:block th:fragment="body">
 													</div>
 												</div>
 											</div>
-											<div id="table">
+											<!-- <div id="table">
 												<bootstrap-table :columns="columns" :data="data" :options="options"></bootstrap-table>
-											</div>
-
+											</div> -->
 											<div class="row clearfix">
-												<table class="table table-borderless table-responsive table-sm">
-													<thead class="bg-primary">
+												<div class="col-md-4 pull-right">
+													<div class="form-group has-search">
+														<span class="fa fa-search form-control-feedback"></span>
+														<input type="text" class="form-control text-primary" placeholder="Buscar servicio..." v-model="buscarServicio"/>
+													</div>
+												</div>
+											</div>
+											<div class="row clearfix">
+												<table class="table table-fixed table-borderless table-responsive table-sm">
+													<thead class="bg-primary titulo">
 													  <tr>
 														<th scope="col" class="col-md-2">Seleccionar</th>
 														<th scope="col" class="col-md-3">Servicio</th>
 														<th scope="col" class="col-md-2">Precio Estimado</th>
 													  </tr>
 													</thead>
-													<tbody>
-													  <tr v-for="service in  servicio">
+													<tbody class="servicios">
+													  <tr v-for="service in  searchServicio">
 														<td>
 														  <div class="custom-control custom-checkbox">
 															  <input type="checkbox" name ="txtServicio" class="custom-control-input checkServicio" :id="service.id_servicio"
-															    :precio_estimado="service.precio_estimado" :value="service.id_servicio" 
+															    :precio_estimado="service.precio_estimado" v-model="service.check"
 															   v-on:click="ObtenerIdServicio(service.id_servicio)"/>
 															  <label class="custom-control-label" :for="service.id_servicio"></label>
 														  </div>
@@ -129,22 +154,25 @@ k<th:block th:fragment="body">
 														<td>{{service.descripcion}}</td>
 														<td>$ {{service.precio_estimado}}</td>
 													  </tr>
-													  <tr class="table-success">
-														  <th colspan="2" class="text-center">Gasto total aproximado</th>
-														<td>
-															<div class="input-group">
-																<span class="input-group-addon">
-																	<i class="material-icons">attach_money</i>
-																</span>
-																<div class="form-line">
-																	<input type="text" class="form-control text-primary font-weight-bold" 
-																		name="txtTotalgasto" readonly="true"
-																		:value="totalgasto"/>
-																</div>
-															</div>		
-														</td>
-													  </tr>
+													  <!-- <tr class="table-success">
+														  //antes  estaba el tr de gasto total aproximado
+													  </tr> -->
 													</tbody>
+													<tr class="table-success">
+														<th colspan="2" class="text-center">Gasto total aproximado</th>
+													  <td>
+														  <div class="input-group">
+															  <span class="input-group-addon">
+																  <i class="material-icons">attach_money</i>
+															  </span>
+															  <div class="form-line">
+																  <input type="text" class="form-control text-primary font-weight-bold" 
+																	  name="txtTotalgasto" readonly="true"
+																	  :value="totalgasto"/>
+															  </div>
+														  </div>		
+													  </td>
+													</tr>
 												  </table>
 											</div>
 										<div v-if="datafiltrado.length!==null">
@@ -239,44 +267,54 @@ k<th:block th:fragment="body">
 												</div>
 											</div>
 										</div>
+
 										<div class="row clearfix">
-											<table class="table table-borderless table-responsive table-sm">
-												<thead class="bg-primary">
+											<div class="col-md-4 pull-right">
+												<div class="form-group has-search">
+													<span class="fa fa-search form-control-feedback"></span>
+													<input type="text" class="form-control text-primary" placeholder="Buscar servicio..." v-model="buscarServicio"/>
+												</div>
+											</div>
+										</div>
+
+										<div class="row clearfix">
+											<table class="table  table-fixed table-borderless table-responsive table-sm">
+												<thead class="bg-primary titulo">
 												  <tr>
 													<th scope="col" class="col-md-2">Seleccionar</th>
 													<th scope="col" class="col-md-3">Servicio</th>
 													<th scope="col" class="col-md-2">Precio Estimado</th>
 												  </tr>
 												</thead>
-												<tbody>
-												  <tr v-for="service in servicio">
+												<tbody class="servicios">
+												  <tr v-for="service in searchServicio">
 													<td>
 													  <div class="custom-control custom-checkbox">
 														  <input type="checkbox" name ="txtServicio" class="custom-control-input checkServicio" :id="'serv'+service.id_servicio"
-															:value="service.id_servicio" v-on:click="ObtenerIdServicioedit(service.id_servicio)"/>
+															v-model="service.check" v-on:click="ObtenerIdServicioedit(service.id_servicio)" :disabled="service.disabled"/>
 														  <label class="custom-control-label" :for="'serv'+service.id_servicio"></label>
 													  </div>
 													</td>
-													<td>{{service.descripcion}}</td>
-													<td>$ {{service.precio_estimado}}</td>
+													<td v-text="service.descripcion"></td>
+													<td v-text="'$ ' + service.precio_estimado"></td>
 												  </tr>
 												  
-												<tr class="table-success">
-													<th colspan="2" class="text-center">Gasto total aproximado</th>
-													<td>
-														<div class="input-group">
-															<span class="input-group-addon">
-																<i class="material-icons">attach_money</i>
-															</span>
-															<div class="form-line">
-																<input type="text" class="form-control text-primary font-weight-bold" 
-																	name="txtTotalgasto" readonly="true"
-																	:value="totalgasto"/>
-															</div>
-														</div>		
-													</td>
-												</tr>
 												</tbody>
+													<tr class="table-success col-md-offset-6 pull-right">
+														<th colspan="2" class="text-center">Gasto total aproximado</th>
+														<td>
+															<div class="input-group">
+																<span class="input-group-addon">
+																	<i class="material-icons">attach_money</i>
+																</span>
+																<div class="form-line">
+																	<input type="text" class="form-control text-primary font-weight-bold" 
+																		name="txtTotalgasto" readonly="true"
+																		:value="totalgasto"/>
+																</div>
+															</div>		
+														</td>
+													</tr>
 											  </table>
 										</div>
 									
@@ -416,7 +454,7 @@ k<th:block th:fragment="body">
 													</td>
 													<td>
 														<label class="text-primary" v-if="(!pagos[index].pagado)">
-															<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Comprobante de pago" >cloud_upload</i><input type="file" id="fileProveedor"
+															<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Comprobante de pago" >cloud_upload</i><input type="file"
 															name="ComprobantePago" multiple="multiple" style="display: none;" accept="application/pdf, .png, .jpg"/>
 														</label>
 														<a :href="'http://localhost:8080/WebSar/ficheros/Comprobantes/'+pagos[index].url_comprobante" target="blank" v-if="(pagos[index].url_comprobante!='')" title="Ver voucher">
@@ -493,12 +531,11 @@ k<th:block th:fragment="body">
 									</div>
 								</div>		
 							</td>
-							<td><textarea name="txtObserProv" id="txtObserProv" cols="40" rows="2" class="form-control" style="overflow: auto;resize: none;"></textarea></td>
+							<td><textarea name="txtObserProv" cols="40" rows="2" class="form-control" style="overflow: auto;resize: none;"></textarea></td>
 							<td>
 								<label class="text-primary">
 									<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Cotizacion" >cloud_upload</i>
-									<input type="file" id="fileProveedor"
-									name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .png, .jpg"/>
+									<input type="file"	name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .png, .jpg"/>
 								</label>
 								<!-- <input type="file" id="fileProveedor" name="ficheroCotizacion" class="custom-file-input" multiple="multiple"/> -->
 								<a href="#" title="Eliminar Proveedor" class="EliminarActivo" onclick="deleteRow(this)"><i class="material-icons delete">delete</i></a>
@@ -544,11 +581,10 @@ k<th:block th:fragment="body">
 										</div>
 									</div>		
 								</td>
-								<td><textarea name="txtObserProv" id="txtObserProv" cols="30" rows="2" class="form-control" :value="proveedor.observaciones" style="overflow: auto;resize: none;"></textarea></td>
+								<td><textarea name="txtObserProv" cols="30" rows="2" class="form-control" :value="proveedor.observaciones" style="overflow: auto;resize: none;"></textarea></td>
 								<td>
 									<label class="text-primary">
-										<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Cotizacion" >cloud_upload</i><input type="file" id="fileProveedor"
-										name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .png, .jpg"/>
+										<i class="material-icons cloud_upload" data-toggle="tooltip" data-placement="top" title="Subir Cotizacion" >cloud_upload</i><input type="file" name="ficheroCotizacion" multiple="multiple" style="display: none;" accept="application/pdf, .png, .jpg"/>
 									</label>
 									
 									<a :href="'http://localhost:8080/WebSar/ficheros/ProveedorCotizacion/'+proveedor.url_cotizacion" target="blank" v-if="(proveedor.url_cotizacion!='')" title="Ver cotización">

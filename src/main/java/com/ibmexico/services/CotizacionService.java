@@ -407,7 +407,7 @@ public class CotizacionService {
 	public void recalcularCotizacion(CotizacionEntity objCotizacion) {
 		if( objCotizacion != null) {
 			//VALIDAMOS QUE LA COTIZACION NO SE UNA RENTA
-			if(objCotizacion.isMaestra() || objCotizacion.isNormal()) {
+			if(objCotizacion.isMaestra() || objCotizacion.isNormal() || objCotizacion.isBoom() ) {
 				
 				List<CotizacionUsuarioQuotaEntity> lstCuotas = cotizacionUsuarioQuotaService.listCotizacionQuotas(objCotizacion);
 				
@@ -415,7 +415,7 @@ public class CotizacionService {
 					cotizacionUsuarioQuotaService.eliminarQuota(objCotizacion);													
 				}
 				
-				if(objCotizacion.isMaestra()) {					
+				if(objCotizacion.isMaestra() || objCotizacion.isBoom()) {					
 					CotizacionComisionEntity objComisionCotizacion = cotizacionComisionService.findByCotizacion(objCotizacion);
 					
 					if(objComisionCotizacion != null) {							

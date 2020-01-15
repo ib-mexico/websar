@@ -1,13 +1,13 @@
 <th:block th:fragment="style">
-	<!-- Range Slider Css -->
-	<link th:href="@{/plugins/morrisjs/morris.css}" rel="stylesheet" />
+    <!-- Range Slider Css -->
+    <link th:href="@{/plugins/morrisjs/morris.css}" rel="stylesheet" />
 </th:block>
 <th:block th:fragment="body">
-	<div id="appIndicadores">
-		<ol class="breadcrumb breadcrumb-bg-red">
+    <div id="appIndicadores">
+        <ol class="breadcrumb breadcrumb-bg-red">
             <li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
             <li class="active"><i class="material-icons">public</i> Indicadores de produccion</li>
-	    </ol>
+        </ol>
 
         <div class="row clearfix">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -15,16 +15,16 @@
                     <div class="header">
                         <h2 v-text="title"></h2>
                     </div>
-            
+
                     <div class="body">
 
-                    <!-- Busqueda en rangos de fecha -->
+                        <!-- Busqueda en rangos de fecha -->
                         <div class="row clearfix">
                             <div class="row">
                                 <div class="col-xs-3 col-sm-3 col-md-3">
-                                    <div class="input-group">	                            
+                                    <div class="input-group">
                                         <select class="selectpicker form-control show-tick cmbEjecutivo required" v-model="idUsuario" data-live-search="true">
-                                            <option value="selected" >Seleccione un ejecutivo</option>
+                                            <option value="selected">Seleccione un ejecutivo</option>
                                             <option v-for="item in dataEjecutivo" :value="item.id_usuario" v-text="item.nombre_completo"></option>
                                         </select>
                                     </div>
@@ -51,75 +51,111 @@
                                 </div>
                                 <div class="col-xs-3 col-sm-3 col-md-3">
                                     <div class="input-group">
-                                        <input type="button" value="Generar Estadistica" class="btn btn-success" id="GenerarIndicadores"/>
+                                        <input type="button" value="Generar Estadistica" class="btn btn-success" id="GenerarIndicadores" />
                                     </div>
-                                </div>					
+                                </div>
                             </div>
                             <div class="row">
-                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                    <div class="card">
-                                        <div class="header">
-                                            <h2 class="text-uppercase text-primary">INDICADORES DEL EJECUTIVO  : {{ usuarioObtenido }}</h2>
-                                            <ul class="header-dropdown m-r--5">
-                                                <li class="dropdown">
-                                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
-                                                        <i class="material-icons">more_vert</i>
-                                                    </a>
-                                                    <ul class="dropdown-menu pull-right">
-                                                        <li><a href="javascript:void(0);" class=" waves-effect waves-block">Action</a></li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="body">
-                                            <div class="table-responsive">
-                                                <table class="table table-hover dashboard-task-infos">
-                                                    <thead>
-                                                        <tr class="bg-primary table-active">
-                                                            <th class="col-md-1 table-active h4 font-weight-bold">#</th>
-                                                            <th class="col-md-3 table-active h4 font-weight-bold">Descripción</th>
-                                                            <th class="col-md-2 table-active h4 font-weight-bold">Cantidad</th>
-                                                            <th class="col-md-1 table-active h4 font-weight-bold">Meta</th>
-                                                            <th class="col-md-1 table-active h4 font-weight-bold">Monto</th>
-                                                            <th class="col-md-4 table-active h4 font-weight-bold">Avance</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr v-for="(value,key,index) in dataProduccion" v-if="dataProduccion!=null">
-                                                            <td class="h4 table-active" v-text="key"></td>
-                                                            <td class="h4 table-active" v-text="value.titulo"></td>
-                                                            <td class="h4 font-weight-bold"><span class="label bg-green" v-text="value.total"></span></td>
-                                                            <td class="h4 font-weight-bold"><span class="label bg-green" v-text="value.meta"></span></td>
-                                                            <td class="h4 font-weight-bold"><span class="label bg-green" v-text="value.montoCotizacion"></span></td>
-                                                            <td>
-                                                                <div class="progress" tabindex="0" data-toggle="tooltip" data-placement="top" :title="value.titulo +' son  ' +value.total" >
-                                                                    <div class="progress-bar progress-bar-striped bg-blue" role="progressbar" :aria-valuenow="value.total" aria-valuemin="0" 
-                                                                    :aria-valuemax="value.meta" :style="{width: value.porcentaje+'%'}">
-                                                                </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr v-if="dataProduccion.length==0">
-                                                            <td colspan="6" class="text-center h4 text-danger font-weight-bold text-uppercase">No existen datos para mostrar.</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                <div class="col-md-12">
+                                    <!-- <div class="container"><h2>Example tab 2 (using standard nav-tabs)</h2></div> -->
+                                    <div id="exTab2">
+                                        <ul class="nav nav-tabs">
+                                            <li class="active">
+                                                <a href="#1" data-toggle="tab">Indicador del ejecutivo</a>
+                                            </li>
+                                            <li><a href="#2" data-toggle="tab" class="hidden">Graficas</a>
+                                            </li>
+                                        </ul>
+
+                                        <div class="tab-content ">
+
+                                            <!--Contenido 1-->
+                                            <div class="tab-pane active" id="1">
+                                                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                                    <div class="card">
+                                                        <div class="header">
+                                                            <h2 class="text-uppercase text-primary" v-text="usuarioObtenido"></h2>
+                                                            <ul class="header-dropdown m-r--5">
+                                                                <li class="dropdown">
+                                                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" 
+                                                                    aria-haspopup="true" aria-expanded="true">
+                                                                        <i class="material-icons">more_vert</i>
+                                                                    </a>
+                                                                    <ul class="dropdown-menu pull-right">
+                                                                        <li>
+                                                                            <a href="javascript:void(0);" class=" waves-effect waves-block">Action</a>
+                                                                        </li>
+                                                                    </ul>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="body">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-hover dashboard-task-infos">
+                                                                    <thead>
+                                                                        <tr class="bg-primary table-active">
+                                                                            <!-- <th class="col-md-1 table-active h4 font-weight-bold">#</th> -->
+                                                                            <th class="col-md-4 table-active h5 font-weight-bold">Descripción</th>
+                                                                            <th class="col-md-1 table-active h5 font-weight-bold">Cantidad</th>
+                                                                            <th class="col-md-1 table-active h5 font-weight-bold">Meta</th>
+                                                                            <th class="col-md-2 table-active h5 font-weight-bold">Monto</th>
+                                                                            <th class="col-md-4 table-active h5 font-weight-bold">Avance</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr v-for="(value,key,index) in dataProduccion"
+                                                                            v-if="dataProduccion!=null">
+                                                                            <!-- <td class="h4 table-active" v-text="key"></td> -->
+                                                                            <td class="h5 table-active" v-text="value.titulo"></td>
+                                                                            <td class="h5 font-weight-bold"><span v-text="value.total"></span></td>
+                                                                            <td class="h4 font-weight-bold"><span v-text="value.meta"></span></td>
+                                                                            <td class="h4 font-weight-bold"><span v-text="value.montoCotizacion"></span></td>
+                                                                            <td>
+                                                                                <div class="progress" tabindex="0" data-toggle="tooltip" data-placement="top"
+                                                                                    :title="value.titulo +' son  ' +value.total" style="height :18px;">
+                                                                                    <div class="progress-bar progress-bar-striped bg-blue" role="progressbar" :aria-valuenow="value.total"
+                                                                                        aria-valuemin="0" :aria-valuemax="value.meta" :style="{width: value.porcentaje+'%'}">
+                                                                                        {{ value.porcentaje }} %
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr v-if="dataProduccion.length == 0">
+                                                                            <td colspan="6" class="text-center h4 text-danger font-weight-bold text-uppercase">
+                                                                                No existen datos para mostrar.
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--Contenido 2-->
+
+                                            <div class="tab-pane" id="2">
+                                                <h2>Agregar grafica</h2>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                             <!--Grafica del indicador 1-->
-                            <div class="row hidden" >
+                            <div class="row hidden">
                                 <div class="row clearfix">
                                     <!-- Bar Chart -->
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                         <div class="card">
                                             <div class="header">
-                                                <h2 class="text-uppercase">GRAFICA INDICADORA DE : {{ usuarioObtenido }}</h2>
+                                                <h2 class="text-uppercase">GRAFICA INDICADORA DE : {{ usuarioObtenido }}
+                                                </h2>
                                                 <ul class="header-dropdown m-r--5">
                                                     <li class="dropdown">
-                                                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                                        <a href="javascript:void(0);" class="dropdown-toggle"
+                                                            data-toggle="dropdown" role="button" aria-haspopup="true"
+                                                            aria-expanded="false">
                                                             <i class="material-icons">more_vert</i>
                                                         </a>
                                                         <ul class="dropdown-menu pull-right">
@@ -139,9 +175,10 @@
                             <!--Segunda Indicador-->
                             <div class="row">
                                 <div class="col-xs-3 col-sm-3 col-md-3">
-                                    <div class="input-group">	                            
-                                        <select class="selectpicker form-control show-tick cmbVenta required" v-model="idGrupoVenta" data-live-search="true">
-                                            <option value="selected" >Seleccione un grupo de ventas</option>
+                                    <div class="input-group">
+                                        <select class="selectpicker form-control show-tick cmbVenta required"
+                                            v-model="idGrupoVenta" data-live-search="true">
+                                            <option value="selected">Seleccione un grupo de ventas</option>
                                             <option v-for="item in dataUsuarioGrupo" :value="item.idUsuarioGrupo" v-text="item.nombre_completo"></option>
                                         </select>
                                     </div>
@@ -168,23 +205,27 @@
                                 </div>
                                 <div class="col-xs-3 col-sm-3 col-md-3">
                                     <div class="input-group">
-                                        <input type="button" value="Generar Estadistica" class="btn btn-success" id="GenerarTopIndicador"/>
+                                        <input type="button" value="Generar Estadistica" class="btn btn-success" id="GenerarTopIndicador" />
                                     </div>
-                                </div>					
+                                </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                     <div class="card">
                                         <div class="header">
-                                            <h2 class="text-uppercase">INDICADORES DEL AREA   : {{ grupoVentaObtenido }}</h2>
+                                            <h2 class="text-uppercase">INDICADORES DEL AREA : {{ grupoVentaObtenido }}
+                                            </h2>
                                             <ul class="header-dropdown m-r--5">
                                                 <li class="dropdown">
-                                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+                                                    <a href="javascript:void(0);" class="dropdown-toggle"
+                                                        data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
                                                         <i class="material-icons">more_vert</i>
                                                     </a>
                                                     <ul class="dropdown-menu pull-right">
-                                                        <li><a href="javascript:void(0);" class=" waves-effect waves-block">Action</a></li>
+                                                        <li>
+                                                            <a href="javascript:void(0);" class=" waves-effect waves-block">Action</a>
+                                                        </li>
                                                     </ul>
                                                 </li>
                                             </ul>
@@ -194,7 +235,7 @@
                                                 <table class="table table-hover dashboard-task-infos">
                                                     <thead>
                                                         <tr class="bg-primary table-active">
-                                                            <th class="col-md-1 h4 table-active  font-weight-bold">#</th>
+                                                            <!-- <th class="col-md-1 h4 table-active  font-weight-bold">#</th> -->
                                                             <th class="col-md-3 h4 table-active  font-weight-bold">Descripción</th>
                                                             <th class="col-md-2 h4 table-active  font-weight-bold">Nombre</th>
                                                             <th class="col-md-1 h4 table-active  font-weight-bold">Cantidad</th>
@@ -202,8 +243,9 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr v-for="(value,key,index) in dataIndicadoresGanador" v-if="dataIndicadoresGanador!=null">
-                                                            <td class="h4 table-active font-weight-bold" v-text="key"></td>
+                                                        <tr v-for="(value,key,index) in dataIndicadoresGanador"
+                                                            v-if="dataIndicadoresGanador!=null">
+                                                            <!-- <td class="h4 table-active font-weight-bold" v-text="key"></td> -->
                                                             <td class="h4 table-active font-weight-bold" v-text="value.titulo"></td>
                                                             <td class="h4 table-active font-weight-bold">
                                                                 <span class="label bg-green" v-text="value.usuario"></span>
@@ -216,7 +258,9 @@
                                                             </td>
                                                         </tr>
                                                         <tr v-if="dataIndicadoresGanador.length==0">
-                                                            <td colspan="5" class="text-center h4  font-weight-bold text-uppercase text-danger">No existen datos para mostrar.</td>
+                                                            <td colspan="5" class="text-center h4  font-weight-bold text-uppercase text-danger">
+                                                                No existen datos para mostrar.
+                                                            </td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -227,40 +271,33 @@
                             </div>
 
 
-                            <div class="row" >
+                            <div class="row">
                                 <div class="row clearfix">
                                     <!-- Bar Chart -->
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="card">
-                                            <div class="header">
-                                                <h2 class="text-uppercase">GRAFICA INDICADORA DEL AREA : {{ usuarioObtenido }}</h2>
-                                                <ul class="header-dropdown m-r--5">
-                                                    <li class="dropdown">
-                                                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                                            <i class="material-icons">more_vert</i>
-                                                        </a>
-                                                        <ul class="dropdown-menu pull-right">
-                                                            <li><a href="javascript:void(0);">Exportar PDF</a></li>
-                                                        </ul>
-                                                    </li>
-                                                </ul>
-                                            </div>
+                                       
                                             <div class="body">
 
-                                                <div class="row hidden" >
+                                                <div class="row hidden">
                                                     <div class="row clearfix">
                                                         <!-- Bar Chart -->
                                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                             <div class="card">
                                                                 <div class="header">
-                                                                    <h2 class="text-uppercase">GRAFICA INDICADORA DE : {{ usuarioObtenido }}</h2>
+                                                                    <h2 class="text-uppercase">GRAFICA INDICADORA DE :
+                                                                        {{ usuarioObtenido }}</h2>
                                                                     <ul class="header-dropdown m-r--5">
                                                                         <li class="dropdown">
-                                                                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                                                            <a href="javascript:void(0);"
+                                                                                class="dropdown-toggle"
+                                                                                data-toggle="dropdown" role="button"
+                                                                                aria-haspopup="true"
+                                                                                aria-expanded="false">
                                                                                 <i class="material-icons">more_vert</i>
                                                                             </a>
                                                                             <ul class="dropdown-menu pull-right">
-                                                                                <li><a href="javascript:void(0);">Exportar PDF</a></li>
+                                                                                <li><a href="javascript:void(0);">Exportar
+                                                                                        PDF</a></li>
                                                                             </ul>
                                                                         </li>
                                                                     </ul>
@@ -273,9 +310,10 @@
                                                         <!-- #END# Bar Chart -->
                                                     </div>
                                                 </div>
+
                                                 <div id="bar_chart" height="700" width="auto"></div>
                                             </div>
-                                        </div>
+                                        
                                     </div>
                                     <!-- #END# Bar Chart -->
                                 </div>
@@ -286,28 +324,28 @@
                 </div>
             </div>
         </div>
-    
-	</div>
+
+    </div>
 
 
 </th:block>
 <th:block th:fragment="script">
 
     <script th:src="@{/plugins/vue/vue.js}"></script>
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script th:src="@{/assets/js/indicadores.js}"></script>
     <script th:src="@{/plugins/bootstrap-select/js/bootstrap-select.js}"></script>
-    
-	<script th:src="@{/plugins/raphael/raphael.min.js}"></script>
+
+    <script th:src="@{/plugins/raphael/raphael.min.js}"></script>
     <script th:src="@{/plugins/morrisjs/morris.js}"></script>
-    
-	<!-- Wenzhixin DataTable -->
-	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
-	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
-	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
-	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+
+    <!-- Wenzhixin DataTable -->
+    <script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+    <script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+    <script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+    <script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
     <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
-    
+
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/data.js"></script>
     <script src="https://code.highcharts.com/modules/drilldown.js"></script>
@@ -316,43 +354,43 @@
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
     <script type="application/javascript" th:inline="javascript">
-    $(document).ready(function() {
-        $(function () {
-            //Datetimepicker plugin
-            $('.datetimepicker').bootstrapMaterialDatePicker({
-                format: 'DD-MM-YYYY',
-                clearButton: true,
-                weekStart: 1,
-                time:false
+        $(document).ready(function () {
+            $(function () {
+                //Datetimepicker plugin
+                $('.datetimepicker').bootstrapMaterialDatePicker({
+                    format: 'DD-MM-YYYY',
+                    clearButton: true,
+                    weekStart: 1,
+                    time: false
+                });
             });
-        });
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        });
-        /*Listar los ejecutivos y grupo de ventas con selectpicker*/
-        $('.cmbEjecutivo').selectpicker('refresh');
-        $('.cmbVenta').selectpicker('refresh');
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            });
+            /*Listar los ejecutivos y grupo de ventas con selectpicker*/
+            $('.cmbEjecutivo').selectpicker('refresh');
+            $('.cmbVenta').selectpicker('refresh');
 
-        $("#GenerarIndicadores").click(async function(){
-            var FechaInicio= $("#txtBootstrapTableDesde").val();
-            var FechaFin=$("#txtBootstrapTableHasta").val();
-            var paramEjecutivo=$('.cmbEjecutivo').selectpicker('val');
-            $('[data-toggle="tooltip"]').tooltip()
-            var dataProduccion=await indicadores.getDataProduccion(paramEjecutivo,FechaInicio,FechaFin);
-            // console.log(dataProduccion);
-            // getMorris('bar','bar_chart',dataProduccion);
-        });
+            $("#GenerarIndicadores").click(async function () {
+                var FechaInicio = $("#txtBootstrapTableDesde").val();
+                var FechaFin = $("#txtBootstrapTableHasta").val();
+                var paramEjecutivo = $('.cmbEjecutivo').selectpicker('val');
+                $('[data-toggle="tooltip"]').tooltip()
+                var dataProduccion = await indicadores.getDataProduccion(paramEjecutivo,
+                    FechaInicio, FechaFin);
+                // console.log(dataProduccion);
+                // getMorris('bar','bar_chart',dataProduccion);
+            });
 
-        $("#GenerarTopIndicador").click(async function(){
-            var FechaInicio= $("#txtFechaInicio").val();
-            var FechaFin=$("#txtFechaFin").val();
-            var paramVenta=$('.cmbVenta').selectpicker('val');
-            await indicadores.getDataProduccionArea(paramVenta,FechaInicio,FechaFin);
-        });
+            $("#GenerarTopIndicador").click(async function () {
+                var FechaInicio = $("#txtFechaInicio").val();
+                var FechaFin = $("#txtFechaFin").val();
+                var paramVenta = $('.cmbVenta').selectpicker('val');
+                await indicadores.getDataProduccionArea(paramVenta, FechaInicio, FechaFin);
+            });
 
 
-    })
-
+        })
     </script>
 
 </th:block>
