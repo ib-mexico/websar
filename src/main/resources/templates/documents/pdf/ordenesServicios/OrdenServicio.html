@@ -231,10 +231,10 @@
 		<tr>
 			<td class="tituloH6" width="15%" style="text-align:left">Elabor&oacute;:</td>
 			<td class="subrayadoH6" width="20%" th:text="${objOrdenServicio.usuarioElabora.nombreCompleto}"></td>
-			<td class="tituloH6" width="10%" style="text-align:left">Revis&oacute;:</td>
+			<td class="tituloH6" width="10%" style="text-align:left">Supervis&oacute;:</td>
 			<td class="subrayadoH6" th:if="${objOrdenServicio.usuarioRevisa != null}" width="20%" th:text="${objOrdenServicio.usuarioRevisa.nombreCompleto}"></td>
 			<td class="subrayadoH6" th:unless="${objOrdenServicio.usuarioRevisa != null}" width="20%" ></td>
-			<td class="tituloH6" width="15%" style="text-align:left">Revis&oacute;:</td>
+			<td class="tituloH6" width="15%" style="text-align:left">Recibi&oacute;:</td>
 			<td class="subrayadoH6" width="20%" th:text="${objOrdenServicio.nombreRecibe}"></td>
 		</tr>
 		

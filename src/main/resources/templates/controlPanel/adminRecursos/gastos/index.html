@@ -72,7 +72,7 @@
 		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 			<div class="card">
 				<div class="header">
-					<h2>Lista de gastos generales</h2>
+					<h2 class="h2 font-weight-bold text-primary">Control de gastos</h2>
 				</div>
 		
     			<div class="body">
@@ -204,15 +204,16 @@
 						<table id="dtGasto" class="table table-bordered table-striped table-hover">
 							<thead>
 								<tr>
-									<th data-width="10%" data-field="numeroFactura" data-sortable="true" data-halign="left" data-align="center">Num. Factura</th>
 									<th data-width="10%" data-formatter="accionesFormatter" data-align="center" style="display: inline">Acciones</th>
+									<th data-width="10%" data-field="numeroFactura" data-sortable="true" data-halign="left" data-align="center">Num. Factura</th>
+									<th data-width="10%" data-field="proveedor" data-sortable="true" data-halign="left" data-align="center">Proveedor</th>
 									<th data-width="10%" data-field="fechaPago" data-halign="left" data-align="center" data-visible="false">Fecha gasto</th>
-									<th data-width="20%" data-field="tipoGasto" data-halign="left" data-align="center" data-visible="true">Tipo de Gasto</th>
-									<th data-width="20%" data-field="Clasificacion" data-halign="left" data-align="center" data-visible="true">Clasificación</th>
+									<th data-width="15%" data-field="tipoGasto" data-halign="left" data-align="center" data-visible="true">Uso de Gasto</th>
+									<th data-width="15%" data-field="Clasificacion" data-halign="left" data-align="center" data-visible="true">Tipo de Gasto</th>
 									<th data-width="20%" data-field="usuario" data-halign="left" data-align="center" data-visible="true">Usuario</th>
 									<th data-width="10%" data-field="numeroCotizacion" data-sortable="true" data-halign="left" data-align="center">Cotización</th>
-									<th data-width="10%" data-field="subtotal" data-detail-formatter="gasto_aproximadoDetailFormatter" data-halign="left">Subtotal</th>
-									<th data-width="30%" data-field="diagnostico" data-halign="left">Observaciones</th>
+									<th data-width="15%" data-field="subtotal" data-detail-formatter="gasto_aproximadoDetailFormatter" data-halign="left">Subtotal</th>
+									<th data-width="35%" data-field="diagnostico" data-halign="left">Observaciones</th>
                                     <th data-width="10%" data-field="creacion_fecha" data-halign="left" data-align="center" data-visible="true">Fecha registro</th>
 									<th data-width="10%" data-field="nombreEstatus" data-halign="left" data-align="center" data-visible="false">Estatus</th>
 								</tr>
@@ -410,7 +411,6 @@
 														</div>
 													</div>
 													<div class="col-md-2">
-														<b></b>
 														<div class="input-group">
 															<button class="btn btn-success" v-on:click="addInput"  id="addCotizacionGasto"><i class="material-icons">add</i>Agregar</button>
 														</div>
@@ -697,7 +697,6 @@
 															</div>
 														</div>
 														<div class="col-md-2">
-															<b></b>
 															<div class="input-group">
 																<button class="btn btn-success" v-on:click="addInput" id="addCotizacionGastoEdit"><i class="material-icons">add</i>Agregar</button>
 															</div>

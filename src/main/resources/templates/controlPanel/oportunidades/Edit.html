@@ -4,7 +4,7 @@
     </div>
     
     <div class="row clearfix">
-    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="appOPN">
     		<div class="card">
     			<div class="header">
     				<h2>Modificar Oportunidad</h2>
@@ -105,8 +105,8 @@
 		                            <b>Empresa *</b>
 		                            <select class="form-control show-tick" name="cmbEmpresa" id="cmbEmpresa" data-live-search="true" >
 		                            	<th:block th:each="itemEmpresa : ${lstEmpresas}">	
-		                            		<option th:if="${objOportunidad.getEmpresa().getIdEmpresa() == itemEmpresa.idEmpresa}" selected="selected" th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.empresa}"></option>
-		                            		<option th:unless="${objOportunidad.getEmpresa().getIdEmpresa() == itemEmpresa.idEmpresa}" th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.empresa}"></option>                            	
+		                            		<option th:if="${objOportunidad.getEmpresa().getIdEmpresa() == itemEmpresa.idEmpresa}" selected="selected" th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.razonSocial}"></option>
+		                            		<option th:unless="${objOportunidad.getEmpresa().getIdEmpresa() == itemEmpresa.idEmpresa}" th:value="${itemEmpresa.idEmpresa}" th:text="${itemEmpresa.razonSocial}"></option>                            	
 		                            	</th:block>
 		                       		</select>
                             	</div>
@@ -178,7 +178,7 @@
 						<br />
 						
 						<div class="row clearfix">
-							<div class="col-md-6">
+							<div class="col-md-4">
 	                            <p><b>Vendedor *</b></p>
 	                            <select class="form-control show-tick" name="cmbVendedor" id="cmbVendedor" data-live-search="true" >
 	                       			<th:block th:each="itemUsuario : ${lstUsuarios}" >
@@ -186,9 +186,53 @@
 	                       				<option th:unless="${itemUsuario.idUsuario == objOportunidad.usuarioVendedor.idUsuario}" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}"></option>
 	                       			</th:block>
 	                       		</select>
-	                        </div>
+							</div>
+							<div class="col-md-8">
+								<div class="col-md-10">
+									<b>Seleccionar Colaborador *</b>
+									<div class="input-group">
+										<select name="cmbUsuario"  class="'form-control selectpicker show-tick cmbUsuario" data-live-search="true"
+										  multiple="multiple">									  
+											<option v-for="item in usuario" :value="item.id_usuario" v-text="item.nombre_completo"></option>
+										</select>
+									</div>
+								</div>
+								<div class="col-md-1">
+									<p><b><b></b></b></p>
+									<div class="input-group">
+										<button class="btn btn-success" v-on:click="addUser"><i class="material-icons">add</i></button>
+									</div>
+								</div>
+							</div>
 	                        
-						</div>						
+						</div>	
+						
+						<!--Tabla de colaboradores de esta oportunidad de negocio-->
+						<div class="row-clearfix"  v-if="formInputs.length!=null" >
+							<div class="col-md-12">
+								<table class="table table-sm table-responsive ">
+									<thead class="bg-danger">
+									  <tr>	
+										<th scope="col">Usuario Colaborador</th>
+										<th scope="col">Empresa</th>
+										<th scope="col">Acci&oacute;n</th>
+									  </tr>
+									</thead>
+									<tbody>
+										<tr v-for="(formInput, index) in formInputs" class="table-success">
+											<input type="hidden" name="idOpnColaborador" v-model="formInput.idOpnColaborador" v-if="formInput.idOpnColaborador"/>
+											<input type="hidden" name="nuevoColaborador" value="" v-else="!formInput.idOpnColaborador"/>
+											<input type="hidden" name="idColaborador" :value="formInput.id_usuario"/>
+											<td class="text-success"><label v-text="formInput.nombre_completo"></label></td>
+											<td class="text-success"><label v-text="formInput.claveEmpresa"></label></td>
+											<td>
+												<a  title="Eliminar Usuario" class="Eliminar Usuario" v-on:click="removeColaborador(index)"><i class="material-icons delete">delete</i></a>
+											</td>
+									  </tr>
+									</tbody>
+								  </table>
+							</div>
+						</div>	
 					
 						<div class="row clearfix">
 							<div class="col-md-12">
@@ -365,12 +409,27 @@
 <th:block th:fragment="script">
 	<!-- Starrr Js -->
 	<script th:src="@{/plugins/starrr/starrr.js}"></script>
+	<script th:src="@{/plugins/vue/vue.js}"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script th:src="@{/assets/js/colaboradores.js}"></script>
+
+	<script th:src="@{/plugins/bootstrap-select/js/bootstrap-select.js}"></script>
+
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
 	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
 			
 		var prioridad = [[${objOportunidad.prioridad}]];
+		var idOPN = [[${objOportunidad.idOportunidadNegocio}]];
+
 	
 		$(document).ready(function() {
 			
+			opn.editOpn(idOPN);
 			//DATEPICKER
 			var date = $('#txtCierreFecha').data('fecha_cierre');
 			var dateRenovacion = $('#txtRenovacionFecha').data('fecha_renovacion');

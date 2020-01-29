@@ -174,25 +174,27 @@
 						
 						<div id="servicioContainer" data-cardinality="1" ></div>	
 						
-						<h2 class="card-inside-title">PERSONA QUE ELABORA LA ORDEN DE SERVICIO</h2>
 						<div class="row clearfix">
 							<div class="col-md-6">
+								<h2 class="card-inside-title">PERSONA QUE ELABORA LA ORDEN DE SERVICIO</h2>
 								<div class="form-group form-group-lg">
-	                       			<b>Nombre</b>
 	                                <div class="form-line">
 	                                    <input type="text" class="form-control" readonly="readonly" th:value="${_USER_.getNombreCompleto()}" />
 	                                </div>
 	                            </div>
-	                         </div>
-	                         
-	                         <div class="col-md-6">
-								<div class="form-group form-group-lg">
-	                       			<b>Puesto</b>
-	                                <div class="form-line">
-	                                    <input type="text" class="form-control" readonly="readonly" />
-	                                </div>
-	                            </div>
-	                         </div>
+							 </div>
+							 
+							 <div class="col-md-6">
+								<h2 class="card-inside-title">PERSONA QUE SUPERVISO LA ORDEN DE SERVICIO</h2>
+								<br/>
+								<div class="input-group">								
+		                            <select class="form-control show-tick" name="cmbUsuarioSupervisa" id="cmbUsuarioSupervisa" data-live-search="true" >
+		                            	<option value="default" selected="selected">Selecciona usuario supervisa...</option>
+		                            	<option th:each="itemUsuario : ${lstUsuarios}" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}"></option>
+		                       		</select>
+								</div>	                           
+							</div>
+							
 	                 	</div>
 	                 	
 	                 	<div class="row clearfix m-t-20">
@@ -329,7 +331,7 @@
 			$('#formOrden').submit(function(e){
 				var flag = false;
 				
-				if($('#cmbCliente').val() == 'default' || $('#cmbClienteContacto').val() == 'default') {
+				if($('#cmbCliente').val() == 'default' || $('#cmbClienteContacto').val() == 'default' || $('#cmbUsuarioSupervisa').val() == 'default' ) {
 					flag = true;
 				}				
 				

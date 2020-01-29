@@ -17,13 +17,13 @@
 					</div>
 					
 					<div class="body">
-						<!-- <div class="row clearfix" th:if="${rolNuevaCotizacion}">
+						<div class="row clearfix" th:if="${rolNuevaCotizacion}">
 							<div class="col-md-4 col-md-offset-8 text-right">
 								<a href="#" role="button" class="btn bg-purple waves-effect" data-toggle="modal" data-target="#modalNuevaCotizacion" v-on:click="loadModal">
 									<i class="material-icons">add_circle</i> Nueva Cotizaci&oacute;n
 								</a>
 							</div>
-						</div> -->
+						</div>
 					
 						<div class="row clearfix" id="dtCotizacionesToolBar" data-toolbar-align="left">
 							<div class="col-xs-3 col-sm-3 col-md-3">
@@ -272,7 +272,7 @@
 							
 								<div class="col-md-6">
 									<input type="radio" name="rdTipoCotizacion" id="rdBoom" class="with-gap radio-col-red" value="boom" v-model="newCotizacion.rdTipoCotizacion" />
-									<label for="rdBoom"><strong>Boom</strong>(Ej. Cotizaci&oacute;n mayor. Principal de una p&oacute;liza)</label>
+									<label for="rdBoom"><strong>BOM</strong>(Ej. Cotizaci&oacute;n mayor. Principal de una p&oacute;liza)</label>
 								</div>
 							</div>
 							
@@ -313,25 +313,25 @@
 		
 		<!-- ESTATUS COTIZACION MODAL -->
 		<div class="modal fade" id="popUpEstatus" tabindex="-1" role="dialog">
-			<div class="modal-dialog" role="document">
+			<div class="modal-dialog modal-md" role="document">
 				<div class="modal-content">
-					<form id="formEstatus" th:action="${ {_PATH_} + 'controlPanel/cotizaciones/modificar-estatus'}" th:method="POST">
+					<form id="formEstatus" th:action="${ {_PATH_} + 'controlPanel/cotizaciones/modificar-estatus'}" th:method="POST" enctype="multipart/form-data">
 						<div class="modal-header">
 							<h4 class="modal-title">Modificar Estatus de Cotizaci&oacute;n</h4>
 						</div>
 						<div class="modal-body">                	
 							<input type="hidden" id="hddIdCotizacion" name="hddIdCotizacion" value="" />
-							<div class="row m-t-20">
-								<div class="col-md-4">
+							<div class="row m-t-20 clearfix">
+								<div class="col-md-6">
 									<div class="form-group">
 										<p><b>Cotizaci&oacute;n</b></p>
-									<div class="form-line">
-										<input type="text" id="txtCotizacion" class="form-control" readonly="readonly" />
+										<div class="form-line">
+											<input type="text" id="txtCotizacion" class="form-control" readonly="readonly" />
+										</div>
 									</div>
 								</div>
-								</div>
 								
-								<div class="col-md-4">
+								<div class="col-md-6">
 									<p><b>Estatus *</b></p>					
 									<select class="form-control show-tick" name="cmbEstatus" id="cmbEstatus" data-live-search="true" >
 										<th:block th:each="itemEstatus : ${lstCotizacionEstatus}">
@@ -351,8 +351,8 @@
 							
 							<hr />
 							
-							<div id="divFactura" class="row">
-								<div class="col-md-4">
+							<div id="divFactura" class="row clearfix">
+								<div class="col-md-6">
 									<b>Factura/fecha</b>
 									<div class="input-group">
 										<span class="input-group-addon">
@@ -367,38 +367,137 @@
 								<div class="col-md-6">
 									<div class="form-group">
 										<b>Factura/n&uacute;mero</b>
-									<div class="form-line">
-										<input type="text" id="txtFacturaNumero" name="txtFacturaNumero" class="form-control" />
+										<div class="form-line">
+											<input type="text" id="txtFacturaNumero" name="txtFacturaNumero" class="form-control" />
+										</div>
 									</div>
-								</div>
 								</div>	
 							</div>
 							
-							<div id="divPago" class="row hide">
-								<div class="col-md-4">
-									<b>Pago/fecha</b>
-									<div class="input-group">
-										<span class="input-group-addon">
-											<i class="material-icons">date_range</i>
-										</span>
-										<div class="form-line">
-											<input type="text" class="form-control text-center" id="txtPagoFecha" name="txtPagoFecha" />
+							<div id="divPago" class=" hide">
+								<div class="row clearfix">
+									<div class="col-md-6">
+										<b>Fecha/Pago</b>
+										<div class="input-group">
+											<span class="input-group-addon">
+												<i class="material-icons">date_range</i>
+											</span>
+											<div class="form-line">
+												<input type="text" class="form-control text-center required" id="txtPagoFecha" name="txtPagoFecha" />
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<b>Pago/referencia</b>
+											<div class="form-line">
+												<input type="text" id="txtPagoReferencia" name="txtPagoReferencia" class="form-control required" />
+											</div>
+										</div>
+									</div>
+
+								</div>
+
+								<div class="row clearfix">	
+									<div class="col-md-12">
+										<div class="form-group">
+											<p class="text-primary font-weight-bold h5 text-center"><b>Registro de comprobante de pago *</b></p> 
 										</div>
 									</div>
 								</div>
 								
-								<div class="col-md-6">
-									<div class="form-group">
-										<b>Pago/referencia</b>
-									<div class="form-line">
-										<input type="text" id="txtPagoReferencia" name="txtPagoReferencia" class="form-control" />
+													
+								<div class="row clearfix">
+									<!-- <div class="col-md-6">
+										<div class="form-group">
+											<b>Folio de Factura</b>
+											<div class="form-line">
+												<input id="txtFolio" type="text" name="txtFolio" class="form-control" />
+											</div>
+										</div>
+									</div> -->
+										
+									<div class="col-md-6">
+										<b>Importe</b>
+										<div class="input-group">
+											<span class="input-group-addon">$</span>
+											<div class="form-line">
+												<input type="text" id="txtImporte" name="txtImporte" class="form-control required" />
+											</div>                                    
+										</div>
+									</div>
+								<!-- </div>
+
+								<div class="row clearfix"> -->
+									<!-- <div class="col-md-6">
+										<b>Proveedor / Cliente</b>
+										<div class="input-group">
+											<div class="form-line">
+												<input id="txtProveedor" type="text" name="txtProveedor" class="form-control"/>
+											</div>
+										</div>
+									</div> -->
+										
+									<div class="col-md-6">
+										<b>Banco</b>
+										<div class="form-group">
+											<div class="form-line">
+												<input id="txtBanco" type="text" name="txtBanco" class="form-control required" />
+											</div>
+										</div>
 									</div>
 								</div>
+																
+								<div class="row clearfix">
+									<div class="col-md-6">
+										<b>Fecha Ingreso</b>
+										<div class="input-group">
+											<span class="input-group-addon">
+												<i class="material-icons">date_range</i>
+											</span>
+											<div class="form-line">
+												<input type="text" class="form-control text-center required"  id="txtFechaVencimiento" name="txtFechaVencimiento" />
+											</div>
+										</div>
+									</div>
+										
+									<div class="col-md-6">
+										<b>Referencia de Pago</b>
+										<div class="form-group">
+											<div class="form-line">
+												<input id="txtReferenciaPago" type="text" name="txtReferenciaPago" class="form-control required" />
+											</div>
+										</div>
+									</div>
 								</div>
+								
+								<div class="row clearfix">
+									<div class="col-md-12">
+										<p><b>Observaciones *</b></p>
+										<div class="form-group">
+											<div class="form-line">
+												<input id="txtDescripcion" type="text" name="txtDescripcion" class="form-control" required="required" />
+											</div>
+										</div>
+									</div>
+								</div>
+														
+								<div class="row clearfix">
+									<div class="col-md-12">
+										<p><b>Fichero</b></p>
+										<div class="form-group files color">
+											<input id="fichero" type="file" name="fichero" class="form-control-drop" />
+										</div>
+									</div>
+								</div>
+							
+
 								<div class="col-md-12 text-center">
 									<p>Nota : no olvidar subir el audio de calidad de servicio en sus sig. cotizaciones para validar sus cotizaciónes</p>	
 								</div>
-							</div>                    
+								
+							</div>
+
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">CERRAR</button>
@@ -475,6 +574,7 @@
 										</div>
 									</div>
 								</div>
+								
 							</div>
 						</div>
 						<div class="modal-footer">
@@ -584,6 +684,15 @@
 						$('#divPago').addClass('hide');
 						$('#txtFacturaFecha').attr('disabled', true);
 						$('#txtPagoFecha').attr('disabled', true);
+						$('#txtFolio').attr('disabled', true);
+						$('#txtReferenciaPago').attr('disabled', true);
+						$('#txtImporte').attr('disabled', true);
+						$('#txtProveedor').attr('disabled', true);
+						$('#txtBanco').attr('disabled', true);
+						$('#txtFechaVencimiento').attr('disabled', true);
+						$('#txtDescripcion').attr('disabled', true);
+						$('#fichero').attr('disabled', true);
+
 						$('#txtFacturaNumero').attr('disabled', true);
 						$('#txtPagoReferencia').attr('disabled', true);
 						break;
@@ -595,6 +704,18 @@
 						$('#txtFacturaFecha').attr('disabled', false);
 						$('#txtFacturaNumero').attr('disabled', false);
 						$('#txtPagoReferencia').attr('disabled', true);
+
+						$('#txtFolio').attr('disabled', true);
+						$('#txtReferenciaPago').attr('disabled', true);
+						$('#txtImporte').attr('disabled', true);
+						$('#txtProveedor').attr('disabled', true);
+						$('#txtBanco').attr('disabled', true);
+						$('#txtFechaVencimiento').attr('disabled', true);
+						$('#txtDescripcion').attr('disabled', true);
+						$('#fichero').attr('disabled', true);
+
+
+
 						break;
 						
 					case "4":
@@ -604,21 +725,37 @@
 						$('#txtPagoFecha').attr('disabled', false);
 						$('#txtFacturaNumero').attr('disabled', false);
 						$('#txtPagoReferencia').attr('disabled', false);
+
+						$('#txtFolio').attr('disabled', false);
+						$('#txtReferenciaPago').attr('disabled', false);
+						$('#txtImporte').attr('disabled', false);
+						$('#txtProveedor').attr('disabled', false);
+						$('#txtBanco').attr('disabled', false);
+						$('#txtFechaVencimiento').attr('disabled', false);
+						$('#txtDescripcion').attr('disabled', false);
+						$('#fichero').attr('disabled', false);
+
 						break;
 				}
 			});
 			
 			$('#formEstatus').submit(function(e){
 				e.preventDefault();
-				$('#btnCambioEstatus').addClass('disabled');
-				
-				var formData = $('#formEstatus').serialize();
+				// var formData = $('#formEstatus').serialize();
+				// var formData = $('#formEstatus').serialize();
+
+				var formData = new FormData($('#formEstatus')[0]);
 				
 				$.ajax({
 					url					: $('#formEstatus').attr('action'),
-					dataType			: 'json',
+					enctype				: 'multipart/form-data',
 					data				: formData,
 					type				: "POST",
+					dataType			: 'json',
+					async				: false,
+					processData			: false,
+					contentType			: false,
+					cache				: false,
 					success				: function(data) {
 						if(data.respuesta) {
 							swal(data.titulo, data.mensaje, 'success');
@@ -633,14 +770,16 @@
 						console.log(e);
 					}
 				});
-		  	});
+			  });
+			  
+			$('#txtFechaVencimiento').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, lang:'es', clearButton: false, time:false});
 			
 			//DATEPICKER
-			$('.solicitud-fecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false, minDate : new Date()});
+			$('.solicitud-fecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, lang: 'es', clearButton: false, time:false, minDate : new Date()});
 			$('.solicitud-fecha').bootstrapMaterialDatePicker('setDate', moment());
 
 			//DATEPICKER FECHA HORA DE LLAMADA DE CALIDAD
-			$('#txtFechaHoraLlamada').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY HH:mm', weekStart : 1, clearButton: true, time:true});
+			$('#txtFechaHoraLlamada').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY HH:mm', lang: 'es', weekStart : 1, clearButton: true, time:true});
 
 			$('#chkVentaCompartida').on('change', function() {				
 				if($(this).prop('checked')) {
@@ -675,9 +814,10 @@
 			urlPdf = [[@{/controlPanel/cotizaciones/}]] + row.idCotizacion + '/pdf';
 			urlFicheros = [[@{/controlPanel/cotizaciones/}]] + row.idCotizacion + '/ficheros';
 			urlOrdenes = [[@{/controlPanel/cotizaciones/}]] + row.idCotizacion + '/ordenesServicios';
+			urlEntregas = [[@{/controlPanel/entregas/crear/}]]+ row.idCotizacion ;
 			/*Validar que ya tenga realizada una llamada de calidad*/
-			var idCotizacion=row.idCotizacion;
-			
+			var idCotizacion = row.idCotizacion;
+			var permisoEntrega = ([[${rolEntrega}]] == true || [[${rolEntregaAdmin}]] == true) ? '' : 'hidden';
 			if(row.paseCalidad){
 				if(row.calidad>0){
 					p_onclick=""
@@ -710,7 +850,7 @@
 			/*Fin de la validacion*/
 			/*Los valores previamente definidos, se usa para hacer dinamica la funcionalidad de registro de llamada de calidad*/
 
-			if(row.idEstatus==1){
+			if(row.idEstatus == 1){
 				return [
 					'<a href="' + urlEdit + '" title="Editar">',
 						'<i class="material-icons">mode_edit</i>',
@@ -733,7 +873,7 @@
 				].join(' ');
 			}
 			
-			if(row.idEstatus==4 || row.idEstatus==2 || row.idEstatus==3 ){
+			if(row.idEstatus == 4 || row.idEstatus == 2 || row.idEstatus == 3 ){
 				return [
 					'<a href="' + urlEdit + '" title="Editar">',
 						'<i class="material-icons">mode_edit</i>',
@@ -756,11 +896,13 @@
 					'</a>',
 					'<a href="'+href+'" title="'+title+'" class="calidad" data-toggle="'+togle+'" data-target="'+target+'" onclick="'+p_onclick+'" role="button">',
 						'<i class="material-icons +'+icon+'" style="color: green;">'+icon+'</i>',
+					'</a>',
+					'<a href="'+urlEntregas+'" title="Entrega de materiales" class="'+permisoEntrega+'">',
+						'<i class="material-icons">layers</i>',
 					'</a>'
 				].join(' ');
 			}
-			
-
+		
 
 			if(row.idEstatus==5 || row.idEstatus==6){
 				return [
