@@ -64,7 +64,6 @@ public class CatalogoActivoService  {
 				objCatalogoFichero.setFechaRegistro(ldtFecha);
 				objCatalogoFichero.setEliminado(false);
 				objCatalogoFichero.setFechaModificacion(ldtFecha);
-				System.out.println(catActivoRep.save(objCatalogoFichero));
 				catActivoRep.save(objCatalogoFichero);
 			}
 		} else {

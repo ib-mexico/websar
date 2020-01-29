@@ -411,18 +411,23 @@ public class CotizacionesFicherosController {
 								@RequestParam(value="ficheroCalidad", required=false) MultipartFile ficheroCalidad,					
 								RedirectAttributes objRedirectAttributes) {
 		CotizacionFicheroEntity objFichero = new CotizacionFicheroEntity();
-		
+		CotizacionEntity objCotizacion = cotizacionService.findByIdCotizacion(paramIdCotizacion);
+
 		Boolean respuesta = false;
 		String titulo = "";
 		String mensaje = "";
 		
 		try {
+			
 			objFichero.setCotizacion(cotizacionService.findByIdCotizacion(paramIdCotizacion));
 			objFichero.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(6));
 			objFichero.setInicioLlamada(Formats.getInstance().toLocalDateTime(txtFechaHoraLlamada));
 			objFichero.setObservaciones(txtDescripcion);
-
 			cotizacionFicheroService.addFile(objFichero, ficheroCalidad);
+			
+			objCotizacion.setCalidad(true);
+			cotizacionService.update(objCotizacion);
+
 			respuesta = true;
 			titulo = "Cargado!";
 			mensaje = "Registro de calidad cargada exitosamente.";
@@ -433,7 +438,6 @@ public class CotizacionesFicherosController {
 			mensaje = "Ocurrió un error al guardar el registro de calidad.";
 		}
 		if(respuesta==true){
-			CotizacionEntity objCotizacion = cotizacionService.findByIdCotizacion(paramIdCotizacion);
 			if(objCotizacion.isRenta() || objCotizacion.isNormal()) {
 				if (objCotizacion.getCotizacionEstatus().getIdCotizacionEstatus() == 4) {
 					//VALIDAMOS QUE NO EXISTA UN REGISTRO DE COMISION

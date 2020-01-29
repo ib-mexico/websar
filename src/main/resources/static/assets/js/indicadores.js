@@ -10,50 +10,95 @@ if(document.getElementById("appIndicadores")){
         mounted() {
             this.getDataEjecutivo();
             this.getDataUsuarioGrupo();
-            // this.getDataProduccionArea(4,'1-11-2019','29-11-2019');
         },
         data:{
             title:"INDICADORES DE PRODUCCIÓN",
-            idUsuario:null,
-            dataProduccion:[],
-            dataEjecutivo:[],
-            usuarioObtenido:'',
-
-            dataProduccionArea:[],
             dataUsuarioGrupo:[],
+            dataEjecutivo:[],
+
+            dataProduccion:[],
+            dataProduccionArea:[],
+
+            idUsuario: '',
+            idGrupoVenta: '',
+            usuarioObtenido:'',
+            grupoVentaObtenido: '',
+                        
             dataIndicadoresGanador:[],
-            idGrupoVenta:null,
-            grupoVentaObtenido:null,
+
+            titulo : [], 
+            total : [] , 
+            percent : [],
+            monto : [],
+            ganaGrupoVentas: []
+
         },
         methods: {
+            
             loadComponent(){
                 $('.cmbEjecutivo').selectpicker('refresh');
+                $('.cmbVenta').selectpicker('refresh');
             },
             validateForm(){
-                var response=false;
-                
+                var response = false;  
                 if((this.idUsuario) == null || this.idUsuario == 'selected') {
                     swal("Revisión!", "Debes seleccionar un Ejecutivo para continuar con los indicativos.", "warning");
                     return response;
                 }
-                console.log(response)
                 return response=true;
             },
-            validate2doIndicator(){
+
+            validateForm2(){
                 var response=false;
                 
                 if((this.idGrupoVenta) == null || this.idGrupoVenta == 'selected') {
                     swal("Revisión!", "Debes seleccionar un Grupo de venta para continuar con los indicativos.", "warning");
                     return response;
                 }
-                console.log(response)
                 return response=true;
             },
+
+            async getDataEjecutivo(){
+                var url = host+"Indicadores/get-ejecutivos";
+                await axios.get(url).then((resp)=>{
+                    if(resp.status == 200 && resp.data.respuesta){
+                        this.dataEjecutivo = resp.data.jsonEjecutivos.rows;
+                    }
+                })
+            },
+            async getDataUsuarioGrupo(){
+                var url = host+"Indicadores/get-usuarioGrupo";
+                await axios.get(url).then((resp) => {
+                    if (resp.status == 200 && resp.data.respuesta) {
+                        this.dataUsuarioGrupo = resp.data.jsonUsuarioGrupo.jsonGrupo;
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                });
+            }
+            ,
+            obtenerUsuarioSeleccionado(paramEjecutivo){
+                var ejecutivo = this.dataEjecutivo.filter(user => user.id_usuario == paramEjecutivo);
+                this.usuarioObtenido = ejecutivo[0].nombre_completo;
+            },
+            obtenerUsuarioGrupoSeleccionado(paramGrupo){
+                var usuarioGrupo = this.dataUsuarioGrupo.filter(grupo => grupo.idUsuarioGrupo == paramGrupo);
+                this.grupoVentaObtenido = usuarioGrupo[0].nombre_completo;
+            },
+
             async getDataProduccion(paramEjecutivo, paramFechaInicio, paramFechaFin){
-                $("#bar_chart").empty();
+                // $("#bar_chart").empty();
                 this.dataProduccion = [];
 
+                this.titulo = [];
+                this.total = [];
+                this.percent = [];
+                this.monto = [];
+
+                // $('#graph1').highcharts().destroy();
+
                 $('[data-toggle="tooltip"]').tooltip()
+
                 var url = host+"Indicadores/get-indicadores-produccion/"+paramEjecutivo+"/"+paramFechaInicio+"/"+paramFechaFin;
                 if(this.validateForm()){
                     await axios.get(url).then((resp) => {
@@ -74,40 +119,42 @@ if(document.getElementById("appIndicadores")){
                                 "color":"#"+i+"A66E"+i
                             });
                         }
-                        idGrafo= document.getElementById("bar_chart");
-                        this.getMorris('bar',idGrafo, this.dataProduccion);
+                        
+                        // idGrafo= document.getElementById("bar_chart");
+                        // this.getMorris('bar',idGrafo, this.dataProduccion);
+
                         this.obtenerUsuarioSeleccionado(paramEjecutivo);
+                        this.myChart();
                     }).catch((error) => {
                         console.log(error)
                     });
-                    // var paramIdArea=4;
-                    // this.getDataProduccionArea(paramIdArea,paramFechaInicio,paramFechaFin);
                 }
             },
+            
             async getDataProduccionArea(paramIdArea,paramFechaInicio, paramFechaFin){
-                // $("#bar_chart").empty();
                 this.dataIndicadoresGanador = [];
                 var url=host+"Indicadores/get-indicadoresArea-produccion/"+paramIdArea+"/"+paramFechaInicio+"/"+paramFechaFin;
-                if(this.validate2doIndicator()){
+                if(this.validateForm2()){
                     await axios.get(url).then((resp) => {
-                        if (resp.status==200 && resp.data.respuesta) {
+                        if (resp.status == 200 && resp.data.respuesta) {
                             this.obtenerUsuarioGrupoSeleccionado(paramIdArea);
-                            var dataProdArea=resp.data.jsonIndicadoresArea.jsonCotArea;
-                            var dataProdCobradaArea=resp.data.jsonIndicadorPagada.jsonCotMenos90Dias;
-                            var dataOpnGeneradaArea=resp.data.jsonOpnArea.jsonOpns;
-                            var dataOpnCerradaArea=resp.data.jsonOpnCerrada.jsonOpnsClose;
-                            console.log(dataOpnCerradaArea);
-    
+                            var dataProdArea = resp.data.jsonIndicadoresArea.jsonCotArea;
+                            var dataProdCobradaArea = resp.data.jsonIndicadorPagada.jsonCotMenos90Dias;
+                            var dataOpnGeneradaArea = resp.data.jsonOpnArea.jsonOpns;
+                            var dataOpnCerradaArea = resp.data.jsonOpnCerrada.jsonOpnsClose;
+                           
                             // this.dataProduccionArea=_.reject(dataProdArea,function(o){return o.idUsuario});
-                            
+
+                            /** Tratar la DATA de Produccion de cotizaciones facturadas */
                             if (dataProdArea.length!=null) {
                                 var produccionArea=_.chain(dataProdArea).groupBy("idUsuario").toArray().value();
-                                var dataFinalFactura=[],dataFinalIngreso=[];
+                                var dataFinalFactura = [] ,dataFinalIngreso = [];
+
                                 /**Iteracion para el mayor numero de facturas y mayor ingreso de facturas */
                                 for (let ejecutivo = 0; ejecutivo < produccionArea.length; ejecutivo++) {
                                     let suma = 0 , aux=0;
                                     for (let y = aux; y < produccionArea[ejecutivo].length; y++) {
-                                        suma=suma+parseFloat(produccionArea[ejecutivo][y].subtotal); 
+                                        suma = suma+parseFloat(produccionArea[ejecutivo][y].subtotal); 
                                     }
                                     dataFinalFactura.push(
                                         {   
@@ -123,19 +170,21 @@ if(document.getElementById("appIndicadores")){
                                     )
                                 }
     
-                                //Ordenar dataFinalFactura
-                                var dataFacturaOrdenado=dataFinalFactura.sort((a, b) => {return (b.numeroFactura - a.numeroFactura)});
-                                var dataMontoOrdenado=dataFinalIngreso.sort((a, b) => {return (b.recurso - a.recurso)});
+                                //Ordenar los arreglos para de facturas y monto.
+                                var dataFacturaOrdenado = dataFinalFactura.sort((a, b) => {return (b.numeroFactura - a.numeroFactura)});
+                                var dataMontoOrdenado = dataFinalIngreso.sort((a, b) => {return (b.recurso - a.recurso)});
     
-                                //this.dataIndicadoresGanador=[];
+                                //this.dataIndicadoresGanador = []; Buscar el mayor numero de facturas
                                 this.dataIndicadoresGanador.push(dataFacturaOrdenado[0]);
                                 for (let ivendedor = 1; ivendedor < dataFacturaOrdenado.length; ivendedor++) {
-                                    if (dataFacturaOrdenado[0].numeroFactura===dataFacturaOrdenado[ivendedor].numeroFactura) {
+                                    if (dataFacturaOrdenado[0].numeroFactura === dataFacturaOrdenado[ivendedor].numeroFactura) {
                                         this.dataIndicadoresGanador.push(dataFacturaOrdenado[ivendedor]);
                                     }else{
                                         break;
                                     }
                                 }
+
+                                /**Buscar con el mayor monto */
                                 this.dataIndicadoresGanador.push(dataMontoOrdenado[0]);
                                 for (let ivendedor = 1; ivendedor < dataMontoOrdenado.length; ivendedor++) {
                                     if (dataMontoOrdenado[0].monto===dataMontoOrdenado[ivendedor].monto) {
@@ -143,17 +192,19 @@ if(document.getElementById("appIndicadores")){
                                     }else{
                                         break;
                                     }
-                                }                   
+                                }
+
                                 // var dataGanador=_.maxBy(dataFinal, function(x) { return x.mayor==x.mayor; });
                             }
+
                             if (dataProdCobradaArea!=null) {
-                                var produccionCobrada=_.chain(dataProdCobradaArea).groupBy("idUsuario").toArray().value();
-                                var dataCobradaMenos90=[];
+                                var produccionCobrada =_.chain(dataProdCobradaArea).groupBy("idUsuario").toArray().value();
+                                var dataCobradaMenos90 = [];
                                 /**Iteracion para el mayor numero de facturas y mayor ingreso de facturas */
                                 for (let ejecutivo = 0; ejecutivo < produccionCobrada.length; ejecutivo++) {
                                     let suma = 0 , aux=0;
                                     for (let y = aux; y < produccionCobrada[ejecutivo].length; y++) {
-                                        suma=suma+parseFloat(produccionCobrada[ejecutivo][y].subtotal); 
+                                        suma = suma+parseFloat(produccionCobrada[ejecutivo][y].subtotal); 
                                     }
                                     dataCobradaMenos90.push(
                                         {   
@@ -163,13 +214,12 @@ if(document.getElementById("appIndicadores")){
                                         }
                                     );
                                 }
-                                //Ordenar dataFinalFactura
-                                var dataFacturaCobradaMenos=dataCobradaMenos90.sort((a, b) => {return (b.numeroFactura - a.numeroFactura)});
+                                //Ordenar facturas cobradas con menos de 90 dias
+                                var dataFacturaCobradaMenos = dataCobradaMenos90.sort((a, b) => {return (b.numeroFactura - a.numeroFactura)});
                                 
-                                //this.dataIndicadoresGanador=[];
                                 this.dataIndicadoresGanador.push(dataFacturaCobradaMenos[0]);
                                 for (let ivendedor = 1; ivendedor < dataFacturaCobradaMenos.length; ivendedor++) {
-                                    if (dataFacturaCobradaMenos[0].numeroFactura===dataFacturaCobradaMenos[ivendedor].numeroFactura) {
+                                    if (dataFacturaCobradaMenos[0].numeroFactura === dataFacturaCobradaMenos[ivendedor].numeroFactura) {
                                         this.dataIndicadoresGanador.push(dataFacturaCobradaMenos[ivendedor]);
                                     }else{
                                         break;
@@ -186,7 +236,7 @@ if(document.getElementById("appIndicadores")){
                                 for (let ejecutivo = 0; ejecutivo < dataOPNGen.length; ejecutivo++) {
                                     let suma = 0 , aux=0;
                                     for (let y = aux; y < dataOPNGen[ejecutivo].length; y++) {
-                                        suma=suma+parseFloat(dataOPNGen[ejecutivo][y].subtotal); 
+                                        suma = suma+parseFloat(dataOPNGen[ejecutivo][y].subtotal); 
                                     }
                                     dataOPNGenerado.push(
                                         {   
@@ -196,13 +246,12 @@ if(document.getElementById("appIndicadores")){
                                         }
                                     );
                                 }
-                                //Ordenar dataFinalFactura
-                                var dataOPNGenOrden=dataOPNGenerado.sort((a, b) => {return (b.numeroFactura - a.numeroFactura)});
+                                //Ordenar las opns generadas 
+                                var dataOPNGenOrden = dataOPNGenerado.sort((a, b) => {return (b.numeroFactura - a.numeroFactura)});
                                 
-                                //this.dataIndicadoresGanador=[];
                                 this.dataIndicadoresGanador.push(dataOPNGenOrden[0]);
                                 for (let ivendedor = 1; ivendedor < dataOPNGenOrden.length; ivendedor++) {
-                                    if (dataOPNGenOrden[0].numeroFactura===dataOPNGenOrden[ivendedor].numeroFactura) {
+                                    if (dataOPNGenOrden[0].numeroFactura === dataOPNGenOrden[ivendedor].numeroFactura) {
                                         this.dataIndicadoresGanador.push(dataOPNGenOrden[ivendedor]);
                                     }else{
                                         break;
@@ -210,44 +259,43 @@ if(document.getElementById("appIndicadores")){
                                 }
                             }
                             else{
-                                var dataOpnVacio=[];
+                                var dataOpnVacio = [];
                                 dataOpnVacio.push(
                                     {   
-                                        "titulo":"Ejecutivo con Mayor Numero de OPN Generadas",
-                                        "usuario":"N/A",
-                                        "numeroFactura":"N/A", "monto":"N/A"
+                                        "titulo": "Ejecutivo con Mayor Numero de OPN Generadas",
+                                        "usuario": "N/A",
+                                        "numeroFactura": "0", "monto": "0"
                                     }
                                 );
                                 this.dataIndicadoresGanador.push(dataOpnVacio[0]);
-    
                             }
     
                             /**Agrupacion, ordenamiento de todos las OPN ganadas y cerradas exitosamente */
-                            if (dataOpnCerradaArea!=null && dataOpnCerradaArea.length>0) {
+                            if (dataOpnCerradaArea != null && dataOpnCerradaArea.length > 0) {
                                 var dataOPNCerrado=_.chain(dataOpnCerradaArea).groupBy("idUsuario").toArray().value();
-                                console.log('OPN Generadas',dataOPNCerrado);
-                                var dataOPNclose=[];
+                                var dataOPNclose = [];
                                 /**Iteracion para el mayor numero de facturas y mayor ingreso de facturas */
                                 for (let ejecutivo = 0; ejecutivo < dataOPNCerrado.length; ejecutivo++) {
                                     let suma = 0 , aux=0;
                                     for (let y = aux; y < dataOPNCerrado[ejecutivo].length; y++) {
-                                        suma=suma+parseFloat(dataOPNCerrado[ejecutivo][y].subtotal); 
+                                        suma = suma + parseFloat(dataOPNCerrado[ejecutivo][y].subtotal); 
                                     }
                                     dataOPNclose.push(
                                         {   
-                                            "titulo":"Ejecutivo con Mayor Numero de OPN Ganadas o Cerradas",
-                                            "usuario":dataOPNCerrado[ejecutivo][aux].nombreCompleto,
-                                            "numeroFactura":dataOPNCerrado[ejecutivo].length, "monto":this.format2(suma,'$ ')
+                                            "titulo": "Ejecutivo con Mayor Numero de OPN Ganadas o Cerradas",
+                                            "usuario": dataOPNCerrado[ejecutivo][aux].nombreCompleto,
+                                            "numeroFactura": dataOPNCerrado[ejecutivo].length,
+                                            "monto": this.format2(suma,'$ ')
                                         }
                                     );
                                 }
                                 //Ordenar dataFinalFactura
-                                var dataOPNcloseOrder=dataOPNclose.sort((a, b) => {return (b.numeroFactura - a.numeroFactura)});
+                                var dataOPNcloseOrder = dataOPNclose.sort((a, b) => {return (b.numeroFactura - a.numeroFactura)});
                                 
                                 //this.dataIndicadoresGanador=[];
                                 this.dataIndicadoresGanador.push(dataOPNcloseOrder[0]);
                                 for (let ivendedor = 1; ivendedor < dataOPNcloseOrder.length; ivendedor++) {
-                                    if (dataOPNcloseOrder[0].numeroFactura===dataOPNcloseOrder[ivendedor].numeroFactura) {
+                                    if (dataOPNcloseOrder[0].numeroFactura === dataOPNcloseOrder[ivendedor].numeroFactura) {
                                         this.dataIndicadoresGanador.push(dataOPNcloseOrder[ivendedor]);
                                     }else{
                                         break;
@@ -260,20 +308,26 @@ if(document.getElementById("appIndicadores")){
                                     {   
                                         "titulo":"Ejecutivo con Mayor Numero de OPN Ganadas o Cerradas",
                                         "usuario":"N/A",
-                                        "numeroFactura":"N/A", "monto":"N/A"
+                                        "numeroFactura":"0", "monto":"0"
                                     }
                                 );
                                 this.dataIndicadoresGanador.push(dataVacio[0]);
                             }
-    
-                            
+                                
                         }
                     })
                 }
+                // var groupVentas=_.chain(this.dataIndicadoresGanador).groupBy("titulo").toArray().value();
+                // this.ganaGrupoVentas = groupVentas;
+                console.log(groupVentas);
+                
+                this.myChartGrupo();
             },
+
             format2(n, currency) {
                 return currency + n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
             },
+            
             getMorris(type,element,value){
                 console.log(value)
                 var data=this.dataProduccion;
@@ -299,36 +353,148 @@ if(document.getElementById("appIndicadores")){
                 }
             },
             
-            async getDataEjecutivo(){
-                var url=host+"Indicadores/get-ejecutivos";
-               await axios.get(url).then((resp)=>{
-                    if(resp.status==200 && resp.data.respuesta){
-                        this.dataEjecutivo=resp.data.jsonEjecutivos.rows;
-                    }
-                })
+            myChart(){
+                
+                for (var index = 0; index < this.dataProduccion.length; index++) {
+                    this.titulo.push(this.dataProduccion[index].titulo);
+                    this.total.push(this.dataProduccion[index].total);
+                    this.percent.push(this.dataProduccion[index].porcentaje);
+                    this.monto.push(this.dataProduccion[index].monto);
+                }
+
+                // Highcharts.chart('graph1', {
+
+                //     title: {
+                //         text: this.usuarioObtenido
+                //     },
+                
+                //     subtitle: {
+                //         text: "Indicadores de producción"
+                //     },
+                
+                //     xAxis: {
+                //         categories: this.titulo
+                //     },
+                //     yAxis: {
+                //         title: {
+                //             text: 'Numero de Cotizaciones'
+                //         }
+                //     },
+                
+                //     series: [{
+                //         type: 'column',
+                //         colorByPoint: true,
+                //         data: this.total,
+                //         monto : this.monto,
+                //         showInLegend: false
+                //     }]
+                
+                // });
+
+
+                 Highcharts.chart('graph1', {
+                     chart: {
+                         type: 'column'
+                     },
+                     title: {
+                         text: this.usuarioObtenido
+                     },
+                     xAxis: {
+                         categories: this.titulo
+                     },
+                     yAxis: {
+                         title: {
+                             text: 'Numero de Cotizaciones'
+                         }
+                     },
+                     plotOptions: {
+                        series: {
+                            borderWidth: 0,
+                            dataLabels: {
+                                enabled: true,
+                                format: '{point.y:.0f}'
+                            }
+                        }
+                    },
+                     tooltip: {
+                        headerFormat: '<span style="font-size:11px">{series.title}</span><br>',
+                        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b> Cotizaciones<br/>'
+                    },
+                     series: [
+                         {
+                            title: this.titulo,
+                            name : this.usuarioObtenido,
+                            colorByPoint: true,
+                            data: this.total,
+                            monto : this.monto,
+                            y : this.percent
+                        }]
+                 });
+             
             },
-            async getDataUsuarioGrupo(){
-                var url=host+"Indicadores/get-usuarioGrupo";
-                await axios.get(url).then((resp) => {
-                    if (resp.status==200 && resp.data.respuesta) {
-                        this.dataUsuarioGrupo=resp.data.jsonUsuarioGrupo.jsonGrupo;
-                    }
-                }).catch((error) => {
-                    console.log(error);
-                });
-            }
-            ,
-            obtenerUsuarioSeleccionado(paramEjecutivo){
-                var ejecutivo=this.dataEjecutivo.filter(user=>user.id_usuario ==paramEjecutivo);
-                this.usuarioObtenido=ejecutivo[0].nombre_completo;
-            },
-            obtenerUsuarioGrupoSeleccionado(paramGrupo){
-                var usuarioGrupo=this.dataUsuarioGrupo.filter(grupo=>grupo.idUsuarioGrupo ==paramGrupo);
-                this.grupoVentaObtenido=usuarioGrupo[0].nombre_completo;
-            }
-        },
-        watch: {
             
-        },
+            myChartGrupo(){
+
+
+                Highcharts.chart('graph2', {
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: this.grupoVentaObtenido
+                    },
+                    subtitle: {
+                        text: 'Estimacion de produccion por area'
+                    },
+                    xAxis: {
+                        categories: [
+                            'Jan',
+                            'Feb',
+                            'Mar',
+                            'Nov'
+                        ],
+                        crosshair: true
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: 'Rainfall (mm)'
+                        }
+                    },
+                    tooltip: {
+                        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                            '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                        footerFormat: '</table>',
+                        shared: true,
+                        useHTML: true
+                    },
+                    plotOptions: {
+                        column: {
+                            pointPadding: 0.2,
+                            borderWidth: 0
+                        }
+                    },
+                    series: [{
+                        name: 'Tokyo',
+                        data: [49.9, 71.5, 106.4, 129.2]
+                
+                    }, {
+                        name: 'New York',
+                        data: [83.6, 78.8, 98.5, 93.4]
+                
+                    }, {
+                        name: 'London',
+                        data: [48.9, 38.8, 39.3, 41.4]
+                
+                    }, {
+                        name: 'Berlin',
+                        data: [42.4, 33.2, 34.5, 39.7]
+                
+                    }]
+                });
+
+            }
+        }
     })
 }

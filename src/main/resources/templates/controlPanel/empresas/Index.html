@@ -1,0 +1,326 @@
+<th:block th:fragment="body">
+	<div id="appEmpresa">
+        <ol class="breadcrumb breadcrumb-bg-red">
+            <li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+            <li class="active"><i class="material-icons">public</i> Nueva Empresa</li>
+        </ol>
+
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card">
+                    <div class="header">
+                        <h2>Lista de Empresas</h2>
+                    </div>
+            
+                    <div class="body">
+                        <div class="row clearfix">
+                            <div class="col-md-4 col-md-offset-8 text-right">
+                                <a href="#" role="button" class="btn bg-purple waves-effect" 
+                                    data-toggle="modal" data-target="#modalNuevaEmpresa">
+                                    <i class="material-icons">add_circle</i> Nuevo Empresa</a>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive-md table-responsive-lg table-responsive-xl">
+                            <table id="dtEmpresa" class="table table-bordered table-striped table-hover table-dark" data-height="600">
+                                <thead>
+                                    <tr class="container-fluid">
+                                        <th class="col-md-2" data-formatter="accionesFormatter" data-align="center" style="display: inline">Acciones</th>
+                                        <th class="col-md-1" data-field="idEmpresa" data-sortable="true" data-halign="left" data-align="center" data-visible="false">ID</th>
+                                        <th class="col-md-2" data-field="clave" data-sortable="true" data-halign="left" data-align="center">Clave</th>
+                                        <th class="col-md-3" data-field="empresa" data-sortable="true" data-halign="left" data-align="center">Empresa</th>
+                                        <th class="col-md-2" data-field="razonSocial" data-halign="left" data-align="center" >Razon Social</th>
+                                        <th class="col-md-2" data-field="direccion" data-halign="left" data-sortable="true" data-align="center">Direccion</th>
+                                        <th class="col-md-1" data-field="dominio" data-sortable="true" data-halign="left" data-visible="false">Dominio</th>
+                                        <th class="col-md-1" data-field="creacion_fecha" data-halign="left" data-align="center" data-visible="true">Fecha registro</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+		<!-- NUEVA EMPRESA -->
+		<div class="modal fade" id="modalNuevaEmpresa" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<form id="formEmpresa" v-on:submit.prevent="createEnpresa" method="POST" role="form">
+						<div class="modal-header">
+							<h4 class="modal-title">Registro Nueva Empresa</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row clearfix">
+								<div class="col-md-6">
+									<div class="form-group">
+										<p><b>Nombre Empresa *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtNombreEmpresa" class="form-control" required="required" v-model="nombreEmpresa"/>
+										</div>
+									</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <p><b></b>Clave *</p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtClaveEmpresa" class="form-control required" required="required" v-model="claveEmpresa"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row clearfix">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <p><b>Direcci&oacute;n *</b></p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtDireccionEmpresa" class="form-control required" required="required" v-model="direccionEmpresa"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <p><b>Razon Social *</b></p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtRazonSocial" class="form-control required" required="required" v-model="razonSocial"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row clearfix">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <p><b>Dominio *</b></p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtDominioEmpresa" class="form-control required" required="required" v-model="dominioEmpresa"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">	
+                                        <p><b>Logotipo</b></p>	
+                                        <b></b>						
+                                        <div class="form-line">
+                                            <input type="file" name="fileLogotipo" id="idFileLogotipo" class="form-control-file" multiple="multiple"  
+                                            accept="image/x-png" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
+							<button type="submit" class="btn btn-primary waves-effect">Crear</button>
+						</div>		
+					</form>
+				</div>
+			</div>
+		</div>
+
+        	<!-- NUEVA EMPRESA -->
+		<div class="modal fade" id="modalEditEmpresa" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<form id="formEditEmpresa" v-on:submit.prevent="updateEmpresa" method="POST" role="form">
+						<div class="modal-header">
+							<h4 class="modal-title">Registro Nueva Empresa</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row clearfix">
+								<div class="col-md-6">
+									<div class="form-group">
+										<p><b>Nombre Empresa *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtNombreEmpresa" class="form-control" required="required" v-model="editEmpresa.nombreEmpresa"/>
+										</div>
+									</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <p><b></b>Clave *</p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtClaveEmpresa" class="form-control required" required="required" v-model="editEmpresa.claveEmpresa"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row clearfix">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <p><b>Direcci&oacute;n *</b></p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtDireccionEmpresa" class="form-control required" required="required" v-model="editEmpresa.direccionEmpresa"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <p><b>Razon Social *</b></p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtRazonSocial" class="form-control required" required="required" v-model="editEmpresa.razonSocial"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row clearfix">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <p><b>Dominio *</b></p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtDominioEmpresa" class="form-control required" required="required" v-model="editEmpresa.dominioEmpresa"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">	
+                                        <p><b>Logotipo</b></p>	
+                                        <div class="form-line">
+                                            <input type="file" name="fileLogotipo" id="idFileLogotipo" class="form-control-file" multiple="multiple"  
+                                            accept="image/x-png" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
+							<button type="submit" class="btn btn-primary waves-effect">Crear</button>
+						</div>		
+					</form>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+</th:block>
+<th:block th:fragment="script">
+
+	<script th:src="@{/plugins/vue/vue.js}"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script th:src="@{/assets/js/empresa.js}"></script>
+	<!-- Wenzhixin DataTable -->
+	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/extensions/export/bootstrap-table-export.js}"></script>
+	<script th:src="@{/plugins/wenzhixin/locale/bootstrap-table-es-MX.js}"></script>
+	<script type="application/javascript" th:inline="javascript">
+
+			$("#dtEmpresa").bootstrapTable({
+			url					: [[@{/controlPanel/empresa/table}]],
+			method				: 'post',
+			contentType 		: 'application/x-www-form-urlencoded',
+			sidePagination		: "server",
+			pagination			: true,
+			showColumns			: true,
+			showToggle 			: true,
+			showRefresh 		: true,
+			search				: true,
+			showExport			: true,
+			striped				: true,
+			pageSize 			: 10,
+			exportTypes			: ["excel"],
+			toolbar				: "#dtEmpresaToolBar",
+			queryParams 		: function(params) {
+										params[ [[${_csrf.parameterName}]] ] = [[${_csrf.token}]];
+										params['txtBootstrapTableDesde'] = $('#txtBootstrapTableDesde').val();
+										params['txtBootstrapTableHasta'] = $('#txtBootstrapTableHasta').val();
+							        	return params;
+		    }, onLoadSuccess :function(data){
+
+			}
+		});
+
+		function editEmpresa(param){			
+			empresa.editEmpresaID(param);
+		}
+
+		function deleteEmpresa(param){
+			empresa.deleteEmpresa(param);
+		}
+
+		function accionesFormatter(value, row, index) {
+			//urlDelete = [[@{/controlPanel/activos/}]] + row.id_activo_mobiliario + '/delete';
+
+		    return [
+				'<a href="#" title="Editar" class="EditActivo" data-Edit="'+row.idEmpresa+'" data-toggle="modal" data-target="#modalEditEmpresa" onclick="editEmpresa('+row.idEmpresa+');" role="button">',
+					'<i class="material-icons edit">edit</i>',
+				'</a>',
+				'<a href="#" title="Eliminar" class="deleteActivo" onclick="deleteEmpresa('+row.idEmpresa+')">',
+		        	'<i class="material-icons remove">delete</i>',
+				'</a>'
+			].join(''); 
+		}
+
+		function estatusFormatter(value, row, index){
+			var lblEstatus='';
+			switch(row.estatus){
+				case true:
+					lblEstatus ='<a type="button" class="btn bg-green waves-effect" >Activo</a>';
+					break;
+				default:
+					lblEstatus='<a type="button" class="btn bg-green waves-effect" > Desconocido </a>';
+					break;
+			}
+			return lblEstatus;
+		}
+
+
+		$(function () {
+		// VALIDADOR DE FORMULARIO
+			$('#formActivo').validate({
+		        rules: {
+		            'txtNombre': {	required: true	},
+		            'txtMarca': {	required: true	},
+					'txtModelo':{	required: true	},
+					'txtColor':{	required: true	},
+					'txtSerie':{	required: true	},
+					'txtObservaciones':{	required: true	},
+		        },
+		        highlight: function (input) {
+		            $(input).parents('.form-line').addClass('error');
+		        },
+		        unhighlight: function (input) {
+		            $(input).parents('.form-line').removeClass('error');
+		        },
+		        errorPlacement: function (error, element) {
+		            $(element).parents('.form-group').append(error);
+		        }
+			});
+			 
+		});
+		
+		$(function () {
+			//Datetimepicker plugin
+		    $('.datetimepicker').bootstrapMaterialDatePicker({
+				format: 'DD/MM/YYYY',
+				lang:'es',
+		        clearButton: true,
+		        weekStart: 1,
+		        time:false
+		    });
+		 });
+
+	$('#txtFechaCompra').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false, todayBtn : true, todayHighlight: true});
+	$('#txtObsolecencia').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+	$('#txtFechaEntrega').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+	// $('#txtFechaEntrega').bootstrapMaterialDatePicker('setDate', moment());
+	// $('.txtCosto').change(function(){
+	// 	$('.txtCosto').toFixed(2);
+	// });
+	function cancel(){
+		$('#formEditActivo')[0].reset();
+			this.NuevoActivo.editData={};
+			this.NuevoActivo.elegido="";
+	}
+	$('#modalEditActivo').on('hidden.bs.modal',function(){
+		cancel();
+	});
+
+	</script>
+
+</th:block>

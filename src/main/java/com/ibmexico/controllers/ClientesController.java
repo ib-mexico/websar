@@ -339,21 +339,21 @@ public class ClientesController {
 			jsonRows.add(Json.createObjectBuilder()
 				.add("idCliente", itemCliente.getIdCliente())
 				
-				.add("sucursal", itemCliente.getSucursal().getSucursal())
+				.add("sucursal", itemCliente.getSucursal()!= null ? itemCliente.getSucursal().getSucursal() :"")
 				.add("cliente", itemCliente.getCliente())
 				.add("ejecutivo", (itemCliente.getUsuarioEjecutivo() != null)?itemCliente.getUsuarioEjecutivo().getNombreCompleto():"")
 				.add("ejecutivoS3s", (itemCliente.getUsuarioEjecutivoS3s() != null)?itemCliente.getUsuarioEjecutivoS3s().getNombreCompleto():"")
 				.add("ejecutivoR2a", (itemCliente.getUsuarioEjecutivoR2a() != null)?itemCliente.getUsuarioEjecutivoR2a().getNombreCompleto():"")
 				.add("clienteGiro", itemCliente.getClienteGiro().getClienteGiro())
 				.add("grupoEmpresarial", (itemCliente.getClienteGrupoEmpresarial() != null)?itemCliente.getClienteGrupoEmpresarial().getGrupoEmpresarial(): "")
-				.add("telefono", itemCliente.getTelefono())
+				.add("telefono", itemCliente.getTelefono()!=null ? itemCliente.getTelefono() :"")
 				
-				.add("razonSocial", itemCliente.getRazonSocial())
-				.add("rfc", itemCliente.getRfc())
-				.add("direccion", itemCliente.getDireccion())
-				.add("ciudad", itemCliente.getCiudad())
-				.add("estado", itemCliente.getEstado())				
-				.add("codigoPostal", itemCliente.getCodigoPostal())
+				.add("razonSocial", itemCliente.getRazonSocial() != null ? itemCliente.getRazonSocial() :"")
+				.add("rfc", itemCliente.getRfc() != null ? itemCliente.getRfc() : "")
+				.add("direccion", itemCliente.getDireccion() != null ? itemCliente.getDireccion() :"" )
+				.add("ciudad", itemCliente.getCiudad() != null ? itemCliente.getCiudad() : "")
+				.add("estado", itemCliente.getEstado()!=null ? itemCliente.getEstado() : "" )				
+				.add("codigoPostal", itemCliente.getCodigoPostal()!= null ? itemCliente.getCodigoPostal() :"")
 				
 				.add("creacion_usuario", itemCliente.getCreacionUsuario().getNombreCompleto())
 				.add("eliminado", itemCliente.isEliminado())
@@ -425,7 +425,7 @@ public class ClientesController {
 			jsonClientes.add(Json.createObjectBuilder()
 					.add("idCliente", itemCliente.getIdCliente())
 					.add("cliente", itemCliente.getCliente())
-					.add("rfc", itemCliente.getRfc())					
+					.add("rfc", itemCliente.getRfc() != null ? itemCliente.getRfc() : "N/A" )					
 			);
 		});
 					

@@ -98,13 +98,13 @@ public class CotizacionComisionService {
 			Boolean status=false;
 			List<CotizacionEntity> objCotizacionFiltrada=cotizacionService.findByCotizacionIdOpn(objCotizacion.getIdCotizacion());
 			
-			if(cotizacionFicheroService.countCotizacionFicheroCalidad(objCotizacion.getIdCotizacion())>0){
-				status=true;
+			if(cotizacionFicheroService.countCotizacionFicheroCalidad(objCotizacion.getIdCotizacion()) > 0){
+				status = true;
 			}else if(objCotizacionFiltrada.size()>0){
 				int idOpnNegocio=objCotizacionFiltrada.get(0).getIdCotizacion();
 				/**Retornara false si encuentran archivos pero que no sean del catalogo fichero Calidad */
 				if(opnNegocioFicheroService.countOpnFicheroCalidad(idOpnNegocio)>0){
-					status=true;
+					status = true;
 				}
 			}
 			/** Fecha de inicio de la llamada de calidad */

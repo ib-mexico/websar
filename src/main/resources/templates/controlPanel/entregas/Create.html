@@ -29,11 +29,11 @@
 		                            	<option value="default" selected="selected">Selecciona un Cliente...</option>
 		                            	<option th:each="itemCliente : ${lstClientes}" th:value="${itemCliente.idCliente}" th:text="${itemCliente.cliente}"></option>
 		                       		</select>
-		                       		<span class="input-group-addon">
+		                       		<!-- <span class="input-group-addon">
 		                       			<a href="#" data-toggle="modal" data-target="#clienteModal">		                       			
 	                                        <i class="material-icons">add_circle</i>
 		                       			</a>
-                                    </span>
+                                    </span> -->
 								</div>	                           
 	                        </div>
 	                        
@@ -43,11 +43,11 @@
 		                            <select class="form-control show-tick" name="cmbClienteContacto" id="cmbClienteContacto" data-live-search="true" >
 		                            	<option value="default" selected="selected">Selecciona un Contacto...</option>
 		                            </select>
-		                            <span class="input-group-addon">
+		                            <!-- <span class="input-group-addon">
 		                       			<a href="#" data-toggle="modal" data-target="#contactoModal">		                       			
 	                                        <i class="material-icons">add_circle</i>
 		                       			</a>
-                                    </span>
+                                    </span> -->
 	                            </div>
 	                        </div>
 						</div>
@@ -317,12 +317,25 @@
 </th:block>
 
 <th:block th:fragment="script">
+	<script th:src="@{/plugins/bootstrap-select/js/bootstrap-select.js}"></script>
+
 	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
 			
 		var idUsuario = [[${_USER_.getIdUsuario()}]];
-	
-		$(document).ready(function() {				
-			
+		var idCotizacion = [[${objCotizacion}]]  != null ? [[${objCotizacion}]] : null;
+		
+		$(document).ready(function() {
+
+			if (idCotizacion != null) {
+				// var arrFolio = item.split("-");
+                // var numberFolio = parseInt(arrFolio[3]);
+				$("#cmbCotizacion").val(idCotizacion);
+				
+				$('#cmbCotizacion').attr('disabled', 'disabled');
+				$('#rstCotizacion').attr('class', 'hidden');
+				getCotizacionEntregas(idCotizacion);
+			}
+
 			// SELECT PICKER
 			$('#cmbCliente option').attr('selected', false);
 			
@@ -360,13 +373,15 @@
 				}
 			});
 				
-			
-			
+						
 			//SELECT COTIZACIONES
 			$('#cmbCotizacion').change(function(e){
-
+				idCotizacion = null;
 				var idCotizacion = $(this).val();
-				
+				getCotizacionEntregas(idCotizacion);
+			});
+			
+			function getCotizacionEntregas(idCotizacion){
 				if(idCotizacion != "0") {					
 					$.ajax({
 						url					: [[@{/controlPanel/cotizaciones/}]] + idCotizacion + "/get-partidas",
@@ -428,8 +443,11 @@
 									strNewTag += '</div>';
 									
 									$('#productoContainer').append(strNewTag);
-						            $('#productoContainer').data('cardinality', cardinality);					
+									$('#productoContainer').data('cardinality', cardinality);					
 								});
+							}else{
+								$('#inputContainer').addClass('hide');
+								$('#productoContainer').empty();
 							}
 						},
 						error				: function(e) {
@@ -437,8 +455,7 @@
 						}
 					});
 				}
-				
-		  	});
+			}
 			
 			// FORM SUBMIT
 			$('#formEntrega').submit(function(e){

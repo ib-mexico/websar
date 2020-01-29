@@ -59,7 +59,7 @@ public class UsuarioService {
 	}
 		
 	public List<UsuarioEntity> listUsuarios() {
-		return usuarioRepository.findAll();
+		return usuarioRepository.listUsuariosActivos();
 	}
 	
 	public List<UsuarioEntity> listUsuariosActivos() {
@@ -82,6 +82,8 @@ public class UsuarioService {
 				.add("nombre_completo", item.getNombreCompleto())
 				.add("departamento", item.getDepartamento()!=null ? item.getDepartamento().getDepartamento() :"N/A")
 				.add("sucursal", item.getSucursal()!=null ? item.getSucursal().getSucursal() :"N/A")
+				.add("empresa", item.getEmpresa()!=null ? item.getEmpresa().getEmpresa() : "N/A")
+				.add("claveEmpresa", item.getEmpresa() != null ? item.getEmpresa().getClave() : "N/A")
 			);
 		});
 

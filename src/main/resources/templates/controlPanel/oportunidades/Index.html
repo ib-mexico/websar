@@ -1,3 +1,16 @@
+<th:block th:fragment="style">
+	<style>
+		.cmbEmpresa > button{
+			height: 35px;
+			font-size: 25px;
+			font-weight: bold;
+		}
+		button > span{
+			font-size: 16px;
+		}
+	
+	</style>
+</th:block>
 <th:block th:fragment="body">
 	<div id="appOportunidades">
 		<div class="block-header">
@@ -6,35 +19,45 @@
 		
 		<div class="row clearfix">
 			<div class="col-md-6">
-				<th:block th:if="${rolNuevaOportunidad}">
-					<a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/create'}" type="button" class="btn bg-purple waves-effect">
-						<i class="material-icons">add_circle</i> 
-						<span>NUEVA OPORTUNIDAD</span>
+				<div class="col-md-3 m-t-10">
+					<th:block th:if="${rolNuevaOportunidad}">
+						<a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/create'}" type="button" class="btn bg-purple waves-effect">
+							<i class="material-icons">add_circle</i> 
+							<span>NUEVA OPORTUNIDAD</span>
+						</a>
+					</th:block>
+				</div>
+				<div class="col-md-6 col-xs-6 col-sm-6 col-lg-6 m-t-10">
+					<select name="cmbEmpresaHistorico" id="cmbEmpresaHistorico" class="selectpicker form-control show-tick cmbEmpresa col-md-4" data-live-search="true" 
+						v-model="idEmpresa" data-style="btn-primary" title="Seleccione Empresa Historico">
+						<option v-for="item in empresa" :value="item.id_empresa" v-text="item.razon_social"></option>				
+					</select>
+						
+						<!-- <div class="btn-group hidden">
+							<button type="button"  id="btnHistorico" :class="historicoActive ? activeClass : inactiveClass + ' dropdown-toggle'" data-toggle="dropdown">
+								OPN HISTORICO<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="#" v-on:click="changeEmpresaHistorico(1)" class="btnHistorico">HISTORICO IB-MEXICO</a></li>
+								<li><a href="#" v-on:click="changeEmpresaHistorico(2)" class="btnHistorico">HISTORICO S3S</a></li>
+								<li><a href="#" v-on:click="changeEmpresaHistorico(3)" class="btnHistorico">HISTORICO R2A</a></li>
+								<li class="divider"></li>
+								<li><a href="#" v-on:click="changeEmpresaHistorico(4)" class="btnHistorico">HISTORICO UCA</a></li>
+							  </ul>
+						</div> -->
+						<!-- <button type="button" :class="historicoIbmActive ? activeClass : inactiveClass" onclick="mostrarHistorico()">
+							<i class="material-icons">history</i>
+							<span>HISTORICO</span>
+						</button> -->
+				</div>
+				<div class="col-md-2 m-t-10">
+					<a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/calendario'}" type="button" class="btn bg-teal waves-effect">
+						<i class="material-icons">date_range</i>
+						<span>VER CALENDARIO</span>
 					</a>
-				</th:block>
-				<th:block>
-					<div class="btn-group">
-						<button type="button"  id="btnHistorico" :class="historicoActive ? activeClass : inactiveClass + ' dropdown-toggle'" data-toggle="dropdown">
-							OPN HISTORICO<span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu">
-							<li><a href="#" v-on:click="changeEmpresaHistorico(1)" class="btnHistorico">HISTORICO IB-MEXICO</a></li>
-							<li><a href="#" v-on:click="changeEmpresaHistorico(2)" class="btnHistorico">HISTORICO S3S</a></li>
-							<li><a href="#" v-on:click="changeEmpresaHistorico(3)" class="btnHistorico">HISTORICO R2A</a></li>
-							<li class="divider"></li>
-							<li><a href="#" v-on:click="changeEmpresaHistorico(4)" class="btnHistorico">HISTORICO UCA</a></li>
-						  </ul>
-					</div>
-					<!-- <button type="button" :class="historicoIbmActive ? activeClass : inactiveClass" onclick="mostrarHistorico()">
-						<i class="material-icons">history</i>
-						<span>HISTORICO</span>
-					</button> -->
-				</th:block>
-				<a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/calendario'}" type="button" class="btn bg-teal waves-effect">
-					<i class="material-icons">date_range</i>
-					<span>VER CALENDARIO</span>
-				</a>
+				</div>
 			</div>
+			<br/>
 			<div class="col-md-6">
 				<div class="card">
 					<div class="body">    		
@@ -62,7 +85,7 @@
 			</div>
 		</div>
 	
-		<div class="row clearfix">
+		<!-- <div class="row clearfix">
 			<div class="col-md-12">    	
 				<button type="button" :class="ibmActive ? activeClass : inactiveClass" v-on:click="changeEmpresa(1)">
 					<i class="material-icons">store</i>
@@ -87,7 +110,8 @@
 				</th:block>
 
 			</div>
-		</div>
+		</div> -->
+
 		<!--Botones de los historicos-->
 		<div class="row clearfix" style="display: none;" id="historicos">
 			<div class="col-md-12">
@@ -118,19 +142,16 @@
 			</div>
 		</div>
 		<!--Fin de los opciones de historicos-->
-		
-		<!-- <div class="row clearfix">
-			<div class="col-md-4 col-xs-12 col-sm-6">
-				<div class="input-group">
-					<select  class="selectpicker form-control show-tick cmbEmpresas" data-live-search="true" v-model="idEmpresa">
-						<option value="default" selected="selected">Seleccione la empresa</option>
-						<option v-for="item  in empresa" :value="item.id_empresa" v-text="item.razon_social"></option>
-					</select>
-				</div>
+	
+		<div class="row clearfix">
+			<div class="col-md-6">
+				<!-- <h4 class="text-center text-primary">Seleccione la empresa.</h4> -->
+				<select name="cmbEmpresa" id="cmbEmpresa" class="selectpicker form-control show-tick cmbEmpresa" data-live-search="true" v-model="idEmpresa" data-style="btn-primary">
+					<option v-for="item in empresa" :value="item.id_empresa" v-text="item.razon_social" v-on:click="changeEmpresa(item.id_empresa)"></option>
+				</select>
 			</div>
-		</div> -->
-
-
+		</div>
+	
 		<div class="row clearfix opn-deck m-t-10">
 			
 			<!-- ABIERTOS -->
@@ -153,7 +174,6 @@
 					:token="token">
 				</opn-card>
 			</div>
-
 			<!-- EN CURSO -->
 			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn" v-if="opnData.en_curso != null" >
 				<div class="info-box bg-light-green hover-zoom-effect">
@@ -196,6 +216,27 @@
 				</opn-card>
 			</div>
 			
+			<!--Financiamiento-->
+			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn" v-if="opnData.financiamiento != null" >
+				<div class="info-box bg-purple hover-zoom-effect">
+					<div class="icon">
+						<i class="material-icons">attach_money</i>
+					</div>
+					<div class="content">
+						<div class="text">FINANCIAMIENTO</div>
+						<div class="number">{{ totalFinanza }}</div>
+					</div>
+				</div>
+			
+				<opn-card v-for="(item, index) in opnData.financiamiento" :key="item.id_oportunidad"
+					:data="item"
+					:id-oportunidad="item.id_oportunidad"
+					:tipo-oportunidad="6"
+					:index="index"
+					:token="token">
+				</opn-card>
+			</div>
+
 			<!-- CERRADO -->
 			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn" v-if="opnData.cerrados != null" >
 				<div class="info-box bg-indigo hover-zoom-effect">
@@ -236,7 +277,8 @@
 					:index="index"
 					:token="token">
 				</opn-card>
-			</div>    	
+			</div>
+			
 		</div>
 	</div>
 
@@ -340,7 +382,7 @@
 													<small v-if="item.maestra == 1">Cotizaci&oacute;n Maestra</small>
 													<small v-if="item.renta == 1">Cotizaci&oacute;n de Renta</small>
 													<small v-if="item.normal == 1">Cotizaci&oacute;n Normal</small>
-													<small v-if="item.boom == 1">Cotizaci&oacute;n Boom</small>
+													<small v-if="item.boom == 1">Cotizaci&oacute;n BOM</small>
 												</div>
 											</div>								 				
 											<div class="row cleafix">
@@ -532,11 +574,19 @@
 	<script th:src="@{/plugins/vue/vue.js}"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script th:src="@{/assets/js/script.js}"></script>
+	<script th:src="@{/plugins/bootstrap-select/js/bootstrap-select.js}"></script>
 
+	<!-- Wenzhixin DataTable -->
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+		
 	<!-- Wenzhixin DataTable -->
 	<script type="application/javascript" th:inline="javascript">
 	/*<![CDATA[*/
 		$(document).ready(function() {
+			 /*Listar los ejecutivos y grupo de ventas con selectpicker*/
+			 $('.cmbEmpresa').selectpicker('refresh');
+            // $('.cmbVenta').selectpicker('refresh');
+
 			var csrftoken = [[${_csrf.token}]];			
 			app1.token = csrftoken;
 			//FILTRADO DE OPN
@@ -564,13 +614,24 @@
 				}				
 			});
 			// *****************************************************************
-
 		});
 
 		// $('select').on('change', function() {
 		// 	  alert( this.value );
 		// });
-
+		$('#cmbEmpresa').on('change', function(e){
+			console.log(this.value,
+            this.options[this.selectedIndex].value,
+			$(this).find("option:selected").val(),);
+			var valor = parseInt(this.value);
+			console.log(valor,"valor");
+			app1.changeEmpresa(valor);
+		});
+		$('#cmbEmpresaHistorico').on('change', function(e){
+			var valor = parseInt(this.value);
+			app1.changeEmpresaHistorico(valor);
+		});
+		
 		function mostrarHistorico() {
    			document.getElementById('historicos').style.display = "block";
 		}

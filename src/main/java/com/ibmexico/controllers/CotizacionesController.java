@@ -1,20 +1,24 @@
 package com.ibmexico.controllers;
 
-
 import java.io.IOException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.mail.MessagingException;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -33,6 +38,7 @@ import org.thymeleaf.context.Context;
 import com.ibmexico.libraries.notifications.ApplicationException;
 import com.ibmexico.libraries.notifications.EnumException;
 import com.ibmexico.libraries.notifications.EnumMessage;
+import com.ibmexico.components.MailerComponent;
 import com.ibmexico.components.ModelAndViewComponent;
 import com.ibmexico.components.PdfComponent;
 import com.ibmexico.configurations.GeneralConfiguration;
@@ -42,6 +48,7 @@ import com.ibmexico.entities.ClienteGiroEntity;
 import com.ibmexico.entities.CotizacionComisionEntity;
 import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.CotizacionEstatusEntity;
+import com.ibmexico.entities.CotizacionFicheroEntity;
 import com.ibmexico.entities.CotizacionPartidaEntity;
 import com.ibmexico.entities.CotizacionUsuarioQuotaEntity;
 import com.ibmexico.entities.EmpresaEntity;
@@ -50,6 +57,7 @@ import com.ibmexico.entities.MonedaEntity;
 import com.ibmexico.entities.OportunidadNegocioEntity;
 import com.ibmexico.entities.SucursalEntity;
 import com.ibmexico.entities.UsuarioEntity;
+import com.ibmexico.entities.UsuarioRolEntity;
 import com.ibmexico.libraries.DataTable;
 import com.ibmexico.libraries.Templates;
 import com.ibmexico.services.ClienteContactoService;
@@ -60,6 +68,7 @@ import com.ibmexico.services.CotizacionEstatusService;
 import com.ibmexico.services.CotizacionFicheroService;
 import com.ibmexico.services.CotizacionPartidaService;
 import com.ibmexico.services.CotizacionService;
+import com.ibmexico.services.CotizacionTipoFicheroService;
 import com.ibmexico.services.CotizacionUsuarioQuotaService;
 import com.ibmexico.services.EmpresaService;
 import com.ibmexico.services.FormaPagoService;
@@ -151,7 +160,11 @@ public class CotizacionesController {
 	@Autowired
 	@Qualifier("cotizacionFicheroService")
 	private CotizacionFicheroService cotizaFicheroService;
-	
+
+	@Autowired
+	@Qualifier("cotizacionTipoFicheroService")
+	private CotizacionTipoFicheroService cotizacionTipoFicheroService;
+
 	@Autowired
 	@Qualifier("usuarioRolService")
 	private UsuarioRolService usuarioRolService;
@@ -159,6 +172,9 @@ public class CotizacionesController {
 	@Autowired
 	@Qualifier("sessionService")
 	private SessionService sessionService;
+
+	@Autowired
+	private MailerComponent mailerComponent;
 	
 	//COTIZACION	
 	@GetMapping({"", "/"})
@@ -172,6 +188,8 @@ public class CotizacionesController {
 		objModelAndView.addObject("rolCotizacionCobranza", sessionService.hasRol("COTIZACIONES_COBRANZA"));
 		objModelAndView.addObject("rolNuevaCotizacion", sessionService.hasRol("COTIZACIONES_CREATE"));
 		objModelAndView.addObject("rolCotizacionAdmin", sessionService.hasRol("COTIZACIONES_ADMINISTRADOR"));
+		objModelAndView.addObject("rolEntrega", sessionService.hasRol("ENTREGAS_CREATE"));
+		objModelAndView.addObject("rolEntregaAdmin", sessionService.hasRol("ENTREGAS_ADMINISTRADOR"));
 		
 		return objModelAndView;
 	}
@@ -715,7 +733,29 @@ public class CotizacionesController {
 		
 		return pdfComponent.generate(path_file, objTemplates.FOUNDATION_PDF, objContext);		
 	}
-	
+
+	//Para la notificacion por correo cuando se acepta una cotizacion por PDF.
+	public ByteArrayResource envioDetalleCotizacion(int idCotizacion)
+			throws DocumentException, IOException, MessagingException {
+		CotizacionEntity objCotizacion = cotizacionService.findByIdCotizacion(idCotizacion);
+		List<CotizacionPartidaEntity> lstPartida = cotizacionPartidaService.listCotizacionesPartidas(idCotizacion);
+		
+		LocalDateTime ldtNow = LocalDateTime.now();
+		Templates objTemplates = new Templates();
+		
+		String path_file = ldtNow.getYear() + "_" + ldtNow.getMonthValue() + "_" + ldtNow.getDayOfMonth() + "_" + objCotizacion.getFolio() + ".pdf";
+				
+		Context objContext = new Context();
+		objContext.setVariable("_TEMPLATE_", Templates.PDF_COTIZACION);
+		objContext.setVariable("title", "Cotización: " + objCotizacion.getFolio());
+		objContext.setVariable("objCotizacion", objCotizacion);
+		objContext.setVariable("lstPartida", lstPartida);
+		objContext.setVariable("fechaActual", ldtNow.format(GeneralConfiguration.getInstance().getDateFormatterNatural()));	
+		ByteArrayResource objPDF = pdfComponent.generateFile(path_file, objTemplates.FOUNDATION_PDF, objContext);
+		return objPDF;
+	}
+
+
 	@RequestMapping(value = {"{paramIdCotizacion}/get-cotizacion", "{paramIdCotizacion}/get-cotizacion/"}, method = RequestMethod.GET)
 	public @ResponseBody String getCotizacion( @PathVariable("paramIdCotizacion") int paramIdCotizacion) {
 						
@@ -757,7 +797,18 @@ public class CotizacionesController {
 								@RequestParam(value="txtFacturaFecha", required=false, defaultValue="") String txtFacturaFecha,
 								@RequestParam(value="txtFacturaNumero", required=false, defaultValue="") String txtFacturaNumero,
 								@RequestParam(value="txtPagoFecha", required=false, defaultValue="") String txtPagoFecha,
-								@RequestParam(value="txtPagoReferencia", required=false, defaultValue="") String txtPagoReferencia) {
+								@RequestParam(value="txtPagoReferencia", required=false, defaultValue="") String txtPagoReferencia,
+								
+								@RequestParam(value="txtFolio", required=false, defaultValue="") String txtFolio,
+								@RequestParam(value="txtReferenciaPago", required=false, defaultValue="") String txtReferenciaPago,
+								@RequestParam(value="txtImporte", required=false, defaultValue="") BigDecimal txtImporte,
+								@RequestParam(value="txtProveedor", required=false, defaultValue="") String txtProveedor,
+								@RequestParam(value="txtBanco", required=false, defaultValue="") String txtBanco,
+								@RequestParam(value="txtFechaVencimiento", required=false, defaultValue="") String txtFechaVencimiento,
+								@RequestParam(value="txtDescripcion", required=false, defaultValue = "" )String txtDescripcion,
+								@RequestParam(value="fichero", required=false) MultipartFile fichero
+											
+								) {
 		
 		CotizacionEntity objCotizacion = cotizacionService.findByIdCotizacion(hddIdCotizacion);
 		Boolean respuesta = false;
@@ -781,6 +832,27 @@ public class CotizacionesController {
 									new PhoneNumber("whatsapp:+12053902893"),
 									"Se aprobó una cotización con folio *"+objCotizacion.getFolio()+"*, con un valor de *"+objCotizacion.getTotalNatural()+"* por el usuario *"+objCotizacion.getUsuario().getAliasCorreo()+"*").create();
 									System.out.println(message.getSid());
+								
+							
+							ByteArrayResource pdfCotizacion = envioDetalleCotizacion(hddIdCotizacion);
+
+							for (UsuarioRolEntity objUsuarioRol : sessionService.findRolName("NOTIFICACION_COTIZACION")){
+								Map<String, Object> mapCotizacionNotificacion = new HashMap<String, Object>();
+								mapCotizacionNotificacion.put("usuarioRol", objUsuarioRol.getUsuario());
+								mapCotizacionNotificacion.put("detalleCotizacion", objCotizacion);
+								// mapCotizacionNotificacion.put("fechaAprobacion", LocalDate.parse(ldNow.toString(), GeneralConfiguration.getInstance().getDateFormatterNatural()));
+								
+								try {
+									if (EmailValidator.getInstance().isValid(objUsuarioRol.getUsuario().getCorreo())) {
+
+										mailerComponent.sendNotificacionCotizacion(objUsuarioRol.getUsuario().getCorreo(), "La cotización "+""+objCotizacion.getFolio() +" fue aceptada",
+										pdfCotizacion, objCotizacion.getFolio(), Templates.EMAIL_NOTIFICACION_COTIZACION_ACEPTADA, mapCotizacionNotificacion);
+										System.err.println("envio correctamente");
+									}
+								} catch (Exception e) {
+									System.err.println("Ocurrio un error y no se pudo enviar el correo : "+e.getMessage());
+								}
+							}
 						}	
 					} catch (Exception e) {
 						objCotizacion.setCotizacionEstatus(cotizacionEstatusService.findByIdCotizacionEstatus(cmbEstatus));
@@ -818,12 +890,45 @@ public class CotizacionesController {
 							if(objComisionExistente == null) {							
 								CotizacionComisionEntity objComision = new CotizacionComisionEntity();
 								objComision.setCotizacion(objCotizacion);
-								
+
 								cotizacionComisionService.create(objComision, objCotizacion);
 							}else{
 								cotizacionComisionService.create(objComisionExistente, objCotizacion);
 							}
 						}
+						/**Registro de comprobante de pago */
+
+						CotizacionFicheroEntity objFichero = new CotizacionFicheroEntity();
+						try {
+							objFichero.setCotizacion(cotizacionService.findByIdCotizacion(hddIdCotizacion));
+							objFichero.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(1));
+							objFichero.setFolio(objCotizacion.getFacturaNumero());
+							objFichero.setReferenciaPago(txtReferenciaPago);
+							objFichero.setProveedor(objCotizacion.getCliente().getCliente());
+							objFichero.setBanco(txtBanco);
+							
+							if(!txtImporte.equals("")) {
+								objFichero.setImporte((txtImporte));
+							}
+							
+							if(!txtFechaVencimiento.equals("")) {
+								objFichero.setVencimientoFecha(LocalDate.parse(txtFechaVencimiento, GeneralConfiguration.getInstance().getDateFormatterNatural()));
+							}
+							
+							objFichero.setObservaciones(txtDescripcion);
+							
+							cotizaFicheroService.addFile(objFichero, fichero);
+							int cmbTipoFichero = 1;
+							if(cmbTipoFichero == 3 || cmbTipoFichero == 4) {					
+								if(objFichero.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() >= 3 &&  objFichero.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() != 5) {	
+									cotizacionService.recalcularCotizacion(objFichero.getCotizacion());
+								}				
+							}
+							respuesta = true;
+						} catch(ApplicationException exception) {
+							respuesta = false;
+						}
+
 					}
 					
 					if(cmbEstatus.equals(6) && objCotizacion.getInicioCobranzaFecha() == null) {

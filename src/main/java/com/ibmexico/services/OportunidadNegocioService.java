@@ -3,7 +3,10 @@ package com.ibmexico.services;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -19,9 +22,11 @@ import com.ibmexico.libraries.notifications.EnumException;
 import com.ibmexico.configurations.GeneralConfiguration;
 import com.ibmexico.entities.ActividadEntity;
 import com.ibmexico.entities.CotizacionEntity;
+import com.ibmexico.entities.OpnNegocioColaboradorEntity;
 import com.ibmexico.entities.OportunidadNegocioEntity;
 import com.ibmexico.entities.OportunidadNegocioFicheroEntity;
 import com.ibmexico.entities.UsuarioEntity;
+import com.ibmexico.repositories.IOpnNegocioColaboradorRepository;
 import com.ibmexico.repositories.IOportunidadNegocioRepository;
 
 @Service("oportunidadNegocioService")
@@ -34,6 +39,10 @@ public class OportunidadNegocioService {
 	@Autowired
 	@Qualifier("oportunidadNegocioFicheroService")
 	private OportunidadNegocioFicheroService opnNegocioFicheroService;
+
+	@Autowired
+	@Qualifier("opnNegocioColaboradorRepository")
+	private IOpnNegocioColaboradorRepository opnNegocioColaboradorRepository;
 
 	@Autowired
 	@Qualifier("sessionService")
@@ -74,12 +83,28 @@ public class OportunidadNegocioService {
 	public List<OportunidadNegocioEntity> listOportunidadesNegociosEmpresa(int idOportunidadEstatus, int idEmpresa) {
 		
 		List<OportunidadNegocioEntity> lstOportunidades = null;
+		List<OpnNegocioColaboradorEntity> lstIdOpn = null;
+		List<OportunidadNegocioEntity> lstOportunidadesColaborador = null;
 		
 		if(sessionService.hasRol("OPORTUNIDADES_ADMINISTRADOR")) {
 			lstOportunidades = oportunidadNegocioRepository.findAllEmpresa(idOportunidadEstatus, idEmpresa);
 		}
 		else {			
 			lstOportunidades = oportunidadNegocioRepository.findAllEmpresa(idOportunidadEstatus, sessionService.getCurrentUser().getIdUsuario(), idEmpresa);
+			
+			lstIdOpn = opnNegocioColaboradorRepository.lstOpnUsuario(sessionService.getCurrentUser().getIdUsuario(), idOportunidadEstatus, idEmpresa);
+		
+			ArrayList<Integer> arrIdOpn = new ArrayList<>();
+			if (lstIdOpn.size() > 0) {
+				for (OpnNegocioColaboradorEntity opnc : lstIdOpn) {
+					arrIdOpn.add(opnc.getOpnNegocio().getIdOportunidadNegocio());
+				}				
+				lstOportunidadesColaborador =  oportunidadNegocioRepository.lstOpnColaboradorEmpresa(arrIdOpn);
+				lstOportunidades.addAll(lstOportunidadesColaborador);
+			}
+			Set<OportunidadNegocioEntity> set = new HashSet<>(lstOportunidades);
+			lstOportunidades.clear();
+			lstOportunidades.addAll(set);
 		}
 		
 		return lstOportunidades;
@@ -88,10 +113,24 @@ public class OportunidadNegocioService {
 	/**Consulta para las OPN Cerradas y perdidas de este anio */
 	public List<OportunidadNegocioEntity> lstOpnNegocioEmpresa(int idOportunidadEstatus, int idEmpresa, int anio){
 		List<OportunidadNegocioEntity> lstOportunidades = null;
+		List<OpnNegocioColaboradorEntity> lstIdOpn = null;
+		List<OportunidadNegocioEntity> lstOportunidadesColaborador = null;
 		if(sessionService.hasRol("OPORTUNIDADES_ADMINISTRADOR")){
 			lstOportunidades = oportunidadNegocioRepository.findAllEmpresaAnio(idOportunidadEstatus, idEmpresa, anio);
 		}else{
 			lstOportunidades = oportunidadNegocioRepository.findAllEmpresaAnio(idOportunidadEstatus, sessionService.getCurrentUser().getIdUsuario(), idEmpresa,anio);
+			lstIdOpn = opnNegocioColaboradorRepository.lstOpnUsuarioAnio(sessionService.getCurrentUser().getIdUsuario(), idOportunidadEstatus, idEmpresa, anio);
+			ArrayList<Integer> arrIdOpn = new ArrayList<>();
+			if (lstIdOpn.size() > 0) {
+				for (OpnNegocioColaboradorEntity opnc : lstIdOpn) {
+					arrIdOpn.add(opnc.getOpnNegocio().getIdOportunidadNegocio());
+				}				
+				lstOportunidadesColaborador =  oportunidadNegocioRepository.lstOpnColaboradorEmpresa(arrIdOpn);
+				lstOportunidades.addAll(lstOportunidadesColaborador);
+			}
+			Set<OportunidadNegocioEntity> set = new HashSet<>(lstOportunidades);
+			lstOportunidades.clear();
+			lstOportunidades.addAll(set);
 		}
 		return lstOportunidades;
 	}
@@ -99,10 +138,28 @@ public class OportunidadNegocioService {
 	/**Consulta de OPN cerradas y perdidas en Historico */
 	public List<OportunidadNegocioEntity> lstOpnNegocioEmpresaHistorico(int idOportunidadEstatus, int idEmpresa, int anio){
 		List<OportunidadNegocioEntity> lstOportunidades = null;
+		/**lista de id de las OPN con colaboradores */
+		List<OpnNegocioColaboradorEntity> lstIdOpn = null;
+		List<OportunidadNegocioEntity> lstOportunidadesColaborador = null;
+
 		if(sessionService.hasRol("OPORTUNIDADES_ADMINISTRADOR")){
 			lstOportunidades = oportunidadNegocioRepository.findAllEmpresaHistorico(idOportunidadEstatus, idEmpresa, anio);
 		}else{
 			lstOportunidades = oportunidadNegocioRepository.findAllEmpresaHistorico(idOportunidadEstatus, sessionService.getCurrentUser().getIdUsuario(), idEmpresa, anio);
+			lstIdOpn = opnNegocioColaboradorRepository.lstOpnUsuarioHistorico(sessionService.getCurrentUser().getIdUsuario(), idOportunidadEstatus, idEmpresa, anio);
+
+			ArrayList<Integer> arrIdOpn = new ArrayList<>();
+			if (lstIdOpn.size() > 0) {
+				for (OpnNegocioColaboradorEntity opnc : lstIdOpn) {
+					arrIdOpn.add(opnc.getOpnNegocio().getIdOportunidadNegocio());
+				}				
+				lstOportunidadesColaborador =  oportunidadNegocioRepository.lstOpnColaboradorEmpresa(arrIdOpn);
+				lstOportunidades.addAll(lstOportunidadesColaborador);
+			}
+			Set<OportunidadNegocioEntity> set = new HashSet<>(lstOportunidades);
+			lstOportunidades.clear();
+			lstOportunidades.addAll(set);
+
 		}
 		return lstOportunidades;
 	}
@@ -124,6 +181,7 @@ public class OportunidadNegocioService {
 				.add("ultima_modificacion", itemOportunidad.getModificacionFechaNatural())
 				.add("cliente", itemOportunidad.getCliente().getCliente())
 				.add("ingreso_estimado", itemOportunidad.getIngresoEstimadoNatural())
+				.add("ingreso", itemOportunidad.getIngresoEstimado())
 				.add("prioridad", itemOportunidad.getPrioridad())
 				.add("oportunidad", itemOportunidad.getOportunidad())
 				.add("ficheroCalidad", opnNegocioFicheroService.countOpnFicheroCalidad(itemOportunidad.getIdOportunidadNegocio())>0 ? true : false )
@@ -152,7 +210,7 @@ public class OportunidadNegocioService {
 		}
 		
 		jsonReturn.add(estatus_key, jsonRows);
-		jsonReturn.add("total_" + estatus_key, totalIngresoEstimadoEmpresaHistorico(idOportunidadEstatus, idEmpresa, anio));
+		// jsonReturn.add("total_" + estatus_key, totalIngresoEstimadoEmpresaHistorico(idOportunidadEstatus, idEmpresa, anio));
 		
 		return jsonReturn.build();
 	}
@@ -175,6 +233,7 @@ public class OportunidadNegocioService {
 				.add("ultima_modificacion", itemOportunidad.getModificacionFechaNatural())
 				.add("cliente", itemOportunidad.getCliente().getCliente())
 				.add("ingreso_estimado", itemOportunidad.getIngresoEstimadoNatural())
+				.add("ingreso", itemOportunidad.getIngresoEstimado())
 				.add("prioridad", itemOportunidad.getPrioridad())
 				.add("oportunidad", itemOportunidad.getOportunidad())
 				.add("ficheroCalidad", opnNegocioFicheroService.countOpnFicheroCalidad(itemOportunidad.getIdOportunidadNegocio())>0 ? true : false )
@@ -209,7 +268,7 @@ public class OportunidadNegocioService {
 		}
 		
 		jsonReturn.add(estatus_key, jsonRows);
-		jsonReturn.add("total_" + estatus_key, totalIngresoEstimadoEmpresaAnual(idOportunidadEstatus, idEmpresa, anio));
+		// jsonReturn.add("total_" + estatus_key, totalIngresoEstimadoEmpresaAnual(idOportunidadEstatus, idEmpresa, anio));
 		
 		return jsonReturn.build();
 	}
@@ -222,7 +281,7 @@ public class OportunidadNegocioService {
 		String estatus_key;
 		
 		List<OportunidadNegocioEntity> lstOportunidades = listOportunidadesNegociosEmpresa(idOportunidadEstatus, idEmpresa);
-		
+
 		lstOportunidades.forEach((itemOportunidad)-> {
 			jsonRows.add(Json.createObjectBuilder()
 				.add("id_oportunidad", itemOportunidad.getIdOportunidadNegocio())
@@ -231,12 +290,12 @@ public class OportunidadNegocioService {
 				.add("ultima_modificacion", itemOportunidad.getModificacionFechaNatural())
 				.add("cliente", itemOportunidad.getCliente().getCliente())
 				.add("ingreso_estimado", itemOportunidad.getIngresoEstimadoNatural())
+				.add("ingreso",itemOportunidad.getIngresoEstimado())
 				.add("prioridad", itemOportunidad.getPrioridad())
 				.add("oportunidad", itemOportunidad.getOportunidad())
-				.add("ficheroCalidad", opnNegocioFicheroService.countOpnFicheroCalidad(itemOportunidad.getIdOportunidadNegocio())>0 ? true : false )
+				.add("ficheroCalidad", opnNegocioFicheroService.countOpnFicheroCalidad(itemOportunidad.getIdOportunidadNegocio()) >0 ? true : false )
 			);
 		});
-		
 		switch (idOportunidadEstatus) {
 			case 1:
 				estatus_key = "abiertos";
@@ -257,6 +316,9 @@ public class OportunidadNegocioService {
 			case 5:
 				estatus_key = "perdidos";
 				break;
+			case 6:
+				estatus_key = "financiamiento";
+				break;
 	
 			default:
 				estatus_key = "abiertos";
@@ -264,7 +326,7 @@ public class OportunidadNegocioService {
 		}
 		
 		jsonReturn.add(estatus_key, jsonRows);
-		jsonReturn.add("total_" + estatus_key, totalIngresoEstimadoEmpresa(idOportunidadEstatus, idEmpresa));
+		// jsonReturn.add("total_" + estatus_key, totalIngresoEstimadoEmpresa(idOportunidadEstatus, idEmpresa));
 		
 		return jsonReturn.build();
 	}
@@ -368,8 +430,18 @@ public class OportunidadNegocioService {
 		}
 		else {			
 			total = oportunidadNegocioRepository.sumIngresosEstimadosEmpresa(idOportunidadEstatus, sessionService.getCurrentUser().getIdUsuario(), idEmpresa);
+
+			// lstIdOpn = opnNegocioColaboradorRepository.lstOpnUsuario(sessionService.getCurrentUser().getIdUsuario(), idOportunidadEstatus, idEmpresa);
+		
+			// ArrayList<Integer> arrIdOpn = new ArrayList<>();
+			// if (lstIdOpn.size() > 0) {
+			// 	for (OpnNegocioColaboradorEntity opnc : lstIdOpn) {
+			// 		arrIdOpn.add(opnc.getOpnNegocio().getIdOportunidadNegocio());
+			// 	}				
+			// 	BigDecimal suma =  oportunidadNegocioRepository.sumOpnColaboradorEmpresa(arrIdOpn);
+			// 	total= total.add(suma);
+			// }
 		}
-				
 		return GeneralConfiguration.getInstance().getNumberFormat().format(total);
 	}
 	
@@ -398,7 +470,7 @@ public class OportunidadNegocioService {
 		return GeneralConfiguration.getInstance().getNumberFormat().format(total);
 	}
 	
-
+	/**Suma total de las OPN por mes HOME */
 	public String sumOportunidadesTotalesPorFecha(LocalDate ldFechaInicial, LocalDate ldFechaFinal) {
 		
 		String total = "";

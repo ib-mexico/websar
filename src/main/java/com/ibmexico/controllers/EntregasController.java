@@ -8,6 +8,7 @@ import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
+import javax.ws.rs.Path;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -164,7 +165,7 @@ public class EntregasController {
 		List<SucursalEntity> lstSucursales = sucursalService.listSucursales();
 		List<ClienteGiroEntity> lstClientesGiros = clienteGiroService.listClientesGiros();
 		List<CotizacionEntity> lstCotizaciones = cotizacionService.listCotizacionesActivas();		
-		
+
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_ENTREGAS_CREATE);
 		objModelAndView.addObject("lstUsuarios", lstUsuarios);
 		objModelAndView.addObject("lstEmpresas", lstEmpresas);
@@ -175,7 +176,30 @@ public class EntregasController {
 		
 		return objModelAndView;
 	}
+
+	@GetMapping(value="/crear/{idCotizacion}")
+	public ModelAndView EntregaCotizacion(@PathVariable (value ="idCotizacion", required = false) int idCotizacion) {
+		List<EmpresaEntity> lstEmpresas = empresaService.listEmpresas();
+		List<UsuarioEntity> lstUsuarios = usuarioService.listUsuarios();
+		List<ClienteEntity> lstClientes = clienteService.listClientesActivos();
+		List<SucursalEntity> lstSucursales = sucursalService.listSucursales();
+		List<ClienteGiroEntity> lstClientesGiros = clienteGiroService.listClientesGiros();
+		List<CotizacionEntity> lstCotizaciones = cotizacionService.listCotizacionesActivas();
+		CotizacionEntity lstCotizacion = cotizacionService.findByIdCotizacion(idCotizacion);		
+		
+		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_ENTREGAS_CREATE);
+		objModelAndView.addObject("lstUsuarios", lstUsuarios);
+		objModelAndView.addObject("lstEmpresas", lstEmpresas);
+		objModelAndView.addObject("lstClientes", lstClientes);
+		objModelAndView.addObject("lstClientesGiros", lstClientesGiros);
+		objModelAndView.addObject("lstSucursales", lstSucursales);
+		objModelAndView.addObject("lstCotizaciones", lstCotizaciones);		
+		objModelAndView.addObject("objCotizacion", lstCotizacion.getIdCotizacion());
+
+		return objModelAndView;
+	}
 	
+
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public RedirectView store(@RequestParam(value="cmbCliente") Integer cmbCliente,
 								@RequestParam(value="cmbClienteContacto") Integer cmbClienteContacto,
