@@ -70,7 +70,6 @@ public class SessionService implements UserDetailsService {
 			User objUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			objCurrentUser = usuarioRepository.findByUsername(objUser.getUsername());
 		}
-
 		return objCurrentUser;
 	}
 	
@@ -207,13 +206,22 @@ public class SessionService implements UserDetailsService {
 		
 		lstRoles.forEach(item -> {
 			if (item.isMenu()) {
+				System.err.println("is menu"+ item.getLabel());
 				if (mapCategoriesRolesMenu.containsKey(item.getRolCategoria())) {
 					mapCategoriesRolesMenu.get(item.getRolCategoria()).add(item);
+					System.err.println("que onda como andamos"+ item.getRolCategoria());
 				} else {
+					System.err.println("else que" +item.getRolCategoria());
+					System.err.println(item + "values de los items");
 					mapCategoriesRolesMenu.put(item.getRolCategoria(), new ArrayList<RolEntity>(Arrays.asList(item)));
 				}
 			}
 		});
+
+		// LinkedHashMap<Integer, List<RolEntity>> orderMenu = mapCategoriesRolesMenu.entrySet()
+					// .stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1,e2)-> e1, LinkedHashMap::new));
+
+		// mapCategoriesRolesMenu.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(entry -> ...);
 
 		return mapCategoriesRolesMenu;
 	}

@@ -1,0 +1,49 @@
+<th:block th:fragment="title">
+	<h2>Cotizacion Aceptada <span th:text="${detalleCotizacion.folio}"></span></h2>
+</th:block>
+
+
+<th:block th:fragment="body">
+	<h1 style="color:#000000;">Ing. <span th:text="${usuarioRol.nombreCompleto}"></span></h1>
+	<p style="display:inline; text-align: justify;">Se hace llegar esta notificación que la cotización <span th:text="${detalleCotizacion.folio}"></span> ha sido aceptada.</p>
+	<p style="display: inline; text-align: justify;">A continuacion se presenta los detalles de la cotizacion y se adjunta el archivo PDF:</p>
+	
+	<div class="table-responsive-md table-responsive-lg table-responsive-xl">
+		<table id="dtDetalle" class="table table-bordered table-striped table-hover">
+			<tr>
+				<td width="35%"><h4><strong>Id Cotización: </strong></h4></td>
+				<td th:text="${detalleCotizacion.idCotizacion}"></td>
+			</tr>
+			<tr>
+				<td width="35%"><h4><strong>Concepto</strong></h4></td>
+				<td th:text="${detalleCotizacion.concepto}"></td>
+			</tr>
+
+			<tr>
+				<td width="35%"><h4><strong>Subtotal: </strong></h4></td>
+				<td th:text="'$ '+${detalleCotizacion.getSubtotal()}"></td>
+			</tr>
+			<tr>
+				<td width="35%"><h4><strong>Total :</strong></h4></td>
+				<td th:text="'$ '+${detalleCotizacion.getTotal()}"></td>
+			</tr>
+			<tr>
+				<td width="35%"><h4><strong>Usuario : </strong></h4></td>
+				<td th:text="${ {detalleCotizacion.getUsuario().getCorreo()}}"></td>
+			</tr>
+			<tr>
+				<td width="35%"><h4><strong>Cliente : </strong></h4></td>
+				<td th:text="${detalleCotizacion.getCliente().getCliente()	}"></td>
+			</tr>
+			<tr>
+				<td width="35%"><h4><strong>Fecha Creacion : </strong></h4></td>
+				<td th:text="${detalleCotizacion.getCreacionFechaNatural()}"></td>
+			</tr>	
+			<!-- <tr>
+				<td width="35%"><h4><strong>Fecha Aprobación : </strong></h4></td>
+				<td th:text="${fechaAprobacion}"></td>
+			</tr>	 -->
+		</table>
+	</div>
+</th:block>
+
