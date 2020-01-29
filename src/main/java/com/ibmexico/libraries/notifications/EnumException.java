@@ -23,6 +23,13 @@ public enum EnumException {
 	GASTO_FICHERO_ADD_FILE_003("Error en el fichero del gasto","Ocurrio un error con el fichero, es posible que el archivo presente errores"),
 	GASTO_FICHERO_ADD_FILE_004("Error en el fichero del gasto","El fichero requiere un nombre"),
 
+	//Empresa
+	EMPRESA_FICHERO_ADD_FILE_001("Error en el logo de la empresa","Ocurrio un error con el fichero, es posible que el archivo presente errores"),
+	EMPRESA_FICHERO_ADD_FILE_002("Error en el logo de la empresa","Ocurrio un error con el fichero de empresa es posible que el archivo presente erores"),
+	EMPRESA_FICHERO_ADD_FILE_003("Error en el logo de la empresa","Ocurrio un error con el fichero, es posible que el archivo presente errores"),
+	EMPRESA_FICHERO_ADD_FILE_004("Error en el logo de la empresa","El fichero requiere un nombre"),
+	EMPRESA_DELETE_001("Error de eliminación de la empresa","El objeto empresa no es válido, consulte a su administrador de sistema"),
+
 
 	//GENERALES
 	GENERAL_FORM("Error de formulario", "Es necesario completar el formulario."),
@@ -154,7 +161,9 @@ public enum EnumException {
 	OPORTUNIDADES_FICHEROS_ADD_FILE_003("Error de fichero de oportunidad", "Ocurrio un error con el fichero, es posible que el archivo presente errores."),
 	OPORTUNIDADES_FICHEROS_ADD_FILE_004("Error de fichero de oportunidad", "El fichero requiere un nombre."),
 	
-	
+	//COLABORADORES
+	OPN_COLABORADOR_DELETE_001("Error en la eliminación de colaborador", "El objeto colaborador no existe, póngase en contacto con el administrador del sistema"),
+
 	//ENTREGAS
 	ENTREGAS_CREATE_001("Error en creación de entrega", "El objeto entrega no es válido, póngase en contacto con el administrador del sistema."),
 	ENTREGAS_UPDATE_001("Error en modificación de entrega", "El objeto entrega no es válido, póngase en contacto con el administrador del sistema."),
@@ -213,6 +222,11 @@ public enum EnumException {
 	USUARIOS_DELETE_004("Error de eliminación de usuario", "El usuario ya que se encuentra eliminado/bloqueado por el administrador."),
 	
 
+	//EMPRESAS
+	EMPRESA_CREATE_001("Error de creacion de empresa", "El objeto empresa no es valido, póngase en contacto con el administrador del sistema."),
+	EMPRESA_CREATE_002("Error de creacion de empresa", "Es necesario especificar el empresa."),
+	
+	EMPRESA_UPDATE_001("Error de modificación de empresa", "El objeto empresa no es válido, póngase en contacto con el administrador del sistema."),
 	
 	//PROVEEDORES
 	PROVEEDORES_CREATE_001("Error de creacion de proveedor", "El objeto proveedor no es valido, póngase en contacto con el administrador del sistema."),

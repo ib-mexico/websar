@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.TemporalAdjuster;
 import java.util.List;
 
 import javax.json.Json;
@@ -13,7 +12,6 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-import org.jboss.logging.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
@@ -47,6 +45,7 @@ import com.ibmexico.entities.CotizacionComisionEntity;
 import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.EmpresaEntity;
 import com.ibmexico.entities.MonedaEntity;
+import com.ibmexico.entities.OpnNegocioColaboradorEntity;
 import com.ibmexico.entities.OportunidadNegocioEntity;
 import com.ibmexico.entities.OportunidadNegocioEstatusEntity;
 import com.ibmexico.entities.OportunidadNegocioFicheroEntity;
@@ -64,6 +63,7 @@ import com.ibmexico.services.CotizacionService;
 import com.ibmexico.services.CotizacionTipoFicheroService;
 import com.ibmexico.services.EmpresaService;
 import com.ibmexico.services.MonedaService;
+import com.ibmexico.services.OpnNegocioColaboradorService;
 import com.ibmexico.services.OportunidadNegocioEstatusService;
 import com.ibmexico.services.OportunidadNegocioFicheroService;
 import com.ibmexico.services.OportunidadNegocioService;
@@ -145,6 +145,10 @@ public class OportunidadesNegociosController {
 	@Autowired
 	@Qualifier("monedaService")
 	private MonedaService monedaService;
+
+	@Autowired
+	@Qualifier("opnNegocioColaboradorService")
+	private OpnNegocioColaboradorService opnNegocioColaboradorService;
 	
 	@Autowired
 	@Qualifier("sessionService")
@@ -171,14 +175,14 @@ public class OportunidadesNegociosController {
 		JsonObject dataRentas = null;
 		JsonObject dataCerrados = null;
 		JsonObject dataPerdidos = null;
-		JsonObject dataEmpresa = null;
+		JsonObject dataFinanciamiento = null;
 				
 		try {
-			dataEmpresa = empresaService.jsonEmpresas();
 			if(objEmpresa != null) {				
 				dataAbiertos = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(1, objEmpresa.getIdEmpresa());
 				dataEnCurso	 = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(2, objEmpresa.getIdEmpresa());
 				dataRentas	 = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(3, objEmpresa.getIdEmpresa());
+				dataFinanciamiento = oportunidadNegocioService.jsonOportunidadesNegociosEmpresa(6, objEmpresa.getIdEmpresa());
 				int  ldtYearNow = LocalDate.now().getYear();
 				
 				dataCerrados = oportunidadNegocioService.jsonOportunidadesNegociosEmpresaAnio(4, objEmpresa.getIdEmpresa(), ldtYearNow);
@@ -201,8 +205,7 @@ public class OportunidadesNegociosController {
 					.add("dataRentas", dataRentas)
 					.add("dataCerrados", dataCerrados)
 					.add("dataPerdidos", dataPerdidos)
-					.add("dataEmpresa", dataEmpresa);
-										
+					.add("dataFinanza", dataFinanciamiento);										
 		return jsonReturn.build().toString();
 	}
 	
@@ -359,6 +362,7 @@ public class OportunidadesNegociosController {
 								@RequestParam(value="cmbVendedor") int cmbVendedor,
 								@RequestParam(value="txtPrioridad", required=false, defaultValue="0") int txtPrioridad,
 								@RequestParam(value="txtNotasInternas", required=false, defaultValue="") String txtNotasInternas,
+								@RequestParam(value = "idColaborador", required = false) int[] idColaborador,
 								RedirectAttributes objRedirectAttributes) {
 		
 		RedirectView objRedirectView = null;
@@ -390,6 +394,15 @@ public class OportunidadesNegociosController {
 			}
 			
 			oportunidadNegocioService.create(objOportunidad);
+			System.err.println(idColaborador != null);
+			if(idColaborador != null){
+				for (int i : idColaborador) {
+					OpnNegocioColaboradorEntity objColaborador = new OpnNegocioColaboradorEntity();
+					objColaborador.setOpnNegocio(oportunidadNegocioService.findByIdOportunidadNegocio(objOportunidad.getIdOportunidadNegocio()));
+					objColaborador.setUsuarioColaborador(usuarioService.findByIdUsuario(i));
+					opnNegocioColaboradorService.create(objColaborador);
+				}
+			}
 			objRedirectView = new RedirectView("/WebSar/controlPanel/oportunidadesNegocios");
 			modelAndViewComponent.addResult(objRedirectAttributes, EnumMessage.OPORTUNIDADES_CREATE_001);
 			
@@ -447,11 +460,14 @@ public class OportunidadesNegociosController {
 								@RequestParam(value="cmbVendedor") int cmbVendedor,
 								@RequestParam(value="txtPrioridad", required=false, defaultValue="0") int txtPrioridad,
 								@RequestParam(value="txtNotasInternas", required=false, defaultValue="") String txtNotasInternas,
+								@RequestParam(value = "idOpnColaborador", required = false) int[] idOpnColaborador,
+								@RequestParam(value = "nuevoColaborador", required = false) String[] nuevoColaborador,
+								@RequestParam(value = "idColaborador", required = false) int[] idColaborador,
 								RedirectAttributes objRedirectAttributes) {
 		
 		RedirectView objRedirectView = null;
 		OportunidadNegocioEntity objOportunidad = oportunidadNegocioService.findByIdOportunidadNegocio(paramIdOportunidad);
-		
+
 		try {
 			
 			objOportunidad.setOportunidad(txtOportunidad);
@@ -482,6 +498,34 @@ public class OportunidadesNegociosController {
 			}
 			
 			oportunidadNegocioService.update(objOportunidad);
+
+			if (nuevoColaborador != null) {
+				System.err.println("entraste al if");
+				int j = 0;
+				if (idOpnColaborador != null) {
+					System.err.println("entraste al if2");
+					j = idOpnColaborador.length;
+				}
+				int tamanioNuevo = nuevoColaborador.length;
+
+				if( tamanioNuevo == 0){
+					System.err.println("entraste al if3");
+					tamanioNuevo = tamanioNuevo + 1;
+				}
+				for (int i = j; i < j+tamanioNuevo; i++) {
+					System.err.println("entraste al if4");
+					OpnNegocioColaboradorEntity objColaborador =new OpnNegocioColaboradorEntity();
+					try {
+						objColaborador.setOpnNegocio(objOportunidad);
+						objColaborador.setUsuarioColaborador(usuarioService.findByIdUsuario(idColaborador[i]));
+						opnNegocioColaboradorService.create(objColaborador);
+					}
+					catch (Exception err) {
+						System.out.println(err.getMessage());
+					}
+				}
+			}
+
 			objRedirectView = new RedirectView("/WebSar/controlPanel/oportunidadesNegocios");
 			modelAndViewComponent.addResult(objRedirectAttributes, EnumMessage.OPORTUNIDADES_UPDATE_001);
 			

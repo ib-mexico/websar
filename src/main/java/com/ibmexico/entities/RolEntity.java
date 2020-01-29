@@ -40,6 +40,9 @@ public class RolEntity {
 	@Column(length = 256)
 	private String url;
 	
+	@Column(length = 10, nullable = true)
+	private int orden;
+
 	@Column(nullable = false)
 	private boolean menu = false;
 	
@@ -83,7 +86,7 @@ public class RolEntity {
 	@Override
 	public String toString() {
 		return "RolEntity [idRol=" + idRol + ", rol=" + rol + ", rolCategoria=" + rolCategoria.getRolCategoria() + ", label=" + label
-				+ ", url=" + url + ", menu=" + menu + "]";
+				+ ", url=" + url + ", menu=" + menu + ",orden="+orden+"]";
 	}
 
 	@Override
@@ -107,6 +110,14 @@ public class RolEntity {
 		if (idRol != other.idRol)
 			return false;
 		return true;
+	}
+
+	public int getOrden() {
+		return orden;
+	}
+
+	public void setOrden(int orden) {
+		this.orden = orden;
 	}
 	
 	

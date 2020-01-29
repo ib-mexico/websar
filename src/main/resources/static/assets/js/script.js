@@ -254,15 +254,21 @@ if(document.getElementById('appOportunidades')) {
 		el: '#appOportunidades',
 		mounted() {
 			this.idEmpresa = 1
+			this.getempresa();
 			this.getOportunidades(this.idEmpresa);
 		},
 		data: {
+			empresa : null,
+			uca : false,
+			isEmpty : null,
 			idEmpresa: null,
 			totalAbiertos: "0.00",
 			totalEnCurso: "0.00",
 			totalRentas: "0.00",
 			totalCerrados: "0.00",
 			totalPerdidos: "0.00",
+			totalFinanza : "0.00",
+
 			opnData: [],
 			ibmData: null,
 			s3sData: null,
@@ -302,25 +308,50 @@ if(document.getElementById('appOportunidades')) {
 			formatNumber(num) {
 				return num.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
 			},
-			getOportunidades(paramEmpresa) {
+			async getOportunidades(paramEmpresa) {
 				var url = host + 'oportunidadesNegocios/' + paramEmpresa + '/get-oportunidades';
-				axios.get(url).then(response => {
+				await axios.get(url).then(response => {
 					if(response.status == 200 && response.data.respuesta) {
 						this.opnData 		= {	...response.data.dataAbiertos.abiertos.length > 0 ? response.data.dataAbiertos : null,
 												...response.data.dataEnCurso.en_curso.length > 0 ? response.data.dataEnCurso : null,
 												...response.data.dataRentas.rentas.length > 0 ? response.data.dataRentas : null,
 												...response.data.dataCerrados.cerrados.length >0 ? response.data.dataCerrados : null, 
-												...response.data.dataPerdidos.perdidos.length >0 ? responde.data.perdidos : null};
+												...response.data.dataPerdidos.perdidos.length >0 ? response.data.perdidos : null,
+												...response.data.dataFinanza.financiamiento.length > 0 ? response.data.dataFinanza : null};
 						this.totalAbiertos 	= this.opnData.total_abiertos;
 						this.totalEnCurso 	= this.opnData.total_en_curso;
 						this.totalRentas 	= this.opnData.total_rentas;
-						this.totalCerrados 	= this.opnData.totalCerrados;
+						this.totalCerrados 	= this.opnData.total_cerrados;
 						this.totalPerdidos 	= this.opnData.total_perdidos;
-	
+						this.totalFinanza 	= this.opnData.total_finanza;
 						this.setDataEmpresa(this.opnData);
 					}
 				});
+				
 			},
+
+			getempresa(){
+				var url = host + 'empresa/get-empresa';
+				axios.get(url).then((resp) => {					
+					if(resp.status == 200 && resp.data.respuesta){
+						this.empresa = resp.data.jsonEmpresa.rows;
+						this.uca = resp.data.opnUca;
+					}
+					/**Remover la empresa de UCA */
+					if(this.uca == false){
+						var idUca = 4;
+						for (let index = 0; index < this.empresa.length; index++) {
+							const element = this.empresa[index].id_empresa;
+							if (element == idUca) {
+								this.empresa.splice(index,1);
+								break;
+							}
+							
+						}
+					}
+				});
+			},
+
 			/**Se le considera para las OPN cerradas y perdidas del año pasado como historico */
 			getOportunidadesHistorico(paramEmpresa) {
 				
@@ -664,8 +695,67 @@ if(document.getElementById('appOportunidades')) {
 					break;
 				}
 	
-			}		
-		}
+			},
+			format2(n, currency) {
+                return currency + n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,');
+            },		
+		},
+		watch: {
+			'opnData.abiertos' : function () {
+				if (this.opnData.abiertos !=  undefined) {
+					suma = 0;
+					for (var i = 0; i < this.opnData.abiertos.length; i++) {
+						suma = suma +	parseFloat(this.opnData.abiertos[i].ingreso);		
+					}
+					this.totalAbiertos = this.format2(suma , '$ ');					
+				}
+			},
+			'opnData.en_curso' : function () {
+				if (this.opnData.en_curso != undefined) {
+					ingresoEstimado = 0;
+					for (var i = 0; i < this.opnData.en_curso.length; i++) {
+						ingresoEstimado = ingresoEstimado +	parseFloat(this.opnData.en_curso[i].ingreso);		
+					}
+					this.totalEnCurso = this.format2(ingresoEstimado , '$ ');					
+				}
+			},
+			'opnData.rentas' : function () {
+				if (this.opnData.rentas != undefined) {
+					ingresoEstimado = 0;
+					for (var i = 0; i < this.opnData.rentas.length; i++) {
+						ingresoEstimado = ingresoEstimado +	parseFloat(this.opnData.rentas[i].ingreso);		
+					}
+					this.totalRentas = this.format2(ingresoEstimado , '$ ');					
+				}
+			},
+			'opnData.cerrados' : function () {
+				if (this.opnData.cerrados != undefined) {
+					ingresoEstimado = 0;
+					for (var i = 0; i < this.opnData.cerrados.length; i++) {
+						ingresoEstimado = ingresoEstimado +	parseFloat(this.opnData.cerrados[i].ingreso);		
+					}
+					this.totalCerrados = this.format2(ingresoEstimado , '$ ');					
+				}
+			},
+			'opnData.perdidos' : function () {
+				if (this.opnData.perdidos != undefined) {
+					ingresoEstimado = 0;
+					for (var i = 0; i < this.opnData.perdidos.length; i++) {
+						ingresoEstimado = ingresoEstimado +	parseFloat(this.opnData.perdidos[i].ingreso);		
+					}
+					this.totalPerdidos = this.format2(ingresoEstimado , '$ ');					
+				}
+			},
+			'opnData.financiamiento' : function () {
+				if (this.opnData.financiamiento != undefined) {
+					ingresoEstimado = 0;
+					for (var i = 0; i < this.opnData.financiamiento.length; i++) {
+						ingresoEstimado = ingresoEstimado +	parseFloat(this.opnData.financiamiento[i].ingreso);		
+					}
+					this.totalFinanza = this.format2(ingresoEstimado , '$ ');					
+				}
+			}
+		},
 	});
 }
 
@@ -985,4 +1075,31 @@ if(document.getElementById('appCotizacionesPartidas')) {
 			}
 		}
 	});
+}
+
+if(document.getElementById("appOPN")){
+    var opn = new Vue({
+        el : "#appOPN",
+        mounted() {
+            this.obtenerUsuario();
+        },
+        data: {
+            formInputs : [],
+            idOportunidad : null,  
+          
+        },
+        methods: {
+            obtenerUsuario(){
+                var url = host + 'opnNegocioColaborador/get-users';
+                axios.get(url).then((resp) => {
+                    if(resp.status == 200 && resp.data.respuesta);
+                    this.usuario=resp.data.jsonUsuario.rows;
+                })
+            },
+            addUser : function(e){
+                e.preventDefault();   
+            }
+        },
+
+    })
 }

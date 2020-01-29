@@ -76,13 +76,13 @@ if (document.getElementById("appGastos")) {
                     var numberFolio = parseInt(arrFolio[3]);
 
                     if(this.formInputs.length>=1){
-                        if(this.formInputs.some(item=>item.id_cotizacion===numberFolio)){
+                        if(this.formInputs.some(item=>item.id_cotizacion === numberFolio)){
                             console.log("no se puede duplicar");
                         }else{
                             this.formInputs.push({
-                                name: item,
-                                id_cotizacion:numberFolio,
-                                subTotal:''
+                                name:           item,
+                                id_cotizacion:  numberFolio,
+                                subTotal:       ''
                             });
                         }
                     }
@@ -97,7 +97,7 @@ if (document.getElementById("appGastos")) {
               },
               
             removeInput: function(index){
-                if(this.formInputs[index].idCotizacionFichero !=undefined){
+                if(this.formInputs[index].idCotizacionFichero != undefined){
                     this.eliminarFichero(this.formInputs[index].idCotizacionFichero,this.formInputs[index].id_cotizacion, index);
                 }else{
                     //console.log(`Removing index: ${index}`);

@@ -1,10 +1,7 @@
 package com.ibmexico.controllers;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
@@ -47,11 +43,8 @@ import com.ibmexico.services.TipoGastoService;
 import com.ibmexico.services.UsuarioService;
 import com.lowagie.text.DocumentException;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +55,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.context.Context;
 
@@ -547,6 +539,7 @@ public class GastosController {
                 .add("usuario", itemDetalle.getUsuario()!=null ? itemDetalle.getUsuario().getNombreCompleto() : "N/A")
                 .add("subtotal",itemDetalle.getSubtotalNatural()!=null ? itemDetalle.getSubtotalNatural() : "N/A")
                 .add("fileFactura", itemDetalle.getFacturaGasto().getUrl()!=null? itemDetalle.getFacturaGasto().getUrl() : "")
+                .add("proveedor", itemDetalle.getProveedor()!=null ?itemDetalle.getProveedor().getProveedor() : "N/A")
                 );
         });
         String FechaInicio=txtBootstrapTableDesde;

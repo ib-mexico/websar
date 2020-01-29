@@ -141,6 +141,9 @@ public class CotizacionEntity {
 	
 	@Column
 	private boolean boolNormal = false;
+
+	@Column
+	private boolean boolCalidad = false;
 	
 	@Column(nullable = false, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
 	private BigDecimal subtotal;
@@ -562,6 +565,14 @@ public class CotizacionEntity {
 		this.boolBoom = boolBoom;
 	}
 	
+	public boolean isCalidad(){
+		return boolCalidad;
+	}
+	
+	public void setCalidad (boolean boolCalidad){
+		this.boolCalidad = boolCalidad;
+	}
+
 	public boolean isRenta() {
 		return boolRenta;
 	}

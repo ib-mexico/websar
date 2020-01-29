@@ -101,7 +101,7 @@ public class CotizacionFicheroService {
 	@Transactional
 	public void addFile(CotizacionFicheroEntity objCotizacionFichero, MultipartFile file) {
 		if(objCotizacionFichero != null) {
-			if(file != null) {
+			if(file != null && !file.isEmpty()) {
 	            try {
 	            	if(!file.getOriginalFilename().trim().equals("")) {
 		            	String ficheroNombre = UUID.randomUUID().toString();
@@ -138,6 +138,8 @@ public class CotizacionFicheroService {
 		 
 		if(objCotizacionFichero != null) {
 			if(objCotizacionFichero.getUrl() != "") {
+
+				System.err.println("hola escribiendo files");
 				byte[] bytesFichero = objFile.getBytes();
 				
 	            try( BufferedOutputStream buffStream = new BufferedOutputStream(new FileOutputStream(new File(urlPath.getPath() +"static/ficheros/cotizaciones/" + objCotizacionFichero.getUrl()))) ) {

@@ -3070,7 +3070,7 @@ section.content {
 /* Infobox ===================================== */
 .info-box {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  height: 80px;
+  height: 100px;
   display: flex;
   cursor: default;
   background-color: #fff;
@@ -3081,11 +3081,11 @@ section.content {
     display: inline-block;
     text-align: center;
     background-color: rgba(0, 0, 0, 0.12);
-    width: 80px; }
+    width: 60px; }
     .info-box .icon i {
       color: #fff;
       font-size: 50px;
-      line-height: 80px; }
+      line-height: 60px; }
     .info-box .icon .chart.chart-bar {
       height: 100%;
       line-height: 100px; }
@@ -3110,7 +3110,7 @@ section.content {
       color: #555; }
     .info-box .content .number {
       font-weight: normal;
-      font-size: 26px;
+      font-size: 20px;
       margin-top: -4px;
       color: #555; }
 

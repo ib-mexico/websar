@@ -160,6 +160,8 @@ public class Templates {
 	public static final String EMAIL_REPORTE_MENSUAL = PATH_EMAIL + "cronJobs/reportes/Mensual";
 	public static final String EMAIL_TICKETS_CREATE = PATH_EMAIL + "tickets/Create";
 
+	public static final String EMAIL_NOTIFICACION_COTIZACION_ACEPTADA = PATH_EMAIL+ "cotizacion/Notificacion";
+
 
 	// CONFIGURACIONES
 	public static final String CONTROL_PANEL_CONFIGURACIONES = PATH_CONTROL_PANEL + "configuraciones/Index";
@@ -204,6 +206,9 @@ public class Templates {
 
 	//Nuevos Gastos
 	public static final String DETALLE_GASTO=PATH_CONTROL_PANEL+"adminRecursos/gastos/Index";
+
+	//Empresa
+	public static final String CATALOGO_EMPRESA = PATH_CONTROL_PANEL+"empresas/Index";
 
 	//Gastos documentos pdf
 	public static final String PDF_GASTO=PATH_DOCUMENTS_PDF+"gasto/ReporteGasto";

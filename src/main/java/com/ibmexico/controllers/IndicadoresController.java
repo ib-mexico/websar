@@ -1,12 +1,10 @@
 package com.ibmexico.controllers;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
 
 import com.ibmexico.components.ModelAndViewComponent;
 import com.ibmexico.libraries.Templates;

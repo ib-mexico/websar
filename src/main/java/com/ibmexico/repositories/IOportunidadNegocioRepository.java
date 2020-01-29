@@ -16,6 +16,12 @@ public interface IOportunidadNegocioRepository extends JpaRepository<Oportunidad
 
 	public abstract OportunidadNegocioEntity findByIdOportunidadNegocio(int idOportunidadNegocio);
 	
+	@Query("SELECT opn FROM OportunidadNegocioEntity opn WHERE  opn.idOportunidadNegocio IN (?1)")
+	public abstract List<OportunidadNegocioEntity> lstOpnColaboradorEmpresa(List<Integer> opn );
+	
+	@Query("SELECT COALESCE(SUM(opn.ingresoEstimado),0) FROM OportunidadNegocioEntity opn WHERE  opn.idOportunidadNegocio IN (?1)")
+	public abstract BigDecimal sumOpnColaboradorEmpresa(List<Integer> opn );
+
 	@Query("SELECT COALESCE(SUM(objOportunidad.ingresoEstimado), 0) FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = ?1 AND objOportunidad.eliminado = 0")
 	public abstract BigDecimal sumIngresosEstimados(int idOportunidadEstatus);
 	
@@ -49,8 +55,7 @@ public interface IOportunidadNegocioRepository extends JpaRepository<Oportunidad
 	@Query("SELECT objOportunidad FROM OportunidadNegocioEntity objOportunidad WHERE objOportunidad.usuarioVendedor.idUsuario = ?1 AND objOportunidad.eliminado = 0 AND objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = 3 AND objOportunidad.renovacionFecha = ?2")
 	public abstract List<OportunidadNegocioEntity> listOportunidadesNegociosRenovaciones(int idUsuario, LocalDate ldFechaRenovacion);
 	
-		
-	
+
 	@Query("SELECT COALESCE(SUM(objOportunidad.ingresoEstimado), 0) FROM OportunidadNegocioEntity objOportunidad WHERE (objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = 3 OR objOportunidad.oportunidadNegocioEstatus.idOportunidadNegocioEstatus = 4) AND CONVERT(objOportunidad.creacionFecha, DATE) BETWEEN ?1 AND ?2 " )
 	public abstract BigDecimal sumTotalOportunidadPorMes(LocalDate ldFechaInicio, LocalDate ldFechaFin);
 	

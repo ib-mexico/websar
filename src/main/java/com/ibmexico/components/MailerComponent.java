@@ -1,30 +1,21 @@
 package com.ibmexico.components;
 
 import javax.mail.internet.MimeMessage;
-import javax.mail.util.ByteArrayDataSource;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
 import javax.mail.MessagingException;
 
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.InputStreamSource;
-import org.springframework.core.io.Resource;
-import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 
@@ -105,4 +96,37 @@ public class MailerComponent {
         objJavaMailSender.send(objMimeMessager);
 	}
 
+	public void sendNotificacionCotizacion(String para, String asunto, ByteArrayResource bytePDF, 
+	String folio, String template, Map<String, Object> mapVariable) throws MessagingException, IOException {
+
+		final InputStreamSource attachment = bytePDF;
+		MimeMessage objMimeMessager = objJavaMailSender.createMimeMessage();
+
+		MimeMessageHelper objMimeMessageHelper = new MimeMessageHelper(objMimeMessager,
+		MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+
+		ClassPathResource objPath = new ClassPathResource("static/assets/images/logotipo_250.png");
+		objMimeMessageHelper.addAttachment("logotipo_250.png", objPath);
+
+		Context objContext = new Context();
+		Templates objTemplates = new Templates();
+
+		objContext.setVariable("_TEMPLATE_", template);
+
+		if (mapVariable != null) {
+			mapVariable.forEach((k, v) -> {
+				objContext.setVariable(k, v);
+			});
+		}
+
+		if (bytePDF.exists()) {
+			objMimeMessageHelper.addAttachment("Cotización "+folio+".pdf", attachment);
+		}
+        objMimeMessageHelper.setTo(para);
+        objMimeMessageHelper.setSubject(asunto);
+		objMimeMessageHelper.setFrom(strFrom);
+
+		objMimeMessageHelper.setText(templateEngine.process(objTemplates.FOUNDATION_MAIL, objContext), true);
+		objJavaMailSender.send(objMimeMessager);
+	}
 }

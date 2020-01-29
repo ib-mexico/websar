@@ -44,6 +44,9 @@ public class CotizacionFicheroEntity {
 	
 	@Column(nullable = true)
 	private String folioOrdenCompra;
+
+	@Column(nullable = true)
+	private String referenciaPago;
 	
 	@Column(nullable = true, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
 	private BigDecimal importe;
@@ -328,6 +331,14 @@ public class CotizacionFicheroEntity {
 
 	public void setInicioLlamada(LocalDateTime inicioLlamada) {
 		this.inicioLlamada = inicioLlamada;
+	}
+
+	public String getReferenciaPago() {
+		return referenciaPago;
+	}
+
+	public void setReferenciaPago(String referenciaPago) {
+		this.referenciaPago = referenciaPago;
 	}
 	
 }

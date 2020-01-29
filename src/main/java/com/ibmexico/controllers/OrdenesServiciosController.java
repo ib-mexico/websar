@@ -28,6 +28,7 @@ import com.ibmexico.services.ClienteService;
 import com.ibmexico.services.OrdenServicioPartidaService;
 import com.ibmexico.services.OrdenServicioService;
 import com.ibmexico.services.SessionService;
+import com.ibmexico.services.UsuarioService;
 import com.lowagie.text.DocumentException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,10 @@ public class OrdenesServiciosController {
         private ClienteContactoService clienteContactoService;
 
         @Autowired
+        @Qualifier("usuarioService")
+        private UsuarioService usuarioService;        
+
+        @Autowired
         @Qualifier("sessionService")
         private SessionService sessionService;
 
@@ -122,15 +127,19 @@ public class OrdenesServiciosController {
         @GetMapping({ "/create", "/create/" })
         public ModelAndView create() {
                 List<ClienteEntity> lstClientes = clienteService.listClientesActivos();
+                List<UsuarioEntity> lstUsuarios = usuarioService.listUsuariosActivos();
                 ModelAndView objModelAndView = modelAndViewComponent
                                 .createModelAndViewControlPanel(Templates.CONTROL_PANEL_ORDENES_SERVICIOS_CREATE);
                 objModelAndView.addObject("lstClientes", lstClientes);
+                objModelAndView.addObject("lstUsuarios", lstUsuarios);
                 return objModelAndView;
         }
 
         @RequestMapping(value = "storeOrdenServicio", method = RequestMethod.POST)
-        public RedirectView store(@RequestParam("cmbCliente") int cmbCliente,
+        public RedirectView store(
+                        @RequestParam("cmbCliente") int cmbCliente,
                         @RequestParam("cmbClienteContacto") int cmbClienteContacto,
+                        @RequestParam(value="cmbUsuarioSupervisa", required =false) int cmbUsuarioSupervisa,
                         @RequestParam("txtFechaInicio") String txtFechaInicio,
                         @RequestParam("txtFechaEntrega") String txtFechaEntrega,
                         @RequestParam(value = "txtTiempoEspera", required = false, defaultValue = "") String txtTiempoEspera,
@@ -154,6 +163,9 @@ public class OrdenesServiciosController {
                         OrdenServicioEntity objOrdenServicio = new OrdenServicioEntity();
 
                         objOrdenServicio.setCliente(clienteService.findByIdCliente(cmbCliente));
+                        if(cmbUsuarioSupervisa > 0){
+                            objOrdenServicio.setUsuarioRevisa(usuarioService.findByIdUsuario(cmbUsuarioSupervisa));
+                        }
                         objOrdenServicio.setClienteContacto(
                                         clienteContactoService.findByIdClienteContacto(cmbClienteContacto));
                         objOrdenServicio.setInicioFecha(Formats.getInstance().toLocalDateTime(txtFechaInicio));
@@ -206,9 +218,11 @@ public class OrdenesServiciosController {
                 try {
 
                         if (objOrdenServicio != null) {
-
-                                objOrdenServicio.setUsuarioRevisa(sessionService.getCurrentUser());
-
+                                if (objOrdenServicio.getUsuarioRevisa() != null) {
+                                        objOrdenServicio.setUsuarioRevisa(objOrdenServicio.getUsuarioRevisa());
+                                }else{
+                                        objOrdenServicio.setUsuarioRevisa(sessionService.getCurrentUser());
+                                }
                                 ordenServicioService.update(objOrdenServicio, imgFirmaRevision);
                                 objRedirectView = new RedirectView("/WebSar/controlPanel/ordenesServicios");
                                 modelAndViewComponent.addResult(objRedirectAttributes,
