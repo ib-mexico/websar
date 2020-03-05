@@ -1,5 +1,6 @@
 package com.ibmexico.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -52,6 +53,15 @@ public class TareaService {
 		
 		return lstTareas;
 	}
+
+	public List<TareaEntity> listTareas(UsuarioEntity objUsuario, LocalDate fechaInicio, LocalDate fechaFin){
+		
+		List<TareaEntity> lstTareas = null;
+		lstTareas = tareaRepository.listTareas(objUsuario.getIdUsuario(), fechaInicio, fechaFin);
+		return lstTareas;
+		
+	}
+
 	
 	@Transactional
 	public void create(TareaEntity objTarea, Integer[] arrParticipantes) {

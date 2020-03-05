@@ -1,5 +1,7 @@
 package com.ibmexico.controllers;
 
+import java.util.List;
+
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
@@ -23,10 +25,12 @@ import com.ibmexico.libraries.notifications.EnumMessage;
 import com.ibmexico.components.ModelAndViewComponent;
 import com.ibmexico.entities.ClienteContactoEntity;
 import com.ibmexico.entities.ClienteEntity;
+import com.ibmexico.entities.PuestoEntity;
 import com.ibmexico.libraries.DataTable;
 import com.ibmexico.libraries.Templates;
 import com.ibmexico.services.ClienteContactoService;
 import com.ibmexico.services.ClienteService;
+import com.ibmexico.services.PuestoService;
 import com.ibmexico.services.SessionService;
 
 @Controller
@@ -44,6 +48,10 @@ public class ClientesContactosController {
 	@Autowired
 	@Qualifier("clienteContactoService")
 	private ClienteContactoService clienteContactoService;	
+
+	@Autowired
+	@Qualifier("puestoService")
+	private PuestoService puestoService;
 	
 	@Autowired
 	@Qualifier("sessionService")
@@ -96,9 +104,11 @@ public class ClientesContactosController {
 	@GetMapping("{paramIdCliente}/contactos/create")
 	public ModelAndView create(@PathVariable int paramIdCliente) {
 		ClienteEntity objCliente = clienteService.findByIdCliente(paramIdCliente);
-		
+		List<PuestoEntity> lstPuesto = puestoService.listPuesto();
+
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_CLIENTES_CONTACTOS_CREATE);
 		objModelAndView.addObject("objCliente", objCliente);
+		objModelAndView.addObject("lstPuesto", lstPuesto);
 		
 		return objModelAndView;
 	}
@@ -107,6 +117,8 @@ public class ClientesContactosController {
 	public RedirectView store(	@RequestParam(value="hddIdCliente") int hddIdCliente,
 								@RequestParam(value="txtContacto") String txtContacto,
 								@RequestParam(value="chkAdministrador", required=false, defaultValue="false") String chkAdministrador,
+
+								@RequestParam(value="cmbPuesto", required = false) int cmbPuesto,
 								@RequestParam(value="txtPuesto", required=false) String txtPuesto,
 								@RequestParam(value="txtCorreo") String txtCorreo,
 								@RequestParam(value="txtTelefono", required=false) String txtTelefono,
@@ -116,14 +128,16 @@ public class ClientesContactosController {
 
 		RedirectView objRedirectView = null;
 		ClienteContactoEntity objClienteContacto = new ClienteContactoEntity();
+		PuestoEntity objPuesto = puestoService.findIdPuesto(cmbPuesto);
 		
 		try {
 			objClienteContacto.setCliente(clienteService.findByIdCliente(hddIdCliente));
 			objClienteContacto.setContacto(txtContacto);
-			objClienteContacto.setPuesto(txtPuesto);
+			objClienteContacto.setPuesto(objPuesto.getPuesto());
 			objClienteContacto.setCorreo(txtCorreo);
 			objClienteContacto.setTelefono(txtTelefono);
 			objClienteContacto.setCelular(txtCelular);
+			objClienteContacto.setPuestos(objPuesto);
 			
 			if(chkAdministrador.equals("true")) {
 				objClienteContacto.setAdministrador(true);
@@ -152,11 +166,19 @@ public class ClientesContactosController {
 		
 		ClienteEntity objCliente = clienteService.findByIdCliente(paramIdCliente);
 		ClienteContactoEntity objClienteContacto = clienteContactoService.findByIdClienteContacto(paramIdClienteContacto);
+
+		List<PuestoEntity> lstPuesto = puestoService.listPuesto();
 				
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_CLIENTES_CONTACTOS_EDIT);
 		objModelAndView.addObject("objCliente", objCliente);
 		objModelAndView.addObject("objClienteContacto", objClienteContacto);
+		objModelAndView.addObject("lstPuesto", lstPuesto);
+		objModelAndView.addObject("objPuesto", objClienteContacto.getPuestos() != null ? objClienteContacto.getPuestos().getIdPuesto() : 0);
 		
+		System.err.println( objClienteContacto.getPuestos() != null ? objClienteContacto.getPuestos().getIdPuesto() : 0);
+		for (PuestoEntity item : lstPuesto) {
+			System.err.println(item + "valor ");
+		}
 		return objModelAndView;
 	}
 	
@@ -166,6 +188,8 @@ public class ClientesContactosController {
 								@RequestParam(value="hddIdCliente") int hddIdCliente,
 								@RequestParam(value="txtContacto") String txtContacto,
 								@RequestParam(value="chkAdministrador", required=false, defaultValue="false") String chkAdministrador,
+								
+								@RequestParam(value = "cmbPuesto",required = false) int cmbPuesto,
 								@RequestParam(value="txtPuesto", required=false) String txtPuesto,
 								@RequestParam(value="txtCorreo") String txtCorreo,
 								@RequestParam(value="txtTelefono", required=false) String txtTelefono,
@@ -185,7 +209,13 @@ public class ClientesContactosController {
 				objClienteContacto.setCorreo(txtCorreo);
 				objClienteContacto.setTelefono(txtTelefono);
 				objClienteContacto.setCelular(txtCelular);
-				
+				if(cmbPuesto > 0 ){
+					objClienteContacto.setPuestos(puestoService.findIdPuesto(cmbPuesto));
+					if(objClienteContacto.getPuesto() == null){
+						objClienteContacto.setPuesto(puestoService.findIdPuesto(cmbPuesto).getPuesto());
+					}
+				}
+
 				if(chkAdministrador.equals("true")) {
 					objClienteContacto.setAdministrador(true);
 				}

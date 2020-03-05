@@ -38,6 +38,18 @@
 						</div>
 						
 						<div class="row clearfix">
+							
+							<div class="col-md-3">
+								<p><b>Puesto *</b></p>
+								<select class="form-control show-tick" name="cmbPuesto" id="cmbPuesto" data-live-search="true" >
+									<th:block th:each="itemPuesto : ${lstPuesto}" >
+									   <option th:value="${itemPuesto.idPuesto}" th:text="${itemPuesto.puesto}"></option>	                       				
+								   </th:block>
+							   	</select>
+							</div>
+
+	
+						<!-- 
 							<div class="col-md-3">
 								<div class="form-group">
 	                        		<p><b>Puesto</b></p>
@@ -45,7 +57,7 @@
                                         <input type="text" name="txtPuesto" class="form-control" />
                                     </div>
                                  </div>
-							</div>
+							</div> -->
 							
 							<div class="col-md-3">                        	
 	                        	<div class="form-group">
@@ -75,7 +87,6 @@
 	                        </div>
 						</div>						
 									
-					
 						<div class="row clearfix">
 							<div class="col-md-3 col-md-offset-8 text-right">
 								<a th:href="${ {_PATH_} + 'controlPanel/clientes/' + objCliente.idCliente + '/contactos'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
@@ -90,6 +101,7 @@
 </th:block>
 
 <th:block th:fragment="script">
+
 	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/			
 	
 		$(document).ready(function() {

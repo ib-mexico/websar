@@ -62,9 +62,9 @@ public class ClienteContactoEntity {
 	@Column
 	private boolean eliminado = false;
 	
-	
-	
-	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_puesto", nullable = true)
+	private PuestoEntity puestos;
 	
 	//ACCESORS METHODS
 	public int getIdClienteContacto() {
@@ -181,11 +181,19 @@ public class ClienteContactoEntity {
 
 	@Override
 	public String toString() {
-		return "ClienteContactoEntity [idClienteContacto=" + idClienteContacto + ", cliente=" + cliente.getCliente() + ", contacto="
-				+ contacto + ", puesto=" + puesto + ", correo=" + correo + ", telefono=" + telefono + ", celular="
-				+ celular + ", administrador=" + administrador + ", creacionUsuario=" + creacionUsuario.getIdUsuario()
-				+ ", creacionFecha=" + creacionFecha + ", modificacionUsuario=" + modificacionUsuario.getIdUsuario()
-				+ ", modificacionFecha=" + modificacionFecha + ", eliminado=" + eliminado + "]";
+		return "ClienteContactoEntity [administrador=" + administrador + ", celular=" + celular + ", cliente=" + cliente
+				+ ", contacto=" + contacto + ", correo=" + correo + ", creacionFecha=" + creacionFecha
+				+ ", creacionUsuario=" + creacionUsuario + ", eliminado=" + eliminado + ", idClienteContacto="
+				+ idClienteContacto + ", modificacionFecha=" + modificacionFecha + ", modificacionUsuario="
+				+ modificacionUsuario + ", puesto=" + puesto + ", puestos=" + puestos + ", telefono=" + telefono + "]";
+	}
+
+	public PuestoEntity getPuestos() {
+		return puestos;
+	}
+
+	public void setPuestos(PuestoEntity puestos) {
+		this.puestos = puestos;
 	}
 	
 	

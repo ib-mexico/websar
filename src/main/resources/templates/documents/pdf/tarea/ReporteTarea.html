@@ -1,0 +1,88 @@
+<th:block th:fragment="style">
+	<style>
+		.user{
+			text-transform: uppercase;
+		}
+	</style>
+</th:block>
+
+<th:block th:fragment="body">
+	<!--/* HEADER */-->
+	<table width="100%">
+		<tr>			
+			<td style="width:119px;">
+				<img th:src="@{'http://localhost:8080/WebSar/assets/images/' + ${objEmpresa.logotipo}}" />
+			</td>
+			
+			<td style="width:10px"></td>
+			<td style="width:258px">
+				<table width="100%">
+				<tr>
+					<td class="tituloH2">BITACORA DE  ACTIVIDADES</td>
+				</tr>
+				</table>
+			</td>
+			<td style="width:10px"></td>
+				
+			<td style="width:179px">
+				<table width="100%">
+					<tr>
+						<td class="tituloTH2">PERIODO</td>
+					</tr>					
+					<tr>
+						<td class="celdaH3" th:text="${fechaInicio + ' - ' + fechaFin}"></td>
+					</tr>
+				</table>
+			</td>
+			
+        </tr>
+	</table>
+	
+	<table id="tblGastos" width="100%" cellpadding="2" cellspacing="0" style="margin-top: 20px;">
+		<tr>
+			<td width="100%" colspan="10" class="tituloH2 user" style="text-align:left; text-transform: uppercase;" th:text="'TAREAS DE : '+${objUsuario.getNombreCompleto()}"></td>
+		</tr>
+		<tr>
+			<td width="100%" colspan="10"></td>
+		</tr>
+		<tr>
+            <td width="12%" class="tituloTH5">Usuario</td>
+            <td width="20%" class="tituloTH5">Descripci&oacute;n</td>
+			<td width="12%" class="tituloTH5">Fecha Inicio</td>
+			<td width="10%" class="tituloTH5">Hora Inicio</td>
+			<td width="12%" class="tituloTH5">Fecha Fin</td>
+			<td width="10%" class="tituloTH5">Hora Fin</td>
+			<td width="30%" class="tituloTH5">Tarea</td>
+			<td width="9%" class="tituloTH5" style="text-align:right">Lugar</td>
+		</tr>
+		<tr th:each="item : ${TareaMap}">
+			<td width="12%" class="celdaH6" style="text-align:justify" th:text="${item.usuario}"></td>
+            <td width="20%" class="celdaH6" th:text="${item.descripcion}"></td>
+			<td width="12%" class="tituloTH5" th:text="${item.inicio_fecha}"></td>
+            <td width="10%" class="tituloTH5" th:text="${item.inicio_hora}"></td>		
+			<td width="12%" class="celdaH6" th:text="${item.fin_fecha}"></td>
+            <td width="10%" class="tituloTH5" th:text="${item.fin_hora}"></td>		
+			<td width="30%" class="celdaH6" style="text-align: justify;" th:text="${item.tarea}"></td>
+			<td width="9%" class="celdaH6" style="text-align:right" th:text="${item.lugar}"></td>
+		</tr>
+	</table>
+	<!--/* FOOTER */-->
+	<table width="100%" style="margin-top:100px;">
+            <tr>
+                <td style="width:50%">
+                    <table>
+                        <tr>
+                            <td>Inside Business Mexico S.A de C.V.</td>
+                        </tr>
+                      
+                        <tr>
+                            <td><span style="color:#ff2e34;font-weight:bold;">https://www.ib-mexico.com/sar</span></td>
+                        </tr>
+                        <tr></tr>
+                    </table>
+                </td>							
+                <td style="width:40%"></td>
+                <td style="width:30%;"></td>				
+            </tr>
+        </table>
+</th:block>
