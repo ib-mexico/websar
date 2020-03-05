@@ -18,8 +18,8 @@
 		</div>
 		
 		<div class="row clearfix">
-			<div class="col-md-6">
-				<div class="col-md-3 m-t-10">
+			<div class="col-md-8 new_oportunity">
+				<div class="col-md-3 col-sm-4 m-t-10">
 					<th:block th:if="${rolNuevaOportunidad}">
 						<a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/create'}" type="button" class="btn bg-purple waves-effect">
 							<i class="material-icons">add_circle</i> 
@@ -27,28 +27,10 @@
 						</a>
 					</th:block>
 				</div>
-				<div class="col-md-6 col-xs-6 col-sm-6 col-lg-6 m-t-10">
-					<select name="cmbEmpresaHistorico" id="cmbEmpresaHistorico" class="selectpicker form-control show-tick cmbEmpresa col-md-4" data-live-search="true" 
-						v-model="idEmpresa" data-style="btn-primary" title="Seleccione Empresa Historico">
+				<div class="col-md-6 col-sm-6 m-t-10">
+					<select name="cmbEmpresaHistorico" id="cmbEmpresaHistorico" class="selectpicker form-control show-tick cmbEmpresa col-md-4"	v-model="idEmpresa" data-style="btn-primary" title="Seleccione Empresa Historico">
 						<option v-for="item in empresa" :value="item.id_empresa" v-text="item.razon_social"></option>				
 					</select>
-						
-						<!-- <div class="btn-group hidden">
-							<button type="button"  id="btnHistorico" :class="historicoActive ? activeClass : inactiveClass + ' dropdown-toggle'" data-toggle="dropdown">
-								OPN HISTORICO<span class="caret"></span>
-							</button>
-							<ul class="dropdown-menu" role="menu">
-								<li><a href="#" v-on:click="changeEmpresaHistorico(1)" class="btnHistorico">HISTORICO IB-MEXICO</a></li>
-								<li><a href="#" v-on:click="changeEmpresaHistorico(2)" class="btnHistorico">HISTORICO S3S</a></li>
-								<li><a href="#" v-on:click="changeEmpresaHistorico(3)" class="btnHistorico">HISTORICO R2A</a></li>
-								<li class="divider"></li>
-								<li><a href="#" v-on:click="changeEmpresaHistorico(4)" class="btnHistorico">HISTORICO UCA</a></li>
-							  </ul>
-						</div> -->
-						<!-- <button type="button" :class="historicoIbmActive ? activeClass : inactiveClass" onclick="mostrarHistorico()">
-							<i class="material-icons">history</i>
-							<span>HISTORICO</span>
-						</button> -->
 				</div>
 				<div class="col-md-2 m-t-10">
 					<a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/calendario'}" type="button" class="btn bg-teal waves-effect">
@@ -58,7 +40,7 @@
 				</div>
 			</div>
 			<br/>
-			<div class="col-md-6">
+			<div class="col-md-4">
 				<div class="card">
 					<div class="body">    		
 						<div class="form-group">
@@ -144,11 +126,14 @@
 		<!--Fin de los opciones de historicos-->
 	
 		<div class="row clearfix">
-			<div class="col-md-6">
-				<!-- <h4 class="text-center text-primary">Seleccione la empresa.</h4> -->
-				<select name="cmbEmpresa" id="cmbEmpresa" class="selectpicker form-control show-tick cmbEmpresa" data-live-search="true" v-model="idEmpresa" data-style="btn-primary">
-					<option v-for="item in empresa" :value="item.id_empresa" v-text="item.razon_social" v-on:click="changeEmpresa(item.id_empresa)"></option>
-				</select>
+			<div class="col-md-12 new_oportunity">
+				<div class="col-md-8 col-sm-8 m-t-10">
+					<!-- <h4 class="text-center text-primary">Seleccione la empresa.</h4> -->
+					<select name="cmbEmpresa" id="cmbEmpresa" class="selectpicker form-control show-tick cmbEmpresa" v-model="idEmpresa" data-live-search="true" 
+					data-style="btn-primary" title="Seleccione empresa">
+						<option v-for="item in empresa" :value="item.id_empresa" v-text="item.razon_social"></option>
+					</select>
+				</div>
 			</div>
 		</div>
 	
