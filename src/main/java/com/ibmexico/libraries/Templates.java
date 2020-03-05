@@ -182,6 +182,12 @@ public class Templates {
 	public static final String PDF_REPORTE_OPORTUNIDAD_NEGOCIO = PATH_DOCUMENTS_PDF + "oportunidadesNegocios/ReporteOportunidad";
 	public static final String PDF_REPORTE_APROBADAS_FACTURADAS = PATH_DOCUMENTS_PDF + "cobranza/AprobadasFacturadas";
 
+	//Gastos documentos pdf
+	public static final String PDF_GASTO = PATH_DOCUMENTS_PDF+"gasto/ReporteGasto";
+	
+	//PDF Tarea Bitacora
+	public static final String PDF_TAREA = PATH_DOCUMENTS_PDF+"tarea/ReporteTarea";
+
 	// PRINTERS
 	public static final String PRINTER_USUARIOS_CARTERA_RECIBO = PATH_PRINTER + "usuarios/cartera/Recibo";
 	
@@ -209,9 +215,6 @@ public class Templates {
 
 	//Empresa
 	public static final String CATALOGO_EMPRESA = PATH_CONTROL_PANEL+"empresas/Index";
-
-	//Gastos documentos pdf
-	public static final String PDF_GASTO=PATH_DOCUMENTS_PDF+"gasto/ReporteGasto";
 
 	//Indicadores de produccion Ejecutivo
 

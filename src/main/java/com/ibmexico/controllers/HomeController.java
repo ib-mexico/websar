@@ -622,15 +622,17 @@ public class HomeController {
 			List<CotizacionEntity> objCotizacionFiltrada=cotizacionService.findByCotizacionIdOpn(itemCotizacion.getIdCotizacion());
 			if(cotizacionFicheroService.countCotizacionFicheroCalidad(itemCotizacion.getIdCotizacion())>0){
 				status=true;
-			}else
-			if(objCotizacionFiltrada.size()>0){
+			}else if(itemCotizacion.isCalidad()){
+				status = true;
+			}
+			else if(objCotizacionFiltrada.size()>0){
 				int idOpnNegocio=objCotizacionFiltrada.get(0).getIdCotizacion();
 				/**Retornara false si encuentran archivos pero que no sean del catalogo fichero Calidad */
 				if(opnNegocioFicheroService.countOpnFicheroCalidad(idOpnNegocio)>0){
-					status=true;
+					status = true;
 				}
 			}
-			LocalDate ldtInicioCalidad =  LocalDate.of(2019, 12, 31);
+			LocalDate ldtInicioCalidad =  LocalDate.of(2020, 03, 31);
 			String arrFechaInicio[]= itemCotizacion.getCreacionFechaNatural().split("/");
 			int yearInicio=Integer.parseInt(arrFechaInicio[2]);
 			int monthInicio=Integer.parseInt(arrFechaInicio[1]);
@@ -693,7 +695,7 @@ public class HomeController {
 			}
 			if(creacionCotizacion.isAfter(ldtInicioCalidad)){
 				if(!status){
-					estatusPago="PROCEDE, FALTA LLAMADA DE CALIDAD";
+					estatusPago = "PROCEDE, FALTA LLAMADA DE CALIDAD";
 				}
 			}
 			myMap1.put("estatus", estatusPago);

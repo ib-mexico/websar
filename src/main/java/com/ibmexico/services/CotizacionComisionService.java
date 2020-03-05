@@ -96,23 +96,31 @@ public class CotizacionComisionService {
 			
 			/**Validacion de la llamada de calidad en una cotizacion */
 			Boolean status=false;
-			List<CotizacionEntity> objCotizacionFiltrada=cotizacionService.findByCotizacionIdOpn(objCotizacion.getIdCotizacion());
+			List<CotizacionEntity> objCotizacionFiltrada = cotizacionService.findByCotizacionIdOpn(objCotizacion.getIdCotizacion());
 			
 			if(cotizacionFicheroService.countCotizacionFicheroCalidad(objCotizacion.getIdCotizacion()) > 0){
 				status = true;
-			}else if(objCotizacionFiltrada.size()>0){
-				int idOpnNegocio=objCotizacionFiltrada.get(0).getIdCotizacion();
+			}else if(objCotizacion.isCalidad()){
+				status = true;
+			}
+			else if(objCotizacionFiltrada.size() > 0){
+				int idOpnNegocio = objCotizacionFiltrada.get(0).getIdCotizacion();
 				/**Retornara false si encuentran archivos pero que no sean del catalogo fichero Calidad */
-				if(opnNegocioFicheroService.countOpnFicheroCalidad(idOpnNegocio)>0){
+				if(opnNegocioFicheroService.countOpnFicheroCalidad(idOpnNegocio) > 0){
 					status = true;
 				}
 			}
+			System.out.println(objCotizacion.isCalidad());
+			System.err.println(status);
+			System.err.println(status == true  ? "verdad" :"false");
 			/** Fecha de inicio de la llamada de calidad */
-			LocalDate ldtInicioCalidad =  LocalDate.of(2019, 12, 31);
-			String arrFechaInicio[]= objCotizacion.getCreacionFechaNatural().split("/");
-			int yearInicio=Integer.parseInt(arrFechaInicio[2]);
-			int monthInicio=Integer.parseInt(arrFechaInicio[1]);
-			int dayInicio=Integer.parseInt(arrFechaInicio[0]);
+			LocalDate ldtInicioCalidad =  LocalDate.of(2020, 03, 31);
+			/**Dividiendo la fecha de creacion en un arreglo */
+			String arrFechaInicio[] = objCotizacion.getCreacionFechaNatural().split("/");
+			int yearInicio = Integer.parseInt(arrFechaInicio[2]);
+			int monthInicio = Integer.parseInt(arrFechaInicio[1]);
+			int dayInicio = Integer.parseInt(arrFechaInicio[0]);
+
 			LocalDate fechaInicio=LocalDate.of(yearInicio, monthInicio, dayInicio);
 			/**Comparar fecha de creacion si es mayor a la fecha de inicio de Calidad */
 			// Boolean paseCalidad = fechaInicio.isAfter(ldtInicioCalidad);
@@ -129,13 +137,11 @@ public class CotizacionComisionService {
 							
 							objComision.setPorcentajeEjecutivo(new BigDecimal(0));
 							objComision.setComisionEjecutivo(new BigDecimal(0));	
-							
 
 							/*CALCULO DE COMISION DEL COTIZANTE  CON IMPLEMENTADOR*/
-						objComision.setUsuarioCotizante(objCotizacion.getUsuario());
-						objComision.setPorcentajeCotizante((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZANTE_IMPL"));
-						objComision.setComisionCotizante(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZANTE_IMPL")));									
-								
+							objComision.setUsuarioCotizante(objCotizacion.getUsuario());
+							objComision.setPorcentajeCotizante((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZANTE_IMPL"));
+							objComision.setComisionCotizante(comisionTotal.divide(new BigDecimal(100)).multiply((BigDecimal) configuracionService.getValue("COMISION_PORCENTAJE_COTIZANTE_IMPL")));	
 							
 						} else {
 						//SELECCIÓN DE EJECUTIVO POR EMPRESA

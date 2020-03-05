@@ -383,7 +383,7 @@ public class OportunidadesNegociosController {
 			}
 			
 			objOportunidad.setPrioridad(txtPrioridad);
-			objOportunidad.setNotasInternas(txtNotasInternas);
+			objOportunidad.setNotasInternas(txtNotasInternas.trim());
 			objOportunidad.setOportunidadNegocioEstatus(oportunidadNegocioEstatusService.findByIdOportunidadNegocioEstatus(1));
 			
 			objOportunidad.setMoneda(monedaService.find(cmbMoneda));
@@ -483,7 +483,8 @@ public class OportunidadesNegociosController {
 			}
 			
 			objOportunidad.setPrioridad(txtPrioridad);
-			objOportunidad.setNotasInternas(txtNotasInternas);
+			// objOportunidad.setNotasInternas(txtNotasInternas.replaceAll("^\\s*",""));
+			objOportunidad.setNotasInternas(txtNotasInternas.trim());
 			objOportunidad.setOportunidadNegocioEstatus(oportunidadNegocioEstatusService.findByIdOportunidadNegocioEstatus(cmbEstatus));
 			
 			if(cmbEstatus == 3 && !txtRenovacionFecha.equals("")) {
