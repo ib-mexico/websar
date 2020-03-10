@@ -133,11 +133,11 @@ public class ClientesContactosController {
 		try {
 			objClienteContacto.setCliente(clienteService.findByIdCliente(hddIdCliente));
 			objClienteContacto.setContacto(txtContacto);
-			objClienteContacto.setPuesto(objPuesto.getPuesto());
+			objClienteContacto.setPuesto(objPuesto.getCargo());
 			objClienteContacto.setCorreo(txtCorreo);
 			objClienteContacto.setTelefono(txtTelefono);
 			objClienteContacto.setCelular(txtCelular);
-			objClienteContacto.setPuestos(objPuesto);
+			objClienteContacto.setPuestoContacto(objPuesto);
 			
 			if(chkAdministrador.equals("true")) {
 				objClienteContacto.setAdministrador(true);
@@ -173,12 +173,8 @@ public class ClientesContactosController {
 		objModelAndView.addObject("objCliente", objCliente);
 		objModelAndView.addObject("objClienteContacto", objClienteContacto);
 		objModelAndView.addObject("lstPuesto", lstPuesto);
-		objModelAndView.addObject("objPuesto", objClienteContacto.getPuestos() != null ? objClienteContacto.getPuestos().getIdPuesto() : 0);
+		objModelAndView.addObject("objPuesto", objClienteContacto.getPuestoContacto() != null ? objClienteContacto.getPuestoContacto().getIdPuesto() : 0);
 		
-		System.err.println( objClienteContacto.getPuestos() != null ? objClienteContacto.getPuestos().getIdPuesto() : 0);
-		for (PuestoEntity item : lstPuesto) {
-			System.err.println(item + "valor ");
-		}
 		return objModelAndView;
 	}
 	
@@ -210,9 +206,9 @@ public class ClientesContactosController {
 				objClienteContacto.setTelefono(txtTelefono);
 				objClienteContacto.setCelular(txtCelular);
 				if(cmbPuesto > 0 ){
-					objClienteContacto.setPuestos(puestoService.findIdPuesto(cmbPuesto));
+					objClienteContacto.setPuestoContacto(puestoService.findIdPuesto(cmbPuesto));
 					if(objClienteContacto.getPuesto() == null){
-						objClienteContacto.setPuesto(puestoService.findIdPuesto(cmbPuesto).getPuesto());
+						objClienteContacto.setPuesto(puestoService.findIdPuesto(cmbPuesto).getCargo());
 					}
 				}
 

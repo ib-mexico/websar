@@ -42,11 +42,11 @@
 
 							<div class="col-md-4">
 	                            <p><b>Puesto *</b></p>
-	                            <select class="form-control show-tick" name="cmbPuesto" id="cmbPuesto" data-live-search="true" >
+	                            <select class="form-control show-tick" name="cmbPuesto" id="cmbPuesto" data-live-search="true" required="true">
 	                            	<option value="default">Selecciona el puesto...</option>
 	                            	<th:block th:each="itemPuesto : ${lstPuesto}">	
-	                            		<option th:if="${(objPuesto == itemPuesto.idPuesto)}" selected="selected" th:value="${itemPuesto.idPuesto}" th:text="${itemPuesto.puesto}"></option>
-	                            		<option th:unless="${(idPuesto == itemPuesto.idPuesto)}" th:value="${itemPuesto.idPuesto}" th:text="${itemPuesto.puesto}"></option>                            	
+	                            		<option th:if="${(objPuesto == itemPuesto.idPuesto)}" selected="selected" th:value="${itemPuesto.idPuesto}" th:text="${itemPuesto.cargo}"></option>
+	                            		<option th:unless="${(idPuesto == itemPuesto.idPuesto)}" th:value="${itemPuesto.idPuesto}" th:text="${itemPuesto.cargo}"></option>                            	
 	                            	</th:block>
 	                       		</select>
 	                        </div>
@@ -115,7 +115,10 @@
 		            },
 		            'txtCelular': {
 		                number: true
-		            }
+					},
+					'cmbPuesto':{
+						number: true
+					}
 		        },
 		        highlight: function (input) {
 		            $(input).parents('.form-line').addClass('error');

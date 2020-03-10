@@ -43,7 +43,7 @@
 								<p><b>Puesto *</b></p>
 								<select class="form-control show-tick" name="cmbPuesto" id="cmbPuesto" data-live-search="true" >
 									<th:block th:each="itemPuesto : ${lstPuesto}" >
-									   <option th:value="${itemPuesto.idPuesto}" th:text="${itemPuesto.puesto}"></option>	                       				
+									   <option th:value="${itemPuesto.idPuesto}" th:text="${itemPuesto.cargo}"></option>	                       				
 								   </th:block>
 							   	</select>
 							</div>
@@ -133,7 +133,24 @@
 		        return value.match('[0-9]+');
 		    },
 		        'Por favor ingresa un n&uacute;mero.'
-		    );
+			);
+			
+			$('#cmbPuesto option').attr('selected',false);
+			$('#formContacto').submit(function (e){
+				var flag = false;
+				if($('#cmbPuesto').val() == 'default'){
+					flag = true;
+				}
+				console.log("que hay1");
+
+				if (flag) {
+					console.log("que onda no entrawste");
+					swal('Hey','Seleccione un puesto del contacto','warning');
+					e.preventDefault();
+				}
+				console.log("que hay");
+
+			});
 		});			
 		/*]]>*/</script>
 </th:block>

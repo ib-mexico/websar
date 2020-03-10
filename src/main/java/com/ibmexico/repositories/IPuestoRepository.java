@@ -1,6 +1,7 @@
 package com.ibmexico.repositories;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.ibmexico.entities.PuestoEntity;
 
@@ -14,5 +15,5 @@ public interface IPuestoRepository extends JpaRepository<PuestoEntity, Serializa
     public abstract PuestoEntity findByIdPuesto(int idPuesto);
 
     @Query("SELECT objPuesto from PuestoEntity objPuesto WHERE objPuesto.eliminado = false")
-    public abstract java.util.List<PuestoEntity> puestosAll();
+    public abstract List<PuestoEntity> puestosAll();
 }

@@ -20,17 +20,19 @@ public class PuestoService {
 	@Qualifier("sessionService")
 	private SessionService sessionService;
 	
+	/**listar puestos sin considerar desactivados. */
 	public List<PuestoEntity> listPuestosAll() {
 		return puestoRepository.findAll();
 	}
-	
+
+	/**Considera lista de puestos unicamente habilitados */
 	public List<PuestoEntity> listPuesto() {
 		return puestoRepository.puestosAll();
     }
-    
+	
+	/**Busqueda por ID */
     public PuestoEntity findIdPuesto(int idPuesto){
         return puestoRepository.findByIdPuesto(idPuesto);
     }
-
 
 }

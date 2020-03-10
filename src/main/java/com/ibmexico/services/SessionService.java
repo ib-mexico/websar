@@ -3,9 +3,13 @@ package com.ibmexico.services;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,24 +33,23 @@ import com.ibmexico.repositories.IUsuarioRolRepository;
 
 @Service("sessionService")
 public class SessionService implements UserDetailsService {
-	
+
 	@Autowired
 	@Qualifier("usuarioRepository")
 	private IUsuarioRepository usuarioRepository;
-	
+
 	@Autowired
 	@Qualifier("usuarioRolRepository")
 	private IUsuarioRolRepository usuarioRolRepository;
-	
+
 	@Autowired
 	@Qualifier("rolesService")
 	private RolesService rolesService;
-	
+
 	@Autowired
 	@Qualifier("usuarioRolService")
 	private UsuarioRolService usuarioRolService;
-	
-	
+
 	private UsuarioEntity objCurrentUser;
 	private String userName;
 	private int userType;
@@ -56,7 +59,7 @@ public class SessionService implements UserDetailsService {
 	private List<String> lstUnderRoles;
 	private Map<RolCategoriaEntity, List<RolEntity>> mapCategoriesRoles;
 	private Map<RolCategoriaEntity, List<RolEntity>> mapCategoriesRolesMenu;
-	
+
 	@Override
 	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 		clearSession();
@@ -64,166 +67,192 @@ public class SessionService implements UserDetailsService {
 		return loadUser;
 	}
 
-	//BASICOS DE USUARIO
+	// BASICOS DE USUARIO
 	public UsuarioEntity getCurrentUser() {
-		if(/* objCurrentUser == null*/ true) {
+		if (/* objCurrentUser == null */ true) {
 			User objUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			objCurrentUser = usuarioRepository.findByUsername(objUser.getUsername());
 		}
 		return objCurrentUser;
 	}
-	
-	//LISTAS DE PRIVILEGIOS Y ROLES
+
+	// LISTAS DE PRIVILEGIOS Y ROLES
 	public List<RolEntity> getRoles() {
-			lstRoles = new ArrayList<RolEntity>();
-			Collection<SimpleGrantedAuthority> lstOriginalAuthorities = (Collection<SimpleGrantedAuthority>)SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-			List<UsuarioRolEntity> lstUsuarioRoles = getCurrentUser().getUsuarioRoles();
-			
-			for(UsuarioRolEntity itemUsuarioRol : lstUsuarioRoles) {
-				for(SimpleGrantedAuthority itemAuthority : lstOriginalAuthorities) {
-					if(itemUsuarioRol.getRol().getRol().equals(itemAuthority.getAuthority())) {
-						lstRoles.add(itemUsuarioRol.getRol());
-						break;
-					}
+		lstRoles = new ArrayList<RolEntity>();
+		Collection<SimpleGrantedAuthority> lstOriginalAuthorities = (Collection<SimpleGrantedAuthority>) SecurityContextHolder
+				.getContext().getAuthentication().getAuthorities();
+		List<UsuarioRolEntity> lstUsuarioRoles = getCurrentUser().getUsuarioRoles();
+
+		for (UsuarioRolEntity itemUsuarioRol : lstUsuarioRoles) {
+			for (SimpleGrantedAuthority itemAuthority : lstOriginalAuthorities) {
+				if (itemUsuarioRol.getRol().getRol().equals(itemAuthority.getAuthority())) {
+					lstRoles.add(itemUsuarioRol.getRol());
+					break;
 				}
 			}
+		}
 
 		return lstRoles;
 	}
-	
+
 	/*
-	public Map<RolEntity, Boolean> getFullRolesByCategories() {
-		Map<RolEntity, Boolean> mapFullRoles = getFullRoles(objCurrentUser);
-		
-		RolCategoriaEntity objRolCategoriaActual = null;
-		for( RolEntity itemRolEntity : mapFullRoles.keySet()   ) {
-			if (objRolCategoriaActual == null) || (objRolCategoriaActual.getIdRolCategoria() != itemRolEntity.getRolCategoria().getIdRolCategoria()) )
-				objRolCategoriaActual = itemRolEntity.getRolCategoria();
-			}
-			
-		}
-		
-		return null;
-	}
-	*/
-	
+	 * public Map<RolEntity, Boolean> getFullRolesByCategories() { Map<RolEntity,
+	 * Boolean> mapFullRoles = getFullRoles(objCurrentUser);
+	 * 
+	 * RolCategoriaEntity objRolCategoriaActual = null; for( RolEntity itemRolEntity
+	 * : mapFullRoles.keySet() ) { if (objRolCategoriaActual == null) ||
+	 * (objRolCategoriaActual.getIdRolCategoria() !=
+	 * itemRolEntity.getRolCategoria().getIdRolCategoria()) ) objRolCategoriaActual
+	 * = itemRolEntity.getRolCategoria(); }
+	 * 
+	 * }
+	 * 
+	 * return null; }
+	 */
+
 	public Map<RolEntity, Boolean> getFullRoles() {
 		return getFullRoles(objCurrentUser);
 	}
-	
+
 	public Map<RolEntity, Boolean> getFullRoles(UsuarioEntity objUsuario) {
 		Map<RolEntity, Boolean> mapFullRoles = this.mapFullRoles;
-			mapFullRoles = new LinkedHashMap<RolEntity, Boolean>();
-			
-			if(objUsuario != null) {
-				List<RolEntity> lstRoles = rolesService.listRoles();
-				List<UsuarioRolEntity> lstUsuariosRoles = objUsuario.getUsuarioRoles();
-				for(RolEntity itemRol : lstRoles) {
-					boolean boolActivo = false;
-					for(UsuarioRolEntity itemUsuarioRol : lstUsuariosRoles) {
-						if( itemRol.equals( itemUsuarioRol.getRol() ) ) {
-							boolActivo = true;
-							break;
-						}
+		mapFullRoles = new LinkedHashMap<RolEntity, Boolean>();
+
+		if (objUsuario != null) {
+			List<RolEntity> lstRoles = rolesService.listRoles();
+			List<UsuarioRolEntity> lstUsuariosRoles = objUsuario.getUsuarioRoles();
+			for (RolEntity itemRol : lstRoles) {
+				boolean boolActivo = false;
+				for (UsuarioRolEntity itemUsuarioRol : lstUsuariosRoles) {
+					if (itemRol.equals(itemUsuarioRol.getRol())) {
+						boolActivo = true;
+						break;
 					}
-					
-					mapFullRoles.put(itemRol, boolActivo);
 				}
+
+				mapFullRoles.put(itemRol, boolActivo);
 			}
+		}
 		return mapFullRoles;
 	}
-	
+
 	public Map<String, Boolean> getStringFullRoles() {
 		return getStringFullRoles(objCurrentUser);
 	}
-	
+
 	public Map<String, Boolean> getStringFullRoles(UsuarioEntity objUsuario) {
-		
+
 		Map<RolEntity, Boolean> mapFullRoles = getFullRoles();
 		Map<String, Boolean> mapStringFullRoles = new LinkedHashMap<String, Boolean>();
-		
-		for(RolEntity itemRol : mapFullRoles.keySet()) {
+
+		for (RolEntity itemRol : mapFullRoles.keySet()) {
 			mapStringFullRoles.put(itemRol.getRol(), mapFullRoles.get(itemRol));
 		}
-		
+
 		return mapStringFullRoles;
 	}
-	
+
 	public boolean getRolValue(UsuarioEntity objUsuario, String strRol) {
 		boolean result = false;
-		
-		if(objUsuario != null) {
+
+		if (objUsuario != null) {
 			RolEntity objRol = rolesService.findByRol(strRol);
-			if(objRol != null) {
+			if (objRol != null) {
 				Map<RolEntity, Boolean> fullRoles = getFullRoles(objUsuario);
-	
-				for( RolEntity itemRol : fullRoles.keySet() ) {
-					if( itemRol.equals(objRol) ) {
+
+				for (RolEntity itemRol : fullRoles.keySet()) {
+					if (itemRol.equals(objRol)) {
 						result = fullRoles.getOrDefault(objRol, false);
 						break;
 					}
 				}
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	public List<String> getUnderRoles() {
 			List<SimpleGrantedAuthority> lstOriginalRoles = (List<SimpleGrantedAuthority>)SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-			lstUnderRoles = new ArrayList<String>();		
-			
-			lstUnderRoles = lstOriginalRoles.stream()
-					.filter(item->item.getAuthority()
-					.startsWith("_") && item.getAuthority().endsWith("_"))
-					.map(item-> item.getAuthority()).collect(Collectors.toList());
+		lstUnderRoles = new ArrayList<String>();
+
+		lstUnderRoles = lstOriginalRoles.stream()
+				.filter(item -> item.getAuthority().startsWith("_") && item.getAuthority().endsWith("_"))
+				.map(item -> item.getAuthority()).collect(Collectors.toList());
 
 		return lstUnderRoles;
 	}
-	
 
-	//LISTAS PRIVILEGIOS POR CATEGORIAS
+	// LISTAS PRIVILEGIOS POR CATEGORIAS
 	public Map<RolCategoriaEntity, List<RolEntity>> getCategoriesRoles() {
 
-			mapCategoriesRoles = new LinkedHashMap<RolCategoriaEntity, List<RolEntity>>();
-			List<RolEntity> lstRoles = getRoles();
-			
-			lstRoles.forEach(item -> {
-				if (mapCategoriesRoles.containsKey(item.getRolCategoria())) {
-					mapCategoriesRoles.get(item.getRolCategoria()).add(item);
-				} else {
-					mapCategoriesRoles.put(item.getRolCategoria(), new ArrayList<RolEntity>(Arrays.asList(item)));
-				}
-			});
+		mapCategoriesRoles = new LinkedHashMap<RolCategoriaEntity, List<RolEntity>>();
+		List<RolEntity> lstRoles = getRoles();
+
+		lstRoles.forEach(item -> {
+			if (mapCategoriesRoles.containsKey(item.getRolCategoria())) {
+				mapCategoriesRoles.get(item.getRolCategoria()).add(item);
+			} else {
+				mapCategoriesRoles.put(item.getRolCategoria(), new ArrayList<RolEntity>(Arrays.asList(item)));
+			}
+		});
 
 		return mapCategoriesRoles;
 	}
 
 	public Map<RolCategoriaEntity, List<RolEntity>> getCategoriesRolesMenu() {
-		
+
 		mapCategoriesRolesMenu = new LinkedHashMap<RolCategoriaEntity, List<RolEntity>>();
 		List<RolEntity> lstRoles = getRoles();
-		
+
 		lstRoles.forEach(item -> {
 			if (item.isMenu()) {
-				System.err.println("is menu"+ item.getLabel());
+				// System.err.println("is menu" + item.getLabel());
 				if (mapCategoriesRolesMenu.containsKey(item.getRolCategoria())) {
 					mapCategoriesRolesMenu.get(item.getRolCategoria()).add(item);
-					System.err.println("que onda como andamos"+ item.getRolCategoria());
+					// System.err.println("que onda como andamos" + item.getRolCategoria());
 				} else {
-					System.err.println("else que" +item.getRolCategoria());
-					System.err.println(item + "values de los items");
+					// System.err.println("else que" + item.getRolCategoria());
+					// System.err.println(item + "values de los items");
 					mapCategoriesRolesMenu.put(item.getRolCategoria(), new ArrayList<RolEntity>(Arrays.asList(item)));
 				}
 			}
 		});
 
-		// LinkedHashMap<Integer, List<RolEntity>> orderMenu = mapCategoriesRolesMenu.entrySet()
-					// .stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1,e2)-> e1, LinkedHashMap::new));
+		LinkedHashMap<RolCategoriaEntity, List<RolEntity>> result = new LinkedHashMap<RolCategoriaEntity,List<RolEntity>>();
+		for (Map.Entry<RolCategoriaEntity, List<RolEntity>> entry : mapCategoriesRolesMenu.entrySet()) {
+			Object k =  entry.getKey();
+			// Object v = entry.getValue();
+			List<RolEntity> value = entry.getValue();
+			Collections.sort(value, new Comparator<RolEntity>() {
+				public int compare(RolEntity obj1, RolEntity obj2) {
+				   return Integer.toString(obj1.getOrden()).compareTo(Integer.toString(obj2.getOrden()));
+				}
+			 });
 
-		// mapCategoriesRolesMenu.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(entry -> ...);
+			 result.put((RolCategoriaEntity) k, value);
+		}
 
-		return mapCategoriesRolesMenu;
+
+		/* List<Map.Entry<RolCategoriaEntity, List<RolEntity>>> list = new ArrayList<Map.Entry<RolCategoriaEntity, List<RolEntity>>>(mapCategoriesRolesMenu.entrySet());
+
+		Collections.sort(list, new Comparator<Map.Entry< RolCategoriaEntity, List<RolEntity>  >>() {
+			@Override
+			public int compare(Entry<RolCategoriaEntity, List<RolEntity>> o1, Entry<RolCategoriaEntity, List<RolEntity>> o2) {
+				return Integer.toString(o1.getValue().stream().findFirst().get().getOrden()).compareTo(Integer.toString(o2.getValue().stream().findFirst().get().getOrden()));
+			}
+		});
+ */
+	/* 	LinkedHashMap<RolCategoriaEntity, List<RolEntity>> result = new LinkedHashMap<RolCategoriaEntity,List<RolEntity>>();
+		for (Entry<RolCategoriaEntity, List<RolEntity>> entry : list) {
+			result.put(entry.getKey(), entry.getValue());
+		}
+
+		for (Entry<RolCategoriaEntity,List<RolEntity>> entry : list) {
+			System.err.println(entry.getKey() + "------"+ entry.getValue() );
+		} */
+
+		return result;
 	}
 	
 	

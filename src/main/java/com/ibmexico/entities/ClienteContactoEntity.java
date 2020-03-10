@@ -62,10 +62,22 @@ public class ClienteContactoEntity {
 	@Column
 	private boolean eliminado = false;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_puesto", nullable = true)
-	private PuestoEntity puestos;
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "id_puesto", referencedColumnName = "idPuesto" ,nullable = true)
+	// private PuestoEntity puestos;
 	
+	// @OneToOne(fetch = FetchType.LAZY, optional = true)
+    // @JoinColumn(name = "id_puesto", nullable = true)
+	// private PuestoEntity puestos;
+	
+	// @OneToOne(cascade = CascadeType.ALL)
+    // @JoinColumn(name = "id_puesto", referencedColumnName = "id_puesto")
+	// private PuestoEntity puestos;
+	@ManyToOne
+    @JoinColumn(name="id_puesto", nullable = true)
+    private PuestoEntity puestoContacto;
+
+
 	//ACCESORS METHODS
 	public int getIdClienteContacto() {
 		return idClienteContacto;
@@ -179,26 +191,25 @@ public class ClienteContactoEntity {
 		this.eliminado = eliminado;
 	}
 
+	public PuestoEntity getPuestoContacto() {
+		return puestoContacto;
+	}
+
+	public void setPuestoContacto(PuestoEntity puestoContacto) {
+		this.puestoContacto = puestoContacto;
+	}
+
 	@Override
 	public String toString() {
 		return "ClienteContactoEntity [administrador=" + administrador + ", celular=" + celular + ", cliente=" + cliente
 				+ ", contacto=" + contacto + ", correo=" + correo + ", creacionFecha=" + creacionFecha
 				+ ", creacionUsuario=" + creacionUsuario + ", eliminado=" + eliminado + ", idClienteContacto="
 				+ idClienteContacto + ", modificacionFecha=" + modificacionFecha + ", modificacionUsuario="
-				+ modificacionUsuario + ", puesto=" + puesto + ", puestos=" + puestos + ", telefono=" + telefono + "]";
+				+ modificacionUsuario + ", puesto=" + puesto + ", puestoContacto=" + puestoContacto + ", telefono="
+				+ telefono + "]";
 	}
 
-	public PuestoEntity getPuestos() {
-		return puestos;
-	}
 
-	public void setPuestos(PuestoEntity puestos) {
-		this.puestos = puestos;
-	}
-	
-	
-	
-	
 	
 	
 }
