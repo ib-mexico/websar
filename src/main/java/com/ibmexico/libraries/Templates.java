@@ -60,6 +60,10 @@ public class Templates {
 	public static final String CONTROL_PANEL_COTIZACIONES_ORDENES_SERVICIOS_CREATE = PATH_CONTROL_PANEL + "cotizaciones/ordenesServicios/Create";
 	public static final String CONTROL_PANEL_COTIZACIONES_ORDENES_SERVICIOS_REVIEW = PATH_CONTROL_PANEL + "cotizaciones/ordenesServicios/Revision";
 	
+
+	// COTIZACIONES SA.
+	public static final String CONTROL_PANEL_COTIZACIONES_SA_INDEX = PATH_CONTROL_PANEL + "cotizaciones/IndexSA";
+
 	//ORDENES SERVICIO SIN ASOCIAR A UNA COTIZACION
 	public static final String CONTROL_PANEL_ORDENES_SERVICIOS_INDEX = PATH_CONTROL_PANEL + "ordenesServicios/Index";
 	public static final String CONTROL_PANEL_ORDENES_SERVICIOS_CREATE = PATH_CONTROL_PANEL + "ordenesServicios/Create";
@@ -67,6 +71,7 @@ public class Templates {
 	
 	// OPORTUNIDADES NEGOCIOS
 	public static final String CONTROL_PANEL_OPORTUNIDADES_INDEX = PATH_CONTROL_PANEL + "oportunidades/Index";
+	public static final String CONTROL_PANEL_OPORTUNIDADES_HISTORICO = PATH_CONTROL_PANEL + "oportunidades/Historico";
 	public static final String CONTROL_PANEL_OPORTUNIDADES_CREATE = PATH_CONTROL_PANEL + "oportunidades/Create";
 	public static final String CONTROL_PANEL_OPORTUNIDADES_EDIT = PATH_CONTROL_PANEL + "oportunidades/Edit";
 	public static final String CONTROL_PANEL_OPORTUNIDADES_UPLOAD = PATH_CONTROL_PANEL + "oportunidades/Upload";

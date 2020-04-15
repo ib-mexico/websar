@@ -45,6 +45,12 @@ public class RolEntity {
 
 	@Column(nullable = false)
 	private boolean menu = false;
+
+	@Column(nullable = false)
+	private boolean submenu = false;
+
+	@Column(nullable = true)
+	private int idRolSubmenu; 
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "rol")
 	private List<UsuarioRolEntity> usuarioRol = new ArrayList<UsuarioRolEntity>();
@@ -86,8 +92,14 @@ public class RolEntity {
 	@Override
 	public String toString() {
 		return "RolEntity [idRol=" + idRol + ", rol=" + rol + ", rolCategoria=" + rolCategoria.getRolCategoria() + ", label=" + label
-				+ ", url=" + url + ", menu=" + menu + ",orden="+orden+"]";
+				+ ", url=" + url + ", menu=" + menu + ",orden="+orden+" , submenu ="+submenu+",idRolSubmenu="+idRolSubmenu+"]";
 	}
+	// @Override
+	// public String toString() {
+	// 	return "RolEntity [idRol=" + idRol + ", idRolSubmenu=" + idRolSubmenu + ", label=" + label + ", menu=" + menu
+	// 			+ ", orden=" + orden + ", rol=" + rol + ", rolCategoria=" + rolCategoria.getRolCategoria() + ", submenu=" + submenu + ", url=" + url + ", usuarioRol=" + usuarioRol + "]";
+	// }
+
 
 	@Override
 	public int hashCode() {
@@ -119,6 +131,25 @@ public class RolEntity {
 	public void setOrden(int orden) {
 		this.orden = orden;
 	}
+
+	public boolean isSubmenu() {
+		return submenu;
+	}
+
+	public void setSubmenu(boolean submenu) {
+		this.submenu = submenu;
+	}
+
+	public int getIdRolSubmenu() {
+		return idRolSubmenu;
+	}
+
+	public void setIdRolSubmenu(int idRolSubmenu) {
+		this.idRolSubmenu = idRolSubmenu;
+	}
+
+
+	
 	
 	
 }
