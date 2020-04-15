@@ -14,28 +14,17 @@
 <th:block th:fragment="body">
 	<div id="appOportunidades">
 		<div class="block-header">
-			<h2 class="h2 bolder" id="titleOPN">OPORTUNIDADES DE NEGOCIOS</h2>
+			<h2 class="h2 bolder" id="titleOPN">OPORTUNIDADES DE NEGOCIOS HISTORICOS</h2>
 		</div>
 		
 		<div class="row clearfix">
-					
-			<div class="col-md-3 col-sm-3 col-lg-2 m-t-10" id="newOPN">
-				<th:block th:if="${rolNuevaOportunidad}">
-					<a th:href="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/create'}" type="button" class="btn bg-purple waves-effect">
-						<i class="material-icons">add_circle</i> 
-						<span>NUEVA OPORTUNIDAD</span>
-					</a>
-				</th:block>
-			</div>
-			<div class="col-md-4 col-sm-8 col-lg-5 m-t-10" id="dvOPN">
-				<!-- <h4 class="text-center text-primary">Seleccione la empresa.</h4> -->
-				<select name="cmbEmpresa" id="cmbEmpresa" class="selectpicker form-control show-tick cmbEmpresa" v-model="idEmpresa" data-live-search="true" 
-				data-style="btn-primary">
-					<option v-for="item in empresa" :value="item.id_empresa" v-text="item.razon_social"></option>
+			<div class="col-md-6 col-sm-6 col-lg-6 m-t-10 " id="dvHistorico">
+				<select name="cmbEmpresaHistorico" id="cmbEmpresaHistorico" class="selectpicker form-control show-tick cmbEmpresa"	v-model="idEmpresa" data-style="btn-primary">
+					<option v-for="item in empresa" :value="item.id_empresa" v-text="item.razon_social"></option>				
 				</select>
 			</div>
-
-			<div class="col-md-5 col-sm-12 col-lg-5 m-t-10">
+	
+			<div class="col-md-6 col-sm-6 col-lg-6 m-t-10">
 					<div class="card">
 						<div class="body">    		
 							<div class="form-group">
@@ -61,7 +50,6 @@
 					</div>
 			</div>
 		</div>
-
 	
 		<div class="row clearfix opn-deck m-t-10">
 			
@@ -188,6 +176,17 @@
 					:index="index"
 					:token="token">
 				</opn-card>
+			</div>
+			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn" v-else="opnData.length">
+				<div class="info-box bg-cyan hover-zoom-effect">
+					<div class="icon">
+						<i class="material-icons">attach_money</i>
+					</div>
+					<div class="content">
+						<div class="text">PERDIDOS</div>
+						<div class="number">{{ totalPerdidos }}</div>
+					</div>
+				</div>
 			</div>
 			
 		</div>
@@ -462,10 +461,7 @@
 										<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">CERRAR</button>
 										<button type="submit" class="btn btn-primary waves-effect text-uppercase">Guardar registro</button>
 									</div>
-								
-								
 								</form>
-
 								
 							</div>
 
@@ -495,10 +491,11 @@
 	<script type="application/javascript" th:inline="javascript">
 	/*<![CDATA[*/
 		$(document).ready(function() {
+			app1.getOportunidadesHistorico(1);
+			app1.changeEmpresaHistorico(1);
+
 			 /*Listar los ejecutivos y grupo de ventas con selectpicker*/
-			$('.cmbEmpresa').selectpicker('refresh');
-			app1.getOportunidades(1);
-			app1.changeEmpresa(1);
+			 $('.cmbEmpresa').selectpicker('refresh');
             // $('.cmbVenta').selectpicker('refresh');
 
 			var csrftoken = [[${_csrf.token}]];			
@@ -530,10 +527,26 @@
 			// *****************************************************************
 		});
 
-		$('#cmbEmpresa').on('change', function(e){
+
+		$('#cmbEmpresaHistorico').on('change', function(e){
 			var valor = parseInt(this.value);
-			app1.changeEmpresa(valor);
+			app1.changeEmpresaHistorico(valor);
 		});
+		
+	
+		$('#btnHistorico').click(function(){
+			$('#dvHistorico').removeClass('hidden');
+			$('#dvHistorico').fadeIn('slow');
+			$('#dvOPN').addClass('hidden');
+			$('.cmbEmpresa').selectpicker('val',1);
+			document.getElementById("titleOPN").innerHTML = "OPORTUNIDADES DE NEGOCIOS HISTORICOS"
+
+			$('#newOPN').addClass('hidden');
+			$('#home').removeClass('hidden');
+
+			app1.changeEmpresaHistorico(1);
+		});
+
 
 	/*]]>*/
 	</script>

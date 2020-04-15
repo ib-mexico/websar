@@ -39,14 +39,26 @@
 						</div>
 						
 						<div class="row clearfix">
-							<div class="col-md-3">
+
+							<div class="col-md-4">
+	                            <p><b>Puesto *</b></p>
+	                            <select class="form-control show-tick" name="cmbPuesto" id="cmbPuesto" data-live-search="true" required="true">
+	                            	<option value="default">Selecciona el puesto...</option>
+	                            	<th:block th:each="itemPuesto : ${lstPuesto}">	
+	                            		<option th:if="${(objPuesto == itemPuesto.idPuesto)}" selected="selected" th:value="${itemPuesto.idPuesto}" th:text="${itemPuesto.cargo}"></option>
+	                            		<option th:unless="${(idPuesto == itemPuesto.idPuesto)}" th:value="${itemPuesto.idPuesto}" th:text="${itemPuesto.cargo}"></option>                            	
+	                            	</th:block>
+	                       		</select>
+	                        </div>
+
+							<!-- <div class="col-md-3">
 								<div class="form-group">
 	                        		<p><b>Puesto</b></p>
                                     <div class="form-line">
                                         <input type="text" name="txtPuesto" th:value="${objClienteContacto.getPuesto()}" class="form-control" />
                                     </div>
                                  </div>
-							</div>
+							</div> -->
 							
 							<div class="col-md-3">                        	
 	                        	<div class="form-group">
@@ -103,7 +115,10 @@
 		            },
 		            'txtCelular': {
 		                number: true
-		            }
+					},
+					'cmbPuesto':{
+						number: true
+					}
 		        },
 		        highlight: function (input) {
 		            $(input).parents('.form-line').addClass('error');

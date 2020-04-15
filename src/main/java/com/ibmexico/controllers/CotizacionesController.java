@@ -190,6 +190,7 @@ public class CotizacionesController {
 		objModelAndView.addObject("rolCotizacionAdmin", sessionService.hasRol("COTIZACIONES_ADMINISTRADOR"));
 		objModelAndView.addObject("rolEntrega", sessionService.hasRol("ENTREGAS_CREATE"));
 		objModelAndView.addObject("rolEntregaAdmin", sessionService.hasRol("ENTREGAS_ADMINISTRADOR"));
+		objModelAndView.addObject("rolCalidad", sessionService.hasRol("LLAMADA_CALIDAD"));
 		
 		return objModelAndView;
 	}
@@ -676,7 +677,7 @@ public class CotizacionesController {
 			default:
 				break;
 			}
-			LocalDate ldtInicioCalidad =  LocalDate.of(2019, 12, 31);
+			LocalDate ldtInicioCalidad =  LocalDate.of(2020, 03, 31);
 			String arrFechaInicio[]= itemCotizacion.getCreacionFechaNatural().split("/");
 			int yearInicio=Integer.parseInt(arrFechaInicio[2]);
 			int monthInicio=Integer.parseInt(arrFechaInicio[1]);
@@ -688,8 +689,11 @@ public class CotizacionesController {
 				.add("idEstatus", itemCotizacion.getCotizacionEstatus().getIdCotizacionEstatus())
 				.add("estatus", itemCotizacion.getCotizacionEstatus().getCotizacionEstatus())
 				.add("sucursal", itemCotizacion.getSucursal().getSucursal())
+
 				.add("calidad",cotizaFicheroService.countCotizacionFicheroCalidad(itemCotizacion.getIdCotizacion())>0 ? 1: 0 )
+				.add("boolCalidad", itemCotizacion.isCalidad())
 				.add("paseCalidad", fechaInicio.isAfter(ldtInicioCalidad) ? true : false)
+				
 				.add("folio", itemCotizacion.getFolio())
 				.add("concepto", itemCotizacion.getConcepto())
 				
@@ -794,20 +798,23 @@ public class CotizacionesController {
 	@RequestMapping(value = "modificar-estatus", method = RequestMethod.POST)
 	public @ResponseBody String store( @RequestParam(value="hddIdCotizacion") int hddIdCotizacion,
 								@RequestParam(value="cmbEstatus") Integer cmbEstatus,
-								@RequestParam(value="txtFacturaFecha", required=false, defaultValue="") String txtFacturaFecha,
-								@RequestParam(value="txtFacturaNumero", required=false, defaultValue="") String txtFacturaNumero,
-								@RequestParam(value="txtPagoFecha", required=false, defaultValue="") String txtPagoFecha,
-								@RequestParam(value="txtPagoReferencia", required=false, defaultValue="") String txtPagoReferencia,
+								@RequestParam(value="txtFacturaFecha", required = false, defaultValue = "") String txtFacturaFecha,
+								@RequestParam(value="txtFacturaNumero", required = false, defaultValue = "") String txtFacturaNumero,
+								@RequestParam(value="txtPagoFecha", required = false, defaultValue = "") String txtPagoFecha,
+								@RequestParam(value="txtPagoReferencia", required = false, defaultValue = "") String txtPagoReferencia,
 								
-								@RequestParam(value="txtFolio", required=false, defaultValue="") String txtFolio,
-								@RequestParam(value="txtReferenciaPago", required=false, defaultValue="") String txtReferenciaPago,
-								@RequestParam(value="txtImporte", required=false, defaultValue="") BigDecimal txtImporte,
-								@RequestParam(value="txtProveedor", required=false, defaultValue="") String txtProveedor,
-								@RequestParam(value="txtBanco", required=false, defaultValue="") String txtBanco,
-								@RequestParam(value="txtFechaVencimiento", required=false, defaultValue="") String txtFechaVencimiento,
-								@RequestParam(value="txtDescripcion", required=false, defaultValue = "" )String txtDescripcion,
-								@RequestParam(value="fichero", required=false) MultipartFile fichero
-											
+								@RequestParam(value="txtFolio", required = false, defaultValue = "") String txtFolio,
+								@RequestParam(value="txtReferenciaPago", required = false, defaultValue = "") String txtReferenciaPago,
+								@RequestParam(value="txtImporte", required = false, defaultValue = "") BigDecimal txtImporte,
+								@RequestParam(value="txtProveedor", required = false, defaultValue = "") String txtProveedor,
+								@RequestParam(value="txtBanco", required = false, defaultValue = "") String txtBanco,
+								@RequestParam(value="txtFechaVencimiento", required = false, defaultValue = "") String txtFechaVencimiento,
+								@RequestParam(value="txtDescripcion", required = false, defaultValue = "" )String txtDescripcion,
+								@RequestParam(value="fichero", required = false) MultipartFile fichero,
+								
+								/**Check subida de comprobante */
+								@RequestParam(value="chkComprobante", required = false, defaultValue = "") String chkComprobante
+
 								) {
 		
 		CotizacionEntity objCotizacion = cotizacionService.findByIdCotizacion(hddIdCotizacion);
@@ -825,7 +832,7 @@ public class CotizacionesController {
 					objCotizacion.setAprobacionFecha(ldNow);
 
 					try {
-						if(objCotizacion.getTotal().doubleValue()>10000) {
+						if(objCotizacion.getTotal().doubleValue() > 10000) {
 							//ESTA NOTIFICACION IRIA EN LA PARTE DE APROBACION AL MOMENTO QUE SE APRUEBE UNA COTIZACION MAYOR A 10,000
 							Twilio.init(GeneralConfiguration.getInstance().getTwilioAccountSID(), GeneralConfiguration.getInstance().getTwilioAuthToken());
 							Message message = Message.creator(new PhoneNumber("whatsapp:"+objUsuario.getCelular()), 
@@ -897,36 +904,37 @@ public class CotizacionesController {
 							}
 						}
 						/**Registro de comprobante de pago */
-
-						CotizacionFicheroEntity objFichero = new CotizacionFicheroEntity();
-						try {
-							objFichero.setCotizacion(cotizacionService.findByIdCotizacion(hddIdCotizacion));
-							objFichero.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(1));
-							objFichero.setFolio(objCotizacion.getFacturaNumero());
-							objFichero.setReferenciaPago(txtReferenciaPago);
-							objFichero.setProveedor(objCotizacion.getCliente().getCliente());
-							objFichero.setBanco(txtBanco);
-							
-							if(!txtImporte.equals("")) {
-								objFichero.setImporte((txtImporte));
+						if(chkComprobante.equals("true")){
+							CotizacionFicheroEntity objFichero = new CotizacionFicheroEntity();
+							try {
+								objFichero.setCotizacion(cotizacionService.findByIdCotizacion(hddIdCotizacion));
+								objFichero.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(1));
+								objFichero.setFolio(objCotizacion.getFacturaNumero());
+								objFichero.setReferenciaPago(txtReferenciaPago);
+								objFichero.setProveedor(objCotizacion.getCliente().getCliente());
+								objFichero.setBanco(txtBanco);
+								
+								if(!txtImporte.equals("")) {
+									objFichero.setImporte((txtImporte));
+								}
+								
+								if(!txtFechaVencimiento.equals("")) {
+									objFichero.setVencimientoFecha(LocalDate.parse(txtFechaVencimiento, GeneralConfiguration.getInstance().getDateFormatterNatural()));
+								}
+								
+								objFichero.setObservaciones(txtDescripcion);
+								
+								cotizaFicheroService.addFile(objFichero, fichero);
+								int cmbTipoFichero = 1;
+								if(cmbTipoFichero == 3 || cmbTipoFichero == 4) {					
+									if(objFichero.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() >= 3 &&  objFichero.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() != 5) {	
+										cotizacionService.recalcularCotizacion(objFichero.getCotizacion());
+									}				
+								}
+								respuesta = true;
+							} catch(ApplicationException exception) {
+								respuesta = false;
 							}
-							
-							if(!txtFechaVencimiento.equals("")) {
-								objFichero.setVencimientoFecha(LocalDate.parse(txtFechaVencimiento, GeneralConfiguration.getInstance().getDateFormatterNatural()));
-							}
-							
-							objFichero.setObservaciones(txtDescripcion);
-							
-							cotizaFicheroService.addFile(objFichero, fichero);
-							int cmbTipoFichero = 1;
-							if(cmbTipoFichero == 3 || cmbTipoFichero == 4) {					
-								if(objFichero.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() >= 3 &&  objFichero.getCotizacion().getCotizacionEstatus().getIdCotizacionEstatus() != 5) {	
-									cotizacionService.recalcularCotizacion(objFichero.getCotizacion());
-								}				
-							}
-							respuesta = true;
-						} catch(ApplicationException exception) {
-							respuesta = false;
 						}
 
 					}

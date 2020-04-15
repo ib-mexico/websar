@@ -331,8 +331,9 @@
                 // var numberFolio = parseInt(arrFolio[3]);
 				$("#cmbCotizacion").val(idCotizacion);
 				
-				$('#cmbCotizacion').attr('disabled', 'disabled');
+				$('#cmbCotizacion').attr('disabled', true);
 				$('#rstCotizacion').attr('class', 'hidden');
+				// $('#cmbCotizacion').css('disabled','disabled');
 				getCotizacionEntregas(idCotizacion);
 			}
 

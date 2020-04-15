@@ -398,98 +398,112 @@
 
 								</div>
 
-								<div class="row clearfix">	
-									<div class="col-md-12">
-										<div class="form-group">
-											<p class="text-primary font-weight-bold h5 text-center"><b>Registro de comprobante de pago *</b></p> 
-										</div>
-									</div>
-								</div>
-								
-													
 								<div class="row clearfix">
-									<!-- <div class="col-md-6">
-										<div class="form-group">
-											<b>Folio de Factura</b>
-											<div class="form-line">
-												<input id="txtFolio" type="text" name="txtFolio" class="form-control" />
-											</div>
-										</div>
-									</div> -->
-										
-									<div class="col-md-6">
-										<b>Importe</b>
-										<div class="input-group">
-											<span class="input-group-addon">$</span>
-											<div class="form-line">
-												<input type="text" id="txtImporte" name="txtImporte" class="form-control required" />
-											</div>                                    
-										</div>
-									</div>
-								<!-- </div>
+									<div class="col-md-12 col-xs-12">
 
-								<div class="row clearfix"> -->
-									<!-- <div class="col-md-6">
-										<b>Proveedor / Cliente</b>
-										<div class="input-group">
-											<div class="form-line">
-												<input id="txtProveedor" type="text" name="txtProveedor" class="form-control"/>
-											</div>
-										</div>
-									</div> -->
-										
-									<div class="col-md-6">
-										<b>Banco</b>
-										<div class="form-group">
-											<div class="form-line">
-												<input id="txtBanco" type="text" name="txtBanco" class="form-control required" />
-											</div>
-										</div>
 									</div>
 								</div>
-																
-								<div class="row clearfix">
-									<div class="col-md-6">
-										<b>Fecha Ingreso</b>
-										<div class="input-group">
-											<span class="input-group-addon">
-												<i class="material-icons">date_range</i>
-											</span>
-											<div class="form-line">
-												<input type="text" class="form-control text-center required"  id="txtFechaVencimiento" name="txtFechaVencimiento" />
+
+								<div class="col-md-12">
+									<input type="checkbox" id="chkComprobante" name="chkComprobante" value="true" class="chk-col-purple" />
+									<label for="chkComprobante">ESTA COTIZACION TIENE COMPROBANTE DE PAGO ?</label>
+								</div>
+
+								<div class="row clearfix" id="divComprobante">
+									<div class="row clearfix">	
+										<div class="col-md-12">
+											<div class="form-group">
+												<p class="text-primary font-weight-bold h5 text-center"><b>Registro de comprobante de pago *</b></p> 
 											</div>
 										</div>
 									</div>
-										
-									<div class="col-md-6">
-										<b>Referencia de Pago</b>
-										<div class="form-group">
-											<div class="form-line">
-												<input id="txtReferenciaPago" type="text" name="txtReferenciaPago" class="form-control required" />
+																							
+									<div class="row clearfix">
+										<!-- <div class="col-md-6">
+											<div class="form-group">
+												<b>Folio de Factura</b>
+												<div class="form-line">
+													<input id="txtFolio" type="text" name="txtFolio" class="form-control" />
+												</div>
+											</div>
+										</div> -->
+											
+										<div class="col-md-6">
+											<b>Importe</b>
+											<div class="input-group">
+												<span class="input-group-addon">$</span>
+												<div class="form-line">
+													<input type="text" id="txtImporte" name="txtImporte" class="form-control required" />
+												</div>                                    
+											</div>
+										</div>
+									<!-- </div>
+	
+									<div class="row clearfix"> -->
+										<!-- <div class="col-md-6">
+											<b>Proveedor / Cliente</b>
+											<div class="input-group">
+												<div class="form-line">
+													<input id="txtProveedor" type="text" name="txtProveedor" class="form-control"/>
+												</div>
+											</div>
+										</div> -->
+											
+										<div class="col-md-6">
+											<b>Banco</b>
+											<div class="form-group">
+												<div class="form-line">
+													<input id="txtBanco" type="text" name="txtBanco" class="form-control required" />
+												</div>
 											</div>
 										</div>
 									</div>
+																	
+									<div class="row clearfix">
+										<div class="col-md-6">
+											<b>Fecha Ingreso</b>
+											<div class="input-group">
+												<span class="input-group-addon">
+													<i class="material-icons">date_range</i>
+												</span>
+												<div class="form-line">
+													<input type="text" class="form-control text-center required"  id="txtFechaVencimiento" name="txtFechaVencimiento" />
+												</div>
+											</div>
+										</div>
+											
+										<div class="col-md-6">
+											<b>Referencia de Pago</b>
+											<div class="form-group">
+												<div class="form-line">
+													<input id="txtReferenciaPago" type="text" name="txtReferenciaPago" class="form-control required" />
+												</div>
+											</div>
+										</div>
+									</div>
+									
+									<div class="row clearfix">
+										<div class="col-md-12">
+											<p><b>Observaciones *</b></p>
+											<div class="form-group">
+												<div class="form-line">
+													<input id="txtDescripcion" type="text" name="txtDescripcion" class="form-control"/>
+												</div>
+											</div>
+										</div>
+									</div>
+															
+									<div class="row clearfix">
+										<div class="col-md-12">
+											<p><b>Fichero</b></p>
+											<div class="form-group files color">
+												<input id="fichero" type="file" name="fichero" class="form-control-drop" />
+											</div>
+										</div>
+									</div>
+									
 								</div>
 								
-								<div class="row clearfix">
-									<div class="col-md-12">
-										<p><b>Observaciones *</b></p>
-										<div class="form-group">
-											<div class="form-line">
-												<input id="txtDescripcion" type="text" name="txtDescripcion" class="form-control" required="required" />
-											</div>
-										</div>
-									</div>
-								</div>
-														
-								<div class="row clearfix">
-									<div class="col-md-12">
-										<p><b>Fichero</b></p>
-										<div class="form-group files color">
-											<input id="fichero" type="file" name="fichero" class="form-control-drop" />
-										</div>
-									</div>
-								</div>
 							
 
 								<div class="col-md-12 text-center">
@@ -533,12 +547,27 @@
 											<label class="custom-control-label" for="nombrevendedor" v-text="dataCotizacion.usuarioVendedor"></label>
 										</div>
 									</div>
-									<div class="col-md-4 col-sm-12">
+									<div class="col-md-4 col-sm-6">
 										<p id="numeroCotizacion"><h4 class="text-primary">Cotización</h4></p>
 										<div class="form-group">
 											<label class="custom-control-label" for="numeroCotizacion" v-text="dataCotizacion.folio"></label>
 										</div>
 									</div>
+									
+									<div class="col-md-4 col-sm-6">
+										<p id="conceptoCotizacion"><h4 class="text-primary">Concepto</h4></p>
+										<div class="form-group">
+											<label class="custom-control-label" for="conceptoCotizacion" v-text="dataCotizacion.concepto"></label>
+										</div>
+									</div>
+									
+									<div class="col-md-4 col-sm-6">
+										<p id="nombreCliente"><h4 class="text-primary">Cliente</h4></p>
+										<div class="form-group">
+											<label class="custom-control-label" for="nombreCliente" v-text="dataCotizacion.cliente"></label>
+										</div>
+									</div>
+									
 								</div>
 							</div>
 							<div class="row clearfix">
@@ -554,7 +583,7 @@
 											<i class="material-icons">date_range</i>
 										</span>
 										<div class="form-line">
-											<input type="text" class="form-control text-center" id="txtFechaHoraLlamada" name="txtFechaHoraLlamada" required="required" />
+											<input type="text" class="form-control text-center" id="txtFechaHoraLlamada" name="txtFechaHoraLlamada"/>
 										</div>
 									</div>				
 								</div>
@@ -570,7 +599,24 @@
 									<div class="form-group">
 										<p><b>Descripción de la llamada*</b></p>
 										<div class="form-line">
-											<textarea rows="4" name="txtTranscripcion" class="form-control no-resize" required="required"></textarea>
+											<textarea rows="4" name="txtTranscripcion" class="form-control no-resize" ></textarea>
+										</div>
+									</div>
+								</div>
+								
+								<!-- Check if make call service quality -->
+						
+								<div class="col-md-12">
+									<div class="col-md-6">
+										<div class="custom-control custom-radio">
+											<input type="radio" id="customRadio1" name="rdCalidad" class="custom-control-input" value="true"/>
+											<label class="custom-control-label" for="customRadio1">EL EJECUTIVO REALIZO LLAMADA DE CALIDAD</label>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="custom-control custom-radio">
+											<input type="radio" id="customRadio2" name="rdCalidad" class="custom-control-input" value="false" />
+											<label class="custom-control-label" for="customRadio2">EL EJECUTIVO NO REALIZO LLAMADA DE CALIDAD</label>
 										</div>
 									</div>
 								</div>
@@ -623,6 +669,7 @@
 				showToggle 			: true,
 				showRefresh 		: true,
 				search				: true,
+				searchSize			: 40,
 				showExport			: true,
 				striped				: true,
 				pageSize 			: 50,
@@ -684,17 +731,20 @@
 						$('#divPago').addClass('hide');
 						$('#txtFacturaFecha').attr('disabled', true);
 						$('#txtPagoFecha').attr('disabled', true);
-						$('#txtFolio').attr('disabled', true);
-						$('#txtReferenciaPago').attr('disabled', true);
-						$('#txtImporte').attr('disabled', true);
-						$('#txtProveedor').attr('disabled', true);
-						$('#txtBanco').attr('disabled', true);
-						$('#txtFechaVencimiento').attr('disabled', true);
-						$('#txtDescripcion').attr('disabled', true);
-						$('#fichero').attr('disabled', true);
-
 						$('#txtFacturaNumero').attr('disabled', true);
 						$('#txtPagoReferencia').attr('disabled', true);
+						
+						// $('#txtFolio').attr('disabled', true);
+						// $('#txtReferenciaPago').attr('disabled', true);
+						// $('#txtImporte').attr('disabled', true);
+
+						$('#divComprobante').addClass('hide');
+						// $('#txtProveedor').attr('disabled', true);
+						// $('#txtBanco').attr('disabled', true);
+						// $('#txtFechaVencimiento').attr('disabled', true);
+						// $('#txtDescripcion').attr('disabled', true);
+						// $('#fichero').attr('disabled', true);
+						
 						break;
 						
 					case "3":		
@@ -705,16 +755,15 @@
 						$('#txtFacturaNumero').attr('disabled', false);
 						$('#txtPagoReferencia').attr('disabled', true);
 
-						$('#txtFolio').attr('disabled', true);
-						$('#txtReferenciaPago').attr('disabled', true);
-						$('#txtImporte').attr('disabled', true);
-						$('#txtProveedor').attr('disabled', true);
-						$('#txtBanco').attr('disabled', true);
-						$('#txtFechaVencimiento').attr('disabled', true);
-						$('#txtDescripcion').attr('disabled', true);
-						$('#fichero').attr('disabled', true);
-
-
+						$('#divComprobante').addClass('hide');
+						// $('#txtFolio').attr('disabled', true);
+						// $('#txtReferenciaPago').attr('disabled', true);
+						// $('#txtImporte').attr('disabled', true);
+						// $('#txtProveedor').attr('disabled', true);
+						// $('#txtBanco').attr('disabled', true);
+						// $('#txtFechaVencimiento').attr('disabled', true);
+						// $('#txtDescripcion').attr('disabled', true);
+						// $('#fichero').attr('disabled', true);
 
 						break;
 						
@@ -726,16 +775,17 @@
 						$('#txtFacturaNumero').attr('disabled', false);
 						$('#txtPagoReferencia').attr('disabled', false);
 
-						$('#txtFolio').attr('disabled', false);
-						$('#txtReferenciaPago').attr('disabled', false);
-						$('#txtImporte').attr('disabled', false);
-						$('#txtProveedor').attr('disabled', false);
-						$('#txtBanco').attr('disabled', false);
-						$('#txtFechaVencimiento').attr('disabled', false);
-						$('#txtDescripcion').attr('disabled', false);
-						$('#fichero').attr('disabled', false);
+						$('#divComprobante').addClass('hide');
 
 						break;
+				}
+			});
+
+			$('#chkComprobante').change(function() {
+				if(this.checked) {
+					$('#divComprobante').removeClass('hide');
+				}else{
+					$('#divComprobante').addClass('hide');
 				}
 			});
 			
@@ -818,8 +868,9 @@
 			/*Validar que ya tenga realizada una llamada de calidad*/
 			var idCotizacion = row.idCotizacion;
 			var permisoEntrega = ([[${rolEntrega}]] == true || [[${rolEntregaAdmin}]] == true) ? '' : 'hidden';
-			if(row.paseCalidad){
-				if(row.calidad>0){
+			var permisoCalidad = ([[${rolCalidad}]]) == true ? '' : 'hidden';
+			if(row.paseCalidad ){
+				if(row.calidad > 0 || row.boolCalidad){
 					p_onclick=""
 					target="false"
 					togle="false"
@@ -894,7 +945,7 @@
 					'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
 						'<i class="material-icons">print</i>',
 					'</a>',
-					'<a href="'+href+'" title="'+title+'" class="calidad" data-toggle="'+togle+'" data-target="'+target+'" onclick="'+p_onclick+'" role="button">',
+					'<a href="'+href+'" title="'+title+'" class="calidad '+permisoCalidad+'" data-toggle="'+togle+'" data-target="'+target+'" onclick="'+p_onclick+'" role="button">',
 						'<i class="material-icons +'+icon+'" style="color: green;">'+icon+'</i>',
 					'</a>',
 					'<a href="'+urlEntregas+'" title="Entrega de materiales" class="'+permisoEntrega+'">',

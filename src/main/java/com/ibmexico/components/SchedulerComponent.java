@@ -116,6 +116,7 @@ public class SchedulerComponent {
 				Map<String, Object> mapVariables = new HashMap<String, Object>();
 				mapVariables.put("lstCotizaciones", mapCotizacionesFiltradas);
 				mapVariables.put("empresa", itemEmpresa.getEmpresa());
+				mapVariables.put("idEmpresa", itemEmpresa.getIdEmpresa());
 				mapVariables.put("total_cotizaciones_natural", GeneralConfiguration.getInstance().getNumberFormat().format(totalCotizaciones));
 				
 				cronJobCobranzaEnviarMails(mapVariables);
@@ -127,7 +128,26 @@ public class SchedulerComponent {
 		try {
 			mapVariables.put("titulo", "Cotizaciones pendientes por cobrar");
 			mapVariables.put("alias", "Cobranza");
-			mailerComponent.send("cobranza@ib-mexico.com", "Reporte: Facturas pendientes de pago.", Templates.EMAIL_COTIZACIONES_POR_COBRAR, mapVariables);
+			for (Map.Entry<String, Object> entry : mapVariables.entrySet()) {
+				String k = entry.getKey();
+				Object v= entry.getValue();
+				/**Para futuras empresas añadir las siguientes condicionales y cuenta de correo*/
+				if(k.equals("idEmpresa")){
+					switch (v.toString()) {
+						case "1":
+						case "2":
+						case "4":
+						mailerComponent.send("cobranza@ib-mexico.com", "Reporte: Facturas pendientes de pago.", Templates.EMAIL_COTIZACIONES_POR_COBRAR, mapVariables);
+							break;
+						case "3":
+						mailerComponent.send("cobranza@r2a.com.mx", "Reporte: Facturas pendientes de pago.", Templates.EMAIL_COTIZACIONES_POR_COBRAR, mapVariables);
+							break;
+						default:
+							break;
+					}
+				}
+			}
+			// mailerComponent.send("cobranza@ib-mexico.com", "Reporte: Facturas pendientes de pago.", Templates.EMAIL_COTIZACIONES_POR_COBRAR, mapVariables);
 		} catch(Exception exception) { }
 	}
 	

@@ -673,6 +673,9 @@ public class CotizacionService {
 		add("idCotizacion", lstCotizacionUnique.get(0).getIdCotizacion()).
 		add("empresa", lstCotizacionUnique.get(0).getEmpresa().getEmpresa()).
 		add("usuarioVendedor", lstCotizacionUnique.get(0).getUsuarioVendedor().getNombreCompleto()).
+		add("concepto", lstCotizacionUnique.get(0).getConcepto()).
+		add("cliente", lstCotizacionUnique.get(0).getCliente().getCliente()).
+		add("iscalidad", lstCotizacionUnique.get(0).isCalidad() == true ? true : false).
 		add("folio", lstCotizacionUnique.get(0).getFolio()));
 
 		jsonReturn.add("jsonCotizacionSeleccionado", jsonRows);

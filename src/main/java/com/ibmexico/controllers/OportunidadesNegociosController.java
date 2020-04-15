@@ -165,6 +165,17 @@ public class OportunidadesNegociosController {
 		return objModelAndView;
 	}
 	
+	@GetMapping({"/historico", "/historico/"})
+	public ModelAndView historico() {
+		
+		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_OPORTUNIDADES_HISTORICO);
+		
+		objModelAndView.addObject("rolOportunidadEmpresaUca", sessionService.hasRol("OPORTUNIDADES_EMPRESA_UCA"));
+		objModelAndView.addObject("rolNuevaOportunidad", sessionService.hasRol("OPORTUNIDADES_CREATE"));
+		
+		return objModelAndView;
+	}
+
 	@RequestMapping(value = {"{paramIdEmpresa}/get-oportunidades", "{paramIdEmpresa}/get-oportunidades/"}, method = RequestMethod.GET)
 	public @ResponseBody String showOportunidades( @PathVariable("paramIdEmpresa") int paramIdEmpresa) {
 		
@@ -383,7 +394,7 @@ public class OportunidadesNegociosController {
 			}
 			
 			objOportunidad.setPrioridad(txtPrioridad);
-			objOportunidad.setNotasInternas(txtNotasInternas);
+			objOportunidad.setNotasInternas(txtNotasInternas.trim());
 			objOportunidad.setOportunidadNegocioEstatus(oportunidadNegocioEstatusService.findByIdOportunidadNegocioEstatus(1));
 			
 			objOportunidad.setMoneda(monedaService.find(cmbMoneda));
@@ -483,7 +494,8 @@ public class OportunidadesNegociosController {
 			}
 			
 			objOportunidad.setPrioridad(txtPrioridad);
-			objOportunidad.setNotasInternas(txtNotasInternas);
+			// objOportunidad.setNotasInternas(txtNotasInternas.replaceAll("^\\s*",""));
+			objOportunidad.setNotasInternas(txtNotasInternas.trim());
 			objOportunidad.setOportunidadNegocioEstatus(oportunidadNegocioEstatusService.findByIdOportunidadNegocioEstatus(cmbEstatus));
 			
 			if(cmbEstatus == 3 && !txtRenovacionFecha.equals("")) {
@@ -783,6 +795,7 @@ public class OportunidadesNegociosController {
 				.add("color", itemActividad.getColor())
 				
 				.add("usuario", itemActividad.getUsuario().getAliasCorreo())
+				.add("usuario_color", itemActividad.getUsuario().getColor())
 				.add("tipoActividad", itemActividad.getActividadTipo().getActividadTipo())
 				.add("creacionFecha", itemActividad.getCreacionFecha().toString())
 				.add("vencimientoFechaNatural", itemActividad.getVencimientoFechaNatural())

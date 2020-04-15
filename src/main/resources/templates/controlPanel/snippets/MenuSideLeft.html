@@ -39,7 +39,26 @@
 	                    <span><th:block th:text="${categoria.key.rolCategoria}" /></span>
    	                </a>
                     <ul class="ml-menu">
-                    	<li th:each="rol : ${categoria.value}"><a th:href="${ {_PATH_} + 'controlPanel/' + {rol.url}}"><th:block th:text="${rol.label}" /></a></li>
+						<!-- <h5 style="color: red;" th:text="${categoria.value}"></h5> -->
+						<li th:each="rol : ${categoria.value}">
+							<!-- <h5 style="color: purple;" th:text="${rol}"></h5> -->
+
+							<!-- th:href="@{(${rol.url} ? ${ {_PATH_} + 'controlPanel/' + {rol.url}} : '#')}" -->
+							<a th:if="${rol.submenu!=true and rol.url!=null}" th:href="${ {_PATH_} + 'controlPanel/' + {rol.url}}">
+								<th:block th:text="${rol.label}"/>
+							</a>
+							<a th:if="${rol.submenu!=true and rol.url==null}" href="#" class="menu-toggle">
+								<th:block th:text="${rol.label}"/>
+							</a>
+								<ul class="ml-menu">
+									<li th:each="subRol : ${categoria.value}">
+										<a th:if="${subRol.idRolSubmenu == rol.idRol}" th:href="${ {_PATH_} + 'controlPanel/' + {subRol.url}}">
+											<th:block th:text="${subRol.label}"/>							
+										</a>
+									</li>
+								</ul>
+							
+						</li>
                     </ul>
                	</li>
         	</th>
@@ -53,7 +72,8 @@
         	&copy; 2018 - 2019 <a href="javascript:void(0);">IB-M&eacute;xico - SAR</a>.
        	</div>
        	<div class="version">
-           <b>Version: </b> <th:block th:text="${_VERSION_}"></th:block>
+		   <b>Version:  2.0.3</b> 
+		   <!-- <th:block th:text="${_VERSION_}"></th:block> -->
        	</div>
    	</div>
    	<!-- #Footer -->

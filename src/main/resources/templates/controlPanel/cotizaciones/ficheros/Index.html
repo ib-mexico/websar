@@ -16,8 +16,9 @@
     				<h2>
     					EXPEDIENTE
     					<small>Los ficheros listados pertenecen a la cotizaci&oacute;n, el m&aacute;ximo de volumen por archivo es de 10MB.</small>	
-    				</h2>
-    				<ul class="header-dropdown m-r--5">
+					</h2>
+
+    				<!-- <ul class="header-dropdown">
                         <li class="dropdown">
                             <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                 <i class="material-icons">more_vert</i>
@@ -27,20 +28,44 @@
                                 <li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {objCotizacion.idCotizacion} + '/reporte-utilidad'}" target="_blank" >Reporte de Utilidad</a></li>
                                 <li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {objCotizacion.idCotizacion} + '/reporte-facturas'}" target="_blank" >Reporte de Facturas</a></li>
                                 <li th:if="${rolExpedienteGerente}">
-                                	<a id="accRecalculoCotizacion" href="#">Recalcular Cotizaci&oacute;n</a>
+                                	<a href="#">Recalcular Cotizaci&oacute;n</a>
                                 </li>
                             </ul>
                         </li>
-                    </ul>
+                    </ul> -->
     			</div>
     			
     			<div class="body">
+					<div class="row clearfix">
+						<div class="col-md-offset-0 col-sm-offset-0 col-lg-offset-4 pull-right">
+							<div class="col-md-3 col-xs-6 col-sm-3 col-lg-3">
+								<a href="#" role="button" class="btn bg-purple waves-effect" data-toggle="modal" data-target="#ficheroModal">
+									<i class="material-icons">add_circle</i> Nueva Fichero
+								</a>
+							</div>
+							<div class="col-md-3 col-xs-6 col-sm-3 col-lg-3">
+								<a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {objCotizacion.idCotizacion} + '/reporte-utilidad'}" role="button" class="btn bg-purple waves-effect" target="_blank">
+									<i class="material-icons">picture_as_pdf</i> Reporte de Utilidad
+								</a>
+							</div>
+							<div class="col-md-3 col-xs-6 col-sm-3 col-lg-3">
+								<a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + {objCotizacion.idCotizacion} + '/reporte-facturas'}" role="button"  target="_blank" class="btn bg-purple waves-effect">
+									<i class="material-icons">picture_as_pdf</i> Reporte de Facturas
+								</a>
+							</div>
+							<div class="col-md-3 col-xs-6 col-sm-3 col-lg-3"  th:if="${rolExpedienteGerente}" >
+								<a href="#" class="btn bg-green waves-effect" id="accRecalculoCotizacion" >
+									<i class="material-icons" >loop</i> Recalcular Cotizaci&oacute;n
+								</a>
+							</div>
+						</div>
+					</div>
     				<div class="row">
-    					<div class="col-md-4 col-md-offset-8">
+    					<div class="col-md-8 col-lg-6 col-xs-12 col-sm-12 pull-right">
     						<button class="btn bg-blue btn-lg btn-block waves-effect" type="button">
-    							GASTOS INDIRECTOS 
+    							OTROS GASTOS 
     							<span class="badge">
-    								<th:block th:text="${' $' + totalGastos}"></th:block>
+    								<th:block th:text="${' $' + totalGastos}" class="h4"></th:block>
    								</span>
 							</button>
     					</div>
@@ -122,7 +147,7 @@
 	                			<p><b>Tipo de Fichero *</b></p>
 	                            <select class="form-control show-tick" name="cmbTipoFichero" id="cmbTipoFichero" data-live-search="true" >
 	                       			<th:block th:each="itemTipo : ${lstTiposFicheros}" >
-	                       				<option th:value="${itemTipo.idCotizacionTipoFichero}" th:text="${itemTipo.cotizacionTipoFichero}"></option>	                       				
+	                       				<option th:if="${itemTipo.idCotizacionTipoFichero == 5}" th:value="${itemTipo.idCotizacionTipoFichero}" th:text="${itemTipo.cotizacionTipoFichero}"></option>	                       				
 	                       			</th:block>
 	                       		</select>
 	                		</div>
@@ -253,7 +278,7 @@
 			});
 			
 			//DATEPICKER
-			$('#txtFechaVencimiento').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false});
+			$('#txtFechaVencimiento').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false, lang:"es"});
 			
 			$('#cmbTipoFichero').change(function() {
 				

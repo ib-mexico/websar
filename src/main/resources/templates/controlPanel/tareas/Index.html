@@ -11,20 +11,69 @@
     			</div>
     			
     			<div class="body">
-    				<div class="row clearfix" th:if="${rolNuevaTarea}">
-    					<div class="col-md-4 col-md-offset-8 text-right">
+    				<div class="row clearfix">
+						<!--Boton reporteador-->
+						<div class="col-md-8 col-md-offset-2 m-b-10 text-right">
+							<button  type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false"
+							aria-controls="collapseExample" class="btn bg-purple waves-effect">
+								<i class="material-icons">picture_as_pdf</i>Bitacora en PDF
+							</button>
+						</div>
+    					<div class="col-md-2 text-right" th:if="${rolNuevaTarea}">
     						<a th:href="${ {_PATH_} + 'controlPanel/tareas/create'}" role="button" class="btn bg-purple waves-effect"><i class="material-icons">add_circle</i> Nueva Tarea</a>
-    					</div>
+						</div>	
     				</div>
-    			
+						
+					<div class="collapse" id="collapseExample">
+							<div class="card card-body reporte">
+								<h4 class="text-center titleReport">Seleccione las opciones para generar su Bitacora de actividades</h4>
+								<div class="row clearfix">
+									<div class="col-md-3 col-xs-12 col-sm-6" th:if="${rolTareaAdmin}">
+										<select name="reporteUsuario" id="reporteUsuario" class="selectpicker form-control show-tick cmbReporteUsuario" data-live-search="true">
+											<option value="default" selected="selected">Seleccione un Usuario</option>
+											<option th:each="item : ${lstUsuarios}" th:value="${item.idUsuario}" th:text="${item.nombreCompleto}"></option>
+										</select>
+									</div>
+																	
+									<div th:classappend="${rolTareaAdmin ? 'col-md-3 col-xs-12 col-sm-6' : 'col-md-4 col-xs-12 col-sm-6'}">
+										<div class="input-group">
+											<span class="input-group-addon">
+												<i class="material-icons">date_range</i>
+											</span>
+											<div class="form-line" id='groupDesde'>
+												<input type="text" class="form-control text-center" id="txtFechaReporteInicio" name="txtFechaReporteInicio" placeholder="Desde..." />
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3 col-xs-12 col-sm-6">
+										<div class="input-group">
+											<span class="input-group-addon">
+												<i class="material-icons">date_range</i>
+											</span>
+											<div class="form-line" id='groupHasta'>
+												<input type="text" class="form-control text-center" id="txtFechaReporteFin" name="txtFechaReporteFin" placeholder="Hasta..." />
+											</div>
+										</div>
+									</div>
+									<div class="col-md-3 col-xs-12 col-sm-6">
+										<button  class="btn bg-purple waves-effect" data-target="#collapseExample" aria-expanded="false"
+										aria-controls="collapseExample"
+										data-toggle="collapse" id="GenerarPDF"><i class="material-icons">picture_as_pdf</i>Generar Reporte</button>
+									</div>
+								</div>
+							</div>  
+					</div>
+
 	    			<div class="row clearfix">
 						<div class="col-sm-12 col-md-12">
 							<div id='divCalendario'></div>
 						</div>
 					</div>
-	    		</div>
-    		</div>    		    		
-    	</div>
+
+				</div>
+
+	    	</div>
+    	</div>    		    		
     </div>
     
     <!-- TAREA MODAL -->
@@ -96,7 +145,8 @@
                 </div>
             </div>
         </div>
-    </div>
+	</div>
+	
 </th:block>
 
 <th:block th:fragment="script">
@@ -104,6 +154,18 @@
 	<script th:src="@{/plugins/fullcalendar/fullcalendar.min.js}"></script>
 	<script th:src='@{/plugins/fullcalendar/locale/es.js}'></script>
 	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
+
+		$('#collapseExample').on('show.bs.collapse',function(){
+            $('#txtFechaReporteFin').bootstrapMaterialDatePicker({format: 'DD-MM-YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
+            $(' #txtFechaReporteInicio').bootstrapMaterialDatePicker({format: 'DD-MM-YYYY', lang:'es', weekStart : 1, clearButton: true, time:false}).on('change', function(e, date)
+                {
+                    $('#txtFechaReporteFin').bootstrapMaterialDatePicker('setMinDate', date);
+                });
+    
+            $('.cmbReporteUsuario').selectpicker('refresh');
+        });
+
+
 		$(document).ready(function() {
 			
 			jsonTareas = jQuery.parseJSON( [[${jsonTareas}]] );			
@@ -165,6 +227,23 @@
 			}
 		  
 			$('#popUpEvento').modal("show");
-	  	}
+		  }
+		  
+		$("button#GenerarPDF").click(function() {
+			var ulrRedirect = '';
+			var valorUsuario = $('#reporteUsuario').val();
+			// var valorUsuario=$('.cmbReporteUsuario').selectpicker('val');
+            var reporteFechaInicio=$('#txtFechaReporteInicio').val();
+			var reporteFechaFin=$('#txtFechaReporteFin').val();
+			console.log(valorUsuario, "valor del usuario");
+			if(valorUsuario != 'default' && valorUsuario != null){
+				ulrRedirect = 'http://localhost:8080/WebSar/controlPanel/tareas/reporte-bitacora-pdf/'+valorUsuario+'/'+
+				reporteFechaInicio+'/'+reporteFechaFin;
+			}else{
+				ulrRedirect = 'http://localhost:8080/WebSar/controlPanel/tareas/reporte-bitacora-pdf';
+			}
+			window.open(ulrRedirect);
+		});
+
 	/*]]>*/</script>
 </th:block>

@@ -60,6 +60,10 @@ public class Templates {
 	public static final String CONTROL_PANEL_COTIZACIONES_ORDENES_SERVICIOS_CREATE = PATH_CONTROL_PANEL + "cotizaciones/ordenesServicios/Create";
 	public static final String CONTROL_PANEL_COTIZACIONES_ORDENES_SERVICIOS_REVIEW = PATH_CONTROL_PANEL + "cotizaciones/ordenesServicios/Revision";
 	
+
+	// COTIZACIONES SA.
+	public static final String CONTROL_PANEL_COTIZACIONES_SA_INDEX = PATH_CONTROL_PANEL + "cotizaciones/IndexSA";
+
 	//ORDENES SERVICIO SIN ASOCIAR A UNA COTIZACION
 	public static final String CONTROL_PANEL_ORDENES_SERVICIOS_INDEX = PATH_CONTROL_PANEL + "ordenesServicios/Index";
 	public static final String CONTROL_PANEL_ORDENES_SERVICIOS_CREATE = PATH_CONTROL_PANEL + "ordenesServicios/Create";
@@ -67,6 +71,7 @@ public class Templates {
 	
 	// OPORTUNIDADES NEGOCIOS
 	public static final String CONTROL_PANEL_OPORTUNIDADES_INDEX = PATH_CONTROL_PANEL + "oportunidades/Index";
+	public static final String CONTROL_PANEL_OPORTUNIDADES_HISTORICO = PATH_CONTROL_PANEL + "oportunidades/Historico";
 	public static final String CONTROL_PANEL_OPORTUNIDADES_CREATE = PATH_CONTROL_PANEL + "oportunidades/Create";
 	public static final String CONTROL_PANEL_OPORTUNIDADES_EDIT = PATH_CONTROL_PANEL + "oportunidades/Edit";
 	public static final String CONTROL_PANEL_OPORTUNIDADES_UPLOAD = PATH_CONTROL_PANEL + "oportunidades/Upload";
@@ -182,6 +187,12 @@ public class Templates {
 	public static final String PDF_REPORTE_OPORTUNIDAD_NEGOCIO = PATH_DOCUMENTS_PDF + "oportunidadesNegocios/ReporteOportunidad";
 	public static final String PDF_REPORTE_APROBADAS_FACTURADAS = PATH_DOCUMENTS_PDF + "cobranza/AprobadasFacturadas";
 
+	//Gastos documentos pdf
+	public static final String PDF_GASTO = PATH_DOCUMENTS_PDF+"gasto/ReporteGasto";
+	
+	//PDF Tarea Bitacora
+	public static final String PDF_TAREA = PATH_DOCUMENTS_PDF+"tarea/ReporteTarea";
+
 	// PRINTERS
 	public static final String PRINTER_USUARIOS_CARTERA_RECIBO = PATH_PRINTER + "usuarios/cartera/Recibo";
 	
@@ -209,9 +220,6 @@ public class Templates {
 
 	//Empresa
 	public static final String CATALOGO_EMPRESA = PATH_CONTROL_PANEL+"empresas/Index";
-
-	//Gastos documentos pdf
-	public static final String PDF_GASTO=PATH_DOCUMENTS_PDF+"gasto/ReporteGasto";
 
 	//Indicadores de produccion Ejecutivo
 

@@ -408,7 +408,8 @@ public class CotizacionesFicherosController {
 	public @ResponseBody String storeCalidad(@PathVariable("paramIdCotizacion") int paramIdCotizacion,
 								@RequestParam(value="txtTranscripcion") String txtDescripcion,
 								@RequestParam("txtFechaHoraLlamada") String txtFechaHoraLlamada,
-								@RequestParam(value="ficheroCalidad", required=false) MultipartFile ficheroCalidad,					
+								@RequestParam(value="ficheroCalidad", required=false) MultipartFile ficheroCalidad,
+								@RequestParam(value="rdCalidad", required=false, defaultValue="false") String rdCalidad,
 								RedirectAttributes objRedirectAttributes) {
 		CotizacionFicheroEntity objFichero = new CotizacionFicheroEntity();
 		CotizacionEntity objCotizacion = cotizacionService.findByIdCotizacion(paramIdCotizacion);
@@ -418,20 +419,26 @@ public class CotizacionesFicherosController {
 		String mensaje = "";
 		
 		try {
-			
-			objFichero.setCotizacion(cotizacionService.findByIdCotizacion(paramIdCotizacion));
-			objFichero.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(6));
-			objFichero.setInicioLlamada(Formats.getInstance().toLocalDateTime(txtFechaHoraLlamada));
-			objFichero.setObservaciones(txtDescripcion);
-			cotizacionFicheroService.addFile(objFichero, ficheroCalidad);
-			
-			objCotizacion.setCalidad(true);
+			if(!txtDescripcion.equals("") && !txtFechaHoraLlamada.equals("") && !ficheroCalidad.isEmpty()){
+				
+				objFichero.setCotizacion(cotizacionService.findByIdCotizacion(paramIdCotizacion));
+				objFichero.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(6));
+				objFichero.setInicioLlamada(Formats.getInstance().toLocalDateTime(txtFechaHoraLlamada));
+				objFichero.setObservaciones(txtDescripcion);
+				cotizacionFicheroService.addFile(objFichero, ficheroCalidad);
+				mensaje = "Registro de audio de calidad exitosa";
+			}
+			System.err.println(rdCalidad);
+			if (rdCalidad.equals("true")) {
+				mensaje = "Realizo audio de calidad exitosa";
+				objCotizacion.setCalidad(true);
+			}else{
+				mensaje = "No se realizo llamada de calidad, por lo tanto afecta las comisiones.";
+				objCotizacion.setCalidad(false);
+			}
 			cotizacionService.update(objCotizacion);
-
 			respuesta = true;
-			titulo = "Cargado!";
-			mensaje = "Registro de calidad cargada exitosamente.";
-			
+			titulo = "Cargado!";			
 		} catch(ApplicationException exception) {
 			respuesta = false;
 			titulo = "Error!";

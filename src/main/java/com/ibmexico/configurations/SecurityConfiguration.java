@@ -28,10 +28,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
-		http.authorizeRequests().antMatchers("/assets/**", "/plugins/**", "/ficheros/**","/controlPanel/Gastos/**","/controlPanel/proveedores/**", "/controlPanel/Indicadores/**","/controlPanel/DetalleMant/**",
-		"/controlPanel/cotizaciones/**","/controlPanel/oportunidadesNegocios/**","/controlPanel/entregas/**").permitAll()
+		// http.authorizeRequests().antMatchers("/assets/**", "/plugins/**", "/ficheros/**","/controlPanel/Gastos/**","/controlPanel/proveedores/**", "/controlPanel/Indicadores/**","/controlPanel/DetalleMant/**",
+		// "/controlPanel/cotizaciones/**","/controlPanel/oportunidadesNegocios/**","/controlPanel/entregas/**").permitAll()
+			
+		http.authorizeRequests().antMatchers("/assets/**", "/plugins/**", "/ficheros/**").permitAll()
 				.anyRequest().authenticated()
 				.and().formLogin().loginPage("/").loginProcessingUrl("/loginValidation").usernameParameter("username").passwordParameter("password").defaultSuccessUrl("/session").permitAll()
-				.and().logout().logoutUrl("/logout").logoutSuccessUrl("/?logout").permitAll();
+				.and().logout().logoutUrl("/logout").logoutSuccessUrl("/?logout").permitAll()
+				.and().sessionManagement().invalidSessionUrl("/")
+				.and().sessionManagement().maximumSessions(2).expiredUrl("/");
 	}
 }
