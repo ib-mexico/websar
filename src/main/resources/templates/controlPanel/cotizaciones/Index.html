@@ -900,7 +900,7 @@
 			}
 			/*Fin de la validacion*/
 			/*Los valores previamente definidos, se usa para hacer dinamica la funcionalidad de registro de llamada de calidad*/
-
+			if(row.boolNormal){
 			if(row.idEstatus == 1){
 				return [
 					'<a href="' + urlEdit + '" title="Editar">',
@@ -954,7 +954,6 @@
 				].join(' ');
 			}
 		
-
 			if(row.idEstatus==5 || row.idEstatus==6){
 				return [
 					'<a href="' + urlEdit + '" title="Editar">',
@@ -977,6 +976,61 @@
 					'</a>'
 				].join(' ');
 			}
+			
+			}else if (row.boolBoom || row.boolMaestra || row.boolRenta ) {
+				if(row.idEstatus == 1 || row.idEstatus == 2){
+				return [
+					'<a href="' + urlEdit + '" title="Editar">',
+						'<i class="material-icons">mode_edit</i>',
+					'</a>',
+					'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
+						'<i class="material-icons">flip_to_front</i>',
+					'</a>',
+					'<a href="' + urlPartidas + '" title="Partidas">',
+						'<i class="material-icons">format_list_numbered</i>',
+					'</a>',
+					'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+						'<i class="material-icons">print</i>',
+					'</a>'
+				].join(' ');
+			}
+			
+			if(row.idEstatus == 4 || row.idEstatus == 2 || row.idEstatus == 3 ){
+				return [
+					'<a href="' + urlEdit + '" title="Editar">',
+						'<i class="material-icons">mode_edit</i>',
+					'</a>',
+					'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
+						'<i class="material-icons">flip_to_front</i>',
+					'</a>',
+					'<a href="' + urlPartidas + '" title="Partidas">',
+						'<i class="material-icons">format_list_numbered</i>',
+					'</a>',				
+					'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+						'<i class="material-icons">print</i>',
+					'</a>'
+				].join(' ');
+			}
+		
+			if(row.idEstatus==5 || row.idEstatus==6){
+				return [
+					'<a href="' + urlEdit + '" title="Editar">',
+						'<i class="material-icons">mode_edit</i>',
+					'</a>',
+					'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
+						'<i class="material-icons">flip_to_front</i>',
+					'</a>',
+					'<a href="' + urlPartidas + '" title="Partidas">',
+						'<i class="material-icons">format_list_numbered</i>',
+					'</a>',
+					'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+						'<i class="material-icons">print</i>',
+					'</a>'
+				].join(' ');
+			}
+				
+			}
+
 		}
 			
 		function estatusFormatter(value, row, index) {
@@ -1031,6 +1085,11 @@
 						$('#txtCotizacion').val(data.folio);
 						$('#txtFacturaNumero').val(data.facturaNumero);
 						$('#txtPagoReferencia').val(data.pagoReferencia);
+						$('#hddBoolNormal').val(data.BoolNormal);
+						$('#hddBoolBoom').val(data.BoolBoom);
+						$('#hddBoolRenta').val(data.BoolRenta);
+						$('#hddBoolMaestra').val(data.BoolMaestra);
+
 						
 						if(data.facturacionFecha != '') {
 							var arrDate1 = data.facturacionFecha.split("-");

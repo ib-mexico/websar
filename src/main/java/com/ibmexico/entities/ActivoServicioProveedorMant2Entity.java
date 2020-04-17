@@ -72,7 +72,6 @@ public class ActivoServicioProveedorMant2Entity {
     @JoinColumn(name = "id_bien_detalle_mantenimiento", nullable = true)
     private BienDetalleMantenimientoEntity bienDetalleMant;
 
-
     /*Campos adicionales de gastos generales */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_proveedor", nullable = true)
@@ -96,10 +95,17 @@ public class ActivoServicioProveedorMant2Entity {
     private String formatted_address;
     //fecha_pago existe
 
+    //* Clasificacion del gasto */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_tipo_gasto_cl", nullable = true)
+    private TipoGastoClEntity principalClasificacionGasto;
+
+    /* Uso del gasto */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="id_tipo_gasto", nullable = true)
     private TipoGastoEntity tipoGasto;
 
+    /* Tipo de gasto */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_clasificacion_gasto", nullable = true)
     private ClasificacionTipoGastoEntity clasificacionTipoGasto;
@@ -519,6 +525,15 @@ public class ActivoServicioProveedorMant2Entity {
     public void setIsGastoParcial(Boolean isGastoParcial) {
         this.isGastoParcial = isGastoParcial;
     }
+
+	public TipoGastoClEntity getPrincipalClasificacionGasto() {
+		return principalClasificacionGasto;
+	}
+
+	public void setPrincipalClasificacionGasto(TipoGastoClEntity principalClasificacionGasto) {
+		this.principalClasificacionGasto = principalClasificacionGasto;
+	}
+
 
     
 }

@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -105,6 +107,11 @@ public class OportunidadNegocioService {
 			Set<OportunidadNegocioEntity> set = new HashSet<>(lstOportunidades);
 			lstOportunidades.clear();
 			lstOportunidades.addAll(set);
+			Collections.sort(lstOportunidades, new Comparator<OportunidadNegocioEntity>() {
+				public int compare(OportunidadNegocioEntity opn1, OportunidadNegocioEntity opn2) {
+					return opn2.getIdOportunidadNegocio() - opn1.getIdOportunidadNegocio();
+				}
+			});
 		}
 		
 		return lstOportunidades;
@@ -131,6 +138,11 @@ public class OportunidadNegocioService {
 			Set<OportunidadNegocioEntity> set = new HashSet<>(lstOportunidades);
 			lstOportunidades.clear();
 			lstOportunidades.addAll(set);
+			Collections.sort(lstOportunidades, new Comparator<OportunidadNegocioEntity>() {
+				public int compare(OportunidadNegocioEntity opn1, OportunidadNegocioEntity opn2) {
+					return opn2.getIdOportunidadNegocio() - opn1.getIdOportunidadNegocio();
+				}
+			});
 		}
 		return lstOportunidades;
 	}
@@ -159,6 +171,11 @@ public class OportunidadNegocioService {
 			Set<OportunidadNegocioEntity> set = new HashSet<>(lstOportunidades);
 			lstOportunidades.clear();
 			lstOportunidades.addAll(set);
+			Collections.sort(lstOportunidades, new Comparator<OportunidadNegocioEntity>() {
+				public int compare(OportunidadNegocioEntity opn1, OportunidadNegocioEntity opn2) {
+					return opn2.getIdOportunidadNegocio() - opn1.getIdOportunidadNegocio();
+				}
+			});
 
 		}
 		return lstOportunidades;
@@ -178,6 +195,7 @@ public class OportunidadNegocioService {
 				.add("id_oportunidad", itemOportunidad.getIdOportunidadNegocio())
 				.add("oportunidad", itemOportunidad.getOportunidad())
 				.add("vendedor", itemOportunidad.getUsuarioVendedor().getNombreCompleto())
+				.add("color", !itemOportunidad.getUsuarioVendedor().getColor().isEmpty() ? itemOportunidad.getUsuarioVendedor().getColor() : "" )
 				.add("ultima_modificacion", itemOportunidad.getModificacionFechaNatural())
 				.add("cliente", itemOportunidad.getCliente().getCliente())
 				.add("ingreso_estimado", itemOportunidad.getIngresoEstimadoNatural())
@@ -230,6 +248,7 @@ public class OportunidadNegocioService {
 				.add("id_oportunidad", itemOportunidad.getIdOportunidadNegocio())
 				.add("oportunidad", itemOportunidad.getOportunidad())
 				.add("vendedor", itemOportunidad.getUsuarioVendedor().getNombreCompleto())
+				.add("color", !itemOportunidad.getUsuarioVendedor().getColor().isEmpty() ? itemOportunidad.getUsuarioVendedor().getColor() : "" )
 				.add("ultima_modificacion", itemOportunidad.getModificacionFechaNatural())
 				.add("cliente", itemOportunidad.getCliente().getCliente())
 				.add("ingreso_estimado", itemOportunidad.getIngresoEstimadoNatural())
@@ -287,6 +306,7 @@ public class OportunidadNegocioService {
 				.add("id_oportunidad", itemOportunidad.getIdOportunidadNegocio())
 				.add("oportunidad", itemOportunidad.getOportunidad())
 				.add("vendedor", itemOportunidad.getUsuarioVendedor().getNombreCompleto())
+				.add("color", !itemOportunidad.getUsuarioVendedor().getColor().isEmpty() ? itemOportunidad.getUsuarioVendedor().getColor() : "" )
 				.add("ultima_modificacion", itemOportunidad.getModificacionFechaNatural())
 				.add("cliente", itemOportunidad.getCliente().getCliente())
 				.add("ingreso_estimado", itemOportunidad.getIngresoEstimadoNatural())

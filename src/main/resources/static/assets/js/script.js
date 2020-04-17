@@ -255,7 +255,7 @@ if(document.getElementById('appOportunidades')) {
 		mounted() {
 			this.idEmpresa = 1
 			this.getempresa();
-			this.getOportunidades(this.idEmpresa);
+			// this.getOportunidades(this.idEmpresa);
 		},
 		data: {
 			empresa : null,
@@ -315,8 +315,8 @@ if(document.getElementById('appOportunidades')) {
 						this.opnData 		= {	...response.data.dataAbiertos.abiertos.length > 0 ? response.data.dataAbiertos : null,
 												...response.data.dataEnCurso.en_curso.length > 0 ? response.data.dataEnCurso : null,
 												...response.data.dataRentas.rentas.length > 0 ? response.data.dataRentas : null,
-												...response.data.dataCerrados.cerrados.length >0 ? response.data.dataCerrados : null, 
-												...response.data.dataPerdidos.perdidos.length >0 ? response.data.perdidos : null,
+												...response.data.dataCerrados.cerrados.length > 0 ? response.data.dataCerrados : null, 
+												...response.data.dataPerdidos.perdidos.length > 0 ? response.data.perdidos : null,
 												...response.data.dataFinanza.financiamiento.length > 0 ? response.data.dataFinanza : null};
 						this.totalAbiertos 	= this.opnData.total_abiertos;
 						this.totalEnCurso 	= this.opnData.total_en_curso;
@@ -376,14 +376,13 @@ if(document.getElementById('appOportunidades')) {
 							this.opnData = this.ibmData;
 						else
 							this.getOportunidades(this.idEmpresa);
-	
-						this.ibmActive = true;
+/* 						this.ibmActive = true;
 						this.s3sActive = false;
 						this.r2aActive = false;
 						this.ucaActive = false;
-						this.historicoActive = false;
-						
-						document.getElementById('historicos').style.display = "none";
+						this.historicoActive = false; */
+						// Se activan botones de cada empresa en version anterior del SAR.
+						// document.getElementById('historicos').style.display = "none";
 					break;
 	
 					case 2:
@@ -391,15 +390,6 @@ if(document.getElementById('appOportunidades')) {
 							this.opnData = this.s3sData;
 						else
 							this.getOportunidades(this.idEmpresa);
-	
-						this.ibmActive = false;
-						this.s3sActive = true;
-						this.r2aActive = false;
-						this.ucaActive = false;
-						this.historicoActive = false;
-
-						document.getElementById('historicos').style.display = "none";
-
 					break;
 	
 					case 3:
@@ -407,15 +397,11 @@ if(document.getElementById('appOportunidades')) {
 							this.opnData = this.r2aData;
 						else
 							this.getOportunidades(this.idEmpresa);
-	
-						this.ibmActive = false;
-						this.s3sActive = false;
-						this.r2aActive = true;
-						this.ucaActive = false;
-						this.historicoActive = false;
-
-						document.getElementById('historicos').style.display = "none";
-
+						// this.ibmActive = false;
+						// this.s3sActive = false;
+						// this.r2aActive = true;
+						// this.ucaActive = false;
+						// this.historicoActive = false;
 					break;
 	
 					case 4:
@@ -423,15 +409,6 @@ if(document.getElementById('appOportunidades')) {
 							this.opnData = this.ucaData;
 						else
 							this.getOportunidades(this.idEmpresa);
-	
-						this.ibmActive = false;
-						this.s3sActive = false;
-						this.r2aActive = false;
-						this.ucaActive = true;
-						this.historicoActive = false;
-
-						document.getElementById('historicos').style.display = "none";
-
 					break;
 	
 				}
@@ -444,7 +421,7 @@ if(document.getElementById('appOportunidades')) {
 			},
 			changeEmpresaHistorico(paramEmpresa){
 				this.idEmpresa = paramEmpresa;
-				this.flag= true;
+				this.flag = true;
 				switch(this.idEmpresa){
 					case 1:
 						if (this.historicoIbmData !=null){
@@ -453,12 +430,15 @@ if(document.getElementById('appOportunidades')) {
 							this.opnData = this.historicoIbmData;
 						}else
 							this.getOportunidadesHistorico(this.idEmpresa);
-						this.ibmActive = false;
-						this.s3sActive = false;
-						this.r2aActive = false;
-						this.ucaActive = false;
-						this.historicoIbmActive =  true;
-						this.historicoS3sActive = false;	this.historicoR2aActive = false;	this.historicoUcaActive = false;
+						// this.ibmActive = false;
+						// this.s3sActive = false;
+						// this.r2aActive = false;
+						// this.ucaActive = false;
+						// this.historicoIbmActive =  true;
+						// this.historicoS3sActive = false;	
+						// this.historicoR2aActive = false;	
+						// this.historicoUcaActive = false;
+						/**Estos activan botones de cada empresa, en version anterior, en caso caso */
 						break;
 					case 2:
 						if(this.historicoS3sData != null){
@@ -467,13 +447,6 @@ if(document.getElementById('appOportunidades')) {
 							this.totalPerdidos 	= this.historicoS3sData.total_perdidos;
 						}else
 							this.getOportunidadesHistorico(this.idEmpresa);
-
-						this.ibmActive = false;
-						this.s3sActive = false;
-						this.r2aActive = false;
-						this.ucaActive = false;
-						this.historicoS3sActive =  true;
-						this.historicoIbmActive = false;	this.historicoR2aActive = false;	this.historicoUcaActive = false;
 						break;
 					case 3:
 						if(this.historicoR2aData != null){
@@ -482,12 +455,6 @@ if(document.getElementById('appOportunidades')) {
 							this.totalPerdidos 	= this.historicoR2aData.total_perdidos;
 						}else
 							this.getOportunidadesHistorico(this.idEmpresa);
-						this.ibmActive = false;
-						this.s3sActive = false;
-						this.r2aActive = false;
-						this.ucaActive = false;
-						this.historicoR2aActive =  true;
-						this.historicoIbmActive = false;	this.historicoS3sActive = false;	this.historicoUcaActive = false;
 						break;
 					case 4:
 						if(this.historicoUcaData != null){
@@ -496,12 +463,6 @@ if(document.getElementById('appOportunidades')) {
 							this.totalPerdidos 	= this.historicoUcaData.total_perdidos;
 						}else
 							this.getOportunidadesHistorico(this.idEmpresa);
-						this.ibmActive = false;
-						this.s3sActive = false;
-						this.r2aActive = false;
-						this.ucaActive = false;
-						this.historicoUcaActive =  true;
-						this.historicoIbmActive = false;	this.historicoS3sActive = false;	this.historicoR2aActive = false;
 						break;
 				}
 			},

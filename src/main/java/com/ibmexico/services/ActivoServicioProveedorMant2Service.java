@@ -277,8 +277,11 @@ public class ActivoServicioProveedorMant2Service {
             .add("pais", item.getPais()!=null ?  item.getPais(): "N/A")
             .add("fecha_gasto", item.getFechaPagoNatural())
             .add("subtotal", item.getPrecioServicioProveedor())
+            /*Agregar clasificacion principal gasto  */
+            .add("idPrincipalGasto", item.getPrincipalClasificacionGasto()!=null ? item.getPrincipalClasificacionGasto().getIdTipoGastoCl() : 0 )
             .add("id_tipoGasto", item.getTipoGasto()!=null ? item.getTipoGasto().getIdTipoGasto() :0)
             .add("id_clasificacion", item.getClasificacionTipoGasto().getIdClasificacion())
+
             .add("id_proveedor", item.getProveedor().getIdProveedor())
             .add("id_cotizacion", item.getCotizacion()!=null ? item.getCotizacion().getIdCotizacion(): 0)
             .add("folio_cotizacion", item.getFolioCotizacion()!=null ? item.getFolioCotizacion() : "N/A")
