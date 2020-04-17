@@ -45,7 +45,7 @@
 						<table id="dtUsuarios" class="table table-bordered table-striped table-hover">
 							<thead>
 								<tr>
-									<th class="col-md-1" data-field="idUsuario" data-halign="left" data-align="center">ID</th>
+									<!-- <th class="col-md-1" data-field="idUsuario" data-halign="left" data-align="center">ID</th> -->
 									<th class="col-md-2" data-formatter="accionesFormatter" data-align="center">Acciones</th>
 									<th class="col-md-2" data-field="clave" data-halign="left">Clave</th>
 									<th class="col-md-3" data-field="usuario" data-halign="left" >Usuario</th>
@@ -182,10 +182,10 @@
 			if(row.eliminado) {
 			    return [
 			    	'<a title="Deshabilitado">',
-		        		'<i class="material-icons" style="color:grey">mode_edit</i>',
+		        		'<i class="material-icons" style="color:#CD5C5C">mode_edit</i>',
 		        	'</a>',
 		        	'<a title="Deshabilitado">',
-		        		'<i class="material-icons" style="color:grey">fingerprint</i>',
+		        		'<i class="material-icons" style="color:#CD5C5C">fingerprint</i>',
 		        	'</a>',
 			        '<a href="#" class="unlock-usuario" data-usuario="'+ row.idUsuario +'" title="Desbloquear">',
 			        	'<i class="material-icons">lock_open</i>',

@@ -16,9 +16,9 @@ public interface ISucursalRepository extends JpaRepository<SucursalEntity, Seria
 	public abstract SucursalEntity findByIdSucursal(int idSucursal);
 	
 	//TABLE
-	@Query("SELECT COUNT(objSucursal) FROM SucursalEntity objSucursal ")	
+	@Query("SELECT COUNT(objSucursal) FROM SucursalEntity objSucursal WHERE objSucursal.eliminado != true")	
 	public abstract long countForDataTable();
 				
-	@Query("SELECT objSucursal FROM SucursalEntity objSucursal ")
+	@Query("SELECT objSucursal FROM SucursalEntity objSucursal WHERE objSucursal.eliminado != true")
 	public abstract List<SucursalEntity> findForDataTable(Pageable page);
 }

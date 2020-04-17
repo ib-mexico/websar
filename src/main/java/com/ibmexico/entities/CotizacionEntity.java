@@ -180,9 +180,8 @@ public class CotizacionEntity {
 	@Column
 	private boolean eliminado = false;
 
-	
-	
-	
+	@Column(nullable = true)
+	private String folioCotizacion;
 	
 	
 	// ACCESORS METHODS
@@ -247,7 +246,27 @@ public class CotizacionEntity {
 		String strFolio = "";
 		
 		if(folio != null) {
-			strFolio = folio;
+			if (boolNormal) {
+				strFolio = folio;
+			}
+			if (boolMaestra) {
+				String[] foliosplit = folio.split("-");
+				foliosplit[0] = "PRO";
+				strFolio  = foliosplit[0]+'-'+foliosplit[1]+'-'+foliosplit[2]+'-'+foliosplit[3];
+			}
+			if (boolBoom) {
+				String[] foliosplit = folio.split("-");
+				foliosplit[0] = "BOM";
+				strFolio  = foliosplit[0]+'-'+foliosplit[1]+'-'+foliosplit[2]+'-'+foliosplit[3];
+			}
+			if (boolRenta) {
+				String[] foliosplit = folio.split("-");
+				foliosplit[0] = "IAAS";
+				strFolio  = foliosplit[0]+'-'+foliosplit[1]+'-'+foliosplit[2]+'-'+foliosplit[3];
+			}
+			if (!boolNormal && !boolMaestra && !boolBoom && !boolRenta) {
+				strFolio =folio;
+			}
 		}
 		return strFolio;
 	}
@@ -647,6 +666,14 @@ public class CotizacionEntity {
 				+ ", requisicionMaterialFolio=" + requisicionMaterialFolio + ", solicitudFecha=" + solicitudFecha
 				+ ", creacionUsuario=" + creacionUsuario.getIdUsuario() + ", creacionFecha=" + creacionFecha + ", modificacionUsuario="
 				+ modificacionUsuario.getIdUsuario() + ", modificacionFecha=" + modificacionFecha + ", eliminado=" + eliminado + "]";
+	}
+
+	public String getFolioCotizacion() {
+		return folioCotizacion;
+	}
+
+	public void setFolioCotizacion(String folioCotizacion) {
+		this.folioCotizacion = folioCotizacion;
 	}
 	
 	

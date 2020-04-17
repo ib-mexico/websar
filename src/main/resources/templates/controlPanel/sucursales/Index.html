@@ -1,76 +1,305 @@
 <th:block th:fragment="body">
-	<div class="block-header">
-        <h2>SUCURSALES</h2>
-    </div>
-    
-    <div class="row clearfix">
-    	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-    		<div class="card">
-    			<div class="header">
-    				<h2>LISTA DE SUCURSALES</h2>
-    			</div>
-    			
-    			<div class="body">
-    				<div class="row clearfix" th:if="${rolNuevaSucursal}">
-    					<div class="col-md-4 col-md-offset-8 text-right">
-    						<a th:href="${ {_PATH_} + 'controlPanel/sucursales/create'}" role="button" class="btn bg-purple waves-effect"><i class="material-icons">add_circle</i> Nueva Sucursal</a>
-    					</div>
-    				</div>
-    			
-    				<div class="row clearfix" id="dtSucursalesToolBar">
-    					<div class="col-xs-3 col-sm-3 col-md-3">
-    						<div class="input-group">
-   								<span class="input-group-addon">
-                                	<i class="material-icons">date_range</i>
-	                           	</span>
-	                           	<div class="form-line" id='groupDesde'>
-                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
-	                           	</div>
-							</div>
-    					</div>
-    					
-    					<div class="col-xs-3 col-sm-3 col-md-3">
-    						<div class="input-group">
-    							<span class="input-group-addon">
-                                	<i class="material-icons">date_range</i>
-	                           	</span>
-	                           	<div class="form-line" id='groupHasta'>
-                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
-	                           	</div>
-							</div>
-    					</div>						
-					</div>
-					
-					<div class="table-responsive">
-						<table id="dtSucursales" class="table table-bordered table-striped table-hover">
-							<thead>
-								<tr>
-									<th class="col-md-1" data-field="idSucursal" data-halign="left" data-align="center">ID</th>
-									<th class="col-md-3" data-field="sucursal" data-halign="left">Sucursal</th>
-									<th class="col-md-2" data-field="domicilio" data-halign="left">Domicilio</th>
-									<th class="col-md-2" data-field="colonia" data-halign="left">Colonia</th>
-									
-									<th class="col-md-3" data-field="municipio" data-halign="left">Municipio</th>
-									<th class="col-md-2" data-field="ciudad" data-halign="left">Ciudad</th>
-									<th class="col-md-2" data-field="estado" data-halign="left">Estado</th>
-									
-									<th class="col-md-1" data-field="codigoPostal" data-halign="left" data-align="center" data-visible="false">C&oacute;digo Postal</th>
-									<th class="col-md-1" data-field="telefono" data-halign="left" data-align="center" data-visible="false">Tel&eacute;fono</th>
-									
-									<th class="col-md-1" data-formatter="accionesFormatter" data-align="center">Acciones</th>
-								</tr>
-							</thead>
-						</table>
+	<div id="appSucursales">
+		<ol class="breadcrumb breadcrumb-bg-red">
+			<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+			<li class="active"><i class="material-icons">public</i> Nueva Sucursal</li>
+		</ol>
 		
+		<div class="row clearfix">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="card">
+					<div class="header">
+						<h2>LISTA DE SUCURSALES</h2>
 					</div>
 					
-    			</div>
-    		</div>
-    	</div>
-    </div>
+					<div class="body">
+						<div class="row clearfix" th:if="${rolNuevaSucursal}">
+                            <div class="col-md-4 col-md-offset-8 text-right">
+                                <a href="#" role="button" class="btn bg-purple waves-effect" 
+                                    data-toggle="modal" data-target="#modalNuevaSucursal" v-on:click="loadModal">
+                                    <i class="material-icons">add_circle</i> Nuevo Sucursal</a>
+                            </div>
+                        </div>
+					
+						<!-- <div class="row clearfix" id="dtSucursalesToolBar">
+							<div class="col-xs-3 col-sm-3 col-md-3">
+								<div class="input-group">
+									   <span class="input-group-addon">
+										<i class="material-icons">date_range</i>
+									   </span>
+									   <div class="form-line" id='groupDesde'>
+										   <input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
+									   </div>
+								</div>
+							</div>
+							
+							<div class="col-xs-3 col-sm-3 col-md-3">
+								<div class="input-group">
+									<span class="input-group-addon">
+										<i class="material-icons">date_range</i>
+									   </span>
+									   <div class="form-line" id='groupHasta'>
+										   <input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
+									   </div>
+								</div>
+							</div>						
+						</div> -->
+						
+						<div class="table-responsive">
+							<table id="dtSucursales" class="table table-bordered table-striped table-hover">
+								<thead>
+									<tr>
+										<!-- <th class="col-md-1" data-field="idSucursal" data-halign="left" data-align="center">ID</th> -->
+										<th class="col-md-1" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+										<th class="col-md-3" data-field="sucursal" data-halign="left">Sucursal</th>
+										<th class="col-md-3" data-field="empresa" data-halign="left">Empresa</th>
+										<th class="col-md-2" data-field="domicilio" data-halign="left">Domicilio</th>
+										<th class="col-md-2" data-field="colonia" data-halign="left">Colonia</th>
+										<th class="col-md-3" data-field="municipio" data-halign="left" data-visible="false">Municipio</th>
+										<th class="col-md-2" data-field="ciudad" data-halign="left" data-visible="false">Ciudad</th>
+										<th class="col-md-2" data-field="estado" data-halign="left">Estado</th>
+										<th class="col-md-1" data-field="codigoPostal" data-halign="left" data-align="center" data-visible="false">C&oacute;digo Postal</th>
+										<th class="col-md-1" data-field="telefono" data-halign="left" data-align="center" data-visible="false">Tel&eacute;fono</th>
+									</tr>
+								</thead>
+							</table>	
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Nueva Sucursal -->
+		<div class="modal fade" id="modalNuevaSucursal" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<form id="formSucursal" v-on:submit.prevent="createSucursal" method="POST" role="form">
+						<div class="modal-header">
+							<h4 class="modal-title">Registro Nueva Sucursal</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row clearfix">
+								<div class="col-md-6">
+									<p><b>Empresa *</b></p>
+									<div class="input-group">
+										<select name="cmbEmpresa" class="form-control show-tick cmbEmpresa required" v-model="idEmpresa" data-live-search="true">
+											<option value="default" selected="selected">Selecciona una empresa</option>
+											<option v-for="item in empresa" :value="item.id_empresa" v-text="item.razon_social"></option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-md-6">
+									<div class="form-group">
+										<p><b>Nombre Sucursal *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtNombreSucursal" class="form-control" required="required" v-model="nombreSucursal"/>
+										</div>
+									</div>
+                                </div>  
+							</div>
+
+							<!-- Codigo Postal y telefono -->		
+                            <div class="row clearfix">
+								<div class="col-md-6">
+                                    <div class="form-group">
+                                        <p><b>Codigo Postal *</b></p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtCodigoPostal" class="form-control required" required="required" v-model="codigoPostal" maxlength="5" size="5"/>
+                                        </div>
+                                    </div>
+								</div>
+								<div class="col-md-6">
+                                    <div class="form-group">
+                                        <p><b>Numero Telefonico *</b></p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtTelefono" class="form-control required" required="required" v-model="telefono"/>
+                                        </div>
+                                    </div>
+								</div>
+							</div>
+							
+                            <div class="row clearfix">
+								<div class="col-md-6">
+                                    <div class="form-group">
+                                        <p><b></b>Domicilio *</p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtDomicilioSucursal" class="form-control required" required="required" v-model="domicilioSucursal"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <p><b>Colonia *</b></p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtColoniaSucursal" class="form-control required" required="required" v-model="coloniaSucursal"/>
+                                        </div>
+                                    </div>
+                                </div>
+							</div>
+							
+                            <div class="row clearfix">
+								<div class="col-md-4">
+                                    <div class="form-group">
+                                        <p><b>Municipio *</b></p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtMunicipio" class="form-control required" required="required" v-model="municipio"/>
+                                        </div>
+                                    </div>
+								</div>
+								<div class="col-md-4">
+                                    <div class="form-group">
+                                        <p><b>Ciudad *</b></p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtCiudad" class="form-control required" required="required" v-model="ciudad"/>
+                                        </div>
+                                    </div>
+								</div>
+								<div class="col-md-4">
+                                    <div class="form-group">
+                                        <p><b>Estado *</b></p>
+                                        <div class="form-line">
+                                            <input type="text" name="txtEstado" class="form-control required" required="required" v-model="estado"/>
+                                        </div>
+                                    </div>
+								</div>
+							</div>
+							
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
+							<button type="submit" class="btn btn-primary waves-effect">Crear</button>
+						</div>		
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<!-- Editar Sucursal -->
+		<div class="modal fade" id="modalEditSucursal" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<form id="formEditSucursal" v-on:submit.prevent="updateSucursal" method="POST" role="form">
+						<div class="modal-header">
+							<h4 class="modal-title">Registro Nueva Sucursal</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row clearfix">
+								<div class="col-md-6">
+									<p><b>Empresa *</b></p>
+									<div class="input-group">
+										<select name="cmbEmpresa" class="form-control show-tick cmbEmpresa required"
+											v-model="editSucursal.idEmpresa" data-live-search="true">
+											<option value="default" selected="selected">Selecciona una empresa</option>
+											<option v-for="item in empresa" :value="item.id_empresa"
+												v-text="item.razon_social">
+											</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="col-md-6">
+									<div class="form-group">
+										<p><b>Nombre Sucursal *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtNombreSucursal" class="form-control"
+												required="required" v-model="editSucursal.nombreSucursal" />
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Codigo Postal y telefono -->
+							<div class="row clearfix">
+								<div class="col-md-6">
+									<div class="form-group">
+										<p><b>Codigo Postal *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtCodigoPostal" class="form-control required"
+												required="required" v-model="editSucursal.codigoPostal" maxlength="5" size="5" />
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<p><b>Numero Telefonico *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtTelefono" class="form-control required"
+												required="required" v-model="editSucursal.telefono" />
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row clearfix">
+								<div class="col-md-6">
+									<div class="form-group">
+										<p><b></b>Domicilio *</p>
+										<div class="form-line">
+											<input type="text" name="txtDomicilioSucursal" class="form-control required"
+												required="required" v-model="editSucursal.domicilioSucursal" />
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<p><b>Colonia *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtColoniaSucursal" class="form-control required"
+												required="required" v-model="editSucursal.coloniaSucursal" />
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="row clearfix">
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Municipio *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtMunicipio" class="form-control required"
+												required="required" v-model="editSucursal.municipio" />
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Ciudad *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtCiudad" class="form-control required"
+												required="required" v-model="editSucursal.ciudad" />
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="form-group">
+										<p><b>Estado *</b></p>
+										<div class="form-line">
+											<input type="text" name="txtEstado" class="form-control required"
+												required="required" v-model="editSucursal.estado" />
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Cancelar</button>
+							<button type="submit" class="btn btn-primary waves-effect">Crear</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	</div>
 </th:block>
 
 <th:block th:fragment="script">
+	<script th:src="@{/plugins/vue/vue.js}"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script th:src="@{/assets/js/sucursales.js}"></script>
 	<!-- Wenzhixin DataTable -->
 	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
 	<script th:src="@{/plugins/wenzhixin/extensions/export/tableExport.js}"></script>
@@ -100,14 +329,24 @@
 		    						}
 		});
 		
+		function editSucursal(param){			
+			sucursal.editSucursalID(param);
+		}
+		function deleteSucursal(param){
+			sucursal.deleteSucursal(param);
+		}
+
 		function accionesFormatter(value, row, index) {
 			
 			urlDelete = [[@{/controlPanel/sucursales/}]] + row.idSucursal + '/delete';
 			
 		    return [
-		        '<a href="' + urlDelete + '" title="Eliminar">',
-		        	'<i class="material-icons">delete</i>',
-		        '</a>'
+			'<a href="#" title="Editar Sucursal" class="EditActivo" data-Edit="'+row.idSucursal+'" data-toggle="modal" data-target="#modalEditSucursal" onclick="editSucursal('+row.idSucursal+');" role="button">',
+					'<i class="material-icons edit">edit</i>',
+				'</a>',
+				'<a href="#" title="Eliminar Sucursal" class="deleteActivo" onclick="deleteSucursal('+row.idSucursal+')">',
+		        	'<i class="material-icons remove">delete</i>',
+				'</a>'
 		    ].join('');
 		}
 		

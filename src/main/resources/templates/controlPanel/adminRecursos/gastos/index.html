@@ -208,6 +208,7 @@
 									<th data-width="10%" data-field="numeroFactura" data-sortable="true" data-halign="left" data-align="center">Num. Factura</th>
 									<th data-width="10%" data-field="proveedor" data-sortable="true" data-halign="left" data-align="center">Proveedor</th>
 									<th data-width="10%" data-field="fechaPago" data-halign="left" data-align="center" data-visible="false">Fecha gasto</th>
+									<th data-width="15%" data-field="principalGasto" data-halign="left" data-align="center" data-visible="true">Clasf. de Gasto</th>
 									<th data-width="15%" data-field="tipoGasto" data-halign="left" data-align="center" data-visible="true">Uso de Gasto</th>
 									<th data-width="15%" data-field="Clasificacion" data-halign="left" data-align="center" data-visible="true">Tipo de Gasto</th>
 									<th data-width="20%" data-field="usuario" data-halign="left" data-align="center" data-visible="true">Usuario</th>
@@ -322,29 +323,41 @@
 														</span>
 														<div class="form-line">
 															<input type="number" step="0.01" class="form-control text-primary font-weight-bold" 
-															name="txtSubtotal"/>
+															name="txtSubtotal" v-model="nuevoPago.subtotal"/>
 														</div>
 													</div>
 												</div>
 											</div>
 
 											<div class="row clearfix">
-												<div class="col-md-6">
-													<p><b>Tipo gasto *</b></p>
+												<div class="col-md-4">
+													<p><b>Clasificacion de gasto *</b></p>
+													<div class="input-group">
+														<select name="cmbClasificacionPrincipalGasto" id="cmbClasificacionPrincipalGasto" 
+														class="form-control show-tick cmbClasificacionPrincipalGasto required"
+														v-model="nuevoPago.idPrincipalGasto" data-live-search="true">
+															<option value="default" selected="selected">Elige la clasificacion de gasto</option>
+															<option v-for="item in clasificacionPrincipalGasto" :value="item.idClasificacionGasto" v-text="item.descripcion"></option>
+														</select>
+													</div>
+												</div>
+
+												<div class="col-md-4">
+													<p><b>Uso de gasto *</b></p>
 													<div class="input-group">
 														<select name="cmbTipogasto" id="cmbTipogasto" class="form-control show-tick cmbTipogasto required"
 														v-model="nuevoPago.id_tipoGasto" data-live-search="true">
-															<option value="default" selected="selected">Elige el tipo de gasto</option>
+															<option value="default" selected="selected">Elige el uso de gasto</option>
 															<option v-for="item in tipoGasto" :value="item.id_tipo_gasto" v-text="item.nombre_gasto"></option>
 														</select>
 													</div>
 												</div>
-												<div class="col-md-6">
-													<p><b>Clasificación *</b></p>
+												<div class="col-md-4">
+													<p><b>Tipo de gasto *</b></p>
 													<div class="input-group">
 														<select name="cmbClasificacion" id="cmbClasificacion" class="form-control show-tick cmbClasificacion required" 
 														v-model="nuevoPago.id_clasificacionGasto" data-live-search="true">
-															<option value="default" selected="selected">Seleccione una clasificacion</option>
+															<option value="default" selected="selected">Seleccione un tipo de gasto</option>
 															<!-- <option v-for="item in clasificacionGasto" :value="item.id_tipo_gasto" v-text="item.nombre"></option> -->
 														</select>
 													</div>
@@ -616,22 +629,35 @@
 											</div>
 
 											<div class="row clearfix">
-												<div class="col-md-6">
-													<p><b>Tipo gasto *</b></p>
+
+												<div class="col-md-4">
+													<p><b>Clasificacion de gasto *</b></p>
+													<div class="input-group">
+														<select name="cmbClasificacionPrincipalGasto" id="cmbClasificacionPrincipalGasto" 
+														class="form-control show-tick cmbClasificacionPrincipalGasto required"
+														v-model="editGastoData.idPrincipalGasto" data-live-search="true">
+															<option value="default" selected="selected">Elige una clasificacion de gasto</option>
+															<option v-for="item in clasificacionPrincipalGasto" :value="item.idClasificacionGasto" v-text="item.descripcion"></option>
+														</select>
+													</div>
+												</div>
+
+												<div class="col-md-4">
+													<p><b>Uso de gasto *</b></p>
 													<div class="input-group">
 														<select name="cmbTipogasto" class="form-control show-tick cmbTipogasto required"
 														v-model="editGastoData.id_tipoGasto" data-live-search="true">
-															<option value="default" selected="selected">Elige el tipo de gasto</option>
+															<option value="default" selected="selected">Elige el uso de gasto</option>
 															<option v-for="item in tipoGasto" :value="item.id_tipo_gasto" v-text="item.nombre_gasto"></option>
 														</select>
 													</div>
 												</div>
-												<div class="col-md-6">
-													<p><b>Clasificación *</b></p>
+												<div class="col-md-4">
+													<p><b>Tipo de Gasto *</b></p>
 													<div class="input-group">
 														<select name="cmbClasificacion" class="form-control show-tick cmbClasificacion required" 
 														v-model="editGastoData.id_clasificacion" data-live-search="true">
-															<option value="default" selected="selected">Seleccione una clasificacion</option>
+															<option value="default" selected="selected">Seleccione un tipo de gasto</option>
 															<!-- <option v-for="item in clasificacionGasto" :value="item.id_tipo_gasto" v-text="item.nombre"></option> -->
 														</select>
 													</div>
@@ -1013,22 +1039,23 @@
 		function cancel(){
 			$('#formGasto')[0].reset();
 			
-			this.gasto.nuevoPago.id_empresa='',
-            this.gasto.nuevoPago.id_proveedor='',
-            this.gasto.nuevoPago.facturaNota='',
-            this.gasto.nuevoPago.id_tipoGasto='',
-            this.gasto.nuevoPago.id_clasificacionGasto='',
-            this.gasto.nuevoPago.id_cotizacion='',
-            this.gasto.nuevoPago.id_usuario='',
-            this.gasto.nuevoPago.checkCotizacion=false,
-            this.gasto.nuevoPago.txtCotizacion='',
-            this.gasto.nuevoPago.depa='',
-            this.gasto.nuevoPago.sucursal=''
+			this.gasto.nuevoPago.id_empresa = '',
+            this.gasto.nuevoPago.id_proveedor = '',
+			this.gasto.nuevoPago.facturaNota = '',
+			this.gasto.nuevoPago.idPrincipalGasto = '',
+            this.gasto.nuevoPago.id_tipoGasto = '',
+            this.gasto.nuevoPago.id_clasificacionGasto = '',
+            this.gasto.nuevoPago.id_cotizacion = '',
+            this.gasto.nuevoPago.id_usuario = '',
+            this.gasto.nuevoPago.checkCotizacion = false,
+            this.gasto.nuevoPago.txtCotizacion = '',
+            this.gasto.nuevoPago.depa = '',
+            this.gasto.nuevoPago.sucursal = ''
 			
-			this.gasto.opcionGasto='';
-			this.gasto.formInputs=[];
-			this.estatus1='';
-			this.estatus2='';
+			this.gasto.opcionGasto = '';
+			this.gasto.formInputs = [];
+			this.estatus1 = '';
+			this.estatus2 = '';
 			$('.cmbCotizacion').selectpicker('refresh');
 		}
 		$('#modalGasto').on('hidden.bs.modal',function(){

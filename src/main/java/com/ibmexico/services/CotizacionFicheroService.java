@@ -29,7 +29,6 @@ import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.CotizacionFicheroEntity;
 import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.repositories.ICotizacionFicheroRepository;
-import com.ibmexico.services.SessionService;
 
 @Service("cotizacionFicheroService")
 public class CotizacionFicheroService {

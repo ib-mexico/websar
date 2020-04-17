@@ -681,4 +681,8 @@ public class CotizacionService {
 		jsonReturn.add("jsonCotizacionSeleccionado", jsonRows);
 		return jsonReturn.build();
 	}
+
+	public int maxIdCotizacion() {
+		return cotizacionRepository.maxIdCotizacion();
+	}
 }

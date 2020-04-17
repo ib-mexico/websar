@@ -212,8 +212,7 @@ public class CotizacionesController {
 		List<ClienteEntity> lstClientes 			= clienteService.listClientesActivos();
 		List<SucursalEntity> lstSucursales 			= sucursalService.listSucursales();
 		List<ClienteGiroEntity> lstClientesGiros 	= clienteGiroService.listClientesGiros();
-		
-		
+				
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_COTIZACIONES_CREATE);
 		objModelAndView.addObject("lstEmpresas", lstEmpresas);
 		objModelAndView.addObject("lstMonedas", lstMonedas);
@@ -224,8 +223,7 @@ public class CotizacionesController {
 		objModelAndView.addObject("lstClientesGiros", lstClientesGiros);
 		objModelAndView.addObject("lstSucursales", lstSucursales);
 		objModelAndView.addObject("objOportunidad", objOportunidad);
-		
-		
+				
 		return objModelAndView;
 	}
 	
@@ -257,13 +255,16 @@ public class CotizacionesController {
 		CotizacionEntity objCotizacion = new CotizacionEntity();
 		
 		try {
-					
+			String claveUsuario;
+			/**Clave para el folio de la cotizacion */
 			if(sessionService.hasRol("COTIZACIONES_ADMINISTRADOR")) {
 				UsuarioEntity objUsuario = usuarioService.findByIdUsuario(cmbUsuario);
 				objCotizacion.setUsuario(objUsuario);
+				claveUsuario = objUsuario.getClave();
 				objCotizacion.setSucursal(sucursalService.findByIdSucursal(objUsuario.getSucursal().getIdSucursal()));
 			} else {
 				objCotizacion.setUsuario(sessionService.getCurrentUser());
+				claveUsuario = sessionService.getCurrentUser().getClave();
 				objCotizacion.setSucursal(sucursalService.findByIdSucursal(sessionService.getCurrentUser().getSucursal().getIdSucursal()));
 			}
 			
@@ -304,27 +305,32 @@ public class CotizacionesController {
 			} else {
 				objCotizacion.setImplementacion(false);
 			}
-			
-			
-			
+						
 			//TIPO DE COTIZACION
 			if(rdTipoCotizacion.equals("master")) {
 				objCotizacion.setMaestra(true);
+				objCotizacion.setFolioCotizacion("PRO" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
 			} else if(rdTipoCotizacion.equals("renta")) {
+				objCotizacion.setFolioCotizacion("IAAS" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
 				objCotizacion.setRenta(true);
 			}else if(rdTipoCotizacion.equals("boom")){
+				objCotizacion.setFolioCotizacion("BOM" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
 				objCotizacion.setBoom(true);
 			} else {
+				objCotizacion.setFolioCotizacion("COT" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
 				objCotizacion.setNormal(true);
 			}
-			
+
 			objCotizacion.setSubtotal(new BigDecimal(0));
 			objCotizacion.setIvaPorcentaje(new BigDecimal(0));
 			objCotizacion.setIva(new BigDecimal(0));
 			objCotizacion.setTotal(new BigDecimal(0));
 			
 			cotizacionService.create(objCotizacion);						
-			
 			/**
 			 * NOTIFICACIONES DE PUSHER
 			 */						
@@ -393,11 +399,14 @@ public class CotizacionesController {
 		
 		try {
 					
-			if(sessionService.hasRol("COTIZACIONES_ADMINISTRADOR")) {
+			String claveUsuario;
+			if (sessionService.hasRol("COTIZACIONES_ADMINISTRADOR")) {
 				UsuarioEntity objUsuario = usuarioService.findByIdUsuario(cmbUsuario);
+				claveUsuario = objUsuario.getClave();
 				objCotizacion.setUsuario(objUsuario);
 				objCotizacion.setSucursal(sucursalService.findByIdSucursal(objUsuario.getSucursal().getIdSucursal()));
 			} else {
+				claveUsuario = sessionService.getCurrentUser().getClave();
 				objCotizacion.setUsuario(sessionService.getCurrentUser());
 				objCotizacion.setSucursal(sucursalService.findByIdSucursal(sessionService.getCurrentUser().getSucursal().getIdSucursal()));
 			}
@@ -426,8 +435,7 @@ public class CotizacionesController {
 				objCotizacion.setVentaCompartida(false);
 				objCotizacion.setUsuarioVendedor(sessionService.getCurrentUser());
 			}
-			
-			
+						
 			//IMPLEMENTACION
 			if(chkImplementacion.equals("true")) {
 				objCotizacion.setImplementacion(true);
@@ -435,17 +443,23 @@ public class CotizacionesController {
 			} else {
 				objCotizacion.setImplementacion(false);
 			}
-			
-			
-			
+					
 			//TIPO DE COTIZACION
 			if(rdTipoCotizacion.equals("master")) {
+				objCotizacion.setFolioCotizacion("PRO" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
 				objCotizacion.setMaestra(true);
 			} else if(rdTipoCotizacion.equals("renta")) {
+				objCotizacion.setFolioCotizacion("IAAS" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
 				objCotizacion.setRenta(true);
 			} else if(rdTipoCotizacion.equals("boom")){
+				objCotizacion.setFolioCotizacion("BOM" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
 				objCotizacion.setBoom(true);
 			} else {
+				objCotizacion.setFolioCotizacion("COT" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
 				objCotizacion.setNormal(true);
 			}
 			
@@ -454,8 +468,8 @@ public class CotizacionesController {
 			objCotizacion.setIva(new BigDecimal(0));
 			objCotizacion.setTotal(new BigDecimal(0));
 			
-			cotizacionService.create(objCotizacion);						
-			
+			cotizacionService.create(objCotizacion);
+
 			/**
 			 * NOTIFICACIONES DE PUSHER
 			 */						
@@ -601,21 +615,29 @@ public class CotizacionesController {
 				
 				//TIPO DE COTIZACION
 				if(rdTipoCotizacion.equals("master")) {
+					objCotizacion.setFolioCotizacion("PRO" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+					'-'+objCotizacion.getUsuario().getClave()+'-'+String.format("%07d", objCotizacion.getIdCotizacion()));
 					objCotizacion.setMaestra(true);
 					objCotizacion.setRenta(false);
 					objCotizacion.setNormal(false);
 					objCotizacion.setBoom(false);
 				} else if(rdTipoCotizacion.equals("renta")) {
+					objCotizacion.setFolioCotizacion("IAAS" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+					'-'+objCotizacion.getUsuario().getClave()+'-'+String.format("%07d", objCotizacion.getIdCotizacion()));
 					objCotizacion.setRenta(true);
 					objCotizacion.setMaestra(false);
 					objCotizacion.setNormal(false);
 					objCotizacion.setBoom(false);
 				} else if(rdTipoCotizacion.equals("boom")){
+					objCotizacion.setFolioCotizacion("BOM" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+					'-'+objCotizacion.getUsuario().getClave()+'-'+String.format("%07d", objCotizacion.getIdCotizacion()));
 					objCotizacion.setBoom(true);
 					objCotizacion.setMaestra(false);
 					objCotizacion.setRenta(false);
 					objCotizacion.setNormal(false);
 				} else {
+					objCotizacion.setFolioCotizacion("COT" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+					'-'+objCotizacion.getUsuario().getClave()+'-'+String.format("%07d", objCotizacion.getIdCotizacion()));
 					objCotizacion.setNormal(true);
 					objCotizacion.setMaestra(false);
 					objCotizacion.setRenta(false);
@@ -709,6 +731,12 @@ public class CotizacionesController {
 				.add("creacionFecha", itemCotizacion.getCreacionFechaNatural())
 
 				.add("eliminado", itemCotizacion.isEliminado())
+
+				/**Estatus de las cotizaciones*/
+				.add("boolMaestra", itemCotizacion.isMaestra())
+				.add("boolBoom", itemCotizacion.isBoom())
+				.add("boolNormal", itemCotizacion.isNormal())
+				.add("boolRenta", itemCotizacion.isRenta())
 			);
 		});
 
@@ -771,6 +799,10 @@ public class CotizacionesController {
 		String facturaNumero = "";
 		String pagoFecha = "";
 		String pagoReferencia = "";
+		Boolean boolNormal = false;
+		Boolean boolBoom = false;
+		Boolean boolMaestra = false;
+		Boolean boolRenta = false;
 				
 		if(objCotizacion != null) {							
 			respuesta = true;
@@ -780,6 +812,11 @@ public class CotizacionesController {
 			facturaNumero = objCotizacion.getFacturaNumero();
 			pagoFecha = objCotizacion.getPagoFechaNatural();
 			pagoReferencia = objCotizacion.getPagoReferencia();
+			boolNormal = objCotizacion.isBoom();
+			boolBoom = objCotizacion.isBoom();
+			boolMaestra = objCotizacion.isMaestra();
+			boolRenta = objCotizacion.isRenta();
+
 		}
 					
 		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
@@ -789,7 +826,12 @@ public class CotizacionesController {
 					.add("facturacionFecha", facturacionFecha)
 					.add("facturaNumero", facturaNumero)
 					.add("pagoFecha", pagoFecha)
-					.add("pagoReferencia", pagoReferencia);
+					.add("pagoReferencia", pagoReferencia)
+					.add("boolNormal", boolNormal)
+					.add("boolBoom", boolBoom)
+					.add("boolMaestra", boolMaestra)
+					.add("boolRenta", boolRenta)
+					;
 
 										
 		return jsonReturn.build().toString();
@@ -826,7 +868,7 @@ public class CotizacionesController {
 			
 			if(objCotizacion != null) {
 				/*Se hace una instancia Usuario para obtener el Usuario de Erick y enviarle a el unicamente el msj de aprobacion de Cotizacion */												
-				UsuarioEntity objUsuario=usuarioService.findByIdUsuario(2);
+				// UsuarioEntity objUsuario = usuarioService.findByIdUsuario(58);
 				if(cmbEstatus.equals(2) && objCotizacion.getAprobacionFecha() == null) {
 					LocalDate ldNow = LocalDate.now();
 					objCotizacion.setAprobacionFecha(ldNow);
@@ -834,21 +876,29 @@ public class CotizacionesController {
 					try {
 						if(objCotizacion.getTotal().doubleValue() > 10000) {
 							//ESTA NOTIFICACION IRIA EN LA PARTE DE APROBACION AL MOMENTO QUE SE APRUEBE UNA COTIZACION MAYOR A 10,000
-							Twilio.init(GeneralConfiguration.getInstance().getTwilioAccountSID(), GeneralConfiguration.getInstance().getTwilioAuthToken());
-							Message message = Message.creator(new PhoneNumber("whatsapp:"+objUsuario.getCelular()), 
-									new PhoneNumber("whatsapp:+12053902893"),
-									"Se aprobó una cotización con folio *"+objCotizacion.getFolio()+"*, con un valor de *"+objCotizacion.getTotalNatural()+"* por el usuario *"+objCotizacion.getUsuario().getAliasCorreo()+"*").create();
-									System.out.println(message.getSid());
-								
+							// Twilio.init(GeneralConfiguration.getInstance().getTwilioAccountSID(), GeneralConfiguration.getInstance().getTwilioAuthToken());
+							// Message message = Message.creator(new PhoneNumber("whatsapp:"+objUsuario.getCelular()), 
+							// 		new PhoneNumber("whatsapp:+12053902893"),
+							// 		"Se aprobó una cotización con folio *"+objCotizacion.getFolio()+"*, con un valor de *"+objCotizacion.getTotalNatural()+"* por el usuario *"+objCotizacion.getUsuario().getAliasCorreo()+"*").create();
+							// 		System.out.println(message.getSid());
+							// System.err.println("procesando la infromacion de twilio");
 							
 							ByteArrayResource pdfCotizacion = envioDetalleCotizacion(hddIdCotizacion);
+							System.err.println("procesando el pdf a enviar");
 
+		/* 					List<UsuarioRolEntity> objuser = sessionService.findRolName("NOTIFICACION_COTIZACION");
+							for (UsuarioRolEntity user : objuser) {
+								System.err.println(user.getUsuario().getNombreCompleto());
+							} */
 							for (UsuarioRolEntity objUsuarioRol : sessionService.findRolName("NOTIFICACION_COTIZACION")){
 								Map<String, Object> mapCotizacionNotificacion = new HashMap<String, Object>();
 								mapCotizacionNotificacion.put("usuarioRol", objUsuarioRol.getUsuario());
 								mapCotizacionNotificacion.put("detalleCotizacion", objCotizacion);
 								// mapCotizacionNotificacion.put("fechaAprobacion", LocalDate.parse(ldNow.toString(), GeneralConfiguration.getInstance().getDateFormatterNatural()));
-								
+								/* if (EmailValidator.getInstance().isValid(objUsuarioRol.getUsuario().getCorreo())){
+									System.err.println("validado");
+								}
+								System.err.println("no validado correo"); */
 								try {
 									if (EmailValidator.getInstance().isValid(objUsuarioRol.getUsuario().getCorreo())) {
 
@@ -856,6 +906,7 @@ public class CotizacionesController {
 										pdfCotizacion, objCotizacion.getFolio(), Templates.EMAIL_NOTIFICACION_COTIZACION_ACEPTADA, mapCotizacionNotificacion);
 										System.err.println("envio correctamente");
 									}
+									System.err.println("correo invalido");
 								} catch (Exception e) {
 									System.err.println("Ocurrio un error y no se pudo enviar el correo : "+e.getMessage());
 								}

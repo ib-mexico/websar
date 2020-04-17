@@ -235,7 +235,7 @@
 		
 	</table>
 	
-	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 50px;">
+	<table width="100%" cellpadding="2" cellspacing="0" style="margin-top: 50px;" th:if="${objCotizacion.isNormal() == true}">
 		<tr>
 			<td width="50%">
 				<span class="tituloH6" style="text-align:left">Condiciones Comerciales:</span><br />
@@ -257,8 +257,11 @@
 					<tr>
 						<td th:text="${objCotizacion.empresa.razonSocial}"></td>
 					</tr>
-					<tr>							
+					<tr th:if="${objCotizacion.isNormal() == true}">							
 						<td><span style="color:#ff2e34;font-weight:bold;">ventas@<th:block th:text="${objCotizacion.empresa.dominio}"></th:block></span></td>
+					</tr>
+					<tr th:if="${objCotizacion.isNormal() != true}">							
+						<td><span style="color:#ff2e34;font-weight:bold;">rm@<th:block th:text="${objCotizacion.empresa.dominio}"></th:block></span></td>
 					</tr>
 					<tr>
 						<td><span style="color:#ff2e34;font-weight:bold;">http://www.<th:block th:text="${objCotizacion.empresa.dominio}"></th:block></span></td>

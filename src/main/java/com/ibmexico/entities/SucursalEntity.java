@@ -57,6 +57,10 @@ public class SucursalEntity {
 	@JoinColumn(name = "modificacion_id_usuario", nullable = false)
 	private UsuarioEntity modificacionUsuario;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_empresa", nullable = true)
+	private EmpresaEntity empresa;
+
 	@Column(nullable = false)
 	private LocalDateTime modificacionFecha;
 
@@ -191,7 +195,15 @@ public class SucursalEntity {
 				+ ", colonia=" + colonia + ", municipio=" + municipio + ", ciudad=" + ciudad + ", estado=" + estado
 				+ ", codigoPostal=" + codigoPostal + ", telefono=" + telefono + ", creacionUsuario=" + creacionUsuario.getIdUsuario()
 				+ ", creacionFecha=" + creacionFecha + ", modificacionUsuario=" + modificacionUsuario.getIdUsuario()
-				+ ", modificacionFecha=" + modificacionFecha + ", eliminado=" + eliminado + "]";
+				+ ", modificacionFecha=" + modificacionFecha + ", eliminado=" + eliminado + ",empresa="+empresa+"]";
+	}
+
+	public EmpresaEntity getEmpresa() {
+		return empresa;
+	}
+
+	public void setEmpresa(EmpresaEntity empresa) {
+		this.empresa = empresa;
 	}
 	
 	

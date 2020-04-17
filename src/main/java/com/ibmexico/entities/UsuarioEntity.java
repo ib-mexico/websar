@@ -24,7 +24,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.ibmexico.libraries.notifications.ApplicationException;
 import com.ibmexico.libraries.notifications.EnumException;
 import com.ibmexico.configurations.GeneralConfiguration;
-import com.ibmexico.entities.UsuarioRolEntity;
 
 
 @Entity
@@ -116,7 +115,8 @@ public class UsuarioEntity {
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "usuario", cascade = CascadeType.ALL)
 	private List<UsuarioRolEntity> usuarioRoles = new ArrayList<UsuarioRolEntity>();
 	
-	
+	@Column (nullable = true)
+	private String color;
 	
 	
 	// ACCESORS METHODS
@@ -404,6 +404,14 @@ public class UsuarioEntity {
 				+ direccion + ", telefono=" + telefono + ", celular=" + celular + ", creacionUsuario=" + creacionUsuario.getIdUsuario()
 				+ ", creacionFecha=" + creacionFecha + ", modificacionUsuario=" + modificacionUsuario.getIdUsuario()
 				+ ", modificacionFecha=" + modificacionFecha + ", eliminado=" + eliminado + ", usuarioRoles=" + usuarioRoles.size() + "]";
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
 	}
 	
 	

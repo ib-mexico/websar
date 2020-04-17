@@ -39,6 +39,7 @@ import com.ibmexico.services.FacturaService;
 import com.ibmexico.services.ProveedorService;
 import com.ibmexico.services.SessionService;
 import com.ibmexico.services.SucursalService;
+import com.ibmexico.services.TipoGastoClService;
 import com.ibmexico.services.TipoGastoService;
 import com.ibmexico.services.UsuarioService;
 import com.lowagie.text.DocumentException;
@@ -78,6 +79,12 @@ public class GastosController {
     @Qualifier("proveedorService")
     private ProveedorService proveedorService;
 
+    /* Clasificacion del gasto */
+    @Autowired
+    @Qualifier("principal_clasificacion_gasto")
+    private TipoGastoClService clasificacionGastoService;
+
+    /* Uso del gasto  */
     @Autowired
     @Qualifier("tipo_gasto_service")
     private TipoGastoService gastoService;
@@ -98,6 +105,7 @@ public class GastosController {
     @Qualifier("cotizacionService")
     private CotizacionService cotizacionService;
 
+    /* Tipo de gasto */
     @Autowired
     @Qualifier("clasificacion_tipogastoService")
     private ClasificacionTipoGastoService tipoGastoService;
@@ -135,14 +143,20 @@ public class GastosController {
         Boolean respuesta = false;
         JsonObject jsonEmpresa = null;
         JsonObject jsonProveedor = null;
-        JsonObject jsonTipoGasto = null;
+        /* Json Clasificacion de gasto */
+        JsonObject jsonClasificacionPrincipalGasto = null;
+        /* Json uso del gasto */
+        JsonObject jsonUsoGasto = null;
         JsonObject jsonCotizacion = null;
         JsonObject jsonUsuario = null;
         JsonObject jsonTipoFichero = null;
         try {
             jsonEmpresa = empresaService.jsonEmpresas();
             jsonProveedor = proveedorService.jsonProveedores();
-            jsonTipoGasto = gastoService.jsonTipoGasto();
+
+            jsonClasificacionPrincipalGasto = clasificacionGastoService.jsonClasificacionGasto();
+            jsonUsoGasto = gastoService.jsonTipoGasto();
+
             jsonUsuario = usuarioService.jsonUsuariosActivos();
             jsonCotizacion = cotizacionService.jsonCotizacionesActivos();
             jsonTipoFichero = cotizacionTipoFicheroService.jsonTipoFichero();
@@ -153,7 +167,8 @@ public class GastosController {
         }
         JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
         jsonReturn.add("respuesta", respuesta).add("jsonEmpresa", jsonEmpresa).add("jsonProveedor", jsonProveedor)
-                .add("jsonTipoGasto", jsonTipoGasto).add("jsonUsuario", jsonUsuario)
+                .add("jsonClasificacionPrincipalGasto", jsonClasificacionPrincipalGasto)
+                .add("jsonTipoGasto", jsonUsoGasto).add("jsonUsuario", jsonUsuario)
                 .add("jsonCotizacion", jsonCotizacion).add("jsonTipoFichero", jsonTipoFichero);
         return jsonReturn.build().toString();
     }
@@ -195,7 +210,7 @@ public class GastosController {
         return jsonReturn.build().toString();
     }
 
-    @RequestMapping(value = "storeGastos", method = RequestMethod.POST)
+    @RequestMapping(value = "storeGastos", method = RequestMethod.POST, consumes = "multipart/form-data")
     public @ResponseBody String storeGastos(@RequestParam(value = "cmbEmpresa", required = false) Integer cmbEmpresa,
             @RequestParam(value = "cmbProveedor", required = false) Integer cmbProveedor,
             @RequestParam(value = "cmbTipoFichero", required = false) Integer cmbTipoFichero,
@@ -206,6 +221,8 @@ public class GastosController {
             @RequestParam(value = "formatted_address") String formatted_address,
             @RequestParam(value = "txtFechagasto") String txtFechagasto,
             @RequestParam(value = "txtSubtotal") BigDecimal txtSubtotal,
+
+            @RequestParam(value ="cmbClasificacionPrincipalGasto") Integer cmbClasificacionPrincipalGasto,
             @RequestParam(value = "cmbTipogasto") Integer cmbTipogasto,
             @RequestParam(value = "cmbClasificacion") Integer cmbClasificacion,
 
@@ -225,19 +242,21 @@ public class GastosController {
         String titulo = "Oops!";
         String mensaje = "Ocurrió un error al intentar mandar a mantenimiento el Activo.";
 
-        ActivoServicioProveedorMant2Entity objServMant2 = new ActivoServicioProveedorMant2Entity();
+        ActivoServicioProveedorMant2Entity objGasto = new ActivoServicioProveedorMant2Entity();
         try {
-            objServMant2.setEmpresa(empresaService.findByIdEmpresa(cmbEmpresa));
-            objServMant2.setProveedor(proveedorService.findByIdProveedor(cmbProveedor));
-            objServMant2.setEstado(txtEstado);
-            objServMant2.setCiudad(txtCiudad);
-            objServMant2.setPais(txtPais);
-            objServMant2.setFormatted_address(formatted_address);
-            objServMant2.setFechaPago(
+            objGasto.setEmpresa(empresaService.findByIdEmpresa(cmbEmpresa));
+            objGasto.setProveedor(proveedorService.findByIdProveedor(cmbProveedor));
+            objGasto.setEstado(txtEstado);
+            objGasto.setCiudad(txtCiudad);
+            objGasto.setPais(txtPais);
+            objGasto.setFormatted_address(formatted_address);
+            objGasto.setFechaPago(
                     LocalDate.parse(txtFechagasto, GeneralConfiguration.getInstance().getDateFormatterNatural()));
-            objServMant2.setPrecioServicioProveedor(txtSubtotal);
-            objServMant2.setTipoGasto(gastoService.findByIdTipoGasto(cmbTipogasto));
-            objServMant2.setClasificacionTipoGasto(tipoGastoService.findByIdClasificacion(cmbClasificacion));
+            objGasto.setPrecioServicioProveedor(txtSubtotal);
+
+            objGasto.setPrincipalClasificacionGasto(clasificacionGastoService.findById(cmbClasificacionPrincipalGasto));
+            objGasto.setTipoGasto(gastoService.findByIdTipoGasto(cmbTipogasto));
+            objGasto.setClasificacionTipoGasto(tipoGastoService.findByIdClasificacion(cmbClasificacion));
             /** Subiendo factura */
             if (!txtFacturaNota.isEmpty()) {
                 FacturaEntity objfactura = new FacturaEntity();
@@ -248,24 +267,24 @@ public class GastosController {
                     facturaService.createFactura(objfactura);
                 }
 
-                objServMant2.setFacturaGasto(facturaService.findByIdFactura(objfactura.getIdFactura()));
-                objServMant2.setCotizacionFichero(cotizacionFicheroService.findIdCotizacionFichero(cmbTipoFichero));
+                objGasto.setFacturaGasto(facturaService.findByIdFactura(objfactura.getIdFactura()));
+                objGasto.setCotizacionFichero(cotizacionFicheroService.findIdCotizacionFichero(cmbTipoFichero));
             }
-            objServMant2.setUsuario(usuarioService.findByIdUsuario(cmbUsuario));
-            objServMant2.setObservaciones(txtObservaciones);
-            objServMant2.setAceptado(true);
+            objGasto.setUsuario(usuarioService.findByIdUsuario(cmbUsuario));
+            objGasto.setObservaciones(txtObservaciones);
+            objGasto.setAceptado(true);
 
             /** Subiendo cotizacion */
             if (chkCotizacion.equals("true")) {
                 if (OpcionGasto.intValue() == 1) {
-                    objServMant2.setIsGastoParcial(false);
+                    objGasto.setIsGastoParcial(false);
                 } else {
-                    objServMant2.setIsGastoParcial(true);
+                    objGasto.setIsGastoParcial(true);
                 }
-                objServMant2.setPerteneceCotizacion(true);
-                objServMant2.setFolioCotizacion(String.join("  / ", folioCotizacion));
-                // objServMant2.setCotizacion(cotizacionService.findByIdCotizacion(cmbCotizacion));
-                gastosService.addGastoGeneral(objServMant2);
+                objGasto.setPerteneceCotizacion(true);
+                objGasto.setFolioCotizacion(String.join("  / ", folioCotizacion));
+                // objGasto.setCotizacion(cotizacionService.findByIdCotizacion(cmbCotizacion));
+                gastosService.addGastoGeneral(objGasto);
                 for (int i = 0; i < idCotizacion.length; i++) {
                     CotizacionFicheroEntity objFicheros = new CotizacionFicheroEntity();
 
@@ -277,7 +296,7 @@ public class GastosController {
                         objFicheros.setImporte(subTotal[i]);
                     }
                     objFicheros.setObservaciones(txtObservaciones);
-                    objFicheros.setGasto(gastosService.findByIdServicioProveedorMant(objServMant2.getIdServicioProveedorMant()));
+                    objFicheros.setGasto(gastosService.findByIdServicioProveedorMant(objGasto.getIdServicioProveedorMant()));
                     // if(i>0){
                     //     CotizacionFicheroEntity objUrlFactura = cotizacionFicheroService.findIdCotizacionFichero(0);
                     //     String urlFacturaUnica=objUrlFactura.getUrl();
@@ -295,13 +314,13 @@ public class GastosController {
 
                 } /** End for */
             } else if (!txtCotizacion.equals("")) {
-                objServMant2.setFolioCotizacion(txtCotizacion);
+                objGasto.setFolioCotizacion(txtCotizacion);
                 if (!ficheroCotizacion.isEmpty() && ficheroCotizacion != null) {
-                    gastosService.addCotizacion(objServMant2, ficheroCotizacion);
+                    gastosService.addCotizacion(objGasto, ficheroCotizacion);
                 }
-                gastosService.addGastoGeneral(objServMant2);
+                gastosService.addGastoGeneral(objGasto);
             }else{
-                gastosService.addGastoGeneral(objServMant2);
+                gastosService.addGastoGeneral(objGasto);
             }
             respuesta = true;
             titulo = "Excelente!";
@@ -314,7 +333,7 @@ public class GastosController {
         return jsonReturn.build().toString();
     }
 
-    @RequestMapping(value = { "{idGasto}/actualizar", "{idGasto}/actualizar/" }, method = RequestMethod.POST)
+    @RequestMapping(value = { "{idGasto}/actualizar", "{idGasto}/actualizar/" }, method = RequestMethod.POST, consumes = "multipart/form-data")
     public @ResponseBody String updateGasto(@RequestParam(value = "cmbEmpresa", required = false) Integer cmbEmpresa,
             @RequestParam(value = "cmbProveedor", required = false) Integer cmbProveedor,
             @RequestParam(value = "cmbTipoFichero", required = false) Integer cmbTipoFichero,
@@ -329,6 +348,7 @@ public class GastosController {
             @RequestParam(value = "txtFechagasto") String txtFechagasto,
             @RequestParam(value = "txtSubtotal") BigDecimal txtSubtotal,
 
+            @RequestParam(value ="cmbClasificacionPrincipalGasto") Integer cmbClasificacionPrincipalGasto,
             @RequestParam(value = "cmbTipogasto") Integer cmbTipogasto,
             @RequestParam(value = "cmbClasificacion") Integer cmbClasificacion,
 
@@ -364,6 +384,8 @@ public class GastosController {
                 }
                 objGasto.setFechaPago(LocalDate.parse(txtFechagasto, GeneralConfiguration.getInstance().getDateFormatterNatural()));
                 objGasto.setPrecioServicioProveedor(txtSubtotal);
+                
+                objGasto.setPrincipalClasificacionGasto(clasificacionGastoService.findById(cmbClasificacionPrincipalGasto));
                 objGasto.setTipoGasto(gastoService.findByIdTipoGasto(cmbTipogasto));
                 objGasto.setClasificacionTipoGasto(tipoGastoService.findByIdClasificacion(cmbClasificacion));
                 if (idFactura > 0) {
@@ -534,8 +556,10 @@ public class GastosController {
                 .add("fechaPago", itemDetalle.getFechaPagoNatural())
                 .add("numeroFactura", itemDetalle.getFacturaGasto()!=null ? itemDetalle.getFacturaGasto().getNumeroFactura() : "N/A")
                 .add("numeroCotizacion", itemDetalle.getFolioCotizacion()!=null ? itemDetalle.getFolioCotizacion() :"N/A")
+                .add("principalGasto", itemDetalle.getPrincipalClasificacionGasto()!= null ? itemDetalle.getPrincipalClasificacionGasto().getDescripcion() : "N/A")
                 .add("tipoGasto", itemDetalle.getTipoGasto()!=null ? itemDetalle.getTipoGasto().getNombre() : "N/A")
                 .add("Clasificacion", itemDetalle.getClasificacionTipoGasto()!=null ? itemDetalle.getClasificacionTipoGasto().getNombre() : "N/A")
+                
                 .add("usuario", itemDetalle.getUsuario()!=null ? itemDetalle.getUsuario().getNombreCompleto() : "N/A")
                 .add("subtotal",itemDetalle.getSubtotalNatural()!=null ? itemDetalle.getSubtotalNatural() : "N/A")
                 .add("fileFactura", itemDetalle.getFacturaGasto().getUrl()!=null? itemDetalle.getFacturaGasto().getUrl() : "")

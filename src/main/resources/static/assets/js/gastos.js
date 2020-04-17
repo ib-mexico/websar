@@ -23,41 +23,46 @@ if (document.getElementById("appGastos")) {
             formInputs: [
             ],
             formCotizaciones: [],
-            opcionGasto:'',
-            estatus1:'',
-            estatus2:'',
+            opcionGasto: '',
+            estatus1: '',
+            estatus2: '',
 
-            lugares:[],
-            empresa:[],
-            proveedor:[],
-            facturaNota:'',
-            tipoGasto:[],
-            clasificacionGasto:[],
-            cotizacion:[],
-            tipoFichero:[],
+            lugares: [],
+            empresa: [],
+            proveedor: [],
+            facturaNota: '',
+            clasificacionPrincipalGasto: [],
+            tipoGasto: [],
+            clasificacionGasto: [],
+            cotizacion: [],
+            tipoFichero: [],
 
-            usuario:[],
+            usuario: [],
             nuevoPago:{
-                id_empresa:'',
-                id_proveedor:'',
-                facturaNota:'',
-                id_tipoGasto:'',
-                id_clasificacionGasto:'',
-                id_cotizacion:'',
-                id_usuario:'',
+                id_empresa: '',
+                id_proveedor: '',
+                facturaNota: '',
+
+                idPrincipalGasto:  '',
+                id_tipoGasto: '',
+                id_clasificacionGasto: '',
+
+                id_cotizacion: '',
+                id_usuario: '',
                 checkCotizacion:false,
-                id_cotizacion:'',
-                txtCotizacion:'',
-                observaciones:'',
-                id_tipoFichero:'',
-                depa:'',
-                sucursal:'',
+                id_cotizacion: '',
+                txtCotizacion: '',
+                observaciones: '',
+                id_tipoFichero: '',
+                depa: '',
+                sucursal: '',
+                subtotal: ''
             }
-            ,editGastoData:[],
+            ,editGastoData: [],
             editUsuario:{
-                id_usuario:'',
-                departamento:'',
-                sucursal:'',
+                id_usuario: '',
+                departamento: '',
+                sucursal: '',
             },
         },
 
@@ -150,6 +155,7 @@ if (document.getElementById("appGastos")) {
             loadModal(){
                 $('.cmbEmpresa').selectpicker('refresh');
                 $('.cmbProveedor').selectpicker('refresh');
+                $('.cmbClasificacionPrincipalGasto').selectpicker('refresh');
                 $('.cmbTipogasto').selectpicker('refresh');
                 $('.cmbClasificacion').selectpicker('refresh');
                 $('.cmbUsuario').selectpicker('refresh');
@@ -170,12 +176,16 @@ if (document.getElementById("appGastos")) {
                     swal("Revisión!","Seleccione un Tipo de Fichero, para continuar","warning");
                     return response;
                 }
+                if(!(this.nuevoPago.idPrincipalGasto)){
+                    swal("Revisión!","Seleccione una clasificacion de gasto, para poder continuar","warning");
+                    return response;
+                }
                 if(!(this.nuevoPago.id_tipoGasto)){
-                    swal("Revisión!","Seleccione un Tipo de gasto, para poder continuar","warning");
+                    swal("Revisión!","Seleccione un uso de gasto, para poder continuar","warning");
                     return response;
                 }
                 if(!(this.nuevoPago.id_clasificacionGasto)){
-                    swal("Revisión!","Seleccione la clasificacion del tipo de gasto, para poder continuar","warning");
+                    swal("Revisión!","Seleccione el tipo de gasto, para poder continuar","warning");
                     return response;
                 }
                 if(!this.nuevoPago.facturaNota){
@@ -185,6 +195,10 @@ if (document.getElementById("appGastos")) {
                 if(!this.nuevoPago.observaciones){
                     swal("Revisión!", "Rellena el campo de observaciones", "warning");
 					return response;
+                }
+                if(!this.nuevoPago.subtotal){
+                    swal("Revisión!", "Completa el campo Subtotal del gasto","warning");
+                    return response;
                 }
 
                 var fileInput= document.getElementById('idFicheroFactura').files.length;
@@ -215,6 +229,7 @@ if (document.getElementById("appGastos")) {
                     if(resp.status==200 && resp.data.respuesta){
                         this.empresa=resp.data.jsonEmpresa.rows;
                         this.proveedor=resp.data.jsonProveedor.proveedores;
+                        this.clasificacionPrincipalGasto = resp.data.jsonClasificacionPrincipalGasto.rows;
                         this.tipoGasto=resp.data.jsonTipoGasto.tipo_gasto;
                         this.usuario=resp.data.jsonUsuario.rows;
                         this.cotizacion=resp.data.jsonCotizacion.rows;
@@ -257,18 +272,21 @@ if (document.getElementById("appGastos")) {
                         if (resp.status==200 && resp.data.respuesta) {
                             $("#formGasto")[0].reset();
                             $("#modalGasto").modal("hide");
-                            this.nuevoPago.id_empresa='',
-                            this.nuevoPago.id_proveedor='',
-                            this.nuevoPago.facturaNota='',
-                            this.nuevoPago.id_tipoGasto='',
-                            this.nuevoPago.id_clasificacionGasto='',
-                            this.nuevoPago.id_cotizacion='',
-                            this.nuevoPago.id_usuario='',
+                            this.nuevoPago.id_empresa = '',
+                            this.nuevoPago.id_proveedor = '',
+                            this.nuevoPago.facturaNota = '',
+
+                            this.nuevoPago.idPrincipalGasto = '',
+                            this.nuevoPago.id_tipoGasto = '',
+                            this.nuevoPago.id_clasificacionGasto = '',
+
+                            this.nuevoPago.id_cotizacion = '',
+                            this.nuevoPago.id_usuario = '',
                             this.nuevoPago.checkCotizacion=false,
-                            this.nuevoPago.txtCotizacion='',
-                            this.nuevoPago.depa='',
-                            this.nuevoPago.sucursal=''
-                            this.formInputs='';
+                            this.nuevoPago.txtCotizacion = '',
+                            this.nuevoPago.depa = '',
+                            this.nuevoPago.sucursal = ''
+                            this.formInputs = '';
                             swal(resp.data.titulo, resp.data.mensaje, "success");
                             $("#dtGasto").bootstrapTable('refresh');
                             console.log("refrescando la tabla");
@@ -293,8 +311,13 @@ if (document.getElementById("appGastos")) {
                         $('.cmbProveedor').selectpicker('render');
                         $('.cmbTipoFichero').selectpicker('val', this.editGastoData.id_tipoFichero);
                         $('.cmbTipoFichero').selectpicker('render');
+                        /* Agregar clasificacion Principal */
+                        $('.cmbClasificacionPrincipalGasto').selectpicker('val', this.editGastoData.idPrincipalGasto);
+                        $('.cmbClasificacionPrincipalGasto').selectpicker('render');
+
                         $('.cmbTipogasto').selectpicker('val', this.editGastoData.id_tipoGasto);
                         $('.cmbTipogasto').selectpicker('render');
+
                         $('.cmbUsuario').selectpicker('val', this.editGastoData.usuario);
                         $('.cmbUsuario').selectpicker('render');
                         if(this.editGastoData.checkGastoParcial==true){

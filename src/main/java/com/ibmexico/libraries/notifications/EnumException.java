@@ -225,9 +225,18 @@ public enum EnumException {
 	//EMPRESAS
 	EMPRESA_CREATE_001("Error de creacion de empresa", "El objeto empresa no es valido, póngase en contacto con el administrador del sistema."),
 	EMPRESA_CREATE_002("Error de creacion de empresa", "Es necesario especificar el empresa."),
-	
+
 	EMPRESA_UPDATE_001("Error de modificación de empresa", "El objeto empresa no es válido, póngase en contacto con el administrador del sistema."),
 	
+	//SUCURSALES
+	SUCURSAL_CREATE_001("Error de creacion de sucursal", "El objeto sucursal no es valido, póngase en contacto con el administrador del sistema."),
+	SUCURSAL_CREATE_002("Error de creacion de sucursal", "Es necesario especificar el sucursal."),
+	
+	SUCURSAL_UPDATE_001("Error de modificación de sucursal", "El objeto sucursal no es válido, póngase en contacto con el administrador del sistema."),
+	
+	SUCURSAL_DELETE_001("Error de eliminación de la sucursal","El objeto sucursal no es válido, consulte a su administrador de sistema"),
+
+
 	//PROVEEDORES
 	PROVEEDORES_CREATE_001("Error de creacion de proveedor", "El objeto proveedor no es valido, póngase en contacto con el administrador del sistema."),
 	PROVEEDORES_CREATE_002("Error de creacion de proveedor", "Es necesario especificar el proveedor."),
