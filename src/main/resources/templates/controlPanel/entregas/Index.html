@@ -1,7 +1,9 @@
 <th:block th:fragment="body">
-	<div class="block-header">
-        <h2>ENTREGAS DE PRODUCTOS</h2>
-    </div>
+
+	<ol class="breadcrumb breadcrumb-bg-red">
+		<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> INICIO</a></li>
+	  <li class="active"><i class="material-icons">public</i> ENTREGAS DE PRODUCTOS</li>
+	</ol>
 
     <div class="row clearfix">
     	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -45,7 +47,6 @@
 						<table id="dtEntregas" class="table table-bordered table-striped table-hover">
 							<thead>
 								<tr>
-									<th data-width="10%" data-field="idEntrega" data-halign="left" data-align="center">ID</th>
 									<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
 									<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
 									<th data-width="30%" data-field="cliente" data-halign="center" data-align="left">Cliente</th>

@@ -5,7 +5,12 @@
     
     <ol class="breadcrumb breadcrumb-bg-red">
       	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
-    	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">view_list</i> Cotizaciones</a></li>
+    	<li>
+			<a th:if="${objCotizacion.isNormal()}" th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">view_list</i> Cotizaciones</a>
+			<a th:if="${objCotizacion.isMaestra()}" th:href="${ {_PATH_} + 'controlPanel/cotizacionesProyecto'}"><i class="material-icons">view_list</i> Proyecto</a>
+			<a th:if="${objCotizacion.isBoom()}" th:href="${ {_PATH_} + 'controlPanel/cotizacionesBom'}"><i class="material-icons">view_list</i> Cotizaciones Bom</a>
+			<a th:if="${objCotizacion.isRenta()}" th:href="${ {_PATH_} + 'controlPanel/Sa'}"><i class="material-icons">view_list</i> Servicios Administrados</a>
+		</li>
     	<li class="active">Ordenes de Servicio</li>
   	</ol>
     

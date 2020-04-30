@@ -13,7 +13,7 @@
     			<div class="body">
     				<form id="formOportunidad" th:action="${ {_PATH_} + 'controlPanel/oportunidadesNegocios/' + objOportunidad.getIdOportunidadNegocio()}" th:method="PUT">
 						<div class="row clearfix">
-							<div class="col-md-8">
+							<div class="col-md-6">
 								<div class="form-group form-group-lg">
 	                        		<p><b>Titulo de oportunidad *</b></p>
 	                                <div class="form-line">
@@ -22,7 +22,7 @@
 	                            </div>
 							</div>														
 							
-							<div class="col-md-4">
+							<div class="col-md-3">
 								<div class="form-group form-group-lg">
 									<p><b>Estatus *</b></p>
 		                            <select class="form-control show-tick" name="cmbEstatus" id="cmbEstatus" data-live-search="true" >
@@ -33,6 +33,20 @@
 		                       		</select>
 		                       	</div>
 							</div>
+
+							<div class="col-md-3">
+								<div class="form-group form-group-lg">
+									<p><b>Clasificacion*</b></p>
+		                            <select class="form-control show-tick" name="cmbEstatusClasificacion" id="cmbEstatusClasificacion" data-live-search="true" >
+		                       			<th:block th:each="itemEstatusClasificacion : ${lstOpnEstatusClasificacion}">
+											<h2 th:text="${itemEstatusClasificacion}"></h2>
+		                       				<option th:if="${objOportunidad.opnNegocioEstatusClasificacion != NULL AND objOportunidad.opnNegocioEstatusClasificacion.idOpnNegocioEstatusClasificacion == itemEstatusClasificacion.idOpnNegocioEstatusClasificacion}" selected="selected" th:value="${itemEstatusClasificacion.idOpnNegocioEstatusClasificacion}" th:text="${itemEstatusClasificacion.nombre}"></option>
+		                       				<option th:unless="${objOportunidad.opnNegocioEstatusClasificacion !=NULL AND objOportunidad.opnNegocioEstatusClasificacion.idOpnNegocioEstatusClasificacion == itemEstatusClasificacion.idOpnNegocioEstatusClasificacion }" th:value="${itemEstatusClasificacion.idOpnNegocioEstatusClasificacion}" th:text="${itemEstatusClasificacion.nombre}"></option>
+		                       			</th:block>
+		                       		</select>
+		                       	</div>
+							</div>
+
 						</div>
 						
 						<div class="row clearfix">
@@ -189,7 +203,7 @@
 							</div>
 							<div class="col-md-8">
 								<div class="col-md-10">
-									<b>Seleccionar Colaborador *</b>
+									<p><b>Seleccionar Colaborador </b></p>
 									<div class="input-group">
 										<select name="cmbUsuario"  class="'form-control selectpicker show-tick cmbUsuario" data-live-search="true"
 										  multiple="multiple">									  
@@ -467,6 +481,37 @@
 				} else {
 					$('.fecha-renovacion').hide();
 				}
+			});
+
+
+			/* Estatus clasificacion */
+						
+			// SELECT PICKER			
+			$('#cmbEstatus').on('change', function() {
+				var $select = $('#cmbEstatusClasificacion');
+				var data = $('#cmbEstatus').val()
+				
+				$.ajax({
+					url					: [[@{/controlPanel/oportunidadesNegocios/get-estatus-clasificacion}]] + "?idEstatus=" + data,
+					dataType			: 'json',
+					type				: "GET",
+					success				: function(data) {
+						$select.attr('disabled', false);
+												 
+						$select.find('option').remove();  
+						$.each(data, function(key, value) 
+						{
+						    $select.append('<option value=' + value.id_Opn_Estatus_clasificacion + '>' + value.nombre + '</option>');
+						});
+						
+						$select.selectpicker('refresh');
+					},
+					error				: function(e) {
+						console.log(e);
+						$select.attr('disabled', true);
+						$select.empty();
+					}
+				});
 			});
 			
 			/**

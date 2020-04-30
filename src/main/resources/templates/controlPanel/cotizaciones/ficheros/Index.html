@@ -1,11 +1,16 @@
 <th:block th:fragment="body">
 	<div class="block-header">
-        <h2>COTIZACI&Oacute;N: <th:block th:text="${objCotizacion.folio}"></th:block></h2>
+        <h2 class="font-weight-bold">COTIZACI&Oacute;N: <th:block th:text="${objCotizacion.folio}"></th:block></h2>
     </div>
     
     <ol class="breadcrumb breadcrumb-bg-red">
       	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
-    	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">public</i> Cotizaciones</a></li>
+    	<li>
+			<a th:if="${objCotizacion.isNormal()}" th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">public</i> Cotizaciones</a>
+			<a th:if="${objCotizacion.isMaestra()}" th:href="${ {_PATH_} + 'controlPanel/cotizacionesProyecto'}"><i class="material-icons">public</i> Proyectos</a>
+			<a th:if="${objCotizacion.isBoom()}" th:href="${ {_PATH_} + 'controlPanel/cotizacionesBom'}"><i class="material-icons">public</i> Cotizaciones Bom</a>
+			<a th:if="${objCotizacion.isRenta()}" th:href="${ {_PATH_} + 'controlPanel/Sa'}"><i class="material-icons">public</i> Servicios Administrados</a>
+		</li>
     	<li class="active"><i class="material-icons">archive</i> Expedientes</li>
   	</ol>
     
@@ -147,7 +152,7 @@
 	                			<p><b>Tipo de Fichero *</b></p>
 	                            <select class="form-control show-tick" name="cmbTipoFichero" id="cmbTipoFichero" data-live-search="true" >
 	                       			<th:block th:each="itemTipo : ${lstTiposFicheros}" >
-	                       				<option th:if="${itemTipo.idCotizacionTipoFichero == 5}" th:value="${itemTipo.idCotizacionTipoFichero}" th:text="${itemTipo.cotizacionTipoFichero}"></option>	                       				
+	                       				<option th:if="${itemTipo.idCotizacionTipoFichero == 5 || itemTipo.idCotizacionTipoFichero == 4}" th:value="${itemTipo.idCotizacionTipoFichero}" th:text="${itemTipo.cotizacionTipoFichero}"></option>	                       				
 	                       			</th:block>
 	                       		</select>
 	                		</div>

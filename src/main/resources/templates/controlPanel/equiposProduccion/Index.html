@@ -1,7 +1,4 @@
 <th:block th:fragment="body">
-	<div class="block-header">
-        <h2>EQUIPOS EN PRODUCCI&Oacute;N</h2>
-    </div>
     
     <ol class="breadcrumb breadcrumb-bg-red">
       	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
@@ -48,24 +45,22 @@
 					</div>
 					
 					<div class="table-responsive">
-						<div class="container">						
-							<table id="dtEquipos" class="table table-bordered table-striped table-hover">
-								<thead>
-									<tr>
-										<th data-width="20%" data-field="fecha_renovacion" data-halign="center" data-align="center">Renovaci&oacute;n</th>
-										<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
-										<th data-width="20%" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>
-										<th data-width="35%" data-field="cliente" data-halign="center" data-align="left">Cliente</th>
-										<th data-width="20%" data-field="marca" data-halign="center" data-align="left">Marca</th>								
-										<th data-width="20%" data-field="modelo" data-halign="center" data-align="left">Modelo</th>
-										<th data-width="20%" data-field="numero_serie" data-halign="center" data-align="left">No. Serie</th>
+						<table id="dtEquipos" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th data-width="20%" data-field="fecha_renovacion" data-halign="center" data-align="center">Renovaci&oacute;n</th>
+									<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+									<th data-width="20%" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>
+									<th data-width="35%" data-field="cliente" data-halign="center" data-align="left">Cliente</th>
+									<th data-width="20%" data-field="marca" data-halign="center" data-align="left">Marca</th>								
+									<th data-width="20%" data-field="modelo" data-halign="center" data-align="left">Modelo</th>
+									<th data-width="20%" data-field="numero_serie" data-halign="center" data-align="left">No. Serie</th>
 										
-										<th data-width="25%" data-field="creacionUsuario" data-halign="center" data-align="center">Creaci&oacute;n/Usuario</th>
-										<th data-width="20%" data-field="creacionFecha" data-halign="center" data-align="center">Creaci&oacute;n/Fecha</th>																			
-									</tr>
-								</thead>
-							</table>		
-						</div>
+									<th data-width="25%" data-field="creacionUsuario" data-halign="center" data-align="center">Creaci&oacute;n/Usuario</th>
+									<th data-width="20%" data-field="creacionFecha" data-halign="center" data-align="center">Creaci&oacute;n/Fecha</th>																			
+								</tr>
+							</thead>
+						</table>		
 					</div>
 					
     			</div>

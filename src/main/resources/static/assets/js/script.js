@@ -736,6 +736,9 @@ if(document.getElementById('appCotizaciones')) {
 			monedas: [],
 			clientes: [],
 			contactos: [],
+			proyectos: [],
+			boms: [],
+			rentas: [],
 			newCotizacion: {
 				id_usuario: 'default',
 				id_empresa: 'default',
@@ -765,6 +768,9 @@ if(document.getElementById('appCotizaciones')) {
 				var url = host + 'cotizaciones/get-cotizacion-data-form';
 				axios.get(url).then(response => {
 					if(response.status == 200 && response.data.respuesta) {
+						this.proyectos		= response.data.jsonProyectos.rows;
+						this.boms			= response.data.jsonBoms.rows;
+						this.rentas			= response.data.jsonRentas.rows;
 						this.usuarios 		= response.data.jsonUsuarios.rows;
 						this.empresas 		= response.data.jsonEmpresas.rows;
 						this.formasPagos 	= response.data.jsonFormasPagos.rows;

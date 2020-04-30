@@ -1,7 +1,9 @@
 <th:block th:fragment="body">
-	<div class="block-header">
-        <h2>RESGUARDOS</h2>
-    </div>
+
+	<ol class="breadcrumb breadcrumb-bg-red">
+		<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> INICIO</a></li>
+	  <li class="active"><i class="material-icons">public</i> RESGUARDOS</li>
+	</ol>
     
     <div class="row clearfix">
     	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -42,23 +44,20 @@
 					</div>
 					
 					<div class="table-responsive">
-						<div class="container">						
-							<table id="dtResguardos" class="table table-bordered table-striped table-hover">
-								<thead>
-									<tr>
-										<th data-width="10%" data-field="idResguardo" data-halign="left" data-align="center">ID</th>
-										<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
-										<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
-										<th data-width="25%" data-field="resguardoTipo" data-halign="center" data-align="center">Tipo</th>
+						<table id="dtResguardos" class="table table-bordered table-striped table-hover">
+							<thead>
+								<tr>
+									<th class="col-md-2" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+									<th class="col-md-2" data-field="folio" data-halign="center" data-align="center">Folio</th>
+									<th class="col-md-1" data-field="resguardoTipo" data-halign="center" data-align="center">Tipo</th>
 																			
-										<th data-width="30%" data-field="nombreEntrega" data-halign="center" data-align="left">Entreg&oacute;</th>
-										<th data-width="30%" data-field="nombreRecibe" data-halign="center" data-align="left">Recibi&oacute;</th>
+									<th class="col-md-3" data-field="nombreEntrega" data-halign="center" data-align="center">Entreg&oacute;</th>
+									<th class="col-md-2" data-field="nombreRecibe" data-halign="center" data-align="center">Recibi&oacute;</th>
 										
-										<th data-width="20%" data-field="creacionFecha" data-halign="center" data-align="center">Creaci&oacute;n/Fecha</th>																			
-									</tr>
-								</thead>
-							</table>		
-						</div>
+									<th class="col-md-2" data-field="creacionFecha" data-halign="center" data-align="center">Creaci&oacute;n/Fecha</th>																			
+								</tr>
+							</thead>
+						</table>		
 					</div>
 					
     			</div>

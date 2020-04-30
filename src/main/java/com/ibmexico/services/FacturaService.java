@@ -8,10 +8,6 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.transaction.Transactional;
 
 import com.ibmexico.entities.FacturaEntity;
@@ -41,12 +37,12 @@ public class FacturaService{
     }
 
     public void createFactura(FacturaEntity objFactura){
-        if(objFactura!=null){
-            LocalDateTime ldtnow=LocalDateTime.now();
+        if(objFactura != null){
+            LocalDateTime ldtnow = LocalDateTime.now();
             objFactura.setCreacionFecha(ldtnow);
             objFactura.setModificacionFecha(ldtnow);
             objFactura.setIsEliminado(false);
-            UsuarioEntity objUsuario=sesionService.getCurrentUser();
+            UsuarioEntity objUsuario = sesionService.getCurrentUser();
             objFactura.setCreacionUsuario(objUsuario);
             objFactura.setModificacionUsuario(objUsuario);
             facturaRepo.save(objFactura);
@@ -54,7 +50,7 @@ public class FacturaService{
     }
 
 @Transactional
-public void addFactura(FacturaEntity objFactura, MultipartFile file) {
+public void addFactura(FacturaEntity objFactura, MultipartFile file)  throws IOException {
     if (objFactura != null) {
         if (file != null && !file.isEmpty()) {
             try {
@@ -64,9 +60,8 @@ public void addFactura(FacturaEntity objFactura, MultipartFile file) {
                     if (arrNombreFichero.length >= 2) {
                         ficheroNombre = ficheroNombre + "." + arrNombreFichero[arrNombreFichero.length - 1];
                     }
-                    System.err.println("file no esta vacio factura");
+                    // System.err.println("file no esta vacio factura");
                     objFactura.setUrl(ficheroNombre);
-                    createFactura(objFactura);
                     createFicheroFactura(objFactura, file);
                 }
             } catch (Exception e) {
@@ -84,19 +79,15 @@ public void createFicheroFactura(FacturaEntity objFactura, MultipartFile objFile
     URL urlPath = this.getClass().getResource("/");
     if (objFactura != null) {
         if (objFactura.getUrl() != "") {
-            byte[] bytesFichero = objFile.getBytes();
             // Crear carpeta si no existe
             File fileruta = new File(urlPath.getPath() + "static/ficheros/FacturasGastos");
             if (!fileruta.exists()) {
                 fileruta.mkdirs();
             }
-            try (BufferedOutputStream buffStream = new BufferedOutputStream(
-                    new FileOutputStream(new File(urlPath.getPath() + "static/ficheros/FacturasGastos/"
-                            + objFactura.getUrl())))) {
+            try (BufferedOutputStream buffStream = new BufferedOutputStream( new FileOutputStream(new File(urlPath.getPath() + "static/ficheros/FacturasGastos/"+objFactura.getUrl())))) {
+                byte[] bytesFichero = objFile.getBytes();
                 buffStream.write(bytesFichero);
-                // LocalDateTime ldtnow=LocalDateTime.now();
-                // objFactura.setModificacionUsuario(objUsurioCreacion);
-                facturaRepo.save(objFactura);
+                createFactura(objFactura);
             } catch (Exception e) {
                 throw new ApplicationException(EnumException.ACTIVO_FICHEROS_ADD_FILE_003);
             }

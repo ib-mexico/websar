@@ -98,35 +98,35 @@ public interface ICotizacionRepository  extends JpaRepository<CotizacionEntity, 
 	
 	
 	//TABLE
-	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion ")	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolNormal = true ")	
 	public abstract long countForDataTable();
 	
-	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.eliminado = false AND (objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1%  OR objCotizacion.cliente.cliente like %?1%)")	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolNormal = true AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1%  OR objCotizacion.cliente.cliente like %?1%)")	
 	public abstract long countForDataTable(String search);
 	
-	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.eliminado = false AND (objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1%  OR objCotizacion.cliente.cliente like %?1%) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?2 AND ?3")	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolNormal = true AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1%  OR objCotizacion.cliente.cliente like %?1%) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?2 AND ?3")	
 	public abstract long countForDataTable(String search, LocalDate ldFechaInicio, LocalDate ldFechaFin);
 	
-	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2%)")	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolNormal = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2%)")	
 	public abstract long countForDataTable(int idUsuario, String search);
 	
-	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2%) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?3 AND ?4")	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolNormal = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2%) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?3 AND ?4")	
 	public abstract long countForDataTable(int idUsuario, String search, LocalDate ldFechaInicio, LocalDate ldFechaFin);
-		
 	
-	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion")
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion where objCotizacion.boolNormal = true")
 	public abstract List<CotizacionEntity> findForDataTable(Pageable page);
 				
-	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1% OR objCotizacion.cliente.cliente like %?1% OR objCotizacion.total like %?1% ) order by objCotizacion.creacionFecha DESC")
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolNormal = true AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1% OR objCotizacion.cliente.cliente like %?1% OR objCotizacion.total like %?1% ) order by objCotizacion.creacionFecha DESC")
 	public abstract List<CotizacionEntity> findForDataTable(String search, Pageable page);
 	
-	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1% OR objCotizacion.cliente.cliente like %?1% OR objCotizacion.total like %?1% ) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?2 AND ?3 order by objCotizacion.creacionFecha DESC")
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolNormal = true AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1% OR objCotizacion.cliente.cliente like %?1% OR objCotizacion.total like %?1% ) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?2 AND ?3 order by objCotizacion.creacionFecha DESC")
 	public abstract List<CotizacionEntity> findForDataTable(String search, LocalDate ldFechaInicio, LocalDate ldFechaFin, Pageable page);
 	
-	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2% OR objCotizacion.total like %?2% ) order by objCotizacion.creacionFecha DESC")
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolNormal = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2% OR objCotizacion.total like %?2% ) order by objCotizacion.creacionFecha DESC")
 	public abstract List<CotizacionEntity> findForDataTable(int idUsuario, String search, Pageable page);
 	
-	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2% OR objCotizacion.total like %?2% ) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?3 AND ?4 order by objCotizacion.creacionFecha DESC")
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolNormal = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2% OR objCotizacion.total like %?2% ) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?3 AND ?4 order by objCotizacion.creacionFecha DESC")
 	public abstract List<CotizacionEntity> findForDataTable(int idUsuario, String search, LocalDate ldFechaInicio, LocalDate ldFechaFin, Pageable page);
 
 	// //GRAFICAS INDICADORES DE PRODUCCION
@@ -165,4 +165,116 @@ public interface ICotizacionRepository  extends JpaRepository<CotizacionEntity, 
 	
 	@Query(value = "{call subtotalCotizacion}", nativeQuery = true)
 	public abstract List<CotizacionEntity> spCotFacturada();
+
+
+	/* Table for proyectos */
+		
+	//TABLE
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolMaestra = true ")	
+	public abstract long countForDataTableProyecto();
+	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolMaestra = true AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1%  OR objCotizacion.cliente.cliente like %?1%)")	
+	public abstract long countForDataTableProyecto(String search);
+	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolMaestra = true AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1%  OR objCotizacion.cliente.cliente like %?1%) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?2 AND ?3")	
+	public abstract long countForDataTableProyecto(String search, LocalDate ldFechaInicio, LocalDate ldFechaFin);
+	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolMaestra = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2%)")	
+	public abstract long countForDataTableProyecto(int idUsuario, String search);
+	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolMaestra = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2%) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?3 AND ?4")	
+	public abstract long countForDataTableProyecto(int idUsuario, String search, LocalDate ldFechaInicio, LocalDate ldFechaFin);
+	
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolMaestra = true")
+	public abstract List<CotizacionEntity> findForDataTableProyecto(Pageable page);
+				
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolMaestra = true AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1% OR objCotizacion.cliente.cliente like %?1% OR objCotizacion.total like %?1% ) order by objCotizacion.creacionFecha DESC")
+	public abstract List<CotizacionEntity> findForDataTableProyecto(String search, Pageable page);
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolMaestra = true AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1% OR objCotizacion.cliente.cliente like %?1% OR objCotizacion.total like %?1% ) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?2 AND ?3 order by objCotizacion.creacionFecha DESC")
+	public abstract List<CotizacionEntity> findForDataTableProyecto(String search, LocalDate ldFechaInicio, LocalDate ldFechaFin, Pageable page);
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolMaestra = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2% OR objCotizacion.total like %?2% ) order by objCotizacion.creacionFecha DESC")
+	public abstract List<CotizacionEntity> findForDataTableProyecto(int idUsuario, String search, Pageable page);
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolMaestra = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2% OR objCotizacion.total like %?2% ) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?3 AND ?4 order by objCotizacion.creacionFecha DESC")
+	public abstract List<CotizacionEntity> findForDataTableProyecto(int idUsuario, String search, LocalDate ldFechaInicio, LocalDate ldFechaFin, Pageable page);
+
+
+
+		
+	//TABLE FOR SERVICIOS ADMINISTRADOS
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolRenta = true")	
+	public abstract long countForDataTableSA();
+	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolRenta = true AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1%  OR objCotizacion.cliente.cliente like %?1%)")	
+	public abstract long countForDataTableSA(String search);
+	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolRenta = true AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1%  OR objCotizacion.cliente.cliente like %?1%) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?2 AND ?3")	
+	public abstract long countForDataTableSA(String search, LocalDate ldFechaInicio, LocalDate ldFechaFin);
+	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolRenta = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2%)")	
+	public abstract long countForDataTableSA(int idUsuario, String search);
+	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolRenta = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2%) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?3 AND ?4")	
+	public abstract long countForDataTableSA(int idUsuario, String search, LocalDate ldFechaInicio, LocalDate ldFechaFin);
+	
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolRenta = true")
+	public abstract List<CotizacionEntity> findForDataTableSA(Pageable page);
+				
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolRenta = true AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1% OR objCotizacion.cliente.cliente like %?1% OR objCotizacion.total like %?1% ) order by objCotizacion.creacionFecha DESC")
+	public abstract List<CotizacionEntity> findForDataTableSA(String search, Pageable page);
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolRenta = true AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1% OR objCotizacion.cliente.cliente like %?1% OR objCotizacion.total like %?1% ) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?2 AND ?3 order by objCotizacion.creacionFecha DESC")
+	public abstract List<CotizacionEntity> findForDataTableSA(String search, LocalDate ldFechaInicio, LocalDate ldFechaFin, Pageable page);
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolRenta = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2% OR objCotizacion.total like %?2% ) order by objCotizacion.creacionFecha DESC")
+	public abstract List<CotizacionEntity> findForDataTableSA(int idUsuario, String search, Pageable page);
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolRenta = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2% OR objCotizacion.total like %?2% ) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?3 AND ?4 order by objCotizacion.creacionFecha DESC")
+	public abstract List<CotizacionEntity> findForDataTableSA(int idUsuario, String search, LocalDate ldFechaInicio, LocalDate ldFechaFin, Pageable page);
+
+
+		
+	//TABLE FOR boom
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion  WHERE objCotizacion.boolBoom = true")	
+	public abstract long countForDataTableBom();
+	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolBoom = true AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1%  OR objCotizacion.cliente.cliente like %?1%)")	
+	public abstract long countForDataTableBom(String search);
+	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolBoom = true AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1%  OR objCotizacion.cliente.cliente like %?1%) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?2 AND ?3")	
+	public abstract long countForDataTableBom(String search, LocalDate ldFechaInicio, LocalDate ldFechaFin);
+	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolBoom = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2%)")	
+	public abstract long countForDataTableBom(int idUsuario, String search);
+	
+	@Query("SELECT COUNT(objCotizacion) FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolBoom = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2%) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?3 AND ?4")	
+	public abstract long countForDataTableBom(int idUsuario, String search, LocalDate ldFechaInicio, LocalDate ldFechaFin);
+	
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolBoom = true")
+	public abstract List<CotizacionEntity> findForDataTableBom(Pageable page);
+				
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolBoom = true AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1% OR objCotizacion.cliente.cliente like %?1% OR objCotizacion.total like %?1% ) order by objCotizacion.creacionFecha DESC")
+	public abstract List<CotizacionEntity> findForDataTableBom(String search, Pageable page);
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolBoom = true AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?1% OR objCotizacion.folioCotizacion like %?1% OR objCotizacion.folio like %?1% OR objCotizacion.usuario.nombreCompleto like %?1% OR objCotizacion.cliente.cliente like %?1% OR objCotizacion.total like %?1% ) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?2 AND ?3 order by objCotizacion.creacionFecha DESC")
+	public abstract List<CotizacionEntity> findForDataTableBom(String search, LocalDate ldFechaInicio, LocalDate ldFechaFin, Pageable page);
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolBoom = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2% OR objCotizacion.total like %?2% ) order by objCotizacion.creacionFecha DESC")
+	public abstract List<CotizacionEntity> findForDataTableBom(int idUsuario, String search, Pageable page);
+	
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolBoom = true AND (objCotizacion.usuario.idUsuario = ?1 OR objCotizacion.usuarioVendedor.idUsuario = ?1) AND objCotizacion.eliminado = false AND (objCotizacion.cotizacionEstatus.cotizacionEstatus like %?1% OR objCotizacion.concepto like %?2% OR objCotizacion.folioCotizacion like %?2% OR objCotizacion.folio like %?2% OR objCotizacion.usuario.nombreCompleto like %?2%  OR objCotizacion.cliente.cliente like %?2% OR objCotizacion.total like %?2% ) AND CONVERT(objCotizacion.creacionFecha, DATE) BETWEEN ?3 AND ?4 order by objCotizacion.creacionFecha DESC")
+	public abstract List<CotizacionEntity> findForDataTableBom(int idUsuario, String search, LocalDate ldFechaInicio, LocalDate ldFechaFin, Pageable page);
+
+	/**Cotizaciones clasificadas por proyecto, boom , servicios administrados */
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolMaestra = true AND objCotizacion.cotizacionEstatus.idCotizacionEstatus != 5 AND objCotizacion.cotizacionEstatus.idCotizacionEstatus !=1")
+	public abstract List<CotizacionEntity> findCotizacionProyecto();
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolBoom = true AND objCotizacion.cotizacionEstatus.idCotizacionEstatus != 5 AND objCotizacion.cotizacionEstatus.idCotizacionEstatus !=1")
+	public abstract List<CotizacionEntity> findCotizacionBom();
+	@Query("SELECT objCotizacion FROM CotizacionEntity objCotizacion WHERE objCotizacion.boolRenta = true AND objCotizacion.cotizacionEstatus.idCotizacionEstatus != 5 AND objCotizacion.cotizacionEstatus.idCotizacionEstatus !=1")
+	public abstract List<CotizacionEntity> findCotizacionRenta();
 }

@@ -62,7 +62,11 @@ public class OportunidadNegocioEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_oportunidad_negocio_estatus", nullable = true)
 	private OportunidadNegocioEstatusEntity oportunidadNegocioEstatus;
-	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_opn_negocio_estatus_clasificacion", nullable = true)
+	private OportunidadNegocioEstatusClasificacionEntity opnNegocioEstatusClasificacion;
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_moneda", nullable = true)
 	private MonedaEntity moneda;
@@ -361,6 +365,15 @@ public class OportunidadNegocioEntity {
 
 	public void setFicheros(List<OportunidadNegocioFicheroEntity> ficheros) {
 		this.ficheros = ficheros;
+	}
+
+	public OportunidadNegocioEstatusClasificacionEntity getOpnNegocioEstatusClasificacion() {
+		return opnNegocioEstatusClasificacion;
+	}
+
+	public void setOpnNegocioEstatusClasificacion(
+			OportunidadNegocioEstatusClasificacionEntity opnNegocioEstatusClasificacion) {
+		this.opnNegocioEstatusClasificacion = opnNegocioEstatusClasificacion;
 	}
 	
 	

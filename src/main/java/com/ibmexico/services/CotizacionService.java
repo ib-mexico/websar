@@ -58,6 +58,7 @@ public class CotizacionService {
 	private SessionService sessionService;
 	private static DecimalFormat df = new DecimalFormat("0.00");
 	
+	/**Cotizaciones Normales */
 	public DataTable<CotizacionEntity> dataTable(String search, int offset, int limit, String txtBootstrapTableDesde, String txtBootstrapTableHasta) {
 		List<CotizacionEntity> lstCotizacionEntity = null;
 		LocalDate fechaInicio = null;
@@ -120,6 +121,197 @@ public class CotizacionService {
 		return returnDataTable;
 	}
 	
+	/**Cotizaciones Proyectos */
+	public DataTable<CotizacionEntity> dataTableProyecto(String search, int offset, int limit, String txtBootstrapTableDesde, String txtBootstrapTableHasta) {
+	List<CotizacionEntity> lstCotizacionEntity = null;
+	LocalDate fechaInicio = null;
+	LocalDate fechaFin = null;
+	long totalCotizaciones = 100;
+	
+	if(search != null) {	
+		
+		if(sessionService.hasRol("COTIZACIONES_ADMINISTRADOR")) {
+			if(!txtBootstrapTableDesde.equals("") && !txtBootstrapTableHasta.equals("")) {
+									
+				String[] arrFechaInicio = txtBootstrapTableDesde.split("/");
+				int yearInicio = Integer.parseInt(arrFechaInicio[2]);
+				int monthInicio = Integer.parseInt(arrFechaInicio[1]);
+				int dayInicio = Integer.parseInt(arrFechaInicio[0]);
+				
+				String[] arrFechaFin = txtBootstrapTableHasta.split("/");
+				int yearFin = Integer.parseInt(arrFechaFin[2]);
+				int monthFin = Integer.parseInt(arrFechaFin[1]);
+				int dayFin = Integer.parseInt(arrFechaFin[0]);
+				
+				fechaInicio = LocalDate.of(yearInicio, monthInicio, dayInicio);
+				fechaFin = LocalDate.of(yearFin, monthFin, dayFin);
+				
+				lstCotizacionEntity = cotizacionRepository.findForDataTable(search, fechaInicio, fechaFin, DataTable.getPageRequest(offset, limit));
+				totalCotizaciones = cotizacionRepository.countForDataTable(search, fechaInicio, fechaFin);
+			} else {					
+				lstCotizacionEntity = cotizacionRepository.findForDataTableProyecto(search, DataTable.getPageRequest(offset, limit));
+				totalCotizaciones = cotizacionRepository.countForDataTableProyecto(search);
+			}
+		} else {
+			if(!txtBootstrapTableDesde.equals("") && !txtBootstrapTableHasta.equals("")) {
+				
+				String[] arrFechaInicio = txtBootstrapTableDesde.split("/");
+				int yearInicio = Integer.parseInt(arrFechaInicio[2]);
+				int monthInicio = Integer.parseInt(arrFechaInicio[1]);
+				int dayInicio = Integer.parseInt(arrFechaInicio[0]);
+				
+				String[] arrFechaFin = txtBootstrapTableHasta.split("/");
+				int yearFin = Integer.parseInt(arrFechaFin[2]);
+				int monthFin = Integer.parseInt(arrFechaFin[1]);
+				int dayFin = Integer.parseInt(arrFechaFin[0]);
+				
+				fechaInicio = LocalDate.of(yearInicio, monthInicio, dayInicio);
+				fechaFin = LocalDate.of(yearFin, monthFin, dayFin);
+				
+				lstCotizacionEntity = cotizacionRepository.findForDataTableProyecto(sessionService.getCurrentUser().getIdUsuario() ,search, fechaInicio, fechaFin, DataTable.getPageRequest(offset, limit));
+				totalCotizaciones = cotizacionRepository.countForDataTableProyecto(sessionService.getCurrentUser().getIdUsuario(), search, fechaInicio, fechaFin);
+			} else {					
+				lstCotizacionEntity = cotizacionRepository.findForDataTableProyecto(sessionService.getCurrentUser().getIdUsuario() ,search, DataTable.getPageRequest(offset, limit));
+				totalCotizaciones = cotizacionRepository.countForDataTableProyecto(sessionService.getCurrentUser().getIdUsuario(), search);
+			}
+		}			
+	} else {
+		lstCotizacionEntity = cotizacionRepository.findForDataTableProyecto(DataTable.getPageRequest(offset, limit));
+		totalCotizaciones = cotizacionRepository.countForDataTableProyecto();
+	}
+
+	DataTable<CotizacionEntity> returnDataTable = new DataTable<CotizacionEntity>(lstCotizacionEntity, totalCotizaciones);
+	return returnDataTable;
+}
+
+	/**Cotizaciones SA */
+	public DataTable<CotizacionEntity> dataTableSA(String search, int offset, int limit, String txtBootstrapTableDesde, String txtBootstrapTableHasta) {
+	List<CotizacionEntity> lstCotizacionEntity = null;
+	LocalDate fechaInicio = null;
+	LocalDate fechaFin = null;
+	long totalCotizaciones = 100;
+	
+	if(search != null) {	
+		
+		if(sessionService.hasRol("COTIZACIONES_ADMINISTRADOR")) {
+			if(!txtBootstrapTableDesde.equals("") && !txtBootstrapTableHasta.equals("")) {
+									
+				String[] arrFechaInicio = txtBootstrapTableDesde.split("/");
+				int yearInicio = Integer.parseInt(arrFechaInicio[2]);
+				int monthInicio = Integer.parseInt(arrFechaInicio[1]);
+				int dayInicio = Integer.parseInt(arrFechaInicio[0]);
+				
+				String[] arrFechaFin = txtBootstrapTableHasta.split("/");
+				int yearFin = Integer.parseInt(arrFechaFin[2]);
+				int monthFin = Integer.parseInt(arrFechaFin[1]);
+				int dayFin = Integer.parseInt(arrFechaFin[0]);
+				
+				fechaInicio = LocalDate.of(yearInicio, monthInicio, dayInicio);
+				fechaFin = LocalDate.of(yearFin, monthFin, dayFin);
+				
+				lstCotizacionEntity = cotizacionRepository.findForDataTableSA(search, fechaInicio, fechaFin, DataTable.getPageRequest(offset, limit));
+				totalCotizaciones = cotizacionRepository.countForDataTableSA(search, fechaInicio, fechaFin);
+			} else {					
+				lstCotizacionEntity = cotizacionRepository.findForDataTableSA(search, DataTable.getPageRequest(offset, limit));
+				totalCotizaciones = cotizacionRepository.countForDataTableSA(search);
+			}
+		} else {
+			if(!txtBootstrapTableDesde.equals("") && !txtBootstrapTableHasta.equals("")) {
+				
+				String[] arrFechaInicio = txtBootstrapTableDesde.split("/");
+				int yearInicio = Integer.parseInt(arrFechaInicio[2]);
+				int monthInicio = Integer.parseInt(arrFechaInicio[1]);
+				int dayInicio = Integer.parseInt(arrFechaInicio[0]);
+				
+				String[] arrFechaFin = txtBootstrapTableHasta.split("/");
+				int yearFin = Integer.parseInt(arrFechaFin[2]);
+				int monthFin = Integer.parseInt(arrFechaFin[1]);
+				int dayFin = Integer.parseInt(arrFechaFin[0]);
+				
+				fechaInicio = LocalDate.of(yearInicio, monthInicio, dayInicio);
+				fechaFin = LocalDate.of(yearFin, monthFin, dayFin);
+				
+				lstCotizacionEntity = cotizacionRepository.findForDataTableSA(sessionService.getCurrentUser().getIdUsuario() ,search, fechaInicio, fechaFin, DataTable.getPageRequest(offset, limit));
+				totalCotizaciones = cotizacionRepository.countForDataTableSA(sessionService.getCurrentUser().getIdUsuario(), search, fechaInicio, fechaFin);
+			} else {					
+				lstCotizacionEntity = cotizacionRepository.findForDataTableSA(sessionService.getCurrentUser().getIdUsuario() ,search, DataTable.getPageRequest(offset, limit));
+				totalCotizaciones = cotizacionRepository.countForDataTableSA(sessionService.getCurrentUser().getIdUsuario(), search);
+			}
+		}			
+	} else {
+		lstCotizacionEntity = cotizacionRepository.findForDataTableSA(DataTable.getPageRequest(offset, limit));
+		totalCotizaciones = cotizacionRepository.countForDataTableSA();
+	}
+
+	DataTable<CotizacionEntity> returnDataTable = new DataTable<CotizacionEntity>(lstCotizacionEntity, totalCotizaciones);
+	return returnDataTable;
+}
+
+	/**Cotizaciones Boom */
+	public DataTable<CotizacionEntity> dataTableBom(String search, int offset, int limit, String txtBootstrapTableDesde, String txtBootstrapTableHasta) {
+	List<CotizacionEntity> lstCotizacionEntity = null;
+	LocalDate fechaInicio = null;
+	LocalDate fechaFin = null;
+	long totalCotizaciones = 100;
+	
+	if(search != null) {	
+		
+		if(sessionService.hasRol("COTIZACIONES_ADMINISTRADOR")) {
+			if(!txtBootstrapTableDesde.equals("") && !txtBootstrapTableHasta.equals("")) {
+									
+				String[] arrFechaInicio = txtBootstrapTableDesde.split("/");
+				int yearInicio = Integer.parseInt(arrFechaInicio[2]);
+				int monthInicio = Integer.parseInt(arrFechaInicio[1]);
+				int dayInicio = Integer.parseInt(arrFechaInicio[0]);
+				
+				String[] arrFechaFin = txtBootstrapTableHasta.split("/");
+				int yearFin = Integer.parseInt(arrFechaFin[2]);
+				int monthFin = Integer.parseInt(arrFechaFin[1]);
+				int dayFin = Integer.parseInt(arrFechaFin[0]);
+				
+				fechaInicio = LocalDate.of(yearInicio, monthInicio, dayInicio);
+				fechaFin = LocalDate.of(yearFin, monthFin, dayFin);
+				
+				lstCotizacionEntity = cotizacionRepository.findForDataTableBom(search, fechaInicio, fechaFin, DataTable.getPageRequest(offset, limit));
+				totalCotizaciones = cotizacionRepository.countForDataTableBom(search, fechaInicio, fechaFin);
+			} else {					
+				lstCotizacionEntity = cotizacionRepository.findForDataTableBom(search, DataTable.getPageRequest(offset, limit));
+				totalCotizaciones = cotizacionRepository.countForDataTableBom(search);
+			}
+		} else {
+			if(!txtBootstrapTableDesde.equals("") && !txtBootstrapTableHasta.equals("")) {
+				
+				String[] arrFechaInicio = txtBootstrapTableDesde.split("/");
+				int yearInicio = Integer.parseInt(arrFechaInicio[2]);
+				int monthInicio = Integer.parseInt(arrFechaInicio[1]);
+				int dayInicio = Integer.parseInt(arrFechaInicio[0]);
+				
+				String[] arrFechaFin = txtBootstrapTableHasta.split("/");
+				int yearFin = Integer.parseInt(arrFechaFin[2]);
+				int monthFin = Integer.parseInt(arrFechaFin[1]);
+				int dayFin = Integer.parseInt(arrFechaFin[0]);
+				
+				fechaInicio = LocalDate.of(yearInicio, monthInicio, dayInicio);
+				fechaFin = LocalDate.of(yearFin, monthFin, dayFin);
+				
+				lstCotizacionEntity = cotizacionRepository.findForDataTableBom(sessionService.getCurrentUser().getIdUsuario() ,search, fechaInicio, fechaFin, DataTable.getPageRequest(offset, limit));
+				totalCotizaciones = cotizacionRepository.countForDataTableBom(sessionService.getCurrentUser().getIdUsuario(), search, fechaInicio, fechaFin);
+			} else {					
+				lstCotizacionEntity = cotizacionRepository.findForDataTableBom(sessionService.getCurrentUser().getIdUsuario() ,search, DataTable.getPageRequest(offset, limit));
+				totalCotizaciones = cotizacionRepository.countForDataTableBom(sessionService.getCurrentUser().getIdUsuario(), search);
+			}
+		}			
+	} else {
+		lstCotizacionEntity = cotizacionRepository.findForDataTableBom(DataTable.getPageRequest(offset, limit));
+		totalCotizaciones = cotizacionRepository.countForDataTableBom();
+	}
+
+	DataTable<CotizacionEntity> returnDataTable = new DataTable<CotizacionEntity>(lstCotizacionEntity, totalCotizaciones);
+	return returnDataTable;
+}
+
+
+
 	public CotizacionEntity findByIdCotizacion(int idCotizacion) {
 		return cotizacionRepository.findByIdCotizacion(idCotizacion);
 	}
@@ -321,10 +513,7 @@ public class CotizacionService {
 		return cotizacionRepository.sumTotalCotizacionPorMes(ldFechaInicio, ldFechaFin, sessionService.getCurrentUser().getIdUsuario());		
 	}
 	
-	public List<CotizacionEntity> listCotizacionesActivas() {
-		return cotizacionRepository.findCotizacionesActivas();
-	}
-	
+
 	/* CRUD DE COTIZACIONES */
 	public void create(CotizacionEntity objCotizacion) {
 		
@@ -456,7 +645,19 @@ public class CotizacionService {
 		}
 	}
 	//**************************
-	
+
+	public List<CotizacionEntity> listCotizacionesActivas() {
+		return cotizacionRepository.findCotizacionesActivas();
+	}
+	public List<CotizacionEntity> listProyectos() {
+		return cotizacionRepository.findCotizacionProyecto();
+	}
+	public List<CotizacionEntity> listBom() {
+		return cotizacionRepository.findCotizacionBom();
+	}
+	public List<CotizacionEntity> listRentas() {
+		return cotizacionRepository.findCotizacionRenta();
+	}
 	//Listado de cotizaciones activas 
 	public JsonObject jsonCotizacionesActivas(){
 		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
@@ -493,6 +694,61 @@ public class CotizacionService {
 		jsonReturn.add("rows", jsonRows);	
 		return jsonReturn.build();
 	}
+
+	/* Lista de proyectos */
+	public JsonObject jsonProyectos(){
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		
+		List<CotizacionEntity> lstCotizaciones =  cotizacionRepository.findCotizacionProyecto();
+		
+		lstCotizaciones.forEach((item)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_cotizacion", item.getIdCotizacion())
+				.add("factura_numero", item.getFolio())
+			);
+		});
+		
+		jsonReturn.add("rows", jsonRows);	
+		return jsonReturn.build();
+	}
+
+	/* Lista de Boms */
+	public JsonObject jsonBoms(){
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		
+		List<CotizacionEntity> lstCotizaciones =  cotizacionRepository.findCotizacionBom();
+		
+		lstCotizaciones.forEach((item)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_cotizacion", item.getIdCotizacion())
+				.add("factura_numero", item.getFolio())
+			);
+		});
+		
+		jsonReturn.add("rows", jsonRows);	
+		return jsonReturn.build();
+	}
+
+	/* Lista de cotizaciones administrados */
+	public JsonObject jsonCotizacionesRenta(){
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+		
+		List<CotizacionEntity> lstCotizaciones =  cotizacionRepository.findCotizacionRenta();
+		
+		lstCotizaciones.forEach((item)-> {
+			jsonRows.add(Json.createObjectBuilder()
+				.add("id_cotizacion", item.getIdCotizacion())
+				.add("factura_numero", item.getFolio())
+			);
+		});
+		
+		jsonReturn.add("rows", jsonRows);	
+		return jsonReturn.build();
+	}
+
 	
 	/*------------------Tablero Indicadores---------------*/
 	public JsonObject jsonCotizacionesAceptadas(LocalDate ldFechaInicio, LocalDate ldFechaFin, int idEjecutivo){

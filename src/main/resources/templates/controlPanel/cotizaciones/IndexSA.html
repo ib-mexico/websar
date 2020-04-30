@@ -1,16 +1,16 @@
 <th:block th:fragment="body">
 	<div id="appCotizaciones">
-		
+
 		<ol class="breadcrumb breadcrumb-bg-red">
 			<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> INICIO</a></li>
-			<li class="active"><i class="material-icons">view_list</i> COTIZACIONES</li>
+			<li class="active"><i class="material-icons">view_list</i> SERVICIOS ADMINISTRADOS</li>
 		</ol>
 		
 		<div class="row clearfix">
 			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 				<div class="card">
 					<div class="header">
-						<h2>LISTA DE COTIZACIONES</h2>
+						<h2>LISTA DE SERVICIOS ADMINISTRADOS</h2>
 					</div>
 					
 					<div class="body">
@@ -518,6 +518,7 @@
 			</div>
 		</div>
 
+
 		<!-- LLAMADA DE CALIDAD DE SERVICIO MODAL -->
 		<div class="modal fade" id="modalCalidad" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-lg" role="document">
@@ -635,6 +636,8 @@
 	<script th:src="@{/plugins/vue/vue.js}"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script th:src="@{/assets/js/script.js}"></script>
+	<!-- <script th:src="@{/assets/js/calidad.js}"></script> -->
+
 
 	<!-- Wenzhixin DataTable -->
 	<script th:src="@{/plugins/wenzhixin/bootstrap-table.js}"></script>
@@ -653,7 +656,7 @@
 			app3.rolcotizacionAdmin = rolCotizacionAdmin;
 
 			$("#dtCotizaciones").bootstrapTable({
-				url					: [[@{/controlPanel/cotizaciones/table}]],
+				url					: [[@{/controlPanel/Sa/tableSA}]],
 				method				: 'post',
 				contentType 		: 'application/x-www-form-urlencoded',
 				sidePagination		: "server",
@@ -708,6 +711,39 @@
 								});																													
 							}
 						}).catch(swal.noop);
+					});
+					$(".clone-cotizacion-renta").click(function(){
+						var idCotizacion = $(this).attr('data-cotizacion');
+						swal({
+							title	: "Generar las cotizaciones en renta",
+							text	: "La cantidad de cotizaciones se genera dependiendo la cantidad asignada en la cotizacion maestra.",
+							type	: "warning",
+							showCancelButton: true,
+							cancelButtonText: 'Cancelar',
+							confirmButtonText: 'Generar Cotizaciones Renta',
+						}).then((result) => {
+							if (result) {
+								$.ajax({
+									url			: [[@{/controlPanel/cotizaciones/}]] + idCotizacion + '/cloneRenta',
+									data		: {
+													idCotizacion : idCotizacion, 
+													[[${_csrf.parameterName}]] : [[${_csrf.token}]]
+									},
+									dataType	: 'json',
+									type		: "POST",
+									success		: function(data) {
+										if(data.respuesta) {				
+											$("#dtCotizaciones").bootstrapTable('refresh');
+											swal(data.titulo, data.mensaje,'success');
+										}
+									},
+									error		: function(e) {
+										console.log(e);										
+									}
+
+								});
+							}
+						})
 					});
 			    }
 			});
@@ -863,7 +899,7 @@
 			var permisoEntrega = ([[${rolEntrega}]] == true || [[${rolEntregaAdmin}]] == true) ? '' : 'hidden';
 			var permisoCalidad = ([[${rolCalidad}]]) == true ? '' : 'hidden';
 			if(row.paseCalidad ){
-				if(row.boolCalidad){
+				if(row.calidad > 0 || row.boolCalidad){
 					p_onclick=""
 					target="false"
 					togle="false"
@@ -893,84 +929,98 @@
 			}
 			/*Fin de la validacion*/
 			/*Los valores previamente definidos, se usa para hacer dinamica la funcionalidad de registro de llamada de calidad*/
-			if(row.boolNormal){
-				if(row.idEstatus == 1){
-					return [
-						'<a href="' + urlEdit + '" title="Editar">',
-							'<i class="material-icons">mode_edit</i>',
-						'</a>',
-						'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
-							'<i class="material-icons">flip_to_front</i>',
-						'</a>',
-						'<a href="' + urlPartidas + '" title="Partidas">',
-							'<i class="material-icons">format_list_numbered</i>',
-						'</a>',
-						'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
-							'<i class="material-icons">assignment_turned_in</i>',
-						'</a>',
-						'<a href="' + ((rolExpediente)?urlFicheros:'#') + '" title="Ficheros">',
-							'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
-						'</a>',
-						'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
-							'<i class="material-icons">print</i>',
-						'</a>'
-					].join(' ');
-				}
-			
-				if(row.idEstatus == 4 || row.idEstatus == 2 || row.idEstatus == 3 ){
-					return [
-						'<a href="' + urlEdit + '" title="Editar">',
-							'<i class="material-icons">mode_edit</i>',
-						'</a>',
-						'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
-							'<i class="material-icons">flip_to_front</i>',
-						'</a>',
-						'<a href="' + urlPartidas + '" title="Partidas">',
-							'<i class="material-icons">format_list_numbered</i>',
-						'</a>',
-						'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
-							'<i class="material-icons">assignment_turned_in</i>',
-						'</a>',
-						'<a href="' + ((rolExpediente)?urlFicheros:'#') + '" title="Ficheros">',
-							'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
-						'</a>',
-						
-						'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
-							'<i class="material-icons">print</i>',
-						'</a>',
-						'<a href="'+href+'" title="'+title+'" class="calidad '+permisoCalidad+'" data-toggle="'+togle+'" data-target="'+target+'" onclick="'+p_onclick+'" role="button">',
-							'<i class="material-icons +'+icon+'" style="color: green;">'+icon+'</i>',
-						'</a>',
-						'<a href="'+urlEntregas+'" title="Entrega de materiales" class="'+permisoEntrega+'">',
-							'<i class="material-icons">layers</i>',
-						'</a>'
-					].join(' ');
-				}
-		
-				if(row.idEstatus==5 || row.idEstatus==6){
-					return [
-						'<a href="' + urlEdit + '" title="Editar">',
-							'<i class="material-icons">mode_edit</i>',
-						'</a>',
-						'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
-							'<i class="material-icons">flip_to_front</i>',
-						'</a>',
-						'<a href="' + urlPartidas + '" title="Partidas">',
-							'<i class="material-icons">format_list_numbered</i>',
-						'</a>',
-						'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
-							'<i class="material-icons">assignment_turned_in</i>',
-						'</a>',
-						'<a href="' + ((rolExpediente)?urlFicheros:'#') + '" title="Ficheros">',
-							'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
-						'</a>',
-						'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
-							'<i class="material-icons">print</i>',
-						'</a>'
-					].join(' ');
-				}
-			
+
+			if(row.idEstatus == 1){
+				return [
+					'<a href="' + urlEdit + '" title="Editar">',
+						'<i class="material-icons">mode_edit</i>',
+					'</a>',
+					'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
+						'<i class="material-icons">flip_to_front</i>',
+					'</a>',
+					'<a href="' + urlPartidas + '" title="Partidas">',
+						'<i class="material-icons">format_list_numbered</i>',
+					'</a>',
+					'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
+						'<i class="material-icons">assignment_turned_in</i>',
+					'</a>',
+					'<a href="' + ((rolExpediente)?urlFicheros:'#') + '" title="Ficheros">',
+						'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
+					'</a>',
+					'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+						'<i class="material-icons">print</i>',
+					'</a>'
+				].join(' ');
 			}
+			
+			if(row.idEstatus == 4 || row.idEstatus == 3 ){
+				return [
+					'<a href="' + urlEdit + '" title="Editar">',
+						'<i class="material-icons">mode_edit</i>',
+					'</a>',
+					'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
+						'<i class="material-icons">flip_to_front</i>',
+					'</a>',
+					'<a href="' + urlPartidas + '" title="Partidas">',
+						'<i class="material-icons">format_list_numbered</i>',
+					'</a>',
+					'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
+						'<i class="material-icons">assignment_turned_in</i>',
+					'</a>',
+					'<a href="' + ((rolExpediente)?urlFicheros:'#') + '" title="Ficheros">',
+						'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
+					'</a>',
+					
+					'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+						'<i class="material-icons">print</i>',
+					'</a>',
+					'<a href="'+href+'" title="'+title+'" class="calidad '+permisoCalidad+'" data-toggle="'+togle+'" data-target="'+target+'" onclick="'+p_onclick+'" role="button">',
+						'<i class="material-icons +'+icon+'" style="color: green;">'+icon+'</i>',
+					'</a>',
+					'<a href="'+urlEntregas+'" title="Entrega de materiales" class="'+permisoEntrega+'">',
+						'<i class="material-icons">layers</i>',
+					'</a>',
+					'<a href="#" title="Ver las cotizaciones en Renta">',
+						'<i class="material-icons " style="color: green;">remove_red_eye</i>',
+					'</a>'
+				].join(' ');
+			}
+		
+
+			if(row.idEstatus == 2){
+				return [
+					'<a href="' + urlEdit + '" title="Editar">',
+						'<i class="material-icons">mode_edit</i>',
+					'</a>',
+					'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
+						'<i class="material-icons">flip_to_front</i>',
+					'</a>',
+					'<a href="' + urlPartidas + '" title="Partidas">',
+						'<i class="material-icons">format_list_numbered</i>',
+					'</a>',
+					'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
+						'<i class="material-icons">assignment_turned_in</i>',
+					'</a>',
+					'<a href="' + ((rolExpediente)?urlFicheros:'#') + '" title="Ficheros">',
+						'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
+					'</a>',
+					
+					'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+						'<i class="material-icons">print</i>',
+					'</a>',
+					'<a href="'+href+'" title="'+title+'" class="calidad '+permisoCalidad+'" data-toggle="'+togle+'" data-target="'+target+'" onclick="'+p_onclick+'" role="button">',
+						'<i class="material-icons +'+icon+'" style="color: green;">'+icon+'</i>',
+					'</a>',
+					'<a href="'+urlEntregas+'" title="Entrega de materiales" class="'+permisoEntrega+'">',
+						'<i class="material-icons">layers</i>',
+					'</a>',
+					'<a href="#" title="Generar Cotizaciones en renta" class="clone-cotizacion-renta">',
+						'<i class="material-icons " style="color: green;">autorenew</i>',
+					'</a>'
+				].join(' ');
+			}
+		
+
 
 		}
 			
@@ -1026,11 +1076,6 @@
 						$('#txtCotizacion').val(data.folio);
 						$('#txtFacturaNumero').val(data.facturaNumero);
 						$('#txtPagoReferencia').val(data.pagoReferencia);
-						$('#hddBoolNormal').val(data.BoolNormal);
-						$('#hddBoolBoom').val(data.BoolBoom);
-						$('#hddBoolRenta').val(data.BoolRenta);
-						$('#hddBoolMaestra').val(data.BoolMaestra);
-
 						
 						if(data.facturacionFecha != '') {
 							var arrDate1 = data.facturacionFecha.split("-");

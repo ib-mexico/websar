@@ -48,6 +48,12 @@ public class Templates {
 	public static final String CONTROL_PANEL_COTIZACIONES_CREATE = PATH_CONTROL_PANEL + "cotizaciones/Create";
 	public static final String CONTROL_PANEL_COTIZACIONES_EDIT = PATH_CONTROL_PANEL + "cotizaciones/Edit";
 	
+	/* INDEX PARA CADA TIPO DE COTIZACION */
+	public static final String CONTROL_PANEL_COTIZACIONES_INDEX_SA = PATH_CONTROL_PANEL + "cotizaciones/IndexSA";
+	public static final String CONTROL_PANEL_COTIZACIONES_INDEX_PROYECTO = PATH_CONTROL_PANEL + "cotizaciones/IndexProyecto";
+	public static final String CONTROL_PANEL_COTIZACIONES_INDEX_BOM = PATH_CONTROL_PANEL + "cotizaciones/IndexBom";
+
+
 	public static final String CONTROL_PANEL_COTIZACIONES_PARTIDAS_INDEX = PATH_CONTROL_PANEL + "cotizaciones/partidas/Index";
 	public static final String CONTROL_PANEL_COTIZACIONES_PARTIDAS_CREATE = PATH_CONTROL_PANEL + "cotizaciones/partidas/Create";
 	public static final String CONTROL_PANEL_COTIZACIONES_PARTIDAS_EDIT = PATH_CONTROL_PANEL + "cotizaciones/partidas/Edit";
@@ -80,8 +86,9 @@ public class Templates {
 	public static final String CONTROL_PANEL_OPORTUNIDADES_ACTIVIDADES_EDIT = PATH_CONTROL_PANEL + "oportunidades/actividades/Edit";
 	
 	public static final String CONTROL_PANEL_OPORTUNIDADES_CALENDAR = PATH_CONTROL_PANEL + "oportunidades/Calendario";
-	
-	
+
+	/* Notificacion por correo de las oportunidades en curso o en servicios administrados */
+	public static final String TEMPLATE_NOTIFICACION_OPORTUNIDAD = PATH_EMAIL+"oportunidades/NotificacionOportunidades";
 	
 	// ENTREGAS
 	public static final String CONTROL_PANEL_ENTREGAS_INDEX = PATH_CONTROL_PANEL + "entregas/Index";

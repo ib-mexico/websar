@@ -71,7 +71,7 @@ public class SessionService implements UserDetailsService {
 	public UsuarioEntity getCurrentUser() {
 		if (/* objCurrentUser == null */ true) {
 			User objUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			objCurrentUser = usuarioRepository.findByUsername(objUser.getUsername());
+			objCurrentUser = usuarioRepository.findByUsernameAndEliminadoFalse(objUser.getUsername());
 		}
 		return objCurrentUser;
 	}
@@ -271,7 +271,7 @@ public class SessionService implements UserDetailsService {
 		User currentUser = null;
 		UsuarioEntity objUsuario = null;
 		
-		objUsuario = usuarioRepository.findByUsername(userName);
+		objUsuario = usuarioRepository.findByUsernameAndEliminadoFalse(userName);
 		currentUser = new User(objUsuario.getUsername(), objUsuario.getPassword(), true, true, true, true, authoritiesFromUsuario(objUsuario));
 
 		return currentUser;
@@ -333,7 +333,7 @@ public class SessionService implements UserDetailsService {
 	public boolean isValidAction(String username, String password, RolEntity objRolEntity) {
 		boolean objReturn = false;
 		if(	username != null) {
-			UsuarioEntity objUsuario = usuarioRepository.findByUsername(username);
+			UsuarioEntity objUsuario = usuarioRepository.findByUsernameAndEliminadoFalse(username);
 			objReturn = isValidAction(objUsuario, password, objRolEntity);
 		}
 		

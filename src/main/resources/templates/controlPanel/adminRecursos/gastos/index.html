@@ -348,7 +348,7 @@
 														<select name="cmbTipogasto" id="cmbTipogasto" class="form-control show-tick cmbTipogasto required"
 														v-model="nuevoPago.id_tipoGasto" data-live-search="true">
 															<option value="default" selected="selected">Elige el uso de gasto</option>
-															<option v-for="item in tipoGasto" :value="item.id_tipo_gasto" v-text="item.nombre_gasto"></option>
+															<option v-for="item in buscarTipoGasto" :value="item.id_tipo_gasto" v-text="item.nombre_gasto"></option>
 														</select>
 													</div>
 												</div>

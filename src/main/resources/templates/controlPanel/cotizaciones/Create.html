@@ -156,12 +156,35 @@
 							</div>							
 						</div>
 						
+
 						<hr />
-						<div style="margin-bottom: 30px;">						
-							<h4>Venta e Implementaci&oacute;n</h4>
+						<div style="margin-bottom: 30px;">
+							<h4 class="text-center">Tipo de Cotizaci&oacute;n</h4>
 						</div>
 						
 						<div class="row clearfix">
+							<div class="col-md-12">
+	                        	<input name="rdTipoCotizacion" type="radio" id="rdMaster" class="with-gap radio-col-red" value="master" />
+                                <label for="rdMaster"><strong>Maestra</strong> (Ej. Cotizaci&oacute;n principal de una p&oacute;liza)</label>
+                                
+                                <input name="rdTipoCotizacion" type="radio" id="rdRenta" class="with-gap radio-col-purple" value="renta" />
+                                <label for="rdRenta"><strong>Renta</strong> (Ej. Cotizaci&oacute;n mensual de una p&oacute;liza)</label>
+                                
+                                <input name="rdTipoCotizacion" type="radio" id="rdNormal" class="with-gap radio-col-blue" value="normal" checked="checked" />
+								<label for="rdNormal"><strong>Normal</strong> (Ej. Cualquier tipo de cotizaci&oacute;n que no sea p&oacute;liza)</label>
+								
+								<input name="rdTipoCotizacion" type="radio" id="rdBoom" class="with-gap radio-col-red" value="boom" />
+                                <label for="rdBoom"><strong>BOM</strong> (Ej. Cotizaci&oacute;n mayor. Principal de una p&oacute;liza)</label>
+	                        </div>
+						</div>
+
+
+						<hr />
+						<div style="margin-bottom: 30px;" id="dvTitleImpl">						
+							<h4>Venta e Implementaci&oacute;n</h4>
+						</div>
+						
+						<div class="row clearfix" id="dvImpl">
 							<div class="col-md-4">
 	                            <p><b>Vendedor *</b></p>
 	                            <select class="form-control show-tick" name="cmbVendedor" id="cmbVendedor" data-live-search="true" disabled="disabled" >
@@ -191,28 +214,23 @@
 	                       		</select>
 	                        </div>
 						</div>						
-						
-						<hr />
+					
+						<hr/>
 						<div style="margin-bottom: 30px;">
-							<h4>Tipo de Cotizaci&oacute;n</h4>
+							<h4>Asociar Cotización</h4>
 						</div>
-						
 						<div class="row clearfix">
-							<div class="col-md-12">
-	                        	<input name="rdTipoCotizacion" type="radio" id="rdMaster" class="with-gap radio-col-red" value="master" />
-                                <label for="rdMaster"><strong>Maestra</strong> (Ej. Cotizaci&oacute;n principal de una p&oacute;liza)</label>
-                                
-                                <input name="rdTipoCotizacion" type="radio" id="rdRenta" class="with-gap radio-col-purple" value="renta" />
-                                <label for="rdRenta"><strong>Renta</strong> (Ej. Cotizaci&oacute;n mensual de una p&oacute;liza)</label>
-                                
-                                <input name="rdTipoCotizacion" type="radio" id="rdNormal" class="with-gap radio-col-blue" value="normal" checked="checked" />
-								<label for="rdNormal"><strong>Normal</strong> (Ej. Cualquier tipo de cotizaci&oacute;n que no sea p&oacute;liza)</label>
-								
-								<input name="rdTipoCotizacion" type="radio" id="rdBoom" class="with-gap radio-col-red" value="boom" />
-                                <label for="rdBoom"><strong>BOM</strong> (Ej. Cotizaci&oacute;n mayor. Principal de una p&oacute;liza)</label>
+							<div class="col-md-6">
+	                            <p><b>Proyecto *</b></p>
+	                            <select class="form-control show-tick" name="cmbProyecto" id="cmbProyecto" data-live-search="true" >
+									<option value="0" selected="selected">Selecciona un proyecto...</option>
+	                       			<th:block th:each="itemProyecto : ${lstProyectos}" >
+	                       				<option th:value="${itemProyecto.idCotizacion}" th:text="${itemProyecto.folioCotizacion +' - '+ itemProyecto.concepto}"></option>
+	                       			</th:block>
+	                       		</select>
 	                        </div>
 						</div>
-						
+
 						<hr />
 						<div style="margin-bottom: 30px;">						
 							<h4>Informaci&oacute;n Adicional</h4>
@@ -439,6 +457,38 @@
 					$('#cmbGenerador').selectpicker('refresh');
 				}
 			});
+
+			// var rdTipo = document.getElementsByName("rdTipoCotizacion");
+			// for (var i = 0, length = rdTipo.length; i < length; i++) {
+			// 	if (rdTipo[i].checked) {
+			// 		// do whatever you want with the checked radio
+			// 		alert(rdTipo[i].value);
+			// 		if (rdTipo[i].value == 'normal') {
+			// 			// alert('normal')
+			// 		}
+			// 		// only one radio can be logically checked, don't check the rest
+			// 		break;
+			// 	}
+			// }
+
+			$('input[name="rdTipoCotizacion"]').change(function(){
+				if (this.value == 'normal') {
+					$('#dvImpl').removeClass('hidden');
+					$('#dvTitleImpl').removeClass('hidden');
+					$('#cmbImplementador').prop('disabled', true);
+					$('#cmbVendedor').prop('disabled', true);
+					$('#cmbImplementador').selectpicker('refresh');
+					$('#cmbVendedor').selectpicker('refresh');
+					
+				}else if(this.value == 'master' || this.value == 'boom'){
+					$('#dvImpl').addClass('hidden');
+					$('#dvTitleImpl').addClass('hidden');
+				}else {
+					$('#dvImpl').addClass('hidden');
+					$('#dvTitleImpl').addClass('hidden');
+				}
+            });
+			
 			
 			// FORM SUBMIT
 			$('#formCotizacion').submit(function(e){

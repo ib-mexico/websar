@@ -17,7 +17,7 @@ public class CotizacionEstatusService {
 	private ICotizacionEstatusRepository cotizacionEstatusRepository;
 	
 	public List<CotizacionEstatusEntity> listAll() {
-		return cotizacionEstatusRepository.findAll();
+		return cotizacionEstatusRepository.findAllByOrderByOrdenAsc();
 	}
 	
 	public CotizacionEstatusEntity findByIdCotizacionEstatus(int idCotizacionEstatus) {

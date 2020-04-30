@@ -177,7 +177,8 @@
 					:token="token">
 				</opn-card>
 			</div>
-			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn" v-else="opnData.length">
+
+			<div class="col-md-4 col-sm-4 col-lg-4 componente-opn" v-if="opnData.length >= 0">
 				<div class="info-box bg-cyan hover-zoom-effect">
 					<div class="icon">
 						<i class="material-icons">attach_money</i>

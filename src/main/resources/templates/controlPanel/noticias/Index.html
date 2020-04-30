@@ -1,13 +1,15 @@
 <th:block th:fragment="body">
-	<div class="block-header">
-        <h2>NOTICIAS</h2>
-    </div>
-    
+
+	<ol class="breadcrumb breadcrumb-bg-red">
+		<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> INICIO</a></li>
+	  <li class="active"><i class="material-icons">public</i> NOTICIAS</li>
+	</ol>
+
     <div class="row clearfix">
     	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     		<div class="card">
     			<div class="header">
-    				<h2>LISTA DE NOTICIAS</h2>
+    				<h2 class="font-weight-bold">LISTA DE NOTICIAS</h2>
     			</div>
     			
     			<div class="body">
@@ -17,41 +19,17 @@
     					</div>
     				</div>
     			
-    				<div class="row clearfix" id="dtNoticiasToolBar">
-    					<div class="col-xs-3 col-sm-3 col-md-3">
-    						<div class="input-group">
-   								<span class="input-group-addon">
-                                	<i class="material-icons">date_range</i>
-	                           	</span>
-	                           	<div class="form-line" id='groupDesde'>
-                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
-	                           	</div>
-							</div>
-    					</div>
-    					
-    					<div class="col-xs-3 col-sm-3 col-md-3">
-    						<div class="input-group">
-    							<span class="input-group-addon">
-                                	<i class="material-icons">date_range</i>
-	                           	</span>
-	                           	<div class="form-line" id='groupHasta'>
-                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
-	                           	</div>
-							</div>
-    					</div>					
-					</div>
 					
 					<div class="table-responsive">
 						<table id="dtNoticias" class="table table-bordered table-striped table-hover">
 							<thead>
 								<tr>
-									<th class="col-md-1" data-field="idNoticia" data-halign="left" data-align="center">ID</th>
 									<!--  <th class="col-md-1" data-formatter="accionesFormatter" data-align="center">Acciones</th>-->
-									<th class="col-md-4" data-field="titulo" data-halign="left">Titulo</th>
-									<th class="col-md-6" data-field="descripcion" data-halign="left" data-visible="false">Descripcion</th>
-									<th class="col-md-3" data-field="vencimientoFecha" data-halign="center" >Vencimiento Fecha</th>
+									<th class="col-md-3" data-field="titulo" data-halign="left" data-align="left">Titulo</th>
+									<th class="col-md-5" data-field="descripcion" data-halign="left" data-align="left" data-visible="true">Descripcion</th>
+									<th class="col-md-2" data-field="vencimientoFecha" data-halign="center" data-align="center" >Vencimiento Fecha</th>
 									
-									<th class="col-md-4" data-field="creacionUsuario" data-halign="left">Usuario</th>																	
+									<th class="col-md-2" data-field="creacionUsuario" data-halign="center" data-align="center">Usuario</th>																	
 								</tr>
 							</thead>
 						</table>

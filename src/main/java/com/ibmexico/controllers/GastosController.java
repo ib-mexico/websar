@@ -237,7 +237,7 @@ public class GastosController {
             @RequestParam(value = "ficheroCotizacion", required = false) MultipartFile ficheroCotizacion,
 
             @RequestParam(value = "cmbUsuario") Integer cmbUsuario,
-            @RequestParam(value = "txtObservaciones", required = false) String txtObservaciones) {
+            @RequestParam(value = "txtObservaciones", required = false) String txtObservaciones) throws IOException {
         Boolean respuesta = false;
         String titulo = "Oops!";
         String mensaje = "Ocurrió un error al intentar mandar a mantenimiento el Activo.";

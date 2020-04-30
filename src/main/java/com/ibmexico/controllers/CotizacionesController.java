@@ -204,7 +204,11 @@ public class CotizacionesController {
 			objOportunidad = oportunidadNegocioService.findByIdOportunidadNegocio(paramIdOportunidad);
 		}
 		
-		List<EmpresaEntity> lstEmpresas 			= empresaService.listEmpresas();
+		List<EmpresaEntity> lstEmpresas 		= empresaService.listEmpresas();
+		List<CotizacionEntity> lstProyectos 	= cotizacionService.listProyectos();
+		List<CotizacionEntity> lstBoms 			= cotizacionService.listBom();
+		List<CotizacionEntity> lstRentas 		= cotizacionService.listRentas();
+
 		List<MonedaEntity> lstMonedas 				= monedaService.listMonedas();
 		List<FormaPagoEntity> lstFormasPagos 		= formaPagoService.listFormasPagos();
 		List<UsuarioEntity> lstUsuarios 			= usuarioService.listUsuariosActivos();
@@ -215,6 +219,11 @@ public class CotizacionesController {
 				
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_COTIZACIONES_CREATE);
 		objModelAndView.addObject("lstEmpresas", lstEmpresas);
+
+		objModelAndView.addObject("lstProyectos", lstProyectos);
+		objModelAndView.addObject("lstBoms", lstBoms);
+		objModelAndView.addObject("lstRentas", lstRentas);
+
 		objModelAndView.addObject("lstMonedas", lstMonedas);
 		objModelAndView.addObject("lstFormasPagos", lstFormasPagos);
 		objModelAndView.addObject("lstUsuarios", lstUsuarios);
@@ -249,6 +258,7 @@ public class CotizacionesController {
 								@RequestParam(value="txtCondicionesPago", required=false) String txtCondicionesPago,
 								@RequestParam(value="txtObservaciones", required=false) String txtObservaciones,
 								@RequestParam(value="hddIdOportunidad", required=false, defaultValue="0") int hddIdOportunidad,
+								@RequestParam(value="cmbProyecto", required=false) Integer cmbProyecto,
 								RedirectAttributes objRedirectAttributes) {
 					
 		RedirectView objRedirectView = null;
@@ -271,7 +281,13 @@ public class CotizacionesController {
 			if(hddIdOportunidad > 0) {
 				objCotizacion.setOportunidadNegocio(oportunidadNegocioService.findByIdOportunidadNegocio(hddIdOportunidad));
 			}
-					
+			System.err.println(cmbProyecto);
+			/* Asociar una cotizacion con un proyecto */
+			if (cmbProyecto > 0 && cmbProyecto != null) {
+				objCotizacion.setIdProyecto(cotizacionService.findByIdCotizacion(cmbProyecto));
+			} else {
+				objCotizacion.setIdProyecto(null);
+			}
 			objCotizacion.setEmpresa(empresaService.findByIdEmpresa(cmbEmpresa));
 			objCotizacion.setConcepto(txtConcepto);
 			objCotizacion.setSolicitudFecha(LocalDate.parse(txtSolicitudFecha, GeneralConfiguration.getInstance().getDateFormatterNatural()));
@@ -312,7 +328,7 @@ public class CotizacionesController {
 				objCotizacion.setFolioCotizacion("PRO" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
 				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
 			} else if(rdTipoCotizacion.equals("renta")) {
-				objCotizacion.setFolioCotizacion("IAAS" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+				objCotizacion.setFolioCotizacion("RNT" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
 				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
 				objCotizacion.setRenta(true);
 			}else if(rdTipoCotizacion.equals("boom")){
@@ -357,8 +373,15 @@ public class CotizacionesController {
 			/**
 			 * 
 			 */
-			
-			objRedirectView = new RedirectView("/WebSar/controlPanel/cotizaciones");
+			if (objCotizacion.isMaestra()) {
+				objRedirectView = new RedirectView("/WebSar/controlPanel/cotizacionesProyecto");
+			}else if(objCotizacion.isBoom()){
+				objRedirectView = new RedirectView("/WebSar/controlPanel/cotizacionesBom");
+			}else if(objCotizacion.isRenta()){
+				objRedirectView = new RedirectView("/WebSar/controlPanel/Sa");
+			}else{
+				objRedirectView = new RedirectView("/WebSar/controlPanel/cotizaciones");
+			}
 			modelAndViewComponent.addResult(objRedirectAttributes, EnumMessage.COTIZACIONES_CREATE_001);
 			
 		} catch(ApplicationException exception) {
@@ -450,7 +473,7 @@ public class CotizacionesController {
 				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
 				objCotizacion.setMaestra(true);
 			} else if(rdTipoCotizacion.equals("renta")) {
-				objCotizacion.setFolioCotizacion("IAAS" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+				objCotizacion.setFolioCotizacion("RNT" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
 				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
 				objCotizacion.setRenta(true);
 			} else if(rdTipoCotizacion.equals("boom")){
@@ -520,6 +543,11 @@ public class CotizacionesController {
 		CotizacionEntity objCotizacion = cotizacionService.findByIdCotizacion(paramIdCotizacion);
 		
 		List<EmpresaEntity> lstEmpresas = empresaService.listEmpresas();
+		
+		List<CotizacionEntity> lstProyectos 	= cotizacionService.listProyectos();
+		List<CotizacionEntity> lstBoms 			= cotizacionService.listBom();
+		List<CotizacionEntity> lstRentas 		= cotizacionService.listRentas();
+
 		List<MonedaEntity> lstMonedas = monedaService.listMonedas();
 		List<FormaPagoEntity> lstFormasPagos = formaPagoService.listFormasPagos();
 		List<UsuarioEntity> lstUsuarios = usuarioService.listUsuarios();
@@ -530,6 +558,10 @@ public class CotizacionesController {
 		
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_COTIZACIONES_EDIT);
 		objModelAndView.addObject("objCotizacion", objCotizacion);
+		objModelAndView.addObject("lstProyectos", lstProyectos);
+		objModelAndView.addObject("lstBoms", lstBoms);
+		objModelAndView.addObject("lstRentas", lstRentas);
+
 		objModelAndView.addObject("lstEmpresas", lstEmpresas);
 		objModelAndView.addObject("lstMonedas", lstMonedas);
 		objModelAndView.addObject("lstFormasPagos", lstFormasPagos);
@@ -564,6 +596,7 @@ public class CotizacionesController {
 								@RequestParam(value="cmbOportunidadNegocio", required=false, defaultValue="0") Integer cmbOportunidadNegocio,
 								@RequestParam(value="txtCondicionesPago", required=false) String txtCondicionesPago,
 								@RequestParam(value="txtObservaciones", required=false) String txtObservaciones,
+								@RequestParam(value="cmbProyecto", required=false) Integer cmbProyecto,
 								RedirectAttributes objRedirectAttributes) {
 		
 		RedirectView objRedirectView = null;
@@ -593,23 +626,32 @@ public class CotizacionesController {
 				} else {
 					objCotizacion.setOportunidadNegocio(null);
 				}
-				
-				//VENTA COMPARTIDA
-				if(chkVentaCompartida.equals("true")) {
-					objCotizacion.setVentaCompartida(true);
-					objCotizacion.setUsuarioVendedor(usuarioService.findByIdUsuario(cmbVendedor));
-				} else {
-					objCotizacion.setVentaCompartida(false);
-					objCotizacion.setUsuarioVendedor(objCotizacion.getUsuario());
+				/* Asociar una cotizacion con un proyecto */
+				if (cmbProyecto > 0 && cmbProyecto != null) {
+					objCotizacion.setIdProyecto(cotizacionService.findByIdCotizacion(cmbProyecto));
+				}else{
+					objCotizacion.setIdProyecto(null);
 				}
 				
-				
-				//IMPLEMENTACION
-				if(chkImplementacion.equals("true")) {
-					objCotizacion.setImplementacion(true);
-					objCotizacion.setUsuarioImplementador(usuarioService.findByIdUsuario(cmbImplementador));
-				} else {
-					objCotizacion.setImplementacion(false);
+				if(rdTipoCotizacion.equals("normal")){
+					
+					//VENTA COMPARTIDA
+					if(chkVentaCompartida.equals("true")) {
+						objCotizacion.setVentaCompartida(true);
+						objCotizacion.setUsuarioVendedor(usuarioService.findByIdUsuario(cmbVendedor));
+					} else {
+						objCotizacion.setVentaCompartida(false);
+						objCotizacion.setUsuarioVendedor(objCotizacion.getUsuario());
+					}
+					
+					//IMPLEMENTACION
+					if(chkImplementacion.equals("true")) {
+						objCotizacion.setImplementacion(true);
+						objCotizacion.setUsuarioImplementador(usuarioService.findByIdUsuario(cmbImplementador));
+					} else {
+						objCotizacion.setImplementacion(false);
+					}
+					
 				}
 						
 				
@@ -622,7 +664,7 @@ public class CotizacionesController {
 					objCotizacion.setNormal(false);
 					objCotizacion.setBoom(false);
 				} else if(rdTipoCotizacion.equals("renta")) {
-					objCotizacion.setFolioCotizacion("IAAS" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
+					objCotizacion.setFolioCotizacion("RNT" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
 					'-'+objCotizacion.getUsuario().getClave()+'-'+String.format("%07d", objCotizacion.getIdCotizacion()));
 					objCotizacion.setRenta(true);
 					objCotizacion.setMaestra(false);
@@ -645,7 +687,15 @@ public class CotizacionesController {
 				}
 				
 				cotizacionService.update(objCotizacion);
-				objRedirectView = new RedirectView("/WebSar/controlPanel/cotizaciones");
+				if (objCotizacion.isMaestra()) {
+					objRedirectView = new RedirectView("/WebSar/controlPanel/cotizacionesProyecto");
+				}else if(objCotizacion.isBoom()){
+					objRedirectView = new RedirectView("/WebSar/controlPanel/cotizacionesBom");
+				}else if(objCotizacion.isRenta()){
+					objRedirectView = new RedirectView("/WebSar/controlPanel/Sa");
+				}else{
+					objRedirectView = new RedirectView("/WebSar/controlPanel/cotizaciones");
+				}
 				modelAndViewComponent.addResult(objRedirectAttributes, EnumMessage.COTIZACIONES_UPDATE_001);
 			}
 			else {
@@ -1004,6 +1054,10 @@ public class CotizacionesController {
 						objCotizacion.setCotizacionEstatus(cotizacionEstatusService.findByIdCotizacionEstatus(cmbEstatus));
 						cotizacionService.update(objCotizacion);
 						respuesta = true;
+					}else if(cmbEstatus.equals(7)){
+						objCotizacion.setCotizacionEstatus(cotizacionEstatusService.findByIdCotizacionEstatus(cmbEstatus));
+						cotizacionService.update(objCotizacion);
+						respuesta = true;
 					}
 				}
 				
@@ -1107,8 +1161,16 @@ public class CotizacionesController {
 		JsonObject jsonUsuarios = null;
 		JsonObject jsonUsuariosGrupos = null;
 		JsonObject jsonClientes = null;
+		
+		/* Listar por tipo de cotizaciones */
+		JsonObject jsonProyectos = null;
+		JsonObject jsonBoms = null;
+		JsonObject jsonRentas = null;
 				
 		try {
+			jsonProyectos = cotizacionService.jsonProyectos();
+			jsonBoms = cotizacionService.jsonBoms();
+			jsonRentas = cotizacionService.jsonCotizacionesRenta();
 			jsonEmpresas = empresaService.jsonEmpresas();
 			jsonMonedas = monedaService.jsonMonedas();
 			jsonFormasPagos = formaPagoService.jsonFormasPagos();
@@ -1123,6 +1185,9 @@ public class CotizacionesController {
 					
 		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
 		jsonReturn	.add("respuesta", respuesta)
+					.add("jsonProyectos", jsonProyectos)
+					.add("jsonBoms", jsonBoms)
+					.add("jsonRentas", jsonRentas)
 					.add("jsonEmpresas", jsonEmpresas)
 					.add("jsonMonedas", jsonMonedas)
 					.add("jsonFormasPagos", jsonFormasPagos)

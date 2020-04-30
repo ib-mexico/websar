@@ -129,4 +129,38 @@ public class MailerComponent {
 		objMimeMessageHelper.setText(templateEngine.process(objTemplates.FOUNDATION_MAIL, objContext), true);
 		objJavaMailSender.send(objMimeMessager);
 	}
+
+	public void sendNotificacionOportunidadNegocio(String para, String asunto, ByteArrayResource bytePDFOportunidad, String oportunidad,
+			String templateNotificacionOportunidad, Map<String, Object> mapVariableOportunidad) throws MessagingException , IOException {
+
+				final InputStreamSource attachment = bytePDFOportunidad;
+				MimeMessage objMimeMessager = objJavaMailSender.createMimeMessage();
+		
+				MimeMessageHelper objMimeMessageHelper = new MimeMessageHelper(objMimeMessager,
+				MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
+		
+				ClassPathResource objPath = new ClassPathResource("static/assets/images/logotipo_250.png");
+				objMimeMessageHelper.addAttachment("logotipo_250.png", objPath);
+		
+				Context objContext = new Context();
+				Templates objTemplates = new Templates();
+		
+				objContext.setVariable("_TEMPLATE_", templateNotificacionOportunidad);
+		
+				if (mapVariableOportunidad != null) {
+					mapVariableOportunidad.forEach((k, v) -> {
+						objContext.setVariable(k, v);
+					});
+				}
+		
+				if (bytePDFOportunidad.exists()) {
+					objMimeMessageHelper.addAttachment(" Oportunidad  "+oportunidad+".pdf", attachment);
+				}
+				objMimeMessageHelper.setTo(para);
+				objMimeMessageHelper.setSubject(asunto);
+				objMimeMessageHelper.setFrom(strFrom);
+		
+				objMimeMessageHelper.setText(templateEngine.process(objTemplates.FOUNDATION_MAIL, objContext), true);
+				objJavaMailSender.send(objMimeMessager);
+	}
 }

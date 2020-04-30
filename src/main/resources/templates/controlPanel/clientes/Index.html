@@ -1,8 +1,5 @@
 <th:block th:fragment="body">
-	<div class="block-header">
-        <h2>CLIENTES</h2>
-    </div>
-    
+	
     <ol class="breadcrumb breadcrumb-bg-red">
       	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
     	<li class="active"><i class="material-icons">public</i> Clientes</li>
@@ -50,7 +47,6 @@
 						<table id="dtClientes" class="table table-bordered table-striped table-hover">
 							<thead>
 								<tr>
-									<th class="col-md-1" data-field="idCliente" data-halign="left" data-align="center">ID</th>
 									<th class="col-md-1" data-formatter="accionesFormatter" data-align="center">Acciones</th>
 									<th class="col-md-3" data-field="cliente" data-halign="left">Nombre Comercial</th>
 									<th class="col-md-3" data-field="ejecutivo" data-halign="left">Ejecutivo IBM</th>

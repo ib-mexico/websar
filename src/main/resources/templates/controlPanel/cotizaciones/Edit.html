@@ -5,7 +5,13 @@
     
     <ol class="breadcrumb breadcrumb-bg-red">
       	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
-    	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">view_list</i> Cotizaciones</a></li>
+		<li>
+			<a th:if="${objCotizacion.isNormal()}" th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">view_list</i> Cotizaciones</a>
+			<a th:if="${objCotizacion.isMaestra()}" th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">view_list</i> Proyectos</a>
+			<a th:if="${objCotizacion.isBoom()}" th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">view_list</i> Cotizaciones Bom</a>
+			<a th:if="${objCotizacion.isRenta()}" th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">view_list</i> Servicios Administrados</a>
+
+		</li>
     	<li class="active"> Modificaci&oacute;n</li>
   	</ol>
     
@@ -13,7 +19,10 @@
     	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     		<div class="card">
     			<div class="header">
-    				<h2>Editar Cotizaci&oacute;n</h2>
+					<h2 th:if="${objCotizacion.isNormal()}">Editar Cotizaci&oacute;n</h2>
+    				<h2 th:if="${objCotizacion.isMaestra()}">Editar Proyecto</h2>
+    				<h2 th:if="${objCotizacion.isRenta()}">Editar Servicio Administrado</h2>
+    				<h2 th:if="${objCotizacion.isBoom()}">Editar Cotizaci&oacute;n Bom</h2>
     			</div>
     			
     			<div class="body">
@@ -162,12 +171,12 @@
 							</div>
 						</div>
 						
-						<hr />
-						<div style="margin-bottom: 30px;">						
+						<hr  th:if="${objCotizacion.isNormal()}"/>
+						<div style="margin-bottom: 30px;" th:if="${objCotizacion.isNormal()}">						
 							<h4>Venta e Implementaci&oacute;n</h4>
 						</div>
 						
-						<div class="row clearfix">
+						<div class="row clearfix" th:if="${objCotizacion.isNormal()}">
 							<div class="col-md-4">
 	                            <p><b>Vendedor *</b></p>
 	                            <select class="form-control show-tick" name="cmbVendedor" id="cmbVendedor" data-live-search="true" disabled="disabled">
@@ -216,21 +225,26 @@
 						
 						<div class="row clearfix">
 							<div class="col-md-12">
-	                        	<input th:if="${objCotizacion.isMaestra()}" name="rdTipoCotizacion" type="radio" id="rdMaster" class="with-gap radio-col-red" value="master" checked="checked" />
-	                        	<input th:unless="${objCotizacion.isMaestra()}" name="rdTipoCotizacion" type="radio" id="rdMaster" class="with-gap radio-col-red" value="master" />
-                                <label for="rdMaster"><strong>Maestra</strong> (Ej. Cotizaci&oacute;n principal de una p&oacute;liza)</label>
-                                
-								<input th:if="${objCotizacion.isRenta()}" name="rdTipoCotizacion" type="radio" id="rdRenta" class="with-gap radio-col-red" value="renta" checked="checked" />
-								<input th:unless="${objCotizacion.isRenta()}" name="rdTipoCotizacion" type="radio" id="rdRenta" class="with-gap radio-col-purple" value="renta" />
-                                <label for="rdRenta"><strong>Renta</strong> (Ej. Cotizaci&oacute;n mensual de una p&oacute;liza)</label>
-                                
-                                <input th:if="${objCotizacion.isNormal()}" name="rdTipoCotizacion" type="radio" id="rdNormal" class="with-gap radio-col-red" value="normal" checked="checked" />
-                                <input th:unless="${objCotizacion.isNormal()}" name="rdTipoCotizacion" type="radio" id="rdNormal" class="with-gap radio-col-blue" value="normal" />
-								<label for="rdNormal"><strong>Normal</strong> (Ej. Cualquier tipo de cotizaci&oacute;n que no sea p&oacute;liza)</label>
-								
-								<input th:if="${objCotizacion.isBoom()}" name="rdTipoCotizacion" type="radio" id="rdBoom" class="with-gap radio-col-red" value="boom" checked="checked" />
-								<input th:unless="${objCotizacion.isBoom()}" name="rdTipoCotizacion" type="radio" id="rdBoom" class="with-gap radio-col-blue" value="boom" />
-								<label for="rdBoom"><strong>BOM</strong>(Ej. Cotizaci&oacute;n mayor. Principal de una p&oacute;liza)</label>
+								<div th:if="${objCotizacion.isMaestra() and !objCotizacion.isRenta() and !objCotizacion.isBoom() and !objCotizacion.isNormal()}">
+									<input th:if="${objCotizacion.isMaestra()}" name="rdTipoCotizacion" type="radio" id="rdMaster" class="with-gap radio-col-red" value="master" checked="checked" />
+									<input th:unless="${objCotizacion.isMaestra()}" name="rdTipoCotizacion" type="radio" id="rdMaster" class="with-gap radio-col-red" value="master" />
+									<label for="rdMaster"><strong>Maestra</strong> (Ej. Cotizaci&oacute;n principal de una p&oacute;liza)</label>
+								</div>
+								<div th:if="${!objCotizacion.isMaestra() and objCotizacion.isRenta() and !objCotizacion.isBoom() and !objCotizacion.isNormal()}">
+									<input th:if="${objCotizacion.isRenta()}" name="rdTipoCotizacion" type="radio" id="rdRenta" class="with-gap radio-col-red" value="renta" checked="checked" />
+									<input th:unless="${objCotizacion.isRenta()}" name="rdTipoCotizacion" type="radio" id="rdRenta" class="with-gap radio-col-purple" value="renta" />
+									<label for="rdRenta"><strong>Renta</strong> (Ej. Cotizaci&oacute;n mensual de una p&oacute;liza)</label>
+								</div>
+								<div th:if="${!objCotizacion.isMaestra() and !objCotizacion.isRenta() and !objCotizacion.isBoom() and objCotizacion.isNormal()}">
+									<input th:if="${objCotizacion.isNormal()}" name="rdTipoCotizacion" type="radio" id="rdNormal" class="with-gap radio-col-red" value="normal" checked="checked" />
+									<input th:unless="${objCotizacion.isNormal()}" name="rdTipoCotizacion" type="radio" id="rdNormal" class="with-gap radio-col-blue" value="normal" />
+									<label for="rdNormal"><strong>Normal</strong> (Ej. Cualquier tipo de cotizaci&oacute;n que no sea p&oacute;liza)</label>
+								</div>
+								<div th:if="${!objCotizacion.isMaestra() and !objCotizacion.isRenta() and objCotizacion.isBoom() and !objCotizacion.isNormal()}">
+									<input th:if="${objCotizacion.isBoom()}" name="rdTipoCotizacion" type="radio" id="rdBoom" class="with-gap radio-col-red" value="boom" checked="checked" />
+									<input th:unless="${objCotizacion.isBoom()}" name="rdTipoCotizacion" type="radio" id="rdBoom" class="with-gap radio-col-blue" value="boom" />
+									<label for="rdBoom"><strong>BOM</strong>(Ej. Cotizaci&oacute;n mayor. Principal de una p&oacute;liza)</label>
+								</div>
 	                        </div>
 						</div>
 						
@@ -240,7 +254,7 @@
 						</div>
 						
 						<div class="row clearfix">
-							<div class="col-md-4">
+							<div class="col-md-6">
 								<p><b>Oportunidad de Negocio</b></p>
 	                            <select class="form-control show-tick" name="cmbOportunidadNegocio" id="cmbOportunidadNegocio" data-live-search="true" >
 	                            <option value="0" selected="selected">Selecciona una Oportunidad...</option>
@@ -257,6 +271,23 @@
 		                            </th:block>
 	                       		</select>
 							</div>
+							<div class="col-md-6">
+								<p><b>Proyectos</b></p>
+	                            <select class="form-control show-tick" name="cmbProyecto" id="cmbProyecto" data-live-search="true" >
+	                            <option value="0" selected="selected">Asocia a un proyecto...</option>
+		                            <th:block th:if="${objCotizacion.getIdProyecto() != null}">
+		                            	<th:block th:each="itemProyecto : ${lstProyectos}" >
+		                       				<option th:if="${itemProyecto.idCotizacion == objCotizacion.getIdProyecto().getIdCotizacion()}" selected="selected" th:value="${itemProyecto.idCotizacion}" th:text="${itemProyecto.idCotizacion + ' - ' + itemProyecto.folioCotizacion}"></option>
+		                       				<option th:unless="${itemProyecto.idCotizacion == objCotizacion.getIdProyecto().getIdCotizacion()}" th:value="${itemProyecto.idCotizacion}" th:text="${itemProyecto.idCotizacion + ' - ' + itemProyecto.folioCotizacion}"></option>
+		                       			</th:block>
+		                            </th:block>
+		                            
+		                            <th:block th:unless="${objCotizacion.getIdProyecto() != null}">
+		                            	<option value="0" selected="selected">Asocie a un proyecto...</option>
+		                            	<option th:each="itemProyecto : ${lstProyectos}" th:value="${itemProyecto.idCotizacion}" th:text="${itemProyecto.idCotizacion + ' - ' + itemProyecto.folioCotizacion}"></option>
+		                            </th:block>
+	                       		</select>
+							</div>
 						</div>
 					
 						<div class="row clearfix">
@@ -264,9 +295,7 @@
 								<div class="form-group">
 	                        		<p><b>Condiciones de pago</b></p>
                                     <div class="form-line">
-                                        <textarea rows="4" name="txtCondicionesPago" class="form-control no-resize" placeholder="...">
-                                        	<th:block th:utext="${objCotizacion.getCondicionesPago()}"></th:block>
-                                        </textarea>
+                                        <textarea rows="4" name="txtCondicionesPago" class="form-control no-resize" placeholder="..."><th:block th:utext="${objCotizacion.getCondicionesPago()}"></th:block></textarea>
                                     </div>
                                  </div>
 							</div>
@@ -275,9 +304,7 @@
 								<div class="form-group">
 	                        		<p><b>Observaciones</b></p>
                                     <div class="form-line">
-                                        <textarea rows="4" name="txtObservaciones" class="form-control no-resize" placeholder="...">
-                                        	<th:block th:utext="${objCotizacion.getObservaciones()}"></th:block>
-                                        </textarea>
+                                        <textarea rows="4" name="txtObservaciones" class="form-control no-resize" placeholder="..."><th:block th:utext="${objCotizacion.getObservaciones()}"></th:block></textarea>
                                     </div>
                                  </div>
 							</div>
@@ -285,7 +312,10 @@
 					
 						<div class="row clearfix">
 							<div class="col-md-3 col-md-offset-8 text-right">
-								<a th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<a th:if="${objCotizacion.isNormal()} " th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<a th:if="${objCotizacion.isMaestra()} " th:href="${ {_PATH_} + 'controlPanel/cotizacionesProyecto'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<a th:if="${objCotizacion.isRenta()} " th:href="${ {_PATH_} + 'controlPanel/Sa'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
+								<a th:if="${objCotizacion.isBoom()} " th:href="${ {_PATH_} + 'controlPanel/cotizacionesBom'}" role="button" class="btn btn-danger m-t-15 waves-effect">CANCELAR</a>
 								<button type="submit" class="btn btn-primary m-t-15 waves-effect">MODIFICAR</button>
 							</div>
 						</div>

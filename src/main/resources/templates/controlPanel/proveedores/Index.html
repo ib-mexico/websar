@@ -1,7 +1,9 @@
 <th:block th:fragment="body">
-	<div class="block-header">
-        <h2>PROVEEDORES</h2>
-    </div>
+
+	<ol class="breadcrumb breadcrumb-bg-red">
+		<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> INICIO</a></li>
+	  <li class="active"><i class="material-icons">public</i> PROVEEDORES</li>
+	</ol>
     
     <div class="row clearfix">
     	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -17,41 +19,16 @@
     					</div>
     				</div>
     				
-    				<div class="row clearfix" id="dtProveedoresToolBar">
-    					<div class="col-xs-3 col-sm-3 col-md-3">
-    						<div class="input-group">
-   								<span class="input-group-addon">
-                                	<i class="material-icons">date_range</i>
-	                           	</span>
-	                           	<div class="form-line" id='groupDesde'>
-                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableDesde" name="txtBootstrapTableDesde" placeholder="Desde..." />
-	                           	</div>
-							</div>
-    					</div>
-    					
-    					<div class="col-xs-3 col-sm-3 col-md-3">
-    						<div class="input-group">
-    							<span class="input-group-addon">
-                                	<i class="material-icons">date_range</i>
-	                           	</span>
-	                           	<div class="form-line" id='groupHasta'>
-                               		<input type="text" class="form-control date text-center datetimepicker" id="txtBootstrapTableHasta" name="txtBootstrapTableHasta" placeholder="Hasta..." />
-	                           	</div>
-							</div>
-    					</div>					
-					</div>
-					
 					<div class="table-responsive">
 						<table id="dtProveedores" class="table table-bordered table-striped table-hover">
 							<thead>
 								<tr>
-									<th class="col-md-1" data-field="idProveedor" data-halign="left" data-align="center">ID</th>
 									<th class="col-md-1" data-formatter="accionesFormatter" data-align="center">Acciones</th>
 									<th class="col-md-3" data-field="proveedor" data-halign="left">Proveedor</th>
 									
 									<th class="col-md-2" data-field="razonSocial" data-halign="left">Raz&oacute;n Social</th>
-									<th class="col-md-2" data-field="rfc" data-halign="left" data-align="center">RFC</th>									
-									<th class="col-md-2" data-field="direccion" data-halign="left" data-visible="false">Direcci&oacute;n</th>
+									<th class="col-md-3" data-field="direccion" data-halign="left" data-visible="true">Direcci&oacute;n</th>
+									<th class="col-md-2" data-field="rfc" data-halign="left" data-align="left">RFC</th>									
 									<th class="col-md-2" data-field="ciudad" data-halign="left" data-visible="false">Ciudad</th>
 									<th class="col-md-1" data-field="codigoPostal" data-halign="left" data-align="center" data-visible="false">C&oacute;digo Postal</th>
 									

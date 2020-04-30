@@ -42,6 +42,9 @@ public class CotizacionEstatusEntity {
 	@Column
 	private boolean eliminado = false;
 
+	@Column(length = 10, nullable = true)
+	private int orden;
+
 	public int getIdCotizacionEstatus() {
 		return idCotizacionEstatus;
 	}
@@ -113,9 +116,14 @@ public class CotizacionEstatusEntity {
 				+ ", modificacionUsuario=" + modificacionUsuario.getIdUsuario() + ", modificacionFecha=" + modificacionFecha
 				+ ", eliminado=" + eliminado + "]";
 	}
+
+	public int getOrden() {
+		return orden;
+	}
+
+	public void setOrden(int orden) {
+		this.orden = orden;
+	}
 	
-	
-	
-	
-	
+		
 }

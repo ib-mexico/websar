@@ -5,15 +5,20 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import javax.mail.MessagingException;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +38,7 @@ import org.thymeleaf.context.Context;
 import com.ibmexico.libraries.notifications.ApplicationException;
 import com.ibmexico.libraries.notifications.EnumException;
 import com.ibmexico.libraries.notifications.EnumMessage;
+import com.ibmexico.components.MailerComponent;
 import com.ibmexico.components.ModelAndViewComponent;
 import com.ibmexico.components.PdfComponent;
 import com.ibmexico.configurations.GeneralConfiguration;
@@ -47,10 +53,12 @@ import com.ibmexico.entities.EmpresaEntity;
 import com.ibmexico.entities.MonedaEntity;
 import com.ibmexico.entities.OpnNegocioColaboradorEntity;
 import com.ibmexico.entities.OportunidadNegocioEntity;
+import com.ibmexico.entities.OportunidadNegocioEstatusClasificacionEntity;
 import com.ibmexico.entities.OportunidadNegocioEstatusEntity;
 import com.ibmexico.entities.OportunidadNegocioFicheroEntity;
 import com.ibmexico.entities.SucursalEntity;
 import com.ibmexico.entities.UsuarioEntity;
+import com.ibmexico.entities.UsuarioRolEntity;
 import com.ibmexico.libraries.Formats;
 import com.ibmexico.libraries.Templates;
 import com.ibmexico.services.ActividadService;
@@ -64,6 +72,7 @@ import com.ibmexico.services.CotizacionTipoFicheroService;
 import com.ibmexico.services.EmpresaService;
 import com.ibmexico.services.MonedaService;
 import com.ibmexico.services.OpnNegocioColaboradorService;
+import com.ibmexico.services.OportunidadNegocioEstatusClasificacionService;
 import com.ibmexico.services.OportunidadNegocioEstatusService;
 import com.ibmexico.services.OportunidadNegocioFicheroService;
 import com.ibmexico.services.OportunidadNegocioService;
@@ -96,6 +105,12 @@ public class OportunidadesNegociosController {
 	@Autowired
 	@Qualifier("oportunidadNegocioEstatusService")
 	private OportunidadNegocioEstatusService oportunidadNegocioEstatusService;
+
+	/* 2da catalogo de clasificacion estatus de oportunidades de negocio */
+	@Autowired
+	@Qualifier("oportunidadNegocioEstatusClasificacionService")
+	private OportunidadNegocioEstatusClasificacionService opnNegocioEstatusClasificacionService;
+
 	/**Para la llamada de calidad */
 	@Autowired
 	@Qualifier("cotizacionTipoFicheroService")
@@ -153,6 +168,9 @@ public class OportunidadesNegociosController {
 	@Autowired
 	@Qualifier("sessionService")
 	private SessionService sessionService;
+
+	@Autowired
+	private MailerComponent mailerComponent;
 	
 	@GetMapping({"", "/"})
 	public ModelAndView index() {
@@ -432,6 +450,7 @@ public class OportunidadesNegociosController {
 		OportunidadNegocioEntity objOportunidad = oportunidadNegocioService.findByIdOportunidadNegocio(paramIdOportunidad);
 		
 		List<OportunidadNegocioEstatusEntity> lstOportunidadesEstatus = oportunidadNegocioEstatusService.listOportunidadesEstatus();
+		List<OportunidadNegocioEstatusClasificacionEntity> lstOpnEstatusClasificacion = opnNegocioEstatusClasificacionService.lstOpnEstatusClasificacion(objOportunidad.getOportunidadNegocioEstatus().getIdOportunidadNegocioEstatus());
 		List<UsuarioEntity> lstUsuarios = usuarioService.listUsuarios();
 		List<ClienteEntity> lstClientes = clienteService.listClientesActivos();
 		List<ClienteContactoEntity> lstContactos = clienteContactoService.listClienteContactosActivos(objOportunidad.getCliente().getIdCliente());
@@ -443,6 +462,7 @@ public class OportunidadesNegociosController {
 		ModelAndView objModelAndView = modelAndViewComponent.createModelAndViewControlPanel(Templates.CONTROL_PANEL_OPORTUNIDADES_EDIT);
 		objModelAndView.addObject("objOportunidad", objOportunidad);
 		objModelAndView.addObject("lstOportunidadesEstatus", lstOportunidadesEstatus);
+		objModelAndView.addObject("lstOpnEstatusClasificacion", lstOpnEstatusClasificacion);
 		objModelAndView.addObject("lstUsuarios", lstUsuarios);
 		objModelAndView.addObject("lstClientes", lstClientes);
 		objModelAndView.addObject("lstContactos", lstContactos);
@@ -459,6 +479,9 @@ public class OportunidadesNegociosController {
 								@RequestParam(value="cmbEmpresa") Integer cmbEmpresa,
 								@RequestParam(value="txtOportunidad") String txtOportunidad,
 								@RequestParam(value="cmbEstatus") int cmbEstatus,
+								//subclasificacion de los estatus de oportunidades
+								@RequestParam(value="cmbEstatusClasificacion", required=false) int cmbEstatusClasificacion, 
+
 								@RequestParam(value="cmbMoneda") int cmbMoneda,
 								@RequestParam(value="txtTipoCambio", required=false, defaultValue="0") String txtTipoCambio,
 								@RequestParam(value="txtValorMonedaExtranjera", required=false, defaultValue="0") String txtValorMonedaExtranjera,
@@ -474,7 +497,7 @@ public class OportunidadesNegociosController {
 								@RequestParam(value = "idOpnColaborador", required = false) int[] idOpnColaborador,
 								@RequestParam(value = "nuevoColaborador", required = false) String[] nuevoColaborador,
 								@RequestParam(value = "idColaborador", required = false) int[] idColaborador,
-								RedirectAttributes objRedirectAttributes) {
+								RedirectAttributes objRedirectAttributes) throws DocumentException, IOException, MessagingException {
 		
 		RedirectView objRedirectView = null;
 		OportunidadNegocioEntity objOportunidad = oportunidadNegocioService.findByIdOportunidadNegocio(paramIdOportunidad);
@@ -492,7 +515,10 @@ public class OportunidadesNegociosController {
 			if(!txtCierreFecha.equals("")) {
 				objOportunidad.setCierreFecha(LocalDate.parse(txtCierreFecha, GeneralConfiguration.getInstance().getDateFormatterNatural()));
 			}
-			
+			if(cmbEstatusClasificacion > 0){
+				objOportunidad.setOpnNegocioEstatusClasificacion(opnNegocioEstatusClasificacionService.findByIdOportunidadNegocioEstatus(cmbEstatusClasificacion));
+			}
+
 			objOportunidad.setPrioridad(txtPrioridad);
 			// objOportunidad.setNotasInternas(txtNotasInternas.replaceAll("^\\s*",""));
 			objOportunidad.setNotasInternas(txtNotasInternas.trim());
@@ -538,6 +564,29 @@ public class OportunidadesNegociosController {
 				}
 			}
 
+			/* Notificacion por correo de las oportunidades de negocio que entren en curso */
+			// if(cmbEstatus == 2 || cmbEstatus ==3 ){
+			// 	ByteArrayResource pdfDetalleOportunidad = detalleOportunidad(objOportunidad.getIdOportunidadNegocio());
+
+			// 	for (UsuarioRolEntity objUsuarioRol : sessionService.findRolName("NOTIFICACION_OPORTUNIDAD_NEGOCIO")){
+			// 		Map<String, Object> mapNotificacionOportunidad = new HashMap<String, Object>();
+			// 		mapNotificacionOportunidad.put("UsuarioRolOpnNotificacion", objUsuarioRol.getUsuario());
+			// 		mapNotificacionOportunidad.put("detalleOportunidad", objOportunidad);
+					
+			// 		try {
+			// 			if (EmailValidator.getInstance().isValid(objUsuarioRol.getUsuario().getCorreo())) {
+	
+			// 				mailerComponent.sendNotificacionOportunidadNegocio(objUsuarioRol.getUsuario().getCorreo(), "La Oportunidad de negocio "+"  "
+			// 				+objOportunidad.getOportunidad() +" esta  "+objOportunidad.getOportunidadNegocioEstatus().getOportunidadNegocioEstatus()
+			// 				,pdfDetalleOportunidad, objOportunidad.getOportunidad(), Templates.TEMPLATE_NOTIFICACION_OPORTUNIDAD, mapNotificacionOportunidad);
+			// 			}
+			// 		} catch (Exception e) {
+			// 			System.err.println("Ocurrio un error y no se pudo enviar el correo : "+e.getMessage());
+			// 		}
+			// 	}
+
+			// }
+			
 			objRedirectView = new RedirectView("/WebSar/controlPanel/oportunidadesNegocios");
 			modelAndViewComponent.addResult(objRedirectAttributes, EnumMessage.OPORTUNIDADES_UPDATE_001);
 			
@@ -916,4 +965,67 @@ public class OportunidadesNegociosController {
 		
 	}
 	
+	/* Generar reporte de la oportunidad  retornando ByteArrayResource */
+	public ByteArrayResource detalleOportunidad(int idOportunidad)
+			throws DocumentException, IOException, MessagingException {
+
+		OportunidadNegocioEntity objOportunidad = oportunidadNegocioService
+				.findByIdOportunidadNegocio(idOportunidad);
+		LocalDateTime ldtNow = LocalDateTime.now();
+		Templates objTemplates = new Templates();
+
+		String path_file = ldtNow.getYear() + "_" + ldtNow.getMonthValue() + "_" + ldtNow.getDayOfMonth()
+				+ "_REPORTE_OPORTUNIDAD_NEGOCIO.pdf";
+
+		Context objContext = new Context();
+		objContext.setVariable("_TEMPLATE_", Templates.PDF_REPORTE_OPORTUNIDAD_NEGOCIO);
+		objContext.setVariable("title", "Reporte de Oportunidad de Negocio : #"
+				+ objOportunidad.getIdOportunidadNegocio() + " - " + objOportunidad.getOportunidad());
+
+		objContext.setVariable("objOportunidad", objOportunidad);
+
+		objContext.setVariable("fechaActual",
+				ldtNow.format(GeneralConfiguration.getInstance().getDateFormatterNatural()));
+		ByteArrayResource objPDF = pdfComponent.generateFile(path_file, objTemplates.FOUNDATION_PDF, objContext);
+		return objPDF;
+	}
+
+	// OBTENER Clasificacion oportunidades MEDIANTE AJAX
+	// @RequestMapping(value = "get-estatus-clasificacion", method = RequestMethod.GET)
+	// public @ResponseBody String getEstatusClasificacion(@RequestParam("idEstatus") int IdEstatus) {
+								
+	// 	Boolean respuesta = false;
+	// 	JsonObject jsonEstatusClasificacion = null;
+				
+	// 	try {
+	// 		jsonEstatusClasificacion = opnNegocioEstatusClasificacionService.jsonEstatusClasificacion(IdEstatus);
+	// 		respuesta = true;
+	// 	} catch(ApplicationException exception) {
+
+	// 	}
+					
+	// 	JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+	// 	jsonReturn	.add("respuesta", respuesta)
+	// 				.add("jsonEstatusClasificacion", jsonEstatusClasificacion);
+		
+	// 	return jsonReturn.build().toString();
+	// }
+	
+	@RequestMapping(value = "/get-estatus-clasificacion", method = RequestMethod.GET)
+	public @ResponseBody String getEstatusClasificacion( @RequestParam("idEstatus") int idEstatus) {
+		
+		List<OportunidadNegocioEstatusClasificacionEntity> lstOpnEstatusClasificacion = opnNegocioEstatusClasificacionService.lstOpnEstatusClasificacion(idEstatus);
+		JsonArrayBuilder jsonContactos = Json.createArrayBuilder();
+		
+		lstOpnEstatusClasificacion.forEach((item)-> {
+			
+			jsonContactos.add(Json.createObjectBuilder()
+					.add("id_Opn_Estatus_clasificacion", item.getIdOpnNegocioEstatusClasificacion())
+					.add("nombre", item.getNombre())
+			);
+
+		});
+					
+		return jsonContactos.build().toString();
+	}
 }

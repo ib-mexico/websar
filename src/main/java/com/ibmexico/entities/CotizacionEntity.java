@@ -183,7 +183,19 @@ public class CotizacionEntity {
 	@Column(nullable = true)
 	private String folioCotizacion;
 	
-	
+	/*id de Proyecto, Boom o Servicios administrados */
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_proyecto", nullable = true)
+	private CotizacionEntity idProyecto;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_bom", nullable = true)
+	private CotizacionEntity idBom;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_renta", nullable = true)
+	private CotizacionEntity idSAdministrado;
+
 	// ACCESORS METHODS
 	public int getIdCotizacion() {
 		return idCotizacion;
@@ -261,7 +273,7 @@ public class CotizacionEntity {
 			}
 			if (boolRenta) {
 				String[] foliosplit = folio.split("-");
-				foliosplit[0] = "IAAS";
+				foliosplit[0] = "RNT";
 				strFolio  = foliosplit[0]+'-'+foliosplit[1]+'-'+foliosplit[2]+'-'+foliosplit[3];
 			}
 			if (!boolNormal && !boolMaestra && !boolBoom && !boolRenta) {
@@ -674,6 +686,30 @@ public class CotizacionEntity {
 
 	public void setFolioCotizacion(String folioCotizacion) {
 		this.folioCotizacion = folioCotizacion;
+	}
+
+	public CotizacionEntity getIdProyecto() {
+		return idProyecto;
+	}
+
+	public void setIdProyecto(CotizacionEntity idProyecto) {
+		this.idProyecto = idProyecto;
+	}
+
+	public CotizacionEntity getIdBom() {
+		return idBom;
+	}
+
+	public void setIdBom(CotizacionEntity idBom) {
+		this.idBom = idBom;
+	}
+
+	public CotizacionEntity getIdSAdministrado() {
+		return idSAdministrado;
+	}
+
+	public void setIdSAdministrado(CotizacionEntity idSAdministrado) {
+		this.idSAdministrado = idSAdministrado;
 	}
 	
 	

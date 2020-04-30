@@ -15,7 +15,7 @@ public interface IUsuarioRepository extends JpaRepository<UsuarioEntity, Seriali
 
 	public abstract UsuarioEntity findByCorreo(String correo);
 	public abstract UsuarioEntity findByClave(String correo);
-	public abstract UsuarioEntity findByUsername(String username);
+	public abstract UsuarioEntity findByUsernameAndEliminadoFalse(String username);
 	public abstract UsuarioEntity findByIdUsuario(int idUsuario);
 	
 	@Query("SELECT objUsuario FROM UsuarioEntity objUsuario WHERE objUsuario.eliminado = false")	

@@ -13,10 +13,11 @@ Vue.component('gastos',{
 
 
 if (document.getElementById("appGastos")) {
-    var gasto=new Vue({
+    var gasto = new Vue({
         el:"#appGastos",
         mounted() {
-            this.obtener_datos_gastos();
+            this.getDataGastos();
+            this.loadModal();
         },
         data:{
             title: 'Gasto relacionados a una o varias Cotizaciones',
@@ -162,6 +163,7 @@ if (document.getElementById("appGastos")) {
                 $('.cmbCotizacion').selectpicker('refresh');
                 $('.cmbTipoFichero').selectpicker('refresh');
             },
+
             validateForm(){
                 var response=false;
                 if(!(this.nuevoPago.id_empresa)) {
@@ -223,7 +225,8 @@ if (document.getElementById("appGastos")) {
 
                 return response = true;
             },
-            obtener_datos_gastos(){
+
+            getDataGastos(){
                 var url=host+'Gastos/get-recurso-data-form';
                 axios.get(url).then(resp=>{
                     if(resp.status==200 && resp.data.respuesta){
@@ -267,9 +270,9 @@ if (document.getElementById("appGastos")) {
                     var formGasto = document.getElementById('formGasto');
                     var formGastoData = new FormData(formGasto);
                     var url = host + 'Gastos/storeGastos';
-                    axios.post(url,formGastoData).then(resp=>{
+                    axios.post(url,formGastoData).then(resp => {
                         console.log(resp);
-                        if (resp.status==200 && resp.data.respuesta) {
+                        if (resp.status == 200 && resp.data.respuesta) {
                             $("#formGasto")[0].reset();
                             $("#modalGasto").modal("hide");
                             this.nuevoPago.id_empresa = '',
@@ -293,7 +296,7 @@ if (document.getElementById("appGastos")) {
                         }else{
                             swal(resp.data.titulo, resp.data.mensaje, "error");
                         }
-                    }).catch(error=>{
+                    }).catch(error => {
                         swal("Algo ha salido mal!",error.resp,"error");
                     })
                 }
@@ -353,6 +356,8 @@ if (document.getElementById("appGastos")) {
                 var formEditGasto = document.getElementById('formEditGasto');
                 var formEditGastoData = new FormData(formEditGasto);
                 var url = host + 'Gastos/'+this.editGastoData.id_gasto+'/actualizar';
+                //`${host}Gastos/${this.editGastoData.id_gasto}/actualizar`
+
                 axios.post(url, formEditGastoData).then(resp=>{
                     if(resp.status==200 && resp.data.respuesta){
                         $("#formEditGasto")[0].reset();
@@ -386,16 +391,15 @@ if (document.getElementById("appGastos")) {
 								swal(resp.data.titulo, resp.data.mensaje, "success");
 								$("#dtGasto").bootstrapTable('refresh');
 							}else{
-								// console.log(resp);
 								swal(resp.data.titulo, resp.data.mensaje, "error");
 							}
 						}).catch(error=>{
 							swal("Algo malo pasó!", error.resp, "error");
-								// console.log(error);
 						});
 					}
 				}).catch(swal.noop);
             },
+            
             validateReporte(){
                 var response=false;
                 var valorEmpresa=$('.cmbReporteEmpresa').selectpicker('val');
@@ -411,6 +415,7 @@ if (document.getElementById("appGastos")) {
                 }
                return response=true;
             },
+
             GenerarPDF(){  
                 var urlRedirect = '';
                 var valorEmpresa=$('.cmbReporteEmpresa').selectpicker('val');
@@ -446,10 +451,34 @@ if (document.getElementById("appGastos")) {
                     $('.cmbReporteUsuario').selectpicker('refresh');
                     window.open(urlRedirect);
                 }
+            },
+
+        },
+
+        computed: {          
+            buscarTipoGasto(){
+                lst = this.tipoGasto;
+                if(this.nuevoPago.idPrincipalGasto == 4){
+                    console.log("prueba del level 4 computed");
+                    // return this.nuevoPago.idPrincipalGasto == 4 ? this.tipoGasto.filter((c) => c.nombre_gasto.includes("COMPRAS")) : this.tipoGasto;
+                    lst = this.tipoGasto.filter((c) => c.nombre_gasto.includes("COMPRAS"));
+                }else if(this.nuevoPago.idPrincipalGasto == 6){
+                    console.log("prueba del level 6 computed");
+                    lst = this.tipoGasto.filter((c) => (c.id_tipo_gasto >= 7 && c.id_tipo_gasto <= 9));
+                }
+                return lst;
             }
-            
         },
         watch: {
+            buscarTipoGasto: function(val) {
+                console.log(val.length, "tamanio");
+                if(val.length){
+                    $('.cmbTipoGasto').selectpicker('render');
+                    this.loadModal();
+                }
+                console.log("prueba 2");
+            },
+
             'nuevoPago.id_tipoGasto': function (val) {
                 if(val>0){
                     if (!isNaN(val)) {

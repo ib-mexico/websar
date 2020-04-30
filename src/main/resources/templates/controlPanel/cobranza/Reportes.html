@@ -1,11 +1,8 @@
 <th:block th:fragment="body">
-	<div class="block-header">
-        <h2>REPORTES</h2>
-    </div>
-    
+	    
     <ol class="breadcrumb breadcrumb-bg-red">
-      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
-    	<li class="active"><i class="material-icons">attach_money</i> Cobranza</li>
+      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> INICIO</a></li>
+    	<li class="active"><i class="material-icons">attach_money</i> REPORTE COBRANZA</li>
   	</ol>
     
     <div class="row clearfix">
@@ -62,7 +59,7 @@
 				var dias = parseInt($('#txtDias1').val();
 				
 				if(!dias.match('[0-9]+')) {
-					swal('Hey!', 'El campo de días únicamente acepta números}');
+					swal('Hey!', 'El campo de dï¿½as ï¿½nicamente acepta nï¿½meros}');
 					e.preventDefault();
 				}
 			}
