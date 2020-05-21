@@ -387,17 +387,17 @@
 	
 		$(document).ready(function() {
 
-			 /*Listar los usuarios con selectpicker*/
-			 $('.cmbUsuario').selectpicker('refresh');
+			/*Listar los usuarios con selectpicker*/
+			$('.cmbUsuario').selectpicker('refresh');
 			//DATEPICKER
 			$('#txtCierreFecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', weekStart : 1, clearButton: false, time:false});
 			
 			$('.starrr').starrr({
-			  max		: 3,
-			  change	: function(e, value){
-				    $('#txtPrioridad').val(value);
-			  }
-			})
+				max		: 3,
+				change	: (e, value) =>{
+					$('#txtPrioridad').val(value);
+				}
+			});
 			
 			// SELECT PICKER
 			$('#cmbCliente option').attr('selected', false);
@@ -439,13 +439,20 @@
 			// FORM SUBMIT
 			$('#formOportunidad').submit(function(e){
 				var flag = false;
+				let flagCliente = false;
 				
 				if($('#cmbCliente').val() == 'default' || $('#cmbClienteContacto').val() == 'default') {
 					flag = true;
-				}				
-				
+				}
+				if($('#cmbCliente').val() == 1 ){
+					flagCliente = true;
+				}
+								
 				if(flag) {
 					swal('Hey!', 'Los campos con (*) son obligatorios', 'warning');
+					e.preventDefault();
+				}else if(flagCliente){
+					swal('Advertencia!', 'No se permite seleccionar un cliente "A QUIEN CORRESPONDA" para generar una nueva oportunidad.', 'warning');
 					e.preventDefault();
 				}
 		  	});
@@ -456,11 +463,11 @@
 				var formData = $('#formCliente').serialize();
 				
 				$.ajax({
-					url					: $('#formCliente').attr('action'),
-					dataType			: 'json',
-					data				: formData,
-					type				: "POST",
-					success				: function(data) {
+					url			: $('#formCliente').attr('action'),
+					dataType	: 'json',
+					data		: formData,
+					type		: "POST",
+					success		: (data) => {
 						if(data.respuesta) {
 							buscarClientes();
 							swal(data.titulo, data.mensaje, 'success');
@@ -469,7 +476,7 @@
 							swal('Error!', 'Ocurrio un error al crear el cliente, verifique su informacion.', 'error');
 						}
 					},
-					error				: function(e) {
+					error	: (e) => {
 						console.log(e);
 					}
 				});
@@ -483,11 +490,11 @@
 				
 				if(data != "") {					
 					$.ajax({
-						url					: $('#formContacto').attr('action'),
-						dataType			: 'json',
-						data				: formData,
-						type				: "POST",
-						success				: function(data) {
+						url			: $('#formContacto').attr('action'),
+						dataType	: 'json',
+						data		: formData,
+						type		: "POST",
+						success		: (data) => {
 							if(data.respuesta) {
 								buscarContactos();
 								swal(data.titulo, data.mensaje, 'success');
@@ -496,11 +503,11 @@
 								swal('Error!', 'Ocurrio un error al crear el contacto, verifique su informacion.', 'error');
 							}
 						},
-						error				: function(e) {
+						error	: (e) => {
 							console.log(e);
 						}
 					});
-				} else {
+				}else {
 					swal('Advertencia!', 'Para crear un contacto, es necesario seleccionar un cliente. Verifique su informacion.', 'warning');
 				}
 				
@@ -511,47 +518,45 @@
 			var $select = $('#cmbCliente');
 			
 			$.ajax({
-				url					: [[@{/controlPanel/clientes/get-clientes}]],
-				dataType			: 'json',
-				type				: "GET",
-				success				: function(data) {
-											 
+				url			: [[@{/controlPanel/clientes/get-clientes}]],
+				dataType	: 'json',
+				type		: "GET",
+				success		: (data) => {
+
 					$select.find('option').remove();  
 					$.each(data, function(key, value) 
 					{
-					    $select.append('<option value="' + value.idCliente + '" >' + value.cliente + '</option>');
+						$select.append('<option value="' + value.idCliente + '" >' + value.cliente + '</option>');
 					});
-					
+
 					$select.selectpicker('refresh');
 				},
-				error				: function(e) {
+				error: (e) => {
 					console.log(e);
 				}
 			});
 		}
 		
 		function buscarContactos() {
-			var $select = $('#cmbClienteContacto');
-			var data = $('#cmbCliente').val()
+			let $select = $('#cmbClienteContacto');
+			let data = $('#cmbCliente').val();
 			$('#hddIdCliente').val(data);
 			
 			$.ajax({
-				url					: [[@{/controlPanel/clientes/get-clientes-contactos}]] + "?idCliente=" + data,
-				dataType			: 'json',
-				type				: "GET",
-				success				: function(data) {
+				url			: [[@{/controlPanel/clientes/get-clientes-contactos}]] + "?idCliente=" + data,
+				dataType	: 'json',
+				type		: "GET",
+				success		: (data) => {
 					$select.attr('disabled', false);
-											 
 					$select.find('option').remove();  
-					$.each(data, function(key, value) 
+					$.each(data, function(key, value)
 					{
-					    $select.append('<option value=' + value.idClienteContacto + ' data-subtext="'+ value.correo +'">' + value.contacto + '</option>');
+						$select.append('<option value=' + value.idClienteContacto + '>' + value.contacto + ' [ '+value.puesto+' ]</option>');
 					});
-					
 					$select.selectpicker('refresh');
+					
 				},
-				error				: function(e) {
-					console.log(e);
+				error : (e) => {
 					$select.attr('disabled', true);
 					$select.empty();
 				}
@@ -562,13 +567,13 @@
 		$(function () {
 			// VALIDADOR DE FORMULARIO
 			$('#formOportunidad').validate({
-		        rules: {
-		            'txtIngresoEstimado': {
-		                number: true
+		    	rules: {
+		        	'txtIngresoEstimado': {
+		            	number: true
 		            }
 		        },
 		        highlight: function (input) {
-		            $(input).parents('.form-line').addClass('error');
+		        	$(input).parents('.form-line').addClass('error');
 		        },
 		        unhighlight: function (input) {
 		            $(input).parents('.form-line').removeClass('error');
@@ -578,17 +583,17 @@
 		        }
 		    });
 			
-			//Custom Validations ===============================================================================
+			//Custom Validations ==============================================
 		    //Number
-		    $.validator.addMethod('number', function (value, element) {
-		        return value.match('[0-9]+');
-		    },
+			$.validator.addMethod('number', function (value, element) {
+		    	return value.match('[0-9]+');
+			},
 		        'Por favor ingresa un n&uacute;mero.'
 		    );
 			
 			//Select Picker
 		    $.validator.addMethod("valueNotEquals", function(value, element, arg){
-	    	  	return arg !== value;
+	    		return arg !== value;
 	    	}, 
 	    	 'Por favor selecciona una opci&oacute;n.'
 	    	 );

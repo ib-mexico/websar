@@ -41,6 +41,7 @@ import com.ibmexico.entities.EmpresaEntity;
 import com.ibmexico.entities.NoticiaEntity;
 import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.libraries.Templates;
+import com.ibmexico.services.ConfiguracionService;
 import com.ibmexico.services.CotizacionComisionService;
 import com.ibmexico.services.CotizacionFicheroService;
 import com.ibmexico.services.CotizacionService;
@@ -110,6 +111,9 @@ public class HomeController {
 	@Qualifier("sessionService")
 	private SessionService sessionService;
 	
+	@Autowired
+	@Qualifier("configuracionService")
+	private ConfiguracionService configuracionService;
 	
 	
 	@GetMapping({"/Home", "/", ""})
@@ -479,9 +483,10 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = {"reporte-comision-pdf", "reporte-comision-pdf/{fecha}/{empresa}/{usuario}"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
-	public ResponseEntity<InputStreamResource> previewPdfComision(@PathVariable(value="fecha", required=false) String fecha,
-																  @PathVariable(value="empresa", required=false) Integer idEmpresa,
-																  @PathVariable(value="usuario", required=false) Integer idUsuario) throws IOException, DocumentException {
+	public ResponseEntity<InputStreamResource> previewPdfComision(
+		@PathVariable(value="fecha", required=false) String fecha,
+		@PathVariable(value="empresa", required=false) Integer idEmpresa,
+		@PathVariable(value="usuario", required=false) Integer idUsuario) throws IOException, DocumentException {
 		
 		LocalDate fechaMesInicio = null;
 		LocalDate fechaMesFin = null;
@@ -618,7 +623,7 @@ public class HomeController {
 			String estatusPago = "PROCEDE";
 
 			/**Validacion de si existe archivo de llamada de calidad */
-			Boolean status=false;
+			Boolean status = false;
 			List<CotizacionEntity> objCotizacionFiltrada=cotizacionService.findByCotizacionIdOpn(itemCotizacion.getIdCotizacion());
 			if(cotizacionFicheroService.countCotizacionFicheroCalidad(itemCotizacion.getIdCotizacion())>0){
 				status=true;
@@ -632,7 +637,8 @@ public class HomeController {
 					status = true;
 				}
 			}
-			LocalDate ldtInicioCalidad =  LocalDate.of(2020, 03, 31);
+			LocalDate ldtInicioCalidad =  LocalDate.parse(configuracionService.getValue("INICIO_CALIDAD").toString(), GeneralConfiguration.getInstance().getDateFormatter());
+
 			String arrFechaInicio[]= itemCotizacion.getCreacionFechaNatural().split("/");
 			int yearInicio=Integer.parseInt(arrFechaInicio[2]);
 			int monthInicio=Integer.parseInt(arrFechaInicio[1]);

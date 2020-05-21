@@ -54,6 +54,10 @@ public class CotizacionService {
 	private CotizacionComisionService cotizacionComisionService;
 	
 	@Autowired
+	@Qualifier("empresaService")
+	private EmpresaService empresaService;
+
+	@Autowired
 	@Qualifier("sessionService")
 	private SessionService sessionService;
 	private static DecimalFormat df = new DecimalFormat("0.00");
@@ -547,9 +551,8 @@ public class CotizacionService {
 
 	@Transactional
 	public void clone(CotizacionEntity objCotizacion, CotizacionEntity objCotizacionNueva) {
-		
+
 		if(objCotizacion != null && objCotizacionNueva != null) {
-			
 			LocalDateTime ldtNow = LocalDateTime.now();
 			UsuarioEntity objUsuarioCreacion = sessionService.getCurrentUser();
 			objCotizacionNueva.setCreacionFecha(ldtNow);
@@ -558,6 +561,27 @@ public class CotizacionService {
 			objCotizacionNueva.setModificacionUsuario(objUsuarioCreacion);
 			cotizacionRepository.save(objCotizacionNueva);
 			
+			//TIPO DE COTIZACION generar folio de cotizacion
+			if(objCotizacion.isMaestra()) {
+				objCotizacion.setMaestra(true);
+				objCotizacionNueva.setFolioCotizacion("PRO" + '-' + empresaService.findByIdEmpresa(objCotizacion.getEmpresa().getIdEmpresa()).getClave()+
+				'-'+objCotizacion.getUsuario().getClave()+'-'+String.format("%07d", objCotizacionNueva.getIdCotizacion()));
+			} else if(objCotizacion.isRenta()) {
+				objCotizacionNueva.setFolioCotizacion("RNT" + '-' + empresaService.findByIdEmpresa(objCotizacion.getEmpresa().getIdEmpresa()).getClave() +
+				'-'+objCotizacion.getUsuario().getClave()+'-'+String.format("%07d", objCotizacionNueva.getIdCotizacion()));
+				objCotizacion.setRenta(true);
+			}else if(objCotizacion.isBoom()){
+				objCotizacionNueva.setFolioCotizacion("BOM" + '-' + empresaService.findByIdEmpresa(objCotizacion.getEmpresa().getIdEmpresa()).getClave() +
+				'-'+objCotizacion.getUsuario().getClave()+'-'+String.format("%07d", objCotizacionNueva.getIdCotizacion()));
+				objCotizacion.setBoom(true);
+			} else {
+				objCotizacionNueva.setFolioCotizacion("COT" + '-' + empresaService.findByIdEmpresa(objCotizacion.getEmpresa().getIdEmpresa()).getClave() +
+				'-'+objCotizacion.getUsuario().getClave()+'-'+String.format("%07d", objCotizacionNueva.getIdCotizacion()));
+				objCotizacion.setNormal(true);
+			}
+		
+			this.update(objCotizacionNueva);
+
 			List<CotizacionPartidaEntity> lstPartidas = cotizacionPartidaService.listCotizacionesPartidas(objCotizacion.getIdCotizacion());
 			
 			for(CotizacionPartidaEntity itemPartida : lstPartidas) {
@@ -592,6 +616,92 @@ public class CotizacionService {
 	}
 	//**************************
 	
+	/* Generar cotizaciones servicios administrados */
+
+	@Transactional
+	public void cloneRenta(CotizacionEntity objCotizacion, CotizacionEntity objCotizacionNueva, int num) {
+		if(objCotizacion != null && objCotizacionNueva != null) {
+			LocalDateTime ldtNow = LocalDateTime.now();
+			UsuarioEntity objUsuarioCreacion = sessionService.getCurrentUser();
+			objCotizacionNueva.setCreacionFecha(ldtNow);
+			objCotizacionNueva.setCreacionUsuario(objUsuarioCreacion);
+			objCotizacionNueva.setModificacionFecha(ldtNow);
+			objCotizacionNueva.setModificacionUsuario(objUsuarioCreacion);
+			cotizacionRepository.save(objCotizacionNueva);
+			
+			//TIPO DE COTIZACION generar folio de cotizacion
+		/* 	if(objCotizacion.isMaestra()) {
+				objCotizacion.setMaestra(true);
+				objCotizacionNueva.setFolioCotizacion("PRO" + '-' + empresaService.findByIdEmpresa(objCotizacion.getEmpresa().getIdEmpresa()).getClave()+
+				'-'+objCotizacion.getUsuario().getClave()+'-'+String.format("%07d", objCotizacionNueva.getIdCotizacion()) +'-'+objCotizacionNueva.getOrdenMes());
+			} else if(objCotizacion.isRenta()) { */
+				objCotizacionNueva.setFolioCotizacion("RNT" + '-' + empresaService.findByIdEmpresa(objCotizacion.getEmpresa().getIdEmpresa()).getClave() +
+				'-'+objCotizacion.getUsuario().getClave()+'-'+String.format("%07d", objCotizacion.getIdCotizacion()) +'-'+String.format("%02d",objCotizacionNueva.getOrdenMes()));
+				// objCotizacion.setRenta(true);
+		/* 	}else if(objCotizacion.isBoom()){
+				objCotizacionNueva.setFolioCotizacion("BOM" + '-' + empresaService.findByIdEmpresa(objCotizacion.getEmpresa().getIdEmpresa()).getClave() +
+				'-'+objCotizacion.getUsuario().getClave()+'-'+String.format("%07d", objCotizacionNueva.getIdCotizacion()) +'-'+objCotizacionNueva.getOrdenMes());
+				objCotizacion.setBoom(true);
+			} else {
+				objCotizacionNueva.setFolioCotizacion("COT" + '-' + empresaService.findByIdEmpresa(objCotizacion.getEmpresa().getIdEmpresa()).getClave() +
+				'-'+objCotizacion.getUsuario().getClave()+'-'+String.format("%07d", objCotizacionNueva.getIdCotizacion()) +'-'+objCotizacionNueva.getOrdenMes());
+				objCotizacion.setNormal(true);
+			} */
+			
+			LocalDate ldtNowGenerar = objCotizacion.getAprobacionFecha().plusMonths(num);
+			if (objCotizacionNueva.getOrdenMes() == 1){
+				if (ldtNowGenerar.getMonth().getValue() > 12) {
+					objCotizacionNueva.setAprobacionFecha(LocalDate.of(ldtNowGenerar.plusYears(1).getYear(),
+					ldtNowGenerar.getMonth(), ldtNowGenerar.getDayOfMonth()));
+				}else{
+					objCotizacionNueva.setAprobacionFecha(LocalDate.of(ldtNowGenerar.getYear(),
+					ldtNowGenerar.getMonth(), ldtNowGenerar.getDayOfMonth()));
+				}
+			}else{
+				// LocalDate fechaNueva = objCotizacionNueva.getAprobacionFecha();
+				if (ldtNowGenerar.getMonth().getValue() > 12) {
+					objCotizacionNueva.setAprobacionFecha(LocalDate.of(ldtNowGenerar.plusYears(1).getYear(),
+					ldtNowGenerar.getMonth(), ldtNowGenerar.getDayOfMonth()));
+				}else{
+					objCotizacionNueva.setAprobacionFecha(LocalDate.of(ldtNowGenerar.getYear(), 
+					ldtNowGenerar.getMonth(), ldtNowGenerar.getDayOfMonth()));
+				}
+			}
+			this.update(objCotizacionNueva);
+			List<CotizacionPartidaEntity> lstPartidas = cotizacionPartidaService.listCotizacionesPartidas(objCotizacion.getIdCotizacion());
+			
+			for(CotizacionPartidaEntity itemPartida : lstPartidas) {
+				
+				try {
+					if(itemPartida != null) {
+						
+						CotizacionPartidaEntity objPartida = new CotizacionPartidaEntity();
+						
+						objPartida.setCotizacion(objCotizacionNueva);
+						objPartida.setOrdenIndex(itemPartida.getOrdenIndex());
+						objPartida.setNumeroParte(itemPartida.getNumeroParte());
+						objPartida.setEntregaDiasHabiles(itemPartida.getEntregaDiasHabiles());
+						objPartida.setDescripcion(itemPartida.getDescripcion());
+						objPartida.setCantidad(1);
+						objPartida.setPrecioUnitarioLista(itemPartida.getPrecioUnitarioLista());
+						objPartida.setDescuentoPorcentaje(itemPartida.getDescuentoPorcentaje());
+						objPartida.setUsuario(itemPartida.getUsuario());
+						
+						cotizacionPartidaService.create(objPartida);
+					
+					} else {
+						throw new ApplicationException(EnumException.COTIZACIONES_CLONE_004);	
+					}
+				} catch(ApplicationException exception) {
+					throw new ApplicationException(EnumException.COTIZACIONES_CLONE_003);
+				}			
+			}			
+		} else {
+			throw new ApplicationException(EnumException.COTIZACIONES_CLONE_002);
+		}
+	}
+	//**************************
+	
 	/* RECALCULO DE LA COTIZACION */
 	public void recalcularCotizacion(CotizacionEntity objCotizacion) {
 		if( objCotizacion != null) {
@@ -601,7 +711,7 @@ public class CotizacionService {
 				List<CotizacionUsuarioQuotaEntity> lstCuotas = cotizacionUsuarioQuotaService.listCotizacionQuotas(objCotizacion);
 				
 				if(!lstCuotas.isEmpty()) {						
-					cotizacionUsuarioQuotaService.eliminarQuota(objCotizacion);													
+					cotizacionUsuarioQuotaService.eliminarQuota(objCotizacion);											
 				}
 				
 				if(objCotizacion.isMaestra() || objCotizacion.isBoom()) {					
@@ -639,7 +749,10 @@ public class CotizacionService {
 					CotizacionComisionEntity objComision = new CotizacionComisionEntity();
 					objComision.setCotizacion(objCotizacion);
 					
-					cotizacionComisionService.create(objComision, objCotizacion);						
+					cotizacionComisionService.create(objComision, objCotizacion);
+					
+					/* recalcular cotizacion */
+					
 				}
 			}
 		}

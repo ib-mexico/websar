@@ -688,7 +688,7 @@
 					$select.find('option').remove();  
 					$.each(data, function(key, value) 
 					{
-					    $select.append('<option value=' + value.idClienteContacto + ' data-subtext="'+ value.correo +'">' + value.contacto + '</option>');
+					    $select.append('<option value=' + value.idClienteContacto + ' data-subtext="'+ value.puesto +'">' + value.contacto + '</option>');
 					});
 					
 					$select.selectpicker('refresh');

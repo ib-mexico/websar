@@ -1,5 +1,6 @@
 package com.ibmexico.controllers;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import javax.json.JsonObjectBuilder;
 import com.ibmexico.components.MailerComponent;
 import com.ibmexico.components.ModelAndViewComponent;
 import com.ibmexico.components.PdfComponent;
+import com.ibmexico.configurations.GeneralConfiguration;
 import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.CotizacionEstatusEntity;
 import com.ibmexico.libraries.DataTable;
@@ -17,6 +19,7 @@ import com.ibmexico.libraries.Templates;
 import com.ibmexico.services.ClienteContactoService;
 import com.ibmexico.services.ClienteGiroService;
 import com.ibmexico.services.ClienteService;
+import com.ibmexico.services.ConfiguracionService;
 import com.ibmexico.services.CotizacionComisionService;
 import com.ibmexico.services.CotizacionEstatusService;
 import com.ibmexico.services.CotizacionFicheroService;
@@ -134,7 +137,11 @@ public class CotizacionesBomController{
 	private SessionService sessionService;
 
 	@Autowired
-    private MailerComponent mailerComponent;
+	private MailerComponent mailerComponent;
+	
+	@Autowired
+	@Qualifier("configuracionService")
+	private ConfiguracionService configuracionService;
     
     //COTIZACIONES SERVICIOS ADMINISTRADOS 
     @GetMapping(value={"","/"})
@@ -193,7 +200,7 @@ public class CotizacionesBomController{
 			default:
 				break;
 			}
-			LocalDate ldtInicioCalidad =  LocalDate.of(2020, 03, 31);
+			LocalDate ldtInicioCalidad =  LocalDate.parse(configuracionService.getValue("INICIO_CALIDAD").toString(), GeneralConfiguration.getInstance().getDateFormatter());
 			String arrFechaInicio[] = itemCotizacion.getCreacionFechaNatural().split("/");
 			int yearInicio = Integer.parseInt(arrFechaInicio[2]);
 			int monthInicio = Integer.parseInt(arrFechaInicio[1]);
@@ -206,7 +213,7 @@ public class CotizacionesBomController{
 				.add("estatus", itemCotizacion.getCotizacionEstatus().getCotizacionEstatus())
 				.add("sucursal", itemCotizacion.getSucursal().getSucursal())
 
-				.add("calidad",cotizaFicheroService.countCotizacionFicheroCalidad(itemCotizacion.getIdCotizacion())>0 ? 1: 0 )
+				// .add("calidad",cotizaFicheroService.countCotizacionFicheroCalidad(itemCotizacion.getIdCotizacion())>0 ? 1: 0 )
 				.add("boolCalidad", itemCotizacion.isCalidad())
 				.add("paseCalidad", fechaInicio.isAfter(ldtInicioCalidad) ? true : false)
 				
@@ -239,4 +246,23 @@ public class CotizacionesBomController{
 		return jsonReturn.build().toString();
 	}		
 	
+
+	//OBTENER CLIENTES MEDIANTE AJAX
+	@RequestMapping(value = "/get-bom", method = RequestMethod.GET)
+	public @ResponseBody String getBom() {
+		
+		List<CotizacionEntity> lstbom = cotizacionService.listBom();
+		JsonArrayBuilder jsonClientes = Json.createArrayBuilder();
+		
+		lstbom.forEach((itemBom)-> {
+			
+			jsonClientes.add(Json.createObjectBuilder()
+				.add("idCotizacion", itemBom.getIdCotizacion())
+				.add("subtotal", itemBom.getSubtotal() != null ? itemBom.getSubtotal() : BigDecimal.ZERO)
+				.add("total",itemBom.getTotal())
+			);
+		});
+
+		return jsonClientes.build().toString();
+	}
 }

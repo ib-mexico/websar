@@ -1,11 +1,14 @@
 <th:block th:fragment="body">
-	<div class="block-header">
-        <h2>COTIZACIONES</h2>
-    </div>
     
     <ol class="breadcrumb breadcrumb-bg-red">
-      	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
-    	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">public</i> Cotizaciones</a></li>
+		<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
+		<li>
+			<a th:if="${objCotizacion.isNormal()}" th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">public</i> Cotizaciones</a>
+			<a th:if="${objCotizacion.isMaestra()}" th:href="${ {_PATH_} + 'controlPanel/cotizacionesProyecto'}"><i class="material-icons">public</i> Proyecto</a>
+			<a th:if="${objCotizacion.isRenta()}" th:href="${ {_PATH_} + 'controlPanel/Sa'}"><i class="material-icons">public</i> Servicios administrados</a>
+			<a th:if="${objCotizacion.isBoom()}" th:href="${ {_PATH_} + 'controlPanel/cotizacionesBom'}"><i class="material-icons">public</i>BOM</a>
+		</li>
+		
     	<li><a th:href="${ {_PATH_} + 'controlPanel/cotizaciones/' + objCotizacion.idCotizacion + '/partidas'}"><i class="material-icons">format_list_numbered</i>Partidas</a></li>
     	<li class="active"> Modificaci&oacute;n</li>
   	</ol>
@@ -14,7 +17,7 @@
     	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
     		<div class="card">
     			<div class="header">
-    				<h2>Editar Partida</h2>
+    				<h2>Editar Partida  de : <span style="font-weight: 500;" th:text="${objCotizacion.folio}"></span></h2>
     			</div>
     			
     			<div class="body">

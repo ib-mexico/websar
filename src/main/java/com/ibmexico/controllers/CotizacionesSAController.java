@@ -7,16 +7,19 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 
-import com.ibmexico.components.MailerComponent;
 import com.ibmexico.components.ModelAndViewComponent;
-import com.ibmexico.components.PdfComponent;
+import com.ibmexico.configurations.GeneralConfiguration;
 import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.CotizacionEstatusEntity;
+import com.ibmexico.entities.UsuarioEntity;
 import com.ibmexico.libraries.DataTable;
 import com.ibmexico.libraries.Templates;
+import com.ibmexico.libraries.notifications.ApplicationException;
+import com.ibmexico.libraries.notifications.EnumException;
 import com.ibmexico.services.ClienteContactoService;
 import com.ibmexico.services.ClienteGiroService;
 import com.ibmexico.services.ClienteService;
+import com.ibmexico.services.ConfiguracionService;
 import com.ibmexico.services.CotizacionComisionService;
 import com.ibmexico.services.CotizacionEstatusService;
 import com.ibmexico.services.CotizacionFicheroService;
@@ -42,6 +45,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -53,9 +57,6 @@ public class CotizacionesSAController{
     @Qualifier("modelAndViewComponent")	
     private ModelAndViewComponent modelAndViewComponent;
 
-    @Autowired
-    @Qualifier("pdfComponent")
-    private PdfComponent pdfComponent;
 
 	@Autowired
 	@Qualifier("cotizacionService")
@@ -134,8 +135,9 @@ public class CotizacionesSAController{
 	private SessionService sessionService;
 
 	@Autowired
-    private MailerComponent mailerComponent;
-    
+	@Qualifier("configuracionService")
+	private ConfiguracionService configuracionService;
+
     //COTIZACIONES SERVICIOS ADMINISTRADOS 
     @GetMapping(value={"","/"})
     public ModelAndView index() {
@@ -193,7 +195,9 @@ public class CotizacionesSAController{
 			default:
 				break;
 			}
-			LocalDate ldtInicioCalidad =  LocalDate.of(2020, 03, 31);
+			
+			LocalDate ldtInicioCalidad =  LocalDate.parse(configuracionService.getValue("INICIO_CALIDAD").toString(), GeneralConfiguration.getInstance().getDateFormatter());
+
 			String arrFechaInicio[] = itemCotizacion.getCreacionFechaNatural().split("/");
 			int yearInicio = Integer.parseInt(arrFechaInicio[2]);
 			int monthInicio = Integer.parseInt(arrFechaInicio[1]);
@@ -206,11 +210,11 @@ public class CotizacionesSAController{
 				.add("estatus", itemCotizacion.getCotizacionEstatus().getCotizacionEstatus())
 				.add("sucursal", itemCotizacion.getSucursal().getSucursal())
 
-				.add("calidad",cotizaFicheroService.countCotizacionFicheroCalidad(itemCotizacion.getIdCotizacion())>0 ? 1: 0 )
+				// .add("calidad",cotizaFicheroService.countCotizacionFicheroCalidad(itemCotizacion.getIdCotizacion())>0 ? 1: 0 )
 				.add("boolCalidad", itemCotizacion.isCalidad())
 				.add("paseCalidad", fechaInicio.isAfter(ldtInicioCalidad) ? true : false)
 				
-				.add("folio", itemCotizacion.getFolio())
+				.add("folio", itemCotizacion.getFolioCotizacion())
 				.add("concepto", itemCotizacion.getConcepto())
 				
 				.add("subtotal", itemCotizacion.getSubtotalNatural())
@@ -231,6 +235,8 @@ public class CotizacionesSAController{
 				.add("boolBoom", itemCotizacion.isBoom())
 				.add("boolNormal", itemCotizacion.isNormal())
 				.add("boolRenta", itemCotizacion.isRenta())
+				.add("idRenta", itemCotizacion.getIdSAdministrado() != null ? itemCotizacion.getIdSAdministrado().getIdCotizacion() : 0 )
+				.add("boolActivoRenta", itemCotizacion.isActivoRenta())
 			);
 		});
 
@@ -239,4 +245,93 @@ public class CotizacionesSAController{
 		return jsonReturn.build().toString();
 	}		
 	
+
+	@RequestMapping(value = "{paramIdCotizacion}/cloneRenta", method = RequestMethod.POST)
+	public @ResponseBody String clone(@PathVariable("paramIdCotizacion") int paramIdCotizacion,
+										@RequestParam(value="idCotizacion") int idCotizacion) {
+		
+		CotizacionEntity objCotizacion = cotizacionService.findByIdCotizacion(idCotizacion);
+		Boolean respuesta = false;
+		String titulo = "";
+		String mensaje = "";
+		
+		try {
+			
+			if(objCotizacion != null) {
+				objCotizacion.isActivoRenta();
+				cotizacionService.update(objCotizacion);
+				// String claveUsuario;
+				// /**Clave para el folio de la cotizacion */
+				// if(sessionService.hasRol("COTIZACIONES_ADMINISTRADOR")) {
+				// 	UsuarioEntity objUsuario = usuarioService.findByIdUsuario(cmbUsuario);
+				// 	objCotizacion.setUsuario(objUsuario);
+				// 	claveUsuario = objUsuario.getClave();
+				// 	objCotizacion.setSucursal(sucursalService.findByIdSucursal(objUsuario.getSucursal().getIdSucursal()));
+				// } else {
+				// 	objCotizacion.setUsuario(sessionService.getCurrentUser());
+				// 	claveUsuario = sessionService.getCurrentUser().getClave();
+				// 	objCotizacion.setSucursal(sucursalService.findByIdSucursal(sessionService.getCurrentUser().getSucursal().getIdSucursal()));
+				// }
+				
+				for (int i = 0; i < objCotizacion.getNumeroMesRenta(); i++) {
+					CotizacionEntity objCotizacionNueva = new CotizacionEntity();
+					objCotizacionNueva.setIdSAdministrado(objCotizacion);
+					objCotizacionNueva.setSucursal(objCotizacion.getSucursal());
+					objCotizacionNueva.setUsuario(sessionService.getCurrentUser());
+					objCotizacionNueva.setEmpresa(objCotizacion.getEmpresa());
+					objCotizacionNueva.setConcepto(objCotizacion.getConcepto());
+					objCotizacionNueva.setSolicitudFecha(objCotizacion.getSolicitudFecha());
+					objCotizacionNueva.setCliente(objCotizacion.getCliente());
+					objCotizacionNueva.setClienteContacto(objCotizacion.getClienteContacto());
+					objCotizacionNueva.setUbicacion(objCotizacion.getUbicacion());
+					objCotizacionNueva.setEntregaLugar(objCotizacion.getEntregaLugar());
+					objCotizacionNueva.setEntregaDiasHabiles(objCotizacion.getEntregaDiasHabiles());
+					objCotizacionNueva.setVigenciaPrecioDiasHabiles(objCotizacion.getVigenciaPrecioDiasHabiles());
+					objCotizacionNueva.setMoneda(objCotizacion.getMoneda());
+					objCotizacionNueva.setFormaPago(objCotizacion.getFormaPago());
+					objCotizacionNueva.setDiasCredito(objCotizacion.getDiasCredito());
+					objCotizacionNueva.setCondicionesPago(objCotizacion.getCondicionesPago());
+					objCotizacionNueva.setObservaciones(objCotizacion.getObservaciones());
+					objCotizacionNueva.setCotizacionEstatus(cotizacionEstatusService.findByIdCotizacionEstatus(2));
+
+					objCotizacionNueva.setUsuarioVendedor(objCotizacion.getUsuarioVendedor());
+					objCotizacionNueva.setMaestra(objCotizacion.isMaestra());
+					objCotizacionNueva.setRenta(objCotizacion.isRenta());
+					objCotizacionNueva.setNormal(objCotizacion.isNormal());
+					objCotizacionNueva.setBoom(objCotizacion.isBoom());
+					
+					/* Orden de las cotizaciones */
+					objCotizacionNueva.setOrdenMes(i+1);
+					
+					if(objCotizacion.getOportunidadNegocio() != null) {
+						objCotizacionNueva.setOportunidadNegocio(objCotizacion.getOportunidadNegocio());
+					}
+					
+					objCotizacionNueva.setSubtotal(objCotizacion.getSubtotal());
+					objCotizacionNueva.setIvaPorcentaje(objCotizacion.getIvaPorcentaje());
+					objCotizacionNueva.setIva(objCotizacion.getIva());
+					objCotizacionNueva.setTotal(objCotizacion.getTotal());
+					
+					cotizacionService.cloneRenta(objCotizacion, objCotizacionNueva, i+1);
+				}
+				respuesta = true;
+				titulo = "Cotizaciónes generadas!";
+				mensaje = "Las cotizaciones has sido generadas exitosamente.";				
+				
+			} else {
+				throw new ApplicationException(EnumException.COTIZACIONES_CLONE_002);
+			}
+			
+		} catch(ApplicationException exception) {
+			throw new ApplicationException(EnumException.COTIZACIONES_CLONE_001);
+		}
+								
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("titulo", titulo)
+					.add("mensaje", mensaje);
+		
+		return jsonReturn.build().toString();
+	}
+
 }

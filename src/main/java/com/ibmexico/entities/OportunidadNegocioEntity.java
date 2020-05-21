@@ -116,9 +116,9 @@ public class OportunidadNegocioEntity {
 	@OneToMany(mappedBy = "oportunidadNegocio", cascade = CascadeType.ALL)
 	private List<OportunidadNegocioFicheroEntity> ficheros = new ArrayList<OportunidadNegocioFicheroEntity>();
 
-	
-	
-	
+	@Column
+	private boolean boolCalidad = false;
+		
 
 	// ACCESORS METHODS
 	public int getIdOportunidadNegocio() {
@@ -374,6 +374,14 @@ public class OportunidadNegocioEntity {
 	public void setOpnNegocioEstatusClasificacion(
 			OportunidadNegocioEstatusClasificacionEntity opnNegocioEstatusClasificacion) {
 		this.opnNegocioEstatusClasificacion = opnNegocioEstatusClasificacion;
+	}
+
+	public boolean isBoolCalidad() {
+		return boolCalidad;
+	}
+
+	public void setBoolCalidad(boolean boolCalidad) {
+		this.boolCalidad = boolCalidad;
 	}
 	
 	

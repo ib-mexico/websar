@@ -632,7 +632,7 @@
 					$select.append('<option value="" >Selecciona un contacto...</option>');
 					$.each(data, function(key, value) 
 					{
-					    $select.append('<option value=' + value.idClienteContacto + ' data-subtext="'+ value.correo +'">' + value.contacto + '</option>');
+					    $select.append('<option value=' + value.idClienteContacto + ' data-subtext="'+ value.puesto +'">' + value.contacto + '</option>');
 					});
 					
 					$select.selectpicker('refresh');

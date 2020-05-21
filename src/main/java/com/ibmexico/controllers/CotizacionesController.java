@@ -3,6 +3,7 @@ package com.ibmexico.controllers;
 import java.io.IOException;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ import com.ibmexico.configurations.GeneralConfiguration;
 import com.ibmexico.entities.ClienteContactoEntity;
 import com.ibmexico.entities.ClienteEntity;
 import com.ibmexico.entities.ClienteGiroEntity;
+import com.ibmexico.entities.CotizacionClasificacionEntity;
 import com.ibmexico.entities.CotizacionComisionEntity;
 import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.CotizacionEstatusEntity;
@@ -63,6 +65,8 @@ import com.ibmexico.libraries.Templates;
 import com.ibmexico.services.ClienteContactoService;
 import com.ibmexico.services.ClienteGiroService;
 import com.ibmexico.services.ClienteService;
+import com.ibmexico.services.ConfiguracionService;
+import com.ibmexico.services.CotizacionClasificacionService;
 import com.ibmexico.services.CotizacionComisionService;
 import com.ibmexico.services.CotizacionEstatusService;
 import com.ibmexico.services.CotizacionFicheroService;
@@ -92,67 +96,67 @@ public class CotizacionesController {
 	@Autowired
 	@Qualifier("modelAndViewComponent")
 	private ModelAndViewComponent modelAndViewComponent;
-	
+
 	@Autowired
 	@Qualifier("pdfComponent")
 	private PdfComponent pdfComponent;
-	
+
 	@Autowired
 	@Qualifier("cotizacionService")
 	private CotizacionService cotizacionService;
-	
+
 	@Autowired
 	@Qualifier("cotizacionComisionService")
 	private CotizacionComisionService cotizacionComisionService;
-	
+
 	@Autowired
 	@Qualifier("cotizacionUsuarioQuotaService")
 	private CotizacionUsuarioQuotaService cotizacionUsuarioQuotaService;
-	
+
 	@Autowired
 	@Qualifier("cotizacionPartidaService")
 	private CotizacionPartidaService cotizacionPartidaService;
-	
+
 	@Autowired
 	@Qualifier("cotizacionEstatusService")
 	private CotizacionEstatusService cotizacionEstatusService;
-	
+
 	@Autowired
 	@Qualifier("empresaService")
 	private EmpresaService empresaService;
-	
+
 	@Autowired
 	@Qualifier("usuarioService")
 	private UsuarioService usuarioService;
-	
+
 	@Autowired
 	@Qualifier("sucursalService")
 	private SucursalService sucursalService;
-	
+
 	@Autowired
 	@Qualifier("clienteService")
 	private ClienteService clienteService;
-	
+
 	@Autowired
 	@Qualifier("clienteGiroService")
 	private ClienteGiroService clienteGiroService;
-	
+
 	@Autowired
 	@Qualifier("clienteContactoService")
 	private ClienteContactoService clienteContactoService;
-	
+
 	@Autowired
 	@Qualifier("oportunidadNegocioService")
 	private OportunidadNegocioService oportunidadNegocioService;
-	
+
 	@Autowired
 	@Qualifier("monedaService")
 	private MonedaService monedaService;
-	
+
 	@Autowired
 	@Qualifier("formaPagoService")
 	private FormaPagoService formaPagoService;
-	
+
 	@Autowired
 	@Qualifier("rolesService")
 	private RolesService rolesService;
@@ -168,13 +172,22 @@ public class CotizacionesController {
 	@Autowired
 	@Qualifier("usuarioRolService")
 	private UsuarioRolService usuarioRolService;
-	
+
 	@Autowired
 	@Qualifier("sessionService")
 	private SessionService sessionService;
 
 	@Autowired
 	private MailerComponent mailerComponent;
+
+	@Autowired
+	@Qualifier("configuracionService")
+	private ConfiguracionService configuracionService;
+
+	@Autowired
+	@Qualifier("cotizacionClasificacionService")
+	private CotizacionClasificacionService cotizacionClasificacionService;
+	
 	
 	//COTIZACION	
 	@GetMapping({"", "/"})
@@ -208,6 +221,7 @@ public class CotizacionesController {
 		List<CotizacionEntity> lstProyectos 	= cotizacionService.listProyectos();
 		List<CotizacionEntity> lstBoms 			= cotizacionService.listBom();
 		List<CotizacionEntity> lstRentas 		= cotizacionService.listRentas();
+		List<CotizacionClasificacionEntity> lstCotizacionClasificacion = cotizacionClasificacionService.getlistAll();
 
 		List<MonedaEntity> lstMonedas 				= monedaService.listMonedas();
 		List<FormaPagoEntity> lstFormasPagos 		= formaPagoService.listFormasPagos();
@@ -232,34 +246,43 @@ public class CotizacionesController {
 		objModelAndView.addObject("lstClientesGiros", lstClientesGiros);
 		objModelAndView.addObject("lstSucursales", lstSucursales);
 		objModelAndView.addObject("objOportunidad", objOportunidad);
+		objModelAndView.addObject("lstCotizacionClasificacion", lstCotizacionClasificacion);
 				
 		return objModelAndView;
 	}
 	
 	@RequestMapping(value = "", method = RequestMethod.POST)
-	public RedirectView store( @RequestParam(value="cmbUsuario", required=false) Integer cmbUsuario,								
-			 					@RequestParam(value="cmbEmpresa") Integer cmbEmpresa,
-								@RequestParam(value="txtConcepto") String txtConcepto,
-								@RequestParam(value="txtSolicitudFecha", required=false) String txtSolicitudFecha,
-								@RequestParam(value="cmbCliente") int cmbCliente,
-								@RequestParam(value="cmbClienteContacto") int cmbClienteContacto,
-								@RequestParam(value="txtUbicacion") String txtUbicacion,
-								@RequestParam(value="txtLugarEntrega") String txtLugarEntrega,
-								@RequestParam(value="txtTiempoEntrega") String txtTiempoEntrega,
-								@RequestParam(value="txtVigenciaPrecios") String txtVigenciaPrecios,
-								@RequestParam(value="cmbMoneda") int cmbMoneda,
-								@RequestParam(value="cmbFormaPago") int cmbFormaPago,
-								@RequestParam(value="txtDiasCredito") String txtDiasCredito,
-								@RequestParam(value="chkVentaCompartida", required=false, defaultValue="false") String chkVentaCompartida,
-								@RequestParam(value="cmbVendedor", required=false) Integer cmbVendedor,
-								@RequestParam(value="chkImplementacion", required=false, defaultValue="false") String chkImplementacion,
-								@RequestParam(value="rdTipoCotizacion", required=false, defaultValue="false") String rdTipoCotizacion,
-								@RequestParam(value="cmbImplementador", required=false) Integer cmbImplementador,
-								@RequestParam(value="txtCondicionesPago", required=false) String txtCondicionesPago,
-								@RequestParam(value="txtObservaciones", required=false) String txtObservaciones,
-								@RequestParam(value="hddIdOportunidad", required=false, defaultValue="0") int hddIdOportunidad,
-								@RequestParam(value="cmbProyecto", required=false) Integer cmbProyecto,
-								RedirectAttributes objRedirectAttributes) {
+	public RedirectView store(
+		@RequestParam(value = "cmbUsuario", required = false) Integer cmbUsuario,
+		@RequestParam(value = "cmbEmpresa" ) Integer cmbEmpresa,
+		@RequestParam(value = "txtConcepto" ) String txtConcepto,
+		@RequestParam(value = "txtSolicitudFecha" , required = false) String txtSolicitudFecha,
+		@RequestParam(value = "cmbCliente" ) int cmbCliente,
+		@RequestParam(value = "cmbClienteContacto" ) int cmbClienteContacto,
+		@RequestParam(value = "txtUbicacion" ) String txtUbicacion,
+		@RequestParam(value = "txtLugarEntrega" ) String txtLugarEntrega,
+		@RequestParam(value = "txtTiempoEntrega" ) String txtTiempoEntrega,
+		@RequestParam(value = "txtVigenciaPrecios" ) String txtVigenciaPrecios,
+		@RequestParam(value = "cmbMoneda" ) int cmbMoneda,
+		@RequestParam(value = "cmbFormaPago" ) int cmbFormaPago,
+		@RequestParam(value = "txtDiasCredito" ) String txtDiasCredito,
+		@RequestParam(value = "chkVentaCompartida", required = false, defaultValue = "false" ) String chkVentaCompartida,
+		@RequestParam(value = "cmbVendedor", required = false) Integer cmbVendedor,
+		@RequestParam(value = "chkImplementacion", required = false, defaultValue = "false" ) String chkImplementacion,
+		@RequestParam(value = "rdTipoCotizacion", required = false, defaultValue = "false" ) String rdTipoCotizacion,
+		@RequestParam(value = "cmbImplementador", required = false) Integer cmbImplementador,
+		@RequestParam(value = "txtCondicionesPago", required = false) String txtCondicionesPago,
+		@RequestParam(value = "txtObservaciones", required = false) String txtObservaciones,
+		@RequestParam(value = "hddIdOportunidad", required = false, defaultValue = "0" ) int hddIdOportunidad,
+		@RequestParam(value = "cmbProyecto", required = false) Integer cmbProyecto,
+		@RequestParam(value = "cmbBom", required = false) Integer cmbBom,
+		@RequestParam(value = "txtMesRenta", required = false) Integer numeroMesRenta,
+		@RequestParam(value = "txtRoi", required = false) BigDecimal roi,
+
+		@RequestParam(value = "cmbClasificacion", required = false) Integer cmbClasificacion,
+		@RequestParam(value = "txtInteresFinanciamiento", required = false) BigDecimal interesFinanciamiento,
+
+		RedirectAttributes objRedirectAttributes) {
 					
 		RedirectView objRedirectView = null;
 		CotizacionEntity objCotizacion = new CotizacionEntity();
@@ -327,10 +350,32 @@ public class CotizacionesController {
 				objCotizacion.setMaestra(true);
 				objCotizacion.setFolioCotizacion("PRO" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
 				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
+				if( numeroMesRenta!= null && numeroMesRenta.intValue() > 0 ){
+					objCotizacion.setNumeroMesRenta(numeroMesRenta);
+					objCotizacion.setRoi(BigDecimal.ZERO);
+				}
+				if (cmbBom > 0 && cmbBom != null) {
+					CotizacionEntity objBom = cotizacionService.findByIdCotizacion(cmbBom);
+					objCotizacion.setIdBom(objBom);
+				}else{
+					objCotizacion.setIdBom(null);
+				}
+				if (cmbClasificacion > 0 && cmbClasificacion != null) {
+					CotizacionClasificacionEntity objClasificacion = cotizacionClasificacionService.findByIdCotizacionClasificacion(cmbClasificacion);
+					objCotizacion.setCotizacionClasificacion(objClasificacion);
+				}else{
+					objCotizacion.setCotizacionClasificacion(null);
+				}
+				if( interesFinanciamiento != null ){
+					objCotizacion.setInteresFinanciamiento(interesFinanciamiento);
+				}
+
+
 			} else if(rdTipoCotizacion.equals("renta")) {
 				objCotizacion.setFolioCotizacion("RNT" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
 				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
 				objCotizacion.setRenta(true);
+			
 			}else if(rdTipoCotizacion.equals("boom")){
 				objCotizacion.setFolioCotizacion("BOM" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
 				'-'+claveUsuario+'-'+String.format("%07d", cotizacionService.maxIdCotizacion()+1));
@@ -547,6 +592,8 @@ public class CotizacionesController {
 		List<CotizacionEntity> lstProyectos 	= cotizacionService.listProyectos();
 		List<CotizacionEntity> lstBoms 			= cotizacionService.listBom();
 		List<CotizacionEntity> lstRentas 		= cotizacionService.listRentas();
+		List<CotizacionClasificacionEntity> lstCotizacionClasificacion = cotizacionClasificacionService.getlistAll();
+
 
 		List<MonedaEntity> lstMonedas = monedaService.listMonedas();
 		List<FormaPagoEntity> lstFormasPagos = formaPagoService.listFormasPagos();
@@ -570,6 +617,8 @@ public class CotizacionesController {
 		objModelAndView.addObject("lstClientes", lstClientes);
 		objModelAndView.addObject("lstClientesContactos", lstClientesContactos);
 		objModelAndView.addObject("lstOportunidades", lstOportunidades);
+		objModelAndView.addObject("lstCotizacionClasificacion", lstCotizacionClasificacion);
+
 		
 		return objModelAndView;
 	}
@@ -597,6 +646,14 @@ public class CotizacionesController {
 								@RequestParam(value="txtCondicionesPago", required=false) String txtCondicionesPago,
 								@RequestParam(value="txtObservaciones", required=false) String txtObservaciones,
 								@RequestParam(value="cmbProyecto", required=false) Integer cmbProyecto,
+
+								@RequestParam(value = "cmbBom", required = false) Integer cmbBom,
+								@RequestParam(value = "txtMesRenta", required = false) Integer numeroMesRenta,
+								@RequestParam(value = "txtRoi", required = false) BigDecimal roi,
+
+								@RequestParam(value = "cmbClasificacion", required = false) Integer cmbClasificacion,
+								@RequestParam(value = "txtInteresFinanciamiento", required = false) BigDecimal interesFinanciamiento,
+
 								RedirectAttributes objRedirectAttributes) {
 		
 		RedirectView objRedirectView = null;
@@ -617,7 +674,9 @@ public class CotizacionesController {
 				objCotizacion.setVigenciaPrecioDiasHabiles(txtVigenciaPrecios);
 				objCotizacion.setMoneda(monedaService.find(cmbMoneda));
 				objCotizacion.setFormaPago(formaPagoService.find(cmbFormaPago));
-				objCotizacion.setDiasCredito(txtDiasCredito);			
+				if (objCotizacion.getDiasCredito() == null) {
+					objCotizacion.setDiasCredito(txtDiasCredito);			
+				}
 				objCotizacion.setCondicionesPago(txtCondicionesPago.trim());
 				objCotizacion.setObservaciones(txtObservaciones.trim());
 				
@@ -626,12 +685,7 @@ public class CotizacionesController {
 				} else {
 					objCotizacion.setOportunidadNegocio(null);
 				}
-				/* Asociar una cotizacion con un proyecto */
-				if (cmbProyecto > 0 && cmbProyecto != null) {
-					objCotizacion.setIdProyecto(cotizacionService.findByIdCotizacion(cmbProyecto));
-				}else{
-					objCotizacion.setIdProyecto(null);
-				}
+				
 				
 				if(rdTipoCotizacion.equals("normal")){
 					
@@ -653,7 +707,6 @@ public class CotizacionesController {
 					}
 					
 				}
-						
 				
 				//TIPO DE COTIZACION
 				if(rdTipoCotizacion.equals("master")) {
@@ -663,6 +716,51 @@ public class CotizacionesController {
 					objCotizacion.setRenta(false);
 					objCotizacion.setNormal(false);
 					objCotizacion.setBoom(false);
+					List<CotizacionPartidaEntity> lstPartidas = cotizacionPartidaService.listCotizacionesPartidas(objCotizacion.getIdCotizacion());
+					// CotizacionPartidaEntity objPartida = cotizacionPartidaService.findByIdCotizacionPartida(objCotizacion.getIdCotizacion());
+					CotizacionEntity objBom = cotizacionService.findByIdCotizacion(cmbBom);
+
+					if(lstPartidas != null){
+						objCotizacion.setNumeroMesRenta(lstPartidas.get(0).getCantidad());
+					}else if(numeroMesRenta >0 && numeroMesRenta != null){
+						objCotizacion.setNumeroMesRenta(numeroMesRenta);
+					}else{
+						objCotizacion.setNumeroMesRenta(0);
+					}
+					/* Asociar una cotizacion con un proyecto */
+					if (cmbBom > 0 && cmbBom != null) {
+						objCotizacion.setIdBom(objBom);
+						objCotizacion.isActivoRenta();
+						objCotizacion.setRoi(objBom.getSubtotal());
+
+						BigDecimal totalAcumulado = BigDecimal.ZERO;
+						if(lstPartidas != null){
+							for (int i = 0; i < lstPartidas.size(); i++) {
+								totalAcumulado = totalAcumulado.add(lstPartidas.get(i).getPrecioUnitarioLista().
+									subtract(lstPartidas.get(i).getPrecioUnitarioLista().divide(new BigDecimal(100)).
+										multiply(lstPartidas.get(i).getDescuentoPorcentaje())
+									).multiply(BigDecimal.valueOf(1))
+								);
+							}
+						}
+						BigDecimal mesRetorno = objBom.getSubtotal().divide(BigDecimal.valueOf(totalAcumulado.doubleValue()));
+						BigDecimal numRetorno = mesRetorno.setScale(0, RoundingMode.UP);
+				
+
+						objCotizacion.setNumeroMesRetorno(numRetorno.intValueExact());
+					}else{
+						objCotizacion.setIdBom(null);
+					}
+					if (cmbClasificacion > 0 && cmbClasificacion != null) {
+						CotizacionClasificacionEntity objClasificacion = cotizacionClasificacionService.findByIdCotizacionClasificacion(cmbClasificacion);
+						objCotizacion.setCotizacionClasificacion(objClasificacion);
+					}else{
+						objCotizacion.setCotizacionClasificacion(null);
+					}
+					if( interesFinanciamiento != null ){
+						objCotizacion.setInteresFinanciamiento(interesFinanciamiento);
+					}
+				
 				} else if(rdTipoCotizacion.equals("renta")) {
 					objCotizacion.setFolioCotizacion("RNT" + '-' + empresaService.findByIdEmpresa(cmbEmpresa).getClave() +
 					'-'+objCotizacion.getUsuario().getClave()+'-'+String.format("%07d", objCotizacion.getIdCotizacion()));
@@ -684,6 +782,12 @@ public class CotizacionesController {
 					objCotizacion.setMaestra(false);
 					objCotizacion.setRenta(false);
 					objCotizacion.setBoom(false);
+					/* Asociar una cotizacion con un proyecto */
+					if (cmbProyecto > 0 && cmbProyecto != null) {
+						objCotizacion.setIdProyecto(cotizacionService.findByIdCotizacion(cmbProyecto));
+					}else{
+						objCotizacion.setIdProyecto(null);
+					}
 				}
 				
 				cotizacionService.update(objCotizacion);
@@ -749,11 +853,13 @@ public class CotizacionesController {
 			default:
 				break;
 			}
-			LocalDate ldtInicioCalidad =  LocalDate.of(2020, 03, 31);
+			LocalDate ldtInicioCalidad =  LocalDate.parse(configuracionService.getValue("INICIO_CALIDAD").toString(), GeneralConfiguration.getInstance().getDateFormatter());
+
 			String arrFechaInicio[]= itemCotizacion.getCreacionFechaNatural().split("/");
 			int yearInicio=Integer.parseInt(arrFechaInicio[2]);
 			int monthInicio=Integer.parseInt(arrFechaInicio[1]);
 			int dayInicio=Integer.parseInt(arrFechaInicio[0]);
+
 			LocalDate fechaInicio=LocalDate.of(yearInicio, monthInicio, dayInicio);
 
 			jsonRows.add(Json.createObjectBuilder()
@@ -762,7 +868,7 @@ public class CotizacionesController {
 				.add("estatus", itemCotizacion.getCotizacionEstatus().getCotizacionEstatus())
 				.add("sucursal", itemCotizacion.getSucursal().getSucursal())
 
-				.add("calidad",cotizaFicheroService.countCotizacionFicheroCalidad(itemCotizacion.getIdCotizacion())>0 ? 1: 0 )
+				// .add("calidad",cotizaFicheroService.countCotizacionFicheroCalidad(itemCotizacion.getIdCotizacion())>0 ? 1: 0 )
 				.add("boolCalidad", itemCotizacion.isCalidad())
 				.add("paseCalidad", fechaInicio.isAfter(ldtInicioCalidad) ? true : false)
 				
@@ -824,7 +930,6 @@ public class CotizacionesController {
 		
 		LocalDateTime ldtNow = LocalDateTime.now();
 		Templates objTemplates = new Templates();
-		
 		String path_file = ldtNow.getYear() + "_" + ldtNow.getMonthValue() + "_" + ldtNow.getDayOfMonth() + "_" + objCotizacion.getFolio() + ".pdf";
 				
 		Context objContext = new Context();
@@ -934,29 +1039,21 @@ public class CotizacionesController {
 							// System.err.println("procesando la infromacion de twilio");
 							
 							ByteArrayResource pdfCotizacion = envioDetalleCotizacion(hddIdCotizacion);
-							System.err.println("procesando el pdf a enviar");
 
-		/* 					List<UsuarioRolEntity> objuser = sessionService.findRolName("NOTIFICACION_COTIZACION");
-							for (UsuarioRolEntity user : objuser) {
-								System.err.println(user.getUsuario().getNombreCompleto());
-							} */
-							for (UsuarioRolEntity objUsuarioRol : sessionService.findRolName("NOTIFICACION_COTIZACION")){
+							List<UsuarioRolEntity> objuser = sessionService.findRolName("NOTIFICACION_COTIZACION");
+							
+							for (UsuarioRolEntity objUsuarioRol : objuser){
 								Map<String, Object> mapCotizacionNotificacion = new HashMap<String, Object>();
 								mapCotizacionNotificacion.put("usuarioRol", objUsuarioRol.getUsuario());
 								mapCotizacionNotificacion.put("detalleCotizacion", objCotizacion);
 								// mapCotizacionNotificacion.put("fechaAprobacion", LocalDate.parse(ldNow.toString(), GeneralConfiguration.getInstance().getDateFormatterNatural()));
-								/* if (EmailValidator.getInstance().isValid(objUsuarioRol.getUsuario().getCorreo())){
-									System.err.println("validado");
-								}
-								System.err.println("no validado correo"); */
+							
 								try {
 									if (EmailValidator.getInstance().isValid(objUsuarioRol.getUsuario().getCorreo())) {
-
-										mailerComponent.sendNotificacionCotizacion(objUsuarioRol.getUsuario().getCorreo(), "La cotización "+""+objCotizacion.getFolio() +" fue aceptada",
+										mailerComponent.sendNotificacionCotizacion(objUsuarioRol.getUsuario().getCorreo(), "La cotización "+objCotizacion.getFolio() +" fue aceptada",
 										pdfCotizacion, objCotizacion.getFolio(), Templates.EMAIL_NOTIFICACION_COTIZACION_ACEPTADA, mapCotizacionNotificacion);
 										System.err.println("envio correctamente");
 									}
-									System.err.println("correo invalido");
 								} catch (Exception e) {
 									System.err.println("Ocurrio un error y no se pudo enviar el correo : "+e.getMessage());
 								}
@@ -991,7 +1088,55 @@ public class CotizacionesController {
 						objCotizacion.setPagoReferencia(txtPagoReferencia);					
 						
 						//VALIDAMOS QUE LA COTIZACION NO SE MAESTRA
-						if(objCotizacion.isRenta() || objCotizacion.isNormal()) {	
+						if (objCotizacion.isRenta()) {
+							if(objCotizacion.getIdProyecto() != null){
+								CotizacionEntity objCotizacionRenta = cotizacionService.findByIdCotizacion(objCotizacion.getIdProyecto().getIdCotizacion());
+								System.err.println("--------------------------------------------------");
+								if (objCotizacionRenta.isActivoRenta()) {
+									BigDecimal montoCobrado = objCotizacionRenta.getMontoCobrado() != null ? objCotizacionRenta.getMontoCobrado() : BigDecimal.ZERO;
+									objCotizacionRenta.setMontoCobrado(montoCobrado.add(objCotizacion.getSubtotal()));
+									cotizacionService.update(objCotizacionRenta);
+	
+									/* Aqui por revisar el codigo de comisiones en renta */
+									if(montoCobrado.doubleValue() > objCotizacionRenta.getRoi().doubleValue()){
+										//VALIDAMOS QUE NO EXISTA UN REGISTRO DE COMISION
+										CotizacionComisionEntity objComisionExistente = cotizacionComisionService.findByCotizacion(objCotizacion);
+										if(objComisionExistente == null) {							
+											CotizacionComisionEntity objComision = new CotizacionComisionEntity();
+											objComision.setCotizacion(objCotizacion);
+	
+											cotizacionComisionService.create(objComision, objCotizacion);
+										}else{
+											cotizacionComisionService.create(objComisionExistente, objCotizacion);
+										}
+									}
+
+								}else{
+									//VALIDAMOS QUE NO EXISTA UN REGISTRO DE COMISION
+									CotizacionComisionEntity objComisionExistente = cotizacionComisionService.findByCotizacion(objCotizacion);
+									if(objComisionExistente == null) {							
+										CotizacionComisionEntity objComision = new CotizacionComisionEntity();
+										objComision.setCotizacion(objCotizacion);
+
+										cotizacionComisionService.create(objComision, objCotizacion);
+									}else{
+										cotizacionComisionService.create(objComisionExistente, objCotizacion);
+									}
+								}
+
+							}else{
+								//VALIDAMOS QUE NO EXISTA UN REGISTRO DE COMISION
+								CotizacionComisionEntity objComisionExistente = cotizacionComisionService.findByCotizacion(objCotizacion);
+								if(objComisionExistente == null) {							
+									CotizacionComisionEntity objComision = new CotizacionComisionEntity();
+									objComision.setCotizacion(objCotizacion);
+
+									cotizacionComisionService.create(objComision, objCotizacion);
+								}else{
+									cotizacionComisionService.create(objComisionExistente, objCotizacion);
+								}
+							}
+						}else if(objCotizacion.isNormal()) {	
 							
 							//VALIDAMOS QUE NO EXISTA UN REGISTRO DE COMISION
 							CotizacionComisionEntity objComisionExistente = cotizacionComisionService.findByCotizacion(objCotizacion);

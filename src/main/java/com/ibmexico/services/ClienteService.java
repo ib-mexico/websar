@@ -38,7 +38,7 @@ public class ClienteService {
 		return clienteRepository.findActivos();
 	}
 
-	public JsonObject jsonClientesActivos() {
+	public JsonObject jsonClientesActivos() throws NullPointerException {
 		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
 		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
 
@@ -48,6 +48,7 @@ public class ClienteService {
 			jsonRows.add(Json.createObjectBuilder()
 				.add("id_cliente", item.getIdCliente())
 				.add("cliente", item.getCliente())
+				.add("direccion", item.getDireccion()!=null ? item.getDireccion(): "")
 			);
 		});
 

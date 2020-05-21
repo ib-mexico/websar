@@ -33,11 +33,11 @@
         	<li class="header">MEN&Uacute; PRINCIPAL</li>
         	<li id="menu-home" class="active"><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i><span>INICIO</span></a></li>
         	<th th:each="categoria : ${_ROLES_MENU_}">
-       			<li>
+				<li>
 	                <a href="javascript:void(0);" class="menu-toggle">
 	                    <i class="material-icons"><th:block th:text="${categoria.key.icono}" /></i>
-	                    <span><th:block th:text="${categoria.key.rolCategoria}" /></span>
-   	                </a>
+						<span><th:block th:text="${categoria.key.rolCategoria}" /></span>
+					</a>
                     <ul class="ml-menu">
 						<!-- <h5 style="color: red;" th:text="${categoria.value}"></h5> -->
 						<li th:each="rol : ${categoria.value}">
@@ -59,22 +59,22 @@
 								</ul>
 							
 						</li>
-                    </ul>
-               	</li>
+					</ul>
+				</li>
         	</th>
         </ul>
 	</div>
 	<!-- #Menu -->
 	
 	<!-- Footer -->
-   	<div class="legal">
+	<div class="legal">
     	<div class="copyright">
-        	&copy; 2018 - 2019 <a href="javascript:void(0);">IB-M&eacute;xico - SAR</a>.
-       	</div>
-       	<div class="version">
-		   <b>Version:  2.0.3</b> 
-		   <!-- <th:block th:text="${_VERSION_}"></th:block> -->
-       	</div>
-   	</div>
-   	<!-- #Footer -->
+			&copy; 2018 - 2020 <a href="javascript:void(0);">IB-M&eacute;xico - SAR</a>.
+		</div>
+		<div class="version">
+			<b>Version:  2.0.5</b> 
+			<!-- <th:block th:text="${_VERSION_}"></th:block> -->
+		</div>
+	</div>
+	<!-- #Footer -->
 </aside>

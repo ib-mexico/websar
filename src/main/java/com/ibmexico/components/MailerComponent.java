@@ -119,11 +119,11 @@ public class MailerComponent {
 			});
 		}
 
-		if (bytePDF.exists()) {
+		if (bytePDF.exists() && bytePDF != null) {
 			objMimeMessageHelper.addAttachment("Cotización "+folio+".pdf", attachment);
 		}
-        objMimeMessageHelper.setTo(para);
-        objMimeMessageHelper.setSubject(asunto);
+		objMimeMessageHelper.setTo(para);
+		objMimeMessageHelper.setSubject(asunto);
 		objMimeMessageHelper.setFrom(strFrom);
 
 		objMimeMessageHelper.setText(templateEngine.process(objTemplates.FOUNDATION_MAIL, objContext), true);

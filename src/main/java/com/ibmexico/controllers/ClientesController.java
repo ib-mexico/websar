@@ -425,7 +425,8 @@ public class ClientesController {
 			jsonClientes.add(Json.createObjectBuilder()
 					.add("idCliente", itemCliente.getIdCliente())
 					.add("cliente", itemCliente.getCliente())
-					.add("rfc", itemCliente.getRfc() != null ? itemCliente.getRfc() : "N/A" )					
+					.add("rfc", itemCliente.getRfc() != null ? itemCliente.getRfc() : "N/A" )
+					.add("ubicacion", itemCliente.getDireccion()!= null ? itemCliente.getDireccion() : "")		
 			);
 		});
 					
@@ -466,7 +467,8 @@ public class ClientesController {
 			jsonContactos.add(Json.createObjectBuilder()
 					.add("idClienteContacto", itemContacto.getIdClienteContacto())
 					.add("contacto", itemContacto.getContacto())
-					.add("correo", itemContacto.getCorreo())					
+					.add("correo", itemContacto.getCorreo())
+					.add("puesto", itemContacto.getPuesto())			
 			);
 		});
 					

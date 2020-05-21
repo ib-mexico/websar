@@ -1,15 +1,12 @@
 <th:block th:fragment="body">
-	<div class="block-header">
-        <h2>COTIZACIONES</h2>
-    </div>
-    
+
     <ol class="breadcrumb breadcrumb-bg-red">
       	<li><a th:href="${ {_PATH_} + 'controlPanel/'}"><i class="material-icons">home</i> Inicio</a></li>
 		<li>
 			<a th:if="${objCotizacion.isNormal()}" th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">view_list</i> Cotizaciones</a>
-			<a th:if="${objCotizacion.isMaestra()}" th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">view_list</i> Proyectos</a>
-			<a th:if="${objCotizacion.isBoom()}" th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">view_list</i> Cotizaciones Bom</a>
-			<a th:if="${objCotizacion.isRenta()}" th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">view_list</i> Servicios Administrados</a>
+			<a th:if="${objCotizacion.isMaestra()}" th:href="${ {_PATH_} + 'controlPanel/cotizacionesProyecto'}"><i class="material-icons">view_list</i> Proyectos</a>
+			<a th:if="${objCotizacion.isBoom()}" th:href="${ {_PATH_} + 'controlPanel/cotizacionesBom'}"><i class="material-icons">view_list</i> BOM</a>
+			<a th:if="${objCotizacion.isRenta()}" th:href="${ {_PATH_} + 'controlPanel/Sa'}"><i class="material-icons">view_list</i> Servicios Administrados</a>
 
 		</li>
     	<li class="active"> Modificaci&oacute;n</li>
@@ -22,7 +19,7 @@
 					<h2 th:if="${objCotizacion.isNormal()}">Editar Cotizaci&oacute;n</h2>
     				<h2 th:if="${objCotizacion.isMaestra()}">Editar Proyecto</h2>
     				<h2 th:if="${objCotizacion.isRenta()}">Editar Servicio Administrado</h2>
-    				<h2 th:if="${objCotizacion.isBoom()}">Editar Cotizaci&oacute;n Bom</h2>
+    				<h2 th:if="${objCotizacion.isBoom()}">Editar BOM</h2>
     			</div>
     			
     			<div class="body">
@@ -58,7 +55,7 @@
 	                        
 	                        <div class="col-md-4">
 	                        	<div class="form-group">
-	                        		<p><b>Concepto *</b></p>
+	                        		<p><b>Descripción *</b></p>
 	                                <div class="form-line">
 	                                    <input type="text" name="txtConcepto" class="form-control" th:value="${objCotizacion.getConcepto()}" required="required" />
 	                                </div>
@@ -95,8 +92,8 @@
 	                            <select class="form-control show-tick" name="cmbClienteContacto" id="cmbClienteContacto" data-live-search="true" >
 	                            	<option value="default">Selecciona un Contacto...</option>
 	                            	<th:block th:each="itemContacto : ${lstClientesContactos}">	
-	                            		<option th:if="${objCotizacion.getClienteContacto().getIdClienteContacto() == itemContacto.idClienteContacto}" selected="selected" th:value="${itemContacto.idClienteContacto}" th:text="${itemContacto.contacto}"></option>
-	                            		<option th:unless="${objCotizacion.getClienteContacto().getIdClienteContacto() == itemContacto.idClienteContacto}" th:value="${itemContacto.idClienteContacto}" th:text="${itemContacto.contacto}"></option>                            	
+	                            		<option th:if="${objCotizacion.getClienteContacto().getIdClienteContacto() == itemContacto.idClienteContacto}" selected="selected" th:value="${itemContacto.idClienteContacto}" th:text="${itemContacto.contacto +' [ '+ itemContacto.puesto +' ]'}"></option>
+	                            		<option th:unless="${objCotizacion.getClienteContacto().getIdClienteContacto() == itemContacto.idClienteContacto}" th:value="${itemContacto.idClienteContacto}" th:text="${itemContacto.contacto +' [ '+ itemContacto.puesto +' ]' }"></option>                            	
 	                            	</th:block>
 	                            </select>
 	                        </div>
@@ -180,55 +177,55 @@
 							<div class="col-md-4">
 	                            <p><b>Vendedor *</b></p>
 	                            <select class="form-control show-tick" name="cmbVendedor" id="cmbVendedor" data-live-search="true" disabled="disabled">
-	                       			<th:block th:each="itemUsuario : ${lstUsuarios}" >
-	                       				<option th:if="${itemUsuario.idUsuario == objCotizacion.getUsuarioVendedor().getIdUsuario()}" selected="selected" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}"></option>
-	                       				<option th:unless="${itemUsuario.idUsuario ==objCotizacion.getUsuarioVendedor().getIdUsuario()}" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}"></option>
-	                       			</th:block>
-	                       		</select>
+									<th:block th:each="itemUsuario : ${lstUsuarios}" >
+										<option th:if="${itemUsuario.idUsuario == objCotizacion.getUsuarioVendedor().getIdUsuario()}" selected="selected" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}"></option>
+										<option th:unless="${itemUsuario.idUsuario ==objCotizacion.getUsuarioVendedor().getIdUsuario()}" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}"></option>
+									</th:block>
+								</select>
 	                        </div>
 	                        
 	                        <div class="col-md-2">
                         		<input th:if="${objCotizacion.isVentaCompartida()}" type="checkbox" id="chkVentaCompartida" name="chkVentaCompartida" value="true" class="chk-col-red" checked="checked" />
-                        		<input th:unless="${objCotizacion.isVentaCompartida()}" type="checkbox" id="chkVentaCompartida" name="chkVentaCompartida" value="true" class="chk-col-red" />
-                               	<label for="chkVentaCompartida">&iquest;VENTA COMPARTIDA?</label>
+								<input th:unless="${objCotizacion.isVentaCompartida()}" type="checkbox" id="chkVentaCompartida" name="chkVentaCompartida" value="true" class="chk-col-red" />
+								<label for="chkVentaCompartida">&iquest;VENTA COMPARTIDA?</label>
 	                        </div>
 	                        
 	                        <div class="col-md-2">
                         		<input th:if="${objCotizacion.isImplementacion()}" type="checkbox" id="chkImplementacion" name="chkImplementacion" value="true" class="chk-col-purple" checked="checked" />
-                        		<input th:unless="${objCotizacion.isImplementacion()}" type="checkbox" id="chkImplementacion" name="chkImplementacion" value="true" class="chk-col-purple" />
-                               	<label for="chkImplementacion">&iquest;REQUIERE IMPLEMENTACI&Oacute;N?</label>
+								<input th:unless="${objCotizacion.isImplementacion()}" type="checkbox" id="chkImplementacion" name="chkImplementacion" value="true" class="chk-col-purple" />
+								<label for="chkImplementacion">&iquest;REQUIERE IMPLEMENTACI&Oacute;N?</label>
 	                        </div>
 	                        
 	                        <div class="col-md-4">
 	                            <p><b>Implementador</b></p>
 	                            <select class="form-control show-tick" name="cmbImplementador" id="cmbImplementador" data-live-search="true" disabled="disabled" >
 	                            	<th:block th:if="${objCotizacion.getUsuarioImplementador() != null}">	                            	
-		                       			<th:block th:each="itemUsuario : ${lstUsuariosGrupos}" >
-		                       				<option th:if="${itemUsuario.idUsuario == objCotizacion.getUsuarioImplementador().getIdUsuario()}" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}" th:attr="data-subtext=${itemUsuario.usuarioGrupo.usuarioGrupo}" selected="selected"></option>
-		                       				<option th:unless="${itemUsuario.idUsuario == objCotizacion.getUsuarioImplementador().getIdUsuario()}" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}" th:attr="data-subtext=${itemUsuario.usuarioGrupo.usuarioGrupo}"></option>
-		                       			</th:block>
+										<th:block th:each="itemUsuario : ${lstUsuariosGrupos}" >
+											<option th:if="${itemUsuario.idUsuario == objCotizacion.getUsuarioImplementador().getIdUsuario()}" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}" th:attr="data-subtext=${itemUsuario.usuarioGrupo.usuarioGrupo}" selected="selected"></option>
+											<option th:unless="${itemUsuario.idUsuario == objCotizacion.getUsuarioImplementador().getIdUsuario()}" th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}" th:attr="data-subtext=${itemUsuario.usuarioGrupo.usuarioGrupo}"></option>
+										</th:block>
 	                            	</th:block>
 	                            	
 	                            	<th:block th:unless="${objCotizacion.getUsuarioImplementador() != null}">	                            	
-		                       			<th:block th:each="itemUsuario : ${lstUsuariosGrupos}" >
-		                       				<option th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}" th:attr="data-subtext=${itemUsuario.usuarioGrupo.usuarioGrupo}"></option>		                       				
-		                       			</th:block>
-	                            	</th:block>
-	                       		</select>
+										<th:block th:each="itemUsuario : ${lstUsuariosGrupos}" >
+											<option th:value="${itemUsuario.idUsuario}" th:text="${itemUsuario.nombreCompleto}" th:attr="data-subtext=${itemUsuario.usuarioGrupo.usuarioGrupo}"></option>		                       				
+										</th:block>
+									</th:block>
+								</select>
 	                        </div>
 						</div>						
-						
-						<hr />
+					
+
 						<div style="margin-bottom: 30px;">
 							<h4>Tipo de Cotizaci&oacute;n</h4>
 						</div>
 						
 						<div class="row clearfix">
-							<div class="col-md-12">
+							<div class="col-md-4">
 								<div th:if="${objCotizacion.isMaestra() and !objCotizacion.isRenta() and !objCotizacion.isBoom() and !objCotizacion.isNormal()}">
 									<input th:if="${objCotizacion.isMaestra()}" name="rdTipoCotizacion" type="radio" id="rdMaster" class="with-gap radio-col-red" value="master" checked="checked" />
 									<input th:unless="${objCotizacion.isMaestra()}" name="rdTipoCotizacion" type="radio" id="rdMaster" class="with-gap radio-col-red" value="master" />
-									<label for="rdMaster"><strong>Maestra</strong> (Ej. Cotizaci&oacute;n principal de una p&oacute;liza)</label>
+									<label for="rdMaster"><strong>Proyecto</strong> (Ej. Cotizaci&oacute;n principal de una p&oacute;liza)</label>
 								</div>
 								<div th:if="${!objCotizacion.isMaestra() and objCotizacion.isRenta() and !objCotizacion.isBoom() and !objCotizacion.isNormal()}">
 									<input th:if="${objCotizacion.isRenta()}" name="rdTipoCotizacion" type="radio" id="rdRenta" class="with-gap radio-col-red" value="renta" checked="checked" />
@@ -245,8 +242,35 @@
 									<input th:unless="${objCotizacion.isBoom()}" name="rdTipoCotizacion" type="radio" id="rdBoom" class="with-gap radio-col-blue" value="boom" />
 									<label for="rdBoom"><strong>BOM</strong>(Ej. Cotizaci&oacute;n mayor. Principal de una p&oacute;liza)</label>
 								</div>
-	                        </div>
+							</div>
+							<div class="col-md-4" th:if="${objCotizacion.isMaestra()}">
+								<p><b>Clasificacion de Proyecto *</b></p>
+								<select class="form-control show-tick" name="cmbClasificacion" id="cmbClasificacion" data-live-search="true" >
+									<option value="0" selected="selected">Clasificacion de Proyecto...</option>
+									<th:block th:if="${objCotizacion.getCotizacionClasificacion() != null}">
+										<th:block th:each="itemClasificacion : ${lstCotizacionClasificacion}" >
+											<option th:if="${itemClasificacion.idCotizacionClasificacion == objCotizacion.getCotizacionClasificacion().getIdCotizacionClasificacion()}" 
+											selected="selected" th:value="${itemClasificacion.idCotizacionClasificacion}" th:text="${itemClasificacion.cotizacionClasificacion}"></option>
+											<option  th:unless="${itemClasificacion.idCotizacionClasificacion == objCotizacion.getCotizacionClasificacion().getIdCotizacionClasificacion()}" 
+											th:value="${itemClasificacion.idCotizacionClasificacion}" th:text="${itemClasificacion.cotizacionClasificacion}"></option>
+										</th:block>
+									</th:block>
+									<th:block th:unless="${objCotizacion.getCotizacionClasificacion() != null}">
+										<option th:each="itemClasificacion : ${lstCotizacionClasificacion}" th:value="${itemClasificacion.idCotizacionClasificacion}" th:text="${itemClasificacion.cotizacionClasificacion}"></option>
+									</th:block>
+								</select>
+							</div>
+							<div class="col-md-4" th:if="${objCotizacion.isMaestra()}">
+								<div class="form-group">
+	                        		<p><b>Interes de Financiamiento</b></p>
+                                    <div class="form-line">
+										<input type="number" name="txtInteresFinanciamiento" id="txtInteresFinanciamiento" 
+										class="form-control" placeholder="Ingrese el interes solo si es proyecto Financiamiento" th:value="${objCotizacion.getInteresFinanciamiento()}" />
+                                    </div>
+                                </div>
+							</div>
 						</div>
+
 						
 						<hr />
 						<div style="margin-bottom: 30px;">						
@@ -260,33 +284,86 @@
 	                            <option value="0" selected="selected">Selecciona una Oportunidad...</option>
 		                            <th:block th:if="${objCotizacion.getOportunidadNegocio() != null}">
 		                            	<th:block th:each="itemOportunidad : ${lstOportunidades}" >
-		                       				<option th:if="${itemOportunidad.idOportunidadNegocio == objCotizacion.getOportunidadNegocio().getIdOportunidadNegocio()}" selected="selected" th:value="${itemOportunidad.idOportunidadNegocio}" th:text="${itemOportunidad.idOportunidadNegocio + ' - ' + itemOportunidad.oportunidad}"></option>
-		                       				<option th:unless="${itemOportunidad.idOportunidadNegocio == objCotizacion.getOportunidadNegocio().getIdOportunidadNegocio()}" th:value="${itemOportunidad.idOportunidadNegocio}" th:text="${itemOportunidad.idOportunidadNegocio + ' - ' + itemOportunidad.oportunidad}"></option>
-		                       			</th:block>
+											<option th:if="${itemOportunidad.idOportunidadNegocio == objCotizacion.getOportunidadNegocio().getIdOportunidadNegocio()}" selected="selected" th:value="${itemOportunidad.idOportunidadNegocio}" th:text="${itemOportunidad.idOportunidadNegocio + ' - ' + itemOportunidad.oportunidad}"></option>
+											<option th:unless="${itemOportunidad.idOportunidadNegocio == objCotizacion.getOportunidadNegocio().getIdOportunidadNegocio()}" th:value="${itemOportunidad.idOportunidadNegocio}" th:text="${itemOportunidad.idOportunidadNegocio + ' - ' + itemOportunidad.oportunidad}"></option>
+										</th:block>
 		                            </th:block>
 		                            
 		                            <th:block th:unless="${objCotizacion.getOportunidadNegocio() != null}">
 		                            	<option value="0" selected="selected">Selecciona una Oportunidad...</option>
 		                            	<option th:each="itemOportunidad : ${lstOportunidades}" th:value="${itemOportunidad.idOportunidadNegocio}" th:text="${itemOportunidad.idOportunidadNegocio + ' - ' + itemOportunidad.oportunidad}"></option>
-		                            </th:block>
-	                       		</select>
+									</th:block>
+								</select>
 							</div>
-							<div class="col-md-6">
+							<!-- Si es proyecto no muestre la opcion de asociar con proyecto -->
+							<div class="col-md-6" th:if="${!objCotizacion.isMaestra() || objCotizacion.isRenta() || objCotizacion.isBoom() || objCotizacion.isNormal()}">
 								<p><b>Proyectos</b></p>
-	                            <select class="form-control show-tick" name="cmbProyecto" id="cmbProyecto" data-live-search="true" >
+	                            <select class="form-control show-tick" name="cmbProyecto" id="cmbProyecto" data-live-search="true">
 	                            <option value="0" selected="selected">Asocia a un proyecto...</option>
 		                            <th:block th:if="${objCotizacion.getIdProyecto() != null}">
 		                            	<th:block th:each="itemProyecto : ${lstProyectos}" >
-		                       				<option th:if="${itemProyecto.idCotizacion == objCotizacion.getIdProyecto().getIdCotizacion()}" selected="selected" th:value="${itemProyecto.idCotizacion}" th:text="${itemProyecto.idCotizacion + ' - ' + itemProyecto.folioCotizacion}"></option>
-		                       				<option th:unless="${itemProyecto.idCotizacion == objCotizacion.getIdProyecto().getIdCotizacion()}" th:value="${itemProyecto.idCotizacion}" th:text="${itemProyecto.idCotizacion + ' - ' + itemProyecto.folioCotizacion}"></option>
-		                       			</th:block>
+											<option th:if="${itemProyecto.idCotizacion == objCotizacion.getIdProyecto().getIdCotizacion()}" selected="selected" 
+											th:value="${itemProyecto.idCotizacion}" th:text="${itemProyecto.idCotizacion + ' - ' + itemProyecto.folioCotizacion}"></option>
+											<option th:unless="${itemProyecto.idCotizacion == objCotizacion.getIdProyecto().getIdCotizacion()}" 
+											th:value="${itemProyecto.idCotizacion}" th:text="${itemProyecto.idCotizacion + ' - ' + itemProyecto.folioCotizacion}"></option>
+										</th:block>
 		                            </th:block>
 		                            
 		                            <th:block th:unless="${objCotizacion.getIdProyecto() != null}">
-		                            	<option value="0" selected="selected">Asocie a un proyecto...</option>
 		                            	<option th:each="itemProyecto : ${lstProyectos}" th:value="${itemProyecto.idCotizacion}" th:text="${itemProyecto.idCotizacion + ' - ' + itemProyecto.folioCotizacion}"></option>
+									</th:block>
+								</select>
+							</div>
+
+							<!--  Si es proyecto asociar con un bom  -->
+							<div class="col-md-6" th:if="${objCotizacion.isMaestra()}">
+								<p><b>BOM</b></p>
+	                            <select class="form-control show-tick" name="cmbBom" id="cmbBom" data-live-search="true">
+	                            <option value="0" selected="selected">Asocia BOM...</option>
+		                            <th:block th:if="${objCotizacion.getIdBom() != null}">
+		                            	<th:block th:each="itemBom : ${lstBoms}" >
+											<option th:if="${itemBom.idCotizacion == objCotizacion.getIdBom().getIdCotizacion()}" selected="selected" th:value="${itemBom.idCotizacion}" th:text="${itemBom.idCotizacion + ' - ' + itemBom.folioCotizacion}"></option>
+											<option th:unless="${itemBom.idCotizacion == objCotizacion.getIdBom().getIdCotizacion()}" th:value="${itemBom.idCotizacion}" th:text="${itemBom.idCotizacion + ' - ' + itemBom.folioCotizacion}"></option>
+										</th:block>
 		                            </th:block>
-	                       		</select>
+		                            
+		                            <th:block th:unless="${objCotizacion.getIdBom() != null}">
+		                            	<option th:each="itemBom : ${lstBoms}" th:value="${itemBom.idCotizacion}" th:text="${itemBom.idCotizacion + ' - ' + itemBom.folioCotizacion}"></option>
+									</th:block>
+								</select>
+							</div>
+						</div>
+
+						<!-- Datos adicionales de servicios administrados -->
+						<hr th:if="${objCotizacion.isMaestra()  and objCotizacion.getIdProyecto() == null}"/>
+						<div style="margin-bottom: 30px;" th:if="${objCotizacion.isMaestra() and objCotizacion.getIdProyecto() == null}">
+							<h4>Datos adicionales para generar las rentas</h4>
+						</div>
+						<div class="row clearfix" th:if="${objCotizacion.isMaestra()  and objCotizacion.getIdProyecto()== null}">
+							<input type="hidden" name="txtAcumulado" id="txtAcumulado"/>
+							<div class="col-md-4">
+								<div class="form-group">
+									<p><b>Meses en Renta *</b></p>
+									<div class="form-line">
+										<input type="number" min="1"  max="99"  name="txtMesRenta" id="txtMesRenta" th:value="${objCotizacion.getNumeroMesRenta()}"  class="form-control" placeholder ="¿Cuantos meses se queda en renta?"/>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<p><b>Monto de Renta Financiamiento *</b></p>
+									<div class="form-line">
+										<input type="number" name="txtRoi" id="txtRoi" th:value="${objCotizacion.getRoi()}"  class="form-control" placeholder="Retorno de inversion"/>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<p><b>Numero mes Retorno Inversion</b></p>
+									<div class="form-line">
+										<input type="number" name="txtnumRoi" id="txtnumRoi" th:value="${objCotizacion.getNumeroMesRetorno()}"  class="form-control" placeholder=".."/>
+									</div>
+								</div>
 							</div>
 						</div>
 					
@@ -330,7 +407,7 @@
 	<script type="application/javascript" th:inline="javascript">/*<![CDATA[*/
 			
 		//var idUsuario = [[${_USER_.getIdUsuario()}]];
-	
+		var idProyecto = [[${objCotizacion.getIdCotizacion()}]];
 		$(document).ready(function() {
 			
 			var date = $('#txtSolicitudFecha').data('fecha_solicitud');
@@ -346,6 +423,62 @@
 				$('#txtSolicitudFecha').bootstrapMaterialDatePicker('setDate', arrDate[2]+"/"+arrDate[1]+"/"+arrDate[0]);
 			}
 			
+			$('#cmbCliente').on('change', function() {
+				searchCliente();
+			});
+
+			$('#cmbBom').on('change', function() {
+				searchBom();
+				searchProyecto();
+			});
+			
+			if( $('#cmbBom').val() != null ) {
+				searchBom();
+				searchProyecto();
+			}
+			function searchBom() {
+				let bomSeleccionado = $('#cmbBom').val();
+				$.ajax({
+					url: [[@{/controlPanel/cotizacionesBom/get-bom}]],
+					dataType: 'json',
+					type: "GET",
+					success: (data) => {
+						/* FILTRO DE BOM PARA EL SUBTOTAL */
+						let approved = data.filter((bom) => bom.idCotizacion == bomSeleccionado);
+						$("input[name='txtRoi']").val(approved[0].subtotal);
+					}
+				});	
+			}
+
+			function searchProyecto() {
+				$.ajax({
+					url: [[@{/controlPanel/cotizacionesProyecto/}]]+idProyecto+'/getProyecto',
+					dataType: 'json',
+					type: "GET",
+					success: (data) => {
+						console.log(data);
+						/* FILTRO DE proyecto */
+						// let approved = data.filter((proyecto) => proyecto.idCotizacion == idProyecto);
+						$("input[name='txtMesRenta']").val(data[0].mesRenta);
+						$("input[name='txtAcumulado']").val(data[0].acumulado);
+						
+					}
+				});	
+			}
+
+			function searchCliente() {
+				let clienteSeleccionado = $('#cmbCliente').val();
+				$.ajax({
+					url: [[@{/controlPanel/clientes/get-clientes}]],
+					dataType: 'json',
+					type: "GET",
+					success: (data) => {
+						/* FILTRO DE CLIENTE PARA SU DIREECCION */
+						let approved = data.filter((cliente) => cliente.idCliente == clienteSeleccionado);
+						$("input[name='txtUbicacion']").val(approved[0].ubicacion);
+					}
+				});
+			}
 			
 			
 			
@@ -375,7 +508,7 @@
 						$select.find('option').remove();  
 						$.each(data, function(key, value) 
 						{
-						    $select.append('<option value=' + value.idClienteContacto + ' data-subtext="'+ value.correo +'">' + value.contacto + '</option>');
+						    $select.append('<option value=' + value.idClienteContacto + '>' + value.contacto + ' [ '+value.puesto+' ]</option>');
 						});
 						
 						$select.selectpicker('refresh');
@@ -391,13 +524,21 @@
 			// FORM SUBMIT
 			$('#formCotizacion').submit(function(e){
 				var flag = false;
-				
+				var flagProyecto = false;
 				if($('#cmbCliente').val() == 'default' || $('#cmbClienteContacto').val() == 'default' || $('#cmbEmpresa').val() == 'default') {
 					flag = true;
-				}				
+				}
+				if (parseFloat($('#txtAcumulado').val()) > parseFloat($('#cmbBom').val()) ||  
+					parseFloat($('#txtAcumulado').val()) == null || parseFloat($('#txtAcumulado').val()) == 0 ) {
+					flagProyecto = true;
+				};			
 				
 				if(flag) {
 					swal('Hey!', 'Los campos con (*) son obligatorios', 'warning');
+					e.preventDefault();
+				}
+				else if(flagProyecto){
+					swal('Advertencia!', 'No se puede editar , si es monto acumulado es mayor que el ROI o es nulo.', 'warning');
 					e.preventDefault();
 				}
 		  	});
@@ -444,7 +585,7 @@
 		            },
 		            'txtVigenciaPrecios': {
 		                number: true
-		            },
+					},
 		            'txtDiasCredito': {
 		                number: true
 		            }
@@ -460,7 +601,7 @@
 		        }
 		    });
 			
-			//Custom Validations ===============================================================================
+			//Custom Validations ======================================================================
 		    //Number
 		    $.validator.addMethod('number', function (value, element) {
 		        return value.match('[0-9]+');

@@ -1,5 +1,7 @@
 package com.ibmexico.controllers;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -10,13 +12,18 @@ import javax.json.JsonObjectBuilder;
 import com.ibmexico.components.MailerComponent;
 import com.ibmexico.components.ModelAndViewComponent;
 import com.ibmexico.components.PdfComponent;
+import com.ibmexico.configurations.GeneralConfiguration;
 import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.CotizacionEstatusEntity;
+import com.ibmexico.entities.CotizacionPartidaEntity;
 import com.ibmexico.libraries.DataTable;
 import com.ibmexico.libraries.Templates;
+import com.ibmexico.libraries.notifications.ApplicationException;
+import com.ibmexico.libraries.notifications.EnumException;
 import com.ibmexico.services.ClienteContactoService;
 import com.ibmexico.services.ClienteGiroService;
 import com.ibmexico.services.ClienteService;
+import com.ibmexico.services.ConfiguracionService;
 import com.ibmexico.services.CotizacionComisionService;
 import com.ibmexico.services.CotizacionEstatusService;
 import com.ibmexico.services.CotizacionFicheroService;
@@ -42,6 +49,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.ModelAndView;
 
 
@@ -134,7 +142,8 @@ public class CotizacionesProyectoController{
 	private SessionService sessionService;
 
 	@Autowired
-    private MailerComponent mailerComponent;
+	@Qualifier("configuracionService")
+	private ConfiguracionService configuracionService;
     
     //COTIZACIONES SERVICIOS ADMINISTRADOS 
     @GetMapping(value={"","/"})
@@ -193,7 +202,8 @@ public class CotizacionesProyectoController{
 			default:
 				break;
 			}
-			LocalDate ldtInicioCalidad =  LocalDate.of(2020, 03, 31);
+			LocalDate ldtInicioCalidad =  LocalDate.parse(configuracionService.getValue("INICIO_CALIDAD").toString(), GeneralConfiguration.getInstance().getDateFormatter());
+
 			String arrFechaInicio[] = itemCotizacion.getCreacionFechaNatural().split("/");
 			int yearInicio = Integer.parseInt(arrFechaInicio[2]);
 			int monthInicio = Integer.parseInt(arrFechaInicio[1]);
@@ -206,7 +216,7 @@ public class CotizacionesProyectoController{
 				.add("estatus", itemCotizacion.getCotizacionEstatus().getCotizacionEstatus())
 				.add("sucursal", itemCotizacion.getSucursal().getSucursal())
 
-				.add("calidad",cotizaFicheroService.countCotizacionFicheroCalidad(itemCotizacion.getIdCotizacion())>0 ? 1: 0 )
+				// .add("calidad",cotizaFicheroService.countCotizacionFicheroCalidad(itemCotizacion.getIdCotizacion())>0 ? 1: 0 )
 				.add("boolCalidad", itemCotizacion.isCalidad())
 				.add("paseCalidad", fechaInicio.isAfter(ldtInicioCalidad) ? true : false)
 				
@@ -231,6 +241,11 @@ public class CotizacionesProyectoController{
 				.add("boolBoom", itemCotizacion.isBoom())
 				.add("boolNormal", itemCotizacion.isNormal())
 				.add("boolRenta", itemCotizacion.isRenta())
+				.add("idProyecto", itemCotizacion.getIdProyecto() != null ? itemCotizacion.getIdProyecto().getIdCotizacion() : 0 )
+				.add("boolActivoRenta", itemCotizacion.isActivoRenta())
+				.add("numMesRenta", itemCotizacion.getNumeroMesRenta())
+				.add("acumuladoRenta", itemCotizacion.getAcumuladoMes())
+
 			);
 		});
 
@@ -238,5 +253,117 @@ public class CotizacionesProyectoController{
 
 		return jsonReturn.build().toString();
 	}		
+
 	
+	@RequestMapping(value = "{paramIdCotizacion}/generateRenta", method = RequestMethod.POST)
+	public @ResponseBody String clone(@PathVariable("paramIdCotizacion") int paramIdCotizacion,
+										@RequestParam(value="idCotizacion") int idCotizacion) {
+		
+		CotizacionEntity objCotizacion = cotizacionService.findByIdCotizacion(idCotizacion);
+		Boolean respuesta = false;
+		String titulo = "";
+		String mensaje = "";
+		
+		try {
+			
+			if(objCotizacion != null) {
+				objCotizacion.isActivoRenta();
+				cotizacionService.update(objCotizacion);
+				int acumulado = objCotizacion.getAcumuladoMes()+1;
+				if (acumulado > objCotizacion.getNumeroMesRenta()) {
+					respuesta = true;
+					titulo = "Rentas no permitidas!";
+					mensaje = "Se termino el limite de rentas asignada en el proyecto";	
+				} else{
+					objCotizacion.setAcumuladoMes(acumulado);
+					cotizacionService.update(objCotizacion);
+				// for (int i = 0; i < objCotizacion.getNumeroMesRenta(); i++) {
+					CotizacionEntity objCotizacionNueva = new CotizacionEntity();
+					objCotizacionNueva.setIdProyecto(objCotizacion);
+					objCotizacionNueva.setSucursal(objCotizacion.getSucursal());
+					objCotizacionNueva.setUsuario(sessionService.getCurrentUser());
+					objCotizacionNueva.setEmpresa(objCotizacion.getEmpresa());
+					objCotizacionNueva.setConcepto(objCotizacion.getConcepto());
+					objCotizacionNueva.setSolicitudFecha(objCotizacion.getSolicitudFecha());
+					objCotizacionNueva.setCliente(objCotizacion.getCliente());
+					objCotizacionNueva.setClienteContacto(objCotizacion.getClienteContacto());
+					objCotizacionNueva.setUbicacion(objCotizacion.getUbicacion());
+					objCotizacionNueva.setEntregaLugar(objCotizacion.getEntregaLugar());
+					objCotizacionNueva.setEntregaDiasHabiles(objCotizacion.getEntregaDiasHabiles());
+					objCotizacionNueva.setVigenciaPrecioDiasHabiles(objCotizacion.getVigenciaPrecioDiasHabiles());
+					objCotizacionNueva.setMoneda(objCotizacion.getMoneda());
+					objCotizacionNueva.setFormaPago(objCotizacion.getFormaPago());
+					objCotizacionNueva.setDiasCredito(objCotizacion.getDiasCredito());
+					objCotizacionNueva.setCondicionesPago(objCotizacion.getCondicionesPago());
+					objCotizacionNueva.setObservaciones(objCotizacion.getObservaciones());
+					objCotizacionNueva.setCotizacionEstatus(cotizacionEstatusService.findByIdCotizacionEstatus(2));
+
+					objCotizacionNueva.setUsuarioVendedor(objCotizacion.getUsuarioVendedor());
+					objCotizacionNueva.setMaestra(false);
+					objCotizacionNueva.setRenta(true);
+					objCotizacionNueva.setNormal(false);
+					objCotizacionNueva.setBoom(false);
+					
+					/* Orden de las cotizaciones */
+					objCotizacionNueva.setOrdenMes(acumulado);
+					
+					if(objCotizacion.getOportunidadNegocio() != null) {
+						objCotizacionNueva.setOportunidadNegocio(objCotizacion.getOportunidadNegocio());
+					}
+					
+					objCotizacionNueva.setSubtotal(objCotizacion.getSubtotal());
+					objCotizacionNueva.setIvaPorcentaje(objCotizacion.getIvaPorcentaje());
+					objCotizacionNueva.setIva(objCotizacion.getIva());
+					objCotizacionNueva.setTotal(objCotizacion.getTotal());
+					
+					cotizacionService.cloneRenta(objCotizacion, objCotizacionNueva, acumulado);
+				// }
+				respuesta = true;
+				titulo = "Renta generada!";
+				mensaje = "La rentaa has sido generada exitosamente.";	
+			}
+			} else {
+				throw new ApplicationException(EnumException.COTIZACIONES_CLONE_002);
+			}
+			
+		} catch(ApplicationException exception) {
+			throw new ApplicationException(EnumException.COTIZACIONES_CLONE_001);
+		}
+								
+		JsonObjectBuilder jsonReturn = Json.createObjectBuilder();
+		jsonReturn	.add("respuesta", respuesta)
+					.add("titulo", titulo)
+					.add("mensaje", mensaje);
+		
+		return jsonReturn.build().toString();
+	}
+
+
+	//OBTENER CLIENTES MEDIANTE AJAX
+	@RequestMapping(value = "{paramIdCotizacion}/getProyecto", method = RequestMethod.GET)
+	public @ResponseBody String getProyecto(@PathVariable("paramIdCotizacion") int paramIdCotizacion) {
+		
+		JsonArrayBuilder jsonRows = Json.createArrayBuilder();
+
+		List<CotizacionPartidaEntity> lstPartidas = cotizacionPartidaService.listCotizacionesPartidas(paramIdCotizacion);
+		CotizacionEntity objCotizacion = cotizacionService.findByIdCotizacion(paramIdCotizacion);
+		BigDecimal totalAcumulado = BigDecimal.ZERO;
+		if (lstPartidas != null) {
+			for (int i = 0; i < lstPartidas.size(); i++) {
+				totalAcumulado = totalAcumulado.add(lstPartidas.get(i).getPrecioUnitarioLista()
+					.subtract(lstPartidas.get(i).getPrecioUnitarioLista().divide(new BigDecimal(100))
+						.multiply(lstPartidas.get(i).getDescuentoPorcentaje()))
+					.multiply(BigDecimal.valueOf(1)));
+			}
+		}
+
+		jsonRows.add(Json.createObjectBuilder().
+			add("idCotizacion", lstPartidas.get(0).getCotizacion().getIdCotizacion()).
+			add("totalAcumulado", totalAcumulado != null ? totalAcumulado : BigDecimal.ZERO).
+			add("mesRenta", lstPartidas.get(0).getCantidad()).
+			add("subtotalProyecto", objCotizacion.getSubtotal())
+		);
+		return jsonRows.build().toString();
+	}
+
 }
