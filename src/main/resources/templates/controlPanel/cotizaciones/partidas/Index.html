@@ -5,7 +5,7 @@
 <th:block th:fragment="body">
 <div id="appCotizacionesPartidas">
 	<div class="block-header">
-        <h2>COTIZACI&Oacute;N: <th:block th:text="${objCotizacion.folio}"></th:block></h2>
+        <h2>DOCUMENTO: <th:block th:text="${objCotizacion.folio}"></th:block></h2>
     </div>
     
     <ol class="breadcrumb breadcrumb-bg-red">
@@ -14,7 +14,7 @@
 			<a th:if="${objCotizacion.isNormal()}" th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">public</i> Cotizaciones</a>
 			<a th:if="${objCotizacion.isMaestra()}" th:href="${ {_PATH_} + 'controlPanel/cotizacionesProyecto'}"><i class="material-icons">public</i> Proyecto</a>
 			<a th:if="${objCotizacion.isRenta()}" th:href="${ {_PATH_} + 'controlPanel/Sa'}"><i class="material-icons">public</i> Servicios administrados</a>
-			<a th:if="${objCotizacion.isBoom()}" th:href="${ {_PATH_} + 'controlPanel/cotizacionesBom'}"><i class="material-icons">public</i> Cotizacion Bom</a>
+			<a th:if="${objCotizacion.isBoom()}" th:href="${ {_PATH_} + 'controlPanel/cotizacionesBom'}"><i class="material-icons">public</i>BOM</a>
 
 		</li>
     	<li class="active"><i class="material-icons">format_list_numbered</i> Partidas</li>

@@ -476,24 +476,24 @@ public class OportunidadesNegociosController {
 	
 	@RequestMapping(value = {"{paramIdOportunidad}", "{paramIdOportunidad}/"}, method = RequestMethod.PUT)
 	public RedirectView store(	@PathVariable("paramIdOportunidad") int paramIdOportunidad,
-								@RequestParam(value="cmbEmpresa") Integer cmbEmpresa,
-								@RequestParam(value="txtOportunidad") String txtOportunidad,
-								@RequestParam(value="cmbEstatus") int cmbEstatus,
+								@RequestParam(value = "cmbEmpresa") Integer cmbEmpresa,
+								@RequestParam(value = "txtOportunidad") String txtOportunidad,
+								@RequestParam(value = "cmbEstatus") int cmbEstatus,
 								//subclasificacion de los estatus de oportunidades
-								@RequestParam(value="cmbEstatusClasificacion", required=false) int cmbEstatusClasificacion, 
+								@RequestParam(value = "cmbEstatusClasificacion", required=false) Integer cmbEstatusClasificacion, 
 
-								@RequestParam(value="cmbMoneda") int cmbMoneda,
-								@RequestParam(value="txtTipoCambio", required=false, defaultValue="0") String txtTipoCambio,
-								@RequestParam(value="txtValorMonedaExtranjera", required=false, defaultValue="0") String txtValorMonedaExtranjera,
-								@RequestParam(value="txtRenovacionFecha", required=false, defaultValue="") String txtRenovacionFecha,
-								@RequestParam(value="txtIngresoEstimado") String txtIngresoEstimado,
-								@RequestParam(value="txtProbabilidad", required=false, defaultValue="") String txtProbabilidad,
-								@RequestParam(value="cmbCliente") int cmbCliente,
-								@RequestParam(value="txtCierreFecha", required=false, defaultValue="") String txtCierreFecha,
-								@RequestParam(value="cmbClienteContacto") int cmbClienteContacto,
-								@RequestParam(value="cmbVendedor") int cmbVendedor,
-								@RequestParam(value="txtPrioridad", required=false, defaultValue="0") int txtPrioridad,
-								@RequestParam(value="txtNotasInternas", required=false, defaultValue="") String txtNotasInternas,
+								@RequestParam(value = "cmbMoneda") int cmbMoneda,
+								@RequestParam(value = "txtTipoCambio", required=false, defaultValue = "0") String txtTipoCambio,
+								@RequestParam(value = "txtValorMonedaExtranjera", required=false, defaultValue = "0") String txtValorMonedaExtranjera,
+								@RequestParam(value = "txtRenovacionFecha", required=false, defaultValue = "") String txtRenovacionFecha,
+								@RequestParam(value = "txtIngresoEstimado") String txtIngresoEstimado,
+								@RequestParam(value = "txtProbabilidad", required=false, defaultValue = "") String txtProbabilidad,
+								@RequestParam(value = "cmbCliente") int cmbCliente,
+								@RequestParam(value = "txtCierreFecha", required=false, defaultValue = "") String txtCierreFecha,
+								@RequestParam(value = "cmbClienteContacto") int cmbClienteContacto,
+								@RequestParam(value = "cmbVendedor") int cmbVendedor,
+								@RequestParam(value = "txtPrioridad", required=false, defaultValue = "0") int txtPrioridad,
+								@RequestParam(value = "txtNotasInternas", required=false, defaultValue = "") String txtNotasInternas,
 								@RequestParam(value = "idOpnColaborador", required = false) int[] idOpnColaborador,
 								@RequestParam(value = "nuevoColaborador", required = false) String[] nuevoColaborador,
 								@RequestParam(value = "idColaborador", required = false) int[] idColaborador,
@@ -515,8 +515,16 @@ public class OportunidadesNegociosController {
 			if(!txtCierreFecha.equals("")) {
 				objOportunidad.setCierreFecha(LocalDate.parse(txtCierreFecha, GeneralConfiguration.getInstance().getDateFormatterNatural()));
 			}
-			if(cmbEstatusClasificacion > 0){
+			/* Change el status de la oportuinidad */
+			System.err.println(cmbEstatusClasificacion+"evaluando");
+			System.err.println(cmbEstatusClasificacion !=null ? "verdadero" : "false");
+
+			if (cmbEstatusClasificacion != null ) {
+				System.err.println("prueba dentro if");
 				objOportunidad.setOpnNegocioEstatusClasificacion(opnNegocioEstatusClasificacionService.findByIdOportunidadNegocioEstatus(cmbEstatusClasificacion));
+			} else {
+				System.err.println("prueba dentro else");
+				objOportunidad.setOpnNegocioEstatusClasificacion(null);
 			}
 
 			objOportunidad.setPrioridad(txtPrioridad);
@@ -565,27 +573,29 @@ public class OportunidadesNegociosController {
 			}
 
 			/* Notificacion por correo de las oportunidades de negocio que entren en curso */
-			// if(cmbEstatus == 2 || cmbEstatus ==3 ){
-			// 	ByteArrayResource pdfDetalleOportunidad = detalleOportunidad(objOportunidad.getIdOportunidadNegocio());
+			if(cmbEstatus == 2 || cmbEstatus ==3 ){
+				ByteArrayResource pdfDetalleOportunidad = detalleOportunidad(objOportunidad.getIdOportunidadNegocio());
+				List<UsuarioRolEntity> lstUsuarios = sessionService.findRolName("NOTIFICACION_OPORTUNIDAD_NEGOCIO");
 
-			// 	for (UsuarioRolEntity objUsuarioRol : sessionService.findRolName("NOTIFICACION_OPORTUNIDAD_NEGOCIO")){
-			// 		Map<String, Object> mapNotificacionOportunidad = new HashMap<String, Object>();
-			// 		mapNotificacionOportunidad.put("UsuarioRolOpnNotificacion", objUsuarioRol.getUsuario());
-			// 		mapNotificacionOportunidad.put("detalleOportunidad", objOportunidad);
+				for (UsuarioRolEntity objUsuarioRol : lstUsuarios){
+					Map<String, Object> mapNotificacionOportunidad = new HashMap<String, Object>();
+					mapNotificacionOportunidad.put("UsuarioRolOpnNotificacion", objUsuarioRol.getUsuario());
+					mapNotificacionOportunidad.put("detalleOportunidad", objOportunidad);
+					mapNotificacionOportunidad.put("usuarioVendedor", objOportunidad.getUsuarioVendedor());
 					
-			// 		try {
-			// 			if (EmailValidator.getInstance().isValid(objUsuarioRol.getUsuario().getCorreo())) {
+					try {
+						if (EmailValidator.getInstance().isValid(objUsuarioRol.getUsuario().getCorreo())) {
 	
-			// 				mailerComponent.sendNotificacionOportunidadNegocio(objUsuarioRol.getUsuario().getCorreo(), "La Oportunidad de negocio "+"  "
-			// 				+objOportunidad.getOportunidad() +" esta  "+objOportunidad.getOportunidadNegocioEstatus().getOportunidadNegocioEstatus()
-			// 				,pdfDetalleOportunidad, objOportunidad.getOportunidad(), Templates.TEMPLATE_NOTIFICACION_OPORTUNIDAD, mapNotificacionOportunidad);
-			// 			}
-			// 		} catch (Exception e) {
-			// 			System.err.println("Ocurrio un error y no se pudo enviar el correo : "+e.getMessage());
-			// 		}
-			// 	}
+							mailerComponent.sendNotificacionOportunidadNegocio(objUsuarioRol.getUsuario().getCorreo(), "La Oportunidad de negocio "+"  "
+							+objOportunidad.getOportunidad() +" esta  : "+objOportunidad.getOportunidadNegocioEstatus().getOportunidadNegocioEstatus()
+							,pdfDetalleOportunidad, objOportunidad.getOportunidad(), Templates.TEMPLATE_NOTIFICACION_OPORTUNIDAD, mapNotificacionOportunidad);
+						}
+					} catch (Exception e) {
+						System.err.println("Ocurrio un error y no se pudo enviar el correo : "+e.getMessage());
+					}
+				}
 
-			// }
+			}
 			
 			objRedirectView = new RedirectView("/WebSar/controlPanel/oportunidadesNegocios");
 			modelAndViewComponent.addResult(objRedirectAttributes, EnumMessage.OPORTUNIDADES_UPDATE_001);
@@ -869,10 +879,10 @@ public class OportunidadesNegociosController {
 	@RequestMapping(value={"{paramIdOportunidad}/get-oportunidad","{paraIdOportunidad}/get-oportunidad/"}, method = RequestMethod.GET)
 	public @ResponseBody String jsonOportunidad(@PathVariable("paramIdOportunidad")int idOportunidad){
 		Boolean respuesta = false;
-		JsonObject dataOportunidad=null;
+		JsonObject dataOportunidad = null;
 		try {
-			dataOportunidad=oportunidadNegocioService.jsonOportunidades(idOportunidad);
-			respuesta=true;
+			dataOportunidad = oportunidadNegocioService.jsonOportunidades(idOportunidad);
+			respuesta = true;
 		} catch (ApplicationException exception) {
 			throw new ApplicationException(EnumException.OPORTUNIDADES_SHOW_001);
 		}
@@ -893,8 +903,8 @@ public class OportunidadesNegociosController {
 		@RequestParam("txtFechaHoraLlamada") String txtFechaHoraLlamada,
 		@RequestParam(value="ficheroCalidad", required=false) MultipartFile ficheroCalidad)
 		{
-			OportunidadNegocioFicheroEntity objOpnFichero=new OportunidadNegocioFicheroEntity();
-			OportunidadNegocioEntity objOportunidad=oportunidadNegocioService.findByIdOportunidadNegocio(idOportunidad);
+			OportunidadNegocioFicheroEntity objOpnFichero = new OportunidadNegocioFicheroEntity();
+			OportunidadNegocioEntity objOportunidad = oportunidadNegocioService.findByIdOportunidadNegocio(idOportunidad);
 			
 			Boolean respuesta=false;
 			String titulo = "";
@@ -907,6 +917,8 @@ public class OportunidadesNegociosController {
 				objOpnFichero.setOportunidadNegocio(objOportunidad);
 				objOpnFichero.setCotizacionTipoFichero(cotizacionTipoFicheroService.findByIdCotizacionTipoFichero(6));
 				oportunidadNegocioFicheroService.addFile(objOpnFichero, ficheroCalidad);
+				objOportunidad.setBoolCalidad(true);
+				oportunidadNegocioService.update(objOportunidad);
 				respuesta = true;
 				titulo = "Cargado!";
 				mensaje = "Registro de calidad cargada exitosamente.";
@@ -947,7 +959,7 @@ public class OportunidadesNegociosController {
 		}
 	
 	@RequestMapping(value={"{paramIdOportunidad}/getCalidad","{paramIdOportunidad}/getCalidad/"}, method = RequestMethod.GET)
-	public @ResponseBody String getCotizacionOpn(@PathVariable("paramIdOportunidad")int idOportunidad){
+	public @ResponseBody String getCalidad(@PathVariable("paramIdOportunidad")int idOportunidad){
 		Boolean respuesta=false;
 		try {
 			if (oportunidadNegocioFicheroService.countOpnFicheroCalidad(idOportunidad)>0) {
@@ -969,23 +981,17 @@ public class OportunidadesNegociosController {
 	public ByteArrayResource detalleOportunidad(int idOportunidad)
 			throws DocumentException, IOException, MessagingException {
 
-		OportunidadNegocioEntity objOportunidad = oportunidadNegocioService
-				.findByIdOportunidadNegocio(idOportunidad);
+		OportunidadNegocioEntity objOportunidad = oportunidadNegocioService.findByIdOportunidadNegocio(idOportunidad);
 		LocalDateTime ldtNow = LocalDateTime.now();
 		Templates objTemplates = new Templates();
 
-		String path_file = ldtNow.getYear() + "_" + ldtNow.getMonthValue() + "_" + ldtNow.getDayOfMonth()
-				+ "_REPORTE_OPORTUNIDAD_NEGOCIO.pdf";
+		String path_file = ldtNow.getYear() + "_" + ldtNow.getMonthValue() + "_" + ldtNow.getDayOfMonth()+ "_REPORTE_OPORTUNIDAD_NEGOCIO.pdf";
 
 		Context objContext = new Context();
 		objContext.setVariable("_TEMPLATE_", Templates.PDF_REPORTE_OPORTUNIDAD_NEGOCIO);
-		objContext.setVariable("title", "Reporte de Oportunidad de Negocio : #"
-				+ objOportunidad.getIdOportunidadNegocio() + " - " + objOportunidad.getOportunidad());
-
+		objContext.setVariable("title", "Reporte de Oportunidad de Negocio : #"	+ objOportunidad.getIdOportunidadNegocio() + " - " + objOportunidad.getOportunidad());
 		objContext.setVariable("objOportunidad", objOportunidad);
-
-		objContext.setVariable("fechaActual",
-				ldtNow.format(GeneralConfiguration.getInstance().getDateFormatterNatural()));
+		objContext.setVariable("fechaActual",ldtNow.format(GeneralConfiguration.getInstance().getDateFormatterNatural()));
 		ByteArrayResource objPDF = pdfComponent.generateFile(path_file, objTemplates.FOUNDATION_PDF, objContext);
 		return objPDF;
 	}

@@ -213,7 +213,6 @@
 							<li><a :href="'cotizaciones/create/' + data.id_oportunidad">Crear Cotizaci&oacute;n</a></li>
 							<li><a :href="'oportunidadesNegocios/reporte-opn-pdf/' + data.id_oportunidad" target="_blank">Reporte OPN</a></li>
 							<li><a :href="'oportunidadesNegocios/' + data.id_oportunidad + '/edit'">Editar</a></li>
-							<li><a href="#" v-on:click="deleteOportunidad(data.id_oportunidad)">Eliminar</a></li>
 						</ul>
 					</li>
 				</ul>
@@ -243,7 +242,6 @@
 						v-on:click="validarCalidad ? getFicheros() : getCalidad()">
 							<i class="material-icons call" v-if="!validarCalidad">call</i>
 							<i class="material-icons library_music" style="color: green;" v-if="validarCalidad">library_music</i>
-
 						</a>
 						
 						<a title="Cotizaciones" type="button" href="#" data-toggle="modal" :data-target="'#opnModal' + data.id_oportunidad" v-on:click="getCotizaciones">
@@ -254,9 +252,9 @@
 							<i class="material-icons">query_builder</i>
 						</a>
 						
-						<!-- <a title="Ficheros" type="button" href="#" data-toggle="modal" :data-target="'#opnModal' + data.id_oportunidad" v-on:click="getFicheros">
+						<a title="Ficheros" type="button" href="#" data-toggle="modal" :data-target="'#opnModal' + data.id_oportunidad" v-on:click="getFicheros">
 							<i class="material-icons">archive</i>
-						</a> -->
+						</a>
 					</div>
 
 					<div v-if="modalInfo != null">
@@ -278,7 +276,7 @@
 			<div class="modal-dialog modal-lg" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h4 class="modal-title text-uppercase text-primary"> {{titulo}} de "{{ titleOpn }}"</h4>
+						<h4 class="modal-title text-uppercase text-primary"><strong>{{titulo}} de "{{ titleOpn }}"</strong></h4>
 					</div>
 					<div class="modal-body">
 						<div class="row clearfix">
@@ -291,10 +289,10 @@
 												<div class="col-md-12 align-left">						
 													<strong>{{ item.folio }}</strong>
 													<br />
-													<small v-if="item.maestra == 1">Cotizaci&oacute;n Maestra</small>
+													<small v-if="item.maestra == 1">Proyecto</small>
 													<small v-if="item.renta == 1">Cotizaci&oacute;n de Renta</small>
 													<small v-if="item.normal == 1">Cotizaci&oacute;n Normal</small>
-													<small v-if="item.boom == 1">Cotizaci&oacute;n BOM</small>
+													<small v-if="item.boom == 1">BOM</small>
 												</div>
 											</div>								 				
 											<div class="row cleafix">

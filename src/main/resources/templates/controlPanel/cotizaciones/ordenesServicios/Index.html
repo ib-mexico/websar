@@ -1,6 +1,6 @@
 <th:block th:fragment="body">
 	<div class="block-header">
-        <h2>COTIZACI&Oacute;N: <th:block th:text="${objCotizacion.folio}"></th:block></h2>
+        <h2>DOCUMENTO: <th:block th:text="${objCotizacion.folio}"></th:block></h2>
     </div>
     
     <ol class="breadcrumb breadcrumb-bg-red">
@@ -8,7 +8,7 @@
     	<li>
 			<a th:if="${objCotizacion.isNormal()}" th:href="${ {_PATH_} + 'controlPanel/cotizaciones'}"><i class="material-icons">view_list</i> Cotizaciones</a>
 			<a th:if="${objCotizacion.isMaestra()}" th:href="${ {_PATH_} + 'controlPanel/cotizacionesProyecto'}"><i class="material-icons">view_list</i> Proyecto</a>
-			<a th:if="${objCotizacion.isBoom()}" th:href="${ {_PATH_} + 'controlPanel/cotizacionesBom'}"><i class="material-icons">view_list</i> Cotizaciones Bom</a>
+			<a th:if="${objCotizacion.isBoom()}" th:href="${ {_PATH_} + 'controlPanel/cotizacionesBom'}"><i class="material-icons">view_list</i>BOM</a>
 			<a th:if="${objCotizacion.isRenta()}" th:href="${ {_PATH_} + 'controlPanel/Sa'}"><i class="material-icons">view_list</i> Servicios Administrados</a>
 		</li>
     	<li class="active">Ordenes de Servicio</li>

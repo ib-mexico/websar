@@ -52,6 +52,9 @@ public class ConfiguracionService {
 				case "BigDecimal":
 					objReturn = new BigDecimal(objConfiguracionEntity.getValor());
 				break;
+				case "LocalDate" :
+					objReturn = new  String(objConfiguracionEntity.getValor());
+				break;
 			}
 		}
 		

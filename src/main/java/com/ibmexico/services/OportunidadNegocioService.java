@@ -202,7 +202,9 @@ public class OportunidadNegocioService {
 				.add("ingreso", itemOportunidad.getIngresoEstimado())
 				.add("prioridad", itemOportunidad.getPrioridad())
 				.add("oportunidad", itemOportunidad.getOportunidad())
-				.add("ficheroCalidad", opnNegocioFicheroService.countOpnFicheroCalidad(itemOportunidad.getIdOportunidadNegocio())>0 ? true : false )
+				// .add("ficheroCalidad", opnNegocioFicheroService.countOpnFicheroCalidad(itemOportunidad.getIdOportunidadNegocio())>0 ? true : false )
+				.add("ficheroCalidad", itemOportunidad.isBoolCalidad())
+
 			);
 		});
 		
@@ -255,7 +257,8 @@ public class OportunidadNegocioService {
 				.add("ingreso", itemOportunidad.getIngresoEstimado())
 				.add("prioridad", itemOportunidad.getPrioridad())
 				.add("oportunidad", itemOportunidad.getOportunidad())
-				.add("ficheroCalidad", opnNegocioFicheroService.countOpnFicheroCalidad(itemOportunidad.getIdOportunidadNegocio())>0 ? true : false )
+				// .add("ficheroCalidad", opnNegocioFicheroService.countOpnFicheroCalidad(itemOportunidad.getIdOportunidadNegocio())>0 ? true : false )
+				.add("ficheroCalidad", itemOportunidad.isBoolCalidad())
 			);
 		});
 		
@@ -313,7 +316,8 @@ public class OportunidadNegocioService {
 				.add("ingreso",itemOportunidad.getIngresoEstimado())
 				.add("prioridad", itemOportunidad.getPrioridad())
 				.add("oportunidad", itemOportunidad.getOportunidad())
-				.add("ficheroCalidad", opnNegocioFicheroService.countOpnFicheroCalidad(itemOportunidad.getIdOportunidadNegocio()) >0 ? true : false )
+				// .add("ficheroCalidad", opnNegocioFicheroService.countOpnFicheroCalidad(itemOportunidad.getIdOportunidadNegocio()) >0 ? true : false )
+				.add("ficheroCalidad", itemOportunidad.isBoolCalidad())
 			);
 		});
 		switch (idOportunidadEstatus) {

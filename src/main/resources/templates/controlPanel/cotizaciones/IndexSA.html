@@ -17,7 +17,7 @@
 						<div class="row clearfix" th:if="${rolNuevaCotizacion}">
 							<div class="col-md-4 col-md-offset-8 text-right">
 								<a href="#" role="button" class="btn bg-purple waves-effect" data-toggle="modal" data-target="#modalNuevaCotizacion" v-on:click="loadModal">
-									<i class="material-icons">add_circle</i> Nueva Cotizaci&oacute;n
+									<i class="material-icons">add_circle</i> Nueva Renta
 								</a>
 							</div>
 						</div>
@@ -51,21 +51,21 @@
 								<table id="dtCotizaciones" class="table table-bordered table-striped table-hover">
 									<thead>
 										<tr>
-											<th data-width="20%" data-formatter="accionesFormatter" data-align="center">Acciones</th>
-											<th data-width="20%" data-field="folio" data-halign="center">Folio</th>
-											<th data-width="20%" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>
-											<th data-width="40%" data-field="concepto" data-halign="left">Concepto</th>
+											<th class="col-md-3" data-formatter="accionesFormatter" data-align="center">Acciones</th>
+											<th class="col-md-3" data-field="folio" data-halign="center">Folio</th>
+											<th class="col-md-2" data-formatter="estatusFormatter" data-halign="center" data-align="center">Estatus</th>
+											<th class="col-md-2" data-field="concepto" data-halign="left">Concepto</th>
 																				
-											<th data-width="20%" data-field="subtotal" data-halign="left" data-align="right">Subtotal</th>
-											<th data-width="20%" data-field="iva" data-halign="left" data-align="right" data-visible="false">Iva</th>
-											<th data-width="20%" data-field="total" data-halign="left" data-align="right">Total</th>
+											<th class="col-md-1" data-field="subtotal" data-halign="left" data-align="right">Subtotal</th>
+											<th class="col-md-1" data-field="iva" data-halign="left" data-align="right" data-visible="false">Iva</th>
+											<th class="col-md-1" data-field="total" data-halign="left" data-align="right">Total</th>
 											
-											<th data-width="25%" data-field="requisicion_folio" data-halign="center" data-visible="false">Folio Requisici&oacute;n</th>
-											<th data-width="30%" data-field="usuario" data-halign="center">Usuario</th>
-											<th data-width="30%" data-field="cliente" data-halign="center">Cliente</th>
-											<th data-width="30%" data-field="ejecutivo" data-halign="center">Ejecutivo</th>
+											<th class="col-md-2" data-field="requisicion_folio" data-halign="center" data-visible="false">Folio Requisici&oacute;n</th>
+											<th class="col-md-2" data-field="usuario" data-halign="center">Usuario</th>
+											<th class="col-md-2" data-field="cliente" data-halign="center">Cliente</th>
+											<th class="col-md-2" data-field="ejecutivo" data-halign="center">Ejecutivo</th>
 											
-											<th data-width="150px" data-field="creacionFecha" data-halign="center">Creaci&oacute;n Fecha</th>														
+											<th class="col-md-2" data-field="creacionFecha" data-halign="center">Creaci&oacute;n Fecha</th>														
 										</tr>
 									</thead>
 								</table>		
@@ -82,7 +82,7 @@
 				<div class="modal-content">
 					<form id="formCotizacion" v-on:submit.prevent="createCotizacion" method="POST" role="form">
 						<div class="modal-header">
-							<h4 class="modal-title">Nueva Cotizaci&oacute;n</h4>
+							<h4 class="modal-title">Nueva Renta</h4>
 						</div>
 						
 						<div class="modal-body">
@@ -105,7 +105,7 @@
 								
 								<div class="col-md-4">
 									<div class="form-group">
-										<p><b>Concepto *</b></p>
+										<p><b>Descripción *</b></p>
 										<div class="form-line">
 											<input type="text" name="txtConcepto" class="form-control" required="required" v-model="newCotizacion.concepto" />
 										</div>
@@ -141,7 +141,7 @@
 									<div class="input-group">	                            
 										<select class="form-control show-tick cmbClienteContacto" name="cmbClienteContacto" id="cmbClienteContacto" v-model="newCotizacion.id_contacto">
 											<option value="default" selected="selected">Selecciona un Contacto...</option>
-											<option v-for="item in contactos" :value="item.id_contacto" :data-subtext="item.correo">{{ item.contacto }}</option>
+											<option v-for="item in contactos" :value="item.id_contacto" :data-subtext="item.correo">{{ item.contacto +' [ '+item.puesto+ ' ]' }}</option>
 										</select>
 									</div>
 								</div>
@@ -251,7 +251,7 @@
 							<div class="row clearfix">
 								<div class="col-md-6">
 									<input name="rdTipoCotizacion" type="radio" id="rdMaster" class="with-gap radio-col-red" value="master" v-model="newCotizacion.rdTipoCotizacion" />
-									<label for="rdMaster"><strong>Maestra</strong> (Ej. Cotizaci&oacute;n principal de una p&oacute;liza)</label>
+									<label for="rdMaster"><strong>Proyecto</strong> (Ej. Cotizaci&oacute;n principal de una p&oacute;liza)</label>
 								</div>
 
 								<div class="col-md-6">
@@ -313,7 +313,7 @@
 				<div class="modal-content">
 					<form id="formEstatus" th:action="${ {_PATH_} + 'controlPanel/cotizaciones/modificar-estatus'}" th:method="POST" enctype="multipart/form-data">
 						<div class="modal-header">
-							<h4 class="modal-title">Modificar Estatus de Cotizaci&oacute;n</h4>
+							<h4 class="modal-title">Modificar Estatus de Renta</h4>
 						</div>
 						<div class="modal-body">                	
 							<input type="hidden" id="hddIdCotizacion" name="hddIdCotizacion" value="" />
@@ -402,7 +402,7 @@
 
 								<div class="col-md-12">
 									<input type="checkbox" id="chkComprobante" name="chkComprobante" value="true" class="chk-col-purple" />
-									<label for="chkComprobante">ESTA COTIZACION TIENE COMPROBANTE DE PAGO ?</label>
+									<label for="chkComprobante">ESTA RENTA TIENE COMPROBANTE DE PAGO ?</label>
 								</div>
 
 								<div class="row clearfix" id="divComprobante">
@@ -714,6 +714,7 @@
 					});
 					$(".clone-cotizacion-renta").click(function(){
 						var idCotizacion = $(this).attr('data-cotizacion');
+						console.log(idCotizacion, "valor de id cotizacion");
 						swal({
 							title	: "Generar las cotizaciones en renta",
 							text	: "La cantidad de cotizaciones se genera dependiendo la cantidad asignada en la cotizacion maestra.",
@@ -724,7 +725,7 @@
 						}).then((result) => {
 							if (result) {
 								$.ajax({
-									url			: [[@{/controlPanel/cotizaciones/}]] + idCotizacion + '/cloneRenta',
+									url			: [[@{/controlPanel/Sa/}]] + idCotizacion + '/cloneRenta',
 									data		: {
 													idCotizacion : idCotizacion, 
 													[[${_csrf.parameterName}]] : [[${_csrf.token}]]
@@ -930,7 +931,7 @@
 			/*Fin de la validacion*/
 			/*Los valores previamente definidos, se usa para hacer dinamica la funcionalidad de registro de llamada de calidad*/
 
-			if(row.idEstatus == 1){
+			if(row.idEstatus == 1 || row.idEstatus == 2){
 				return [
 					'<a href="' + urlEdit + '" title="Editar">',
 						'<i class="material-icons">mode_edit</i>',
@@ -967,7 +968,7 @@
 					'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
 						'<i class="material-icons">assignment_turned_in</i>',
 					'</a>',
-					'<a href="' + ((rolExpediente)?urlFicheros:'#') + '" title="Ficheros">',
+					'<a href="' + ((rolExpediente) ? urlFicheros : '#' ) + '" title="Ficheros">',
 						'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
 					'</a>',
 					
@@ -979,48 +980,108 @@
 					'</a>',
 					'<a href="'+urlEntregas+'" title="Entrega de materiales" class="'+permisoEntrega+'">',
 						'<i class="material-icons">layers</i>',
-					'</a>',
-					'<a href="#" title="Ver las cotizaciones en Renta">',
-						'<i class="material-icons " style="color: green;">remove_red_eye</i>',
 					'</a>'
 				].join(' ');
 			}
 		
 
-			if(row.idEstatus == 2){
-				return [
-					'<a href="' + urlEdit + '" title="Editar">',
-						'<i class="material-icons">mode_edit</i>',
-					'</a>',
-					'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
-						'<i class="material-icons">flip_to_front</i>',
-					'</a>',
-					'<a href="' + urlPartidas + '" title="Partidas">',
-						'<i class="material-icons">format_list_numbered</i>',
-					'</a>',
-					'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
-						'<i class="material-icons">assignment_turned_in</i>',
-					'</a>',
-					'<a href="' + ((rolExpediente)?urlFicheros:'#') + '" title="Ficheros">',
-						'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
-					'</a>',
-					
-					'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
-						'<i class="material-icons">print</i>',
-					'</a>',
-					'<a href="'+href+'" title="'+title+'" class="calidad '+permisoCalidad+'" data-toggle="'+togle+'" data-target="'+target+'" onclick="'+p_onclick+'" role="button">',
-						'<i class="material-icons +'+icon+'" style="color: green;">'+icon+'</i>',
-					'</a>',
-					'<a href="'+urlEntregas+'" title="Entrega de materiales" class="'+permisoEntrega+'">',
-						'<i class="material-icons">layers</i>',
-					'</a>',
-					'<a href="#" title="Generar Cotizaciones en renta" class="clone-cotizacion-renta">',
-						'<i class="material-icons " style="color: green;">autorenew</i>',
-					'</a>'
-				].join(' ');
+		/* 	if(row.idEstatus == 2 ){
+				if (row.idRenta == 0 ) {
+					if (!row.boolActivoRenta) {
+						return [
+							'<a href="' + urlEdit + '" title="Editar">',
+								'<i class="material-icons">mode_edit</i>',
+							'</a>',
+							'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
+								'<i class="material-icons">flip_to_front</i>',
+							'</a>',
+							'<a href="' + urlPartidas + '" title="Partidas">',
+								'<i class="material-icons">format_list_numbered</i>',
+							'</a>',
+							'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
+								'<i class="material-icons">assignment_turned_in</i>',
+							'</a>',
+							'<a href="' + ((rolExpediente) ? urlFicheros : '#' ) + '" title="Ficheros">',
+								'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
+							'</a>',
+							
+							'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+								'<i class="material-icons">print</i>',
+							'</a>',
+							'<a href="'+href+'" title="'+title+'" class="calidad '+permisoCalidad+'" data-toggle="'+togle+'" data-target="'+target+'" onclick="'+p_onclick+'" role="button">',
+								'<i class="material-icons +'+icon+'" style="color: green;">'+icon+'</i>',
+							'</a>',
+							'<a href="'+urlEntregas+'" title="Entrega de materiales" class="'+permisoEntrega+'">',
+								'<i class="material-icons">layers</i>',
+							'</a>',
+							'<a href="#" title="Generar Cotizaciones en renta" class="clone-cotizacion-renta" data-cotizacion="'+ row.idCotizacion +'">',
+								'<i class="material-icons " style="color: green;">autorenew</i>',
+							'</a>'
+						].join(' ');
+					}else{
+						return [
+							'<a href="' + urlEdit + '" title="Editar">',
+								'<i class="material-icons">mode_edit</i>',
+							'</a>',
+							'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
+								'<i class="material-icons">flip_to_front</i>',
+							'</a>',
+							'<a href="' + urlPartidas + '" title="Partidas">',
+								'<i class="material-icons">format_list_numbered</i>',
+							'</a>',
+							'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
+								'<i class="material-icons">assignment_turned_in</i>',
+							'</a>',
+							'<a href="' + ((rolExpediente) ? urlFicheros : '#' ) + '" title="Ficheros">',
+								'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
+							'</a>',
+							
+							'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+								'<i class="material-icons">print</i>',
+							'</a>',
+							'<a href="'+href+'" title="'+title+'" class="calidad '+permisoCalidad+'" data-toggle="'+togle+'" data-target="'+target+'" onclick="'+p_onclick+'" role="button">',
+								'<i class="material-icons +'+icon+'" style="color: green;">'+icon+'</i>',
+							'</a>',
+							'<a href="'+urlEntregas+'" title="Entrega de materiales" class="'+permisoEntrega+'">',
+								'<i class="material-icons">layers</i>',
+							'</a>',
+							'<a href="#" title="Ver Cotizaciones asociadas en renta" class="watch-renta" data-cotizacion="'+ row.idCotizacion +'">',
+								'<i class="material-icons " style="color: green;">remove_red_eye</i>',
+							'</a>'
+						].join(' ');
+					}
+				}else{
+					return [
+						'<a href="' + urlEdit + '" title="Editar">',
+							'<i class="material-icons">mode_edit</i>',
+						'</a>',
+						'<a href="#" class="clone-cotizacion" data-cotizacion="'+ row.idCotizacion +'" title="Clonar cotizaci&oacute;n">',
+							'<i class="material-icons">flip_to_front</i>',
+						'</a>',
+						'<a href="' + urlPartidas + '" title="Partidas">',
+							'<i class="material-icons">format_list_numbered</i>',
+						'</a>',
+						'<a href="' + urlOrdenes + '" title="Ordenes Servicios">',
+							'<i class="material-icons">assignment_turned_in</i>',
+						'</a>',
+						'<a href="' + ((rolExpediente) ? urlFicheros : '#' ) + '" title="Ficheros">',
+							'<i style="' + ((rolExpediente)?'':'color:grey') + '" class="material-icons">archive</i>',
+						'</a>',
+						
+						'<a target="_blank" href="' + urlPdf + '" title="Generar PDF">',
+							'<i class="material-icons">print</i>',
+						'</a>',
+						'<a href="'+href+'" title="'+title+'" class="calidad '+permisoCalidad+'" data-toggle="'+togle+'" data-target="'+target+'" onclick="'+p_onclick+'" role="button">',
+							'<i class="material-icons +'+icon+'" style="color: green;">'+icon+'</i>',
+						'</a>',
+						'<a href="'+urlEntregas+'" title="Entrega de materiales" class="'+permisoEntrega+'">',
+							'<i class="material-icons">layers</i>',
+						'</a>'
+					].join(' ');
+				}
 			}
 		
-
+ */
 
 		}
 			
@@ -1119,8 +1180,8 @@
 			$('#txtPagoFecha').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY', lang:'es', weekStart : 1, clearButton: true, time:false});
 			
 		 });
-		 
-		 $(function () {
+
+		$(function () {
 			// VALIDADOR DE FORMULARIO
 			$('#formCotizacion').validate({
 		        rules: {

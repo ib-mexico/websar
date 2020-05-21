@@ -1,0 +1,42 @@
+<th:block th:fragment="title">
+	<h2>La oportunidad de Negocio <span th:text="${detalleOportunidad.oportunidad}"></span></h2>
+</th:block>
+
+
+<th:block th:fragment="body">
+	<h2 style="color:#F44336;">Ing. <span th:text="${UsuarioRolOpnNotificacion.nombreCompleto}"></span></h2>
+	<p style="display:inline; text-align: justify;">Se hace llegar esta notificación que la Oportunidad <span style="text-transform: uppercase; font-weight:bold;" th:text="${detalleOportunidad.oportunidad}"></span> esta :  <span style="text-transform: uppercase; font-weight:bold;" th:text="${detalleOportunidad.getOportunidadNegocioEstatus().getOportunidadNegocioEstatus()}">.</span></p>
+    <p style="display: inline; text-align: justify;">A continuacion se presenta los detalles de la Oportunidad de Negocio, se adjunta un PDF con toda la informacion, asociaciónes de cotización en esta Oportunidad:</p>
+	
+	<div class="table-responsive-md table-responsive-lg table-responsive-xl">
+		<table id="dtDetalle" class="table table-bordered table-striped table-hover">
+			<tr>
+				<td width="35%"><h4><strong>Numero de la Oportunidad: </strong></h4></td>
+				<td th:text="${detalleOportunidad.idOportunidadNegocio}"></td>
+			</tr>
+			<tr>
+				<td width="35%"><h4><strong>Concepto</strong></h4></td>
+				<td th:text="${detalleOportunidad.oportunidad}"></td>
+			</tr>
+
+			<tr>
+				<td width="35%"><h4><strong>Ingreso Estimado :</strong></h4></td>
+				<td th:text="'$ '+${detalleOportunidad.getIngresoEstimado()}"></td>
+			</tr>
+			<tr>
+				<td width="35%"><h4><strong>Usuario  Vendedor: </strong></h4></td>
+				<td th:text="${usuarioVendedor.nombreCompleto}"></td>
+			</tr>
+			<tr>
+				<td width="35%"><h4><strong>Cliente : </strong></h4></td>
+				<td th:text="${detalleOportunidad.getCliente().getCliente()}"></td>
+			</tr>
+			<tr>
+				<td width="35%"><h4><strong>Fecha Creacion : </strong></h4></td>
+				<td th:text="${detalleOportunidad.getCreacionFechaNatural()}"></td>
+			</tr>
+		</table>
+	</div>
+	<br/>
+</th:block>
+

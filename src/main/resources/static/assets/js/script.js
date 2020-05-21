@@ -9,7 +9,7 @@ axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content; // for all reques
 moment.locale('es');
 
 var modalOpn = Vue.component('example-modal', {
-	props: ['params', 'idOportunidad', 'modalTipo'],
+	props: ['params', 'idOportunidad', 'modalTipo','titleOpn'],
 	template: '#opn-modal-template',
 	mounted() {
 		this.collection = this.params;
@@ -164,7 +164,7 @@ Vue.component('opn-card', {
 			} else {
 				this.modalInfo=this.oportunidad;
 			}
-			this.modalTipo=4;
+			this.modalTipo = 4;
 			//DATEPICKER FECHA HORA DE LLAMADA DE CALIDAD
 			$('.txtFechaHoraLlamada').bootstrapMaterialDatePicker({format: 'DD/MM/YYYY HH:mm', weekStart : 1, clearButton: true, time:true});
 
@@ -803,7 +803,7 @@ if(document.getElementById('appCotizaciones')) {
 						$select.find('option').remove(); 
 
 						this.contactos.forEach(item => {
-							$select.append('<option value=' + item.id_contacto + ' data-subtext="'+ item.correo +'">' + item.contacto + '</option>');
+							$select.append('<option value=' + item.id_contacto + ' data-subtext="'+ item.puesto +'">' + item.contacto + '</option>');
 						});
 
 						if(this.contactos.length >= 1) {
@@ -952,6 +952,8 @@ if(document.getElementById('appCotizaciones')) {
 			'newCotizacion.id_cliente': function(val) {
 				if(!isNaN(val)) {
 					this.getContactos(val);
+					let approved = this.clientes.filter(data => data.id_cliente == val);
+					this.newCotizacion.ubicacion = approved[0].direccion;
 				}
 			},
 			'newCotizacion.dias_credito': function(val) {
@@ -1052,8 +1054,7 @@ if(document.getElementById("appOPN")){
         },
         data: {
             formInputs : [],
-            idOportunidad : null,  
-          
+            idOportunidad : null,
         },
         methods: {
             obtenerUsuario(){

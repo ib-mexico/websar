@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.ibmexico.libraries.notifications.ApplicationException;
 import com.ibmexico.libraries.notifications.EnumException;
+import com.ibmexico.configurations.GeneralConfiguration;
 import com.ibmexico.entities.CotizacionComisionEntity;
 import com.ibmexico.entities.CotizacionEntity;
 import com.ibmexico.entities.UsuarioEntity;
@@ -110,18 +111,16 @@ public class CotizacionComisionService {
 					status = true;
 				}
 			}
-			System.out.println(objCotizacion.isCalidad());
-			System.err.println(status);
-			System.err.println(status == true  ? "verdad" :"false");
 			/** Fecha de inicio de la llamada de calidad */
-			LocalDate ldtInicioCalidad =  LocalDate.of(2020, 03, 31);
+			LocalDate ldtInicioCalidad =  LocalDate.parse(configuracionService.getValue("INICIO_CALIDAD").toString(), GeneralConfiguration.getInstance().getDateFormatter());
+			
 			/**Dividiendo la fecha de creacion en un arreglo */
 			String arrFechaInicio[] = objCotizacion.getCreacionFechaNatural().split("/");
 			int yearInicio = Integer.parseInt(arrFechaInicio[2]);
 			int monthInicio = Integer.parseInt(arrFechaInicio[1]);
 			int dayInicio = Integer.parseInt(arrFechaInicio[0]);
 
-			LocalDate fechaInicio=LocalDate.of(yearInicio, monthInicio, dayInicio);
+			LocalDate fechaInicio = LocalDate.of(yearInicio, monthInicio, dayInicio);
 			/**Comparar fecha de creacion si es mayor a la fecha de inicio de Calidad */
 			// Boolean paseCalidad = fechaInicio.isAfter(ldtInicioCalidad);
 			if (fechaInicio.isAfter(ldtInicioCalidad)) {

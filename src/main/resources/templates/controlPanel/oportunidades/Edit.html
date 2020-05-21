@@ -38,8 +38,8 @@
 								<div class="form-group form-group-lg">
 									<p><b>Clasificacion*</b></p>
 		                            <select class="form-control show-tick" name="cmbEstatusClasificacion" id="cmbEstatusClasificacion" data-live-search="true" >
+										<option value="0" selected="selected">Seleccione clasificacion...</option>
 		                       			<th:block th:each="itemEstatusClasificacion : ${lstOpnEstatusClasificacion}">
-											<h2 th:text="${itemEstatusClasificacion}"></h2>
 		                       				<option th:if="${objOportunidad.opnNegocioEstatusClasificacion != NULL AND objOportunidad.opnNegocioEstatusClasificacion.idOpnNegocioEstatusClasificacion == itemEstatusClasificacion.idOpnNegocioEstatusClasificacion}" selected="selected" th:value="${itemEstatusClasificacion.idOpnNegocioEstatusClasificacion}" th:text="${itemEstatusClasificacion.nombre}"></option>
 		                       				<option th:unless="${objOportunidad.opnNegocioEstatusClasificacion !=NULL AND objOportunidad.opnNegocioEstatusClasificacion.idOpnNegocioEstatusClasificacion == itemEstatusClasificacion.idOpnNegocioEstatusClasificacion }" th:value="${itemEstatusClasificacion.idOpnNegocioEstatusClasificacion}" th:text="${itemEstatusClasificacion.nombre}"></option>
 		                       			</th:block>
@@ -558,13 +558,21 @@
 			// FORM SUBMIT
 			$('#formOportunidad').submit(function(e){
 				var flag = false;
-				
+				let flagCliente = false;
+
 				if($('#cmbCliente').val() == 'default' || $('#cmbClienteContacto').val() == 'default' || isNaN($('#txtIngresoEstimado').val())) {
 					flag = true;
-				}				
+				}
+				if($('#cmbCliente').val() == 1 ){
+					flagCliente = true;
+				}
 				
 				if(flag) {
 					swal('Hey!', 'Los campos con (*) son obligatorios', 'warning');
+					e.preventDefault();
+				}
+				else if(flagCliente){
+					swal('Advertencia!', 'No se permite seleccionar un cliente "A QUIEN CORRESPONDA" para generar una nueva oportunidad.', 'warning');
 					e.preventDefault();
 				}
 		  	});

@@ -48,6 +48,7 @@ public class ClienteContactoService {
 				.add("id_contacto", item.getIdClienteContacto())
 				.add("contacto", item.getContacto())
 				.add("correo", item.getCorreo())
+				.add("puesto", item.getPuesto())
 			);
 		});
 

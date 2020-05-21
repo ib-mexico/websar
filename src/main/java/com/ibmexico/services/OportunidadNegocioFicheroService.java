@@ -20,7 +20,6 @@ import com.ibmexico.libraries.notifications.ApplicationException;
 import com.ibmexico.libraries.notifications.EnumException;
 import com.ibmexico.entities.OportunidadNegocioFicheroEntity;
 import com.ibmexico.repositories.IOportunidadNegocioFicheroRepository;
-import com.ibmexico.services.SessionService;
 
 @Service("oportunidadNegocioFicheroService")
 public class OportunidadNegocioFicheroService {

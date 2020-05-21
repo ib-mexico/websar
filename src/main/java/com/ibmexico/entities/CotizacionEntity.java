@@ -18,7 +18,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Formula;
 
 import com.ibmexico.configurations.GeneralConfiguration;
-import com.ibmexico.entities.UsuarioEntity;
 
 @Entity
 @Table(name="cotizaciones")
@@ -195,6 +194,36 @@ public class CotizacionEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_renta", nullable = true)
 	private CotizacionEntity idSAdministrado;
+
+	/* Permita generar multiples cotizaciones en renta */
+	@Column(nullable = true, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
+	private BigDecimal montoCobrado;
+
+	@Column (nullable = true)
+	private int ordenMes;
+
+	@Column (nullable = true, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
+	private BigDecimal roi;
+
+	@Column(nullable = true)
+	private int numeroMesRenta;
+
+	@Column(nullable = true)
+	private Boolean activoRenta = false;
+
+	@Column(nullable = true)
+	private int numeroMesRetorno = 0;
+
+	@Column(nullable = true)
+	private int acumuladoMes = 0;
+
+	/* tipo de proyecto solamente aplicable para proyectos por el momento */
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_cotizacion_clasificacion", nullable = true)
+	private CotizacionClasificacionEntity cotizacionClasificacion;
+	
+	@Column(nullable = true, precision = 14, scale = 2, columnDefinition = "DECIMAL(12,2)")
+	private BigDecimal interesFinanciamiento = BigDecimal.ZERO;
 
 	// ACCESORS METHODS
 	public int getIdCotizacion() {
@@ -711,8 +740,77 @@ public class CotizacionEntity {
 	public void setIdSAdministrado(CotizacionEntity idSAdministrado) {
 		this.idSAdministrado = idSAdministrado;
 	}
-	
-	
-	
+
+	public BigDecimal getMontoCobrado() {
+		return montoCobrado;
+	}
+
+	public void setMontoCobrado(BigDecimal montoCobrado) {
+		this.montoCobrado = montoCobrado;
+	}
+
+	public BigDecimal getRoi() {
+		return roi;
+	}
+
+	public void setRoi(BigDecimal roi) {
+		this.roi = roi;
+	}
+
+	public int getNumeroMesRenta() {
+		return numeroMesRenta;
+	}
+
+	public void setNumeroMesRenta(int numeroMesRenta) {
+		this.numeroMesRenta = numeroMesRenta;
+	}
+
+	public int getOrdenMes() {
+		return ordenMes;
+	}
+
+	public void setOrdenMes(int ordenMes) {
+		this.ordenMes = ordenMes;
+	}
+
+	public Boolean isActivoRenta() {
+		return activoRenta;
+	}
+
+	public void setActivoRenta(Boolean activoRenta) {
+		this.activoRenta = activoRenta;
+	}
+
+	public int getNumeroMesRetorno() {
+		return numeroMesRetorno;
+	}
+
+	public void setNumeroMesRetorno(int numeroMesRetorno) {
+		this.numeroMesRetorno = numeroMesRetorno;
+	}
+
+	public int getAcumuladoMes() {
+		return acumuladoMes;
+	}
+
+	public void setAcumuladoMes(int acumuladoMes) {
+		this.acumuladoMes = acumuladoMes;
+	}
+
+	public CotizacionClasificacionEntity getCotizacionClasificacion() {
+		return cotizacionClasificacion;
+	}
+
+	public void setCotizacionClasificacion(CotizacionClasificacionEntity cotizacionClasificacion) {
+		this.cotizacionClasificacion = cotizacionClasificacion;
+	}
+
+	public BigDecimal getInteresFinanciamiento() {
+		return interesFinanciamiento;
+	}
+
+	public void setInteresFinanciamiento(BigDecimal interesFinanciamiento) {
+		this.interesFinanciamiento = interesFinanciamiento;
+	}
 	
 }
